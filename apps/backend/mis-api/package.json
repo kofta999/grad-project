@@ -1,0 +1,28 @@
+{
+  "name": "@repo/mis-api",
+  "private": "true",
+  "scripts": {
+    "start": "node dist/index.js",
+    "dev": "tsup --watch --onSuccess \"node dist/index.js\"",
+    "build": "tsup",
+    "clean": "rm -rf dist",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src/",
+    "test": "jest --detectOpenHandles"
+  },
+  "jest": {
+    "preset": "@repo/jest-presets/node"
+  },
+  "dependencies": {
+    "@repo/logger": "*",
+    "@hono/node-server": "^1.13.7",
+    "hono": "^4.6.10"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.17",
+    "tsup": "^8.0.2",
+    "@repo/eslint-config": "*",
+    "@repo/jest-presets": "*",
+    "@repo/typescript-config": "*"
+  }
+}
