@@ -16,10 +16,11 @@
   "engines": {
     "node": ">=18"
   },
-  "name": "kitchen-sink",
+  "name": "grad-project",
   "packageManager": "bun@1.1.26",
   "workspaces": [
-    "apps/*",
+    "apps/frontend/*",
+    "apps/backend/*",
     "packages/*"
   ]
 }
