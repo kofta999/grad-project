@@ -1,8 +1,22 @@
-import { defineConfig, type Options } from "tsup";
+import { defineConfig } from 'tsup';
 
-export default defineConfig((options: Options) => ({
-  entryPoints: ["src/index.ts"],
-  clean: true,
-  format: ["cjs"],
-  ...options,
-}));
+export default defineConfig([
+  {
+    entry: ['src/index.ts'],
+    outDir: 'dist/server',
+    format: ['cjs', 'esm'],
+    dts: true,
+    sourcemap: true,
+    clean: true,
+    minify: false,
+  },
+  {
+    entry: ['src/hc.ts'],
+    outDir: 'dist/client',
+    format: ['cjs', 'esm'],
+    dts: true,
+    sourcemap: true,
+    clean: true,
+    minify: false,
+  }
+]);
