@@ -1,17 +1,12 @@
-import { serve } from "@hono/node-server";
-import { log } from "@repo/logger";
-import { Hono } from "hono";
+import { serve } from '@hono/node-server'
+import app from './app'
+import env from './env'
 
-export const app = new Hono()
-  .get("/", (c) => {
-    log("test");
-    return c.text("Hello Hono!");
-  });
-
-const port = 5000;
-console.log(`Server is running on http://localhost:${port}`);
+const port = Number(env.PORT)
+// eslint-disable-next-line no-console
+console.log(`Server is running on http://localhost:${port}`)
 
 serve({
   fetch: app.fetch,
   port,
-});
+})
