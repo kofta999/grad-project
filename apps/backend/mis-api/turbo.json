@@ -2,6 +2,7 @@
   "extends": ["//"],
   "tasks": {
     "build": {
+      "env": ["NODE_ENV", "PORT", "LOG_LEVEL", "DATABASE_URL"],
       "outputs": ["dist/**"]
     }
   }

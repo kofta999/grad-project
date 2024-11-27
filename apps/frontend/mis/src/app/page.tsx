@@ -12,8 +12,9 @@ export const metadata = {
 };
 export default async function Store() {
   log("Hey! This is the Store page.");
-  const client = hcWithType("http://127.0.0.1:5000");
+  const client = hcWithType("http://127.0.0.1:3000");
   const data = await (await client.index.$get()).text();
+  console.log(data);
 
   return (
     <div className="container">
