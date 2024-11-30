@@ -1,6 +1,18 @@
 import { integer, sqliteTable, text } from 'drizzle-orm/sqlite-core'
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod'
 
+export const users = sqliteTable('users', {
+  id: integer({ mode: "number" }).primaryKey({ autoIncrement: true }),
+  username: text().notNull().unique(),
+  password: text({ length: 20 }).notNull()
+})
+
+export const selectUsersSchema = createSelectSchema(users);
+export const insertUsersSchema = createInsertSchema(users,
+  { username: schema => schema.username.min(3), password: schema => schema.password.min(6) })
+  .omit({ id: true });
+
+
 export const tasks = sqliteTable('tasks', {
   id: integer({ mode: 'number' })
     .primaryKey({ autoIncrement: true }),
