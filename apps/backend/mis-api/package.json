@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "scripts": {
     "start": "node dist/server/index.js",
-    "dev": "tsx src/index.ts",
+    "dev": "tsx watch src/index.ts",
     "dev:tsc": "tsc -p tsconfig.build.json --watch",
     "build": "tsc -p tsconfig.build.json",
     "clean": "rm -rf dist",
