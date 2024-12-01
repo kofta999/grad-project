@@ -15,7 +15,7 @@ export const login = createRoute({
     body: jsonContentRequired(insertUsersSchema, "The login credentials")
   },
   responses: {
-    [HttpStatusCodes.OK]: jsonContent(z.object({}), "Successful login, access and refresh tokens are sent as a cookie"),
+    [HttpStatusCodes.OK]: jsonContent(z.object({}), "Successful login"),
     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(createErrorSchema(insertUsersSchema), "The validation error(s)"),
     [HttpStatusCodes.UNAUTHORIZED]: jsonContent(unauthorizedSchema, "The authentication errors")
   }

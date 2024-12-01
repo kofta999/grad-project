@@ -12,6 +12,7 @@ export function createRouter() {
 
 export default function createApp() {
   const app = createRouter()
+  // TODO: Decide on using / not using a memory store
   const store = new MemoryStore()
 
   app.use(sessionMiddleware({
