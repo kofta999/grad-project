@@ -18,6 +18,7 @@ export const login: AppRouteHandler<LoginRoute> = async (c) => {
     return c.json({ message: HttpStatusPhrases.UNAUTHORIZED }, HttpStatusCodes.UNAUTHORIZED)
   }
 
-  // TODO: Create auth cookie
+  c.var.session.set('id', user.id)
+
   return c.json({}, HttpStatusCodes.OK)
 }
