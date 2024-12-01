@@ -4,5 +4,6 @@ import * as routes from "./auth.routes"
 
 const router = createRouter()
   .openapi(routes.login, handlers.login)
+  .openapi(routes.logout, handlers.logout)
 
 export default router

@@ -1,5 +1,5 @@
 import { AppRouteHandler } from "@/lib/types";
-import { LoginRoute } from "./auth.routes";
+import { LoginRoute, LogoutRoute } from "./auth.routes";
 import * as HttpStatusCodes from 'stoker/http-status-codes'
 import * as HttpStatusPhrases from 'stoker/http-status-phrases'
 import db from "@/db";
@@ -19,6 +19,12 @@ export const login: AppRouteHandler<LoginRoute> = async (c) => {
   }
 
   c.var.session.set('id', user.id)
+
+  return c.json({}, HttpStatusCodes.OK)
+}
+
+export const logout: AppRouteHandler<LogoutRoute> = async (c) => {
+  c.var.session.deleteSession()
 
   return c.json({}, HttpStatusCodes.OK)
 }

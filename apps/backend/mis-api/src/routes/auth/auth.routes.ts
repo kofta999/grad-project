@@ -4,6 +4,7 @@ import { jsonContent, jsonContentRequired } from "stoker/openapi/helpers";
 import * as HttpStatusCodes from 'stoker/http-status-codes'
 import { createErrorSchema } from "stoker/openapi/schemas";
 import { unauthorizedSchema } from "@/lib/constants";
+import { isAuthenticated } from "@/middlewares/isAuthenticated";
 
 const tags = ["Authentication"]
 
@@ -21,4 +22,17 @@ export const login = createRoute({
   }
 })
 
+export const logout = createRoute({
+  path: "/logout",
+  method: "post",
+  tags,
+  middleware: [isAuthenticated] as const,
+  responses: {
+    [HttpStatusCodes.OK]: jsonContent(z.object({}), "Successful logout"),
+    [HttpStatusCodes.UNAUTHORIZED]: jsonContent(unauthorizedSchema, "The authentication errors")
+  }
+})
+
 export type LoginRoute = typeof login
+
+export type LogoutRoute = typeof logout
