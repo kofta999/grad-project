@@ -1,7 +1,8 @@
 CREATE DATABASE mis
 WITH ENCODING 'UTF8'
 LC_COLLATE='ar_AE.utf8' -- لضبط الترتيب باللغة العربية
-LC_CTYPE='ar_AE.utf8'; -- لضبط نوع الأحرف
+LC_CTYPE='ar_AE.utf8' -- لضبط نوع الأحرف
+TEMPLATE template0;
 
 -- Set client encoding to UTF-8 for Arabic support
 SET client_encoding = 'UTF8';
