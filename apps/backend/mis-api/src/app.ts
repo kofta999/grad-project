@@ -14,5 +14,5 @@ const app = createApp()
 configureOpenAPI(app)
 // routes.forEach(route => app.route('/', route))
 
-export const _app = app.route("", index).route("", tasks).route("/auth", auth)
+export const _app = app.route("", index).route("/auth", auth)
 export default app
