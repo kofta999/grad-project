@@ -1,5 +1,7 @@
 {
   "$schema": "https://turbo.build/schema.json",
+  "ui": "tui",
+  "globalEnv": ["PORT", "DATABASE_URL", "LOG_LEVEL"],
   "tasks": {
     "build": {
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
@@ -26,6 +28,9 @@
       "dependsOn": ["^build"],
       "cache": false,
       "persistent": true
+    },
+    "start": {
+      "dependsOn": ["^build"]
     },
     "clean": {
       "cache": false
