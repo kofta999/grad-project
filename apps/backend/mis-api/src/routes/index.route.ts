@@ -13,7 +13,7 @@ const router = createRouter()
     middleware: [isAuthenticated] as const,
     path: '/',
     responses: {
-      [HttpStatusCodes.OK]: jsonContent(createMessageObjectSchema('Tasks API'), 'My API Index'),
+      [HttpStatusCodes.OK]: jsonContent(createMessageObjectSchema('MIS API'), 'My API Index'),
       [HttpStatusCodes.UNAUTHORIZED]: jsonContent(unauthorizedSchema, "The authentication errors")
     },
   }), c => c.json({ message: "Hi" }))

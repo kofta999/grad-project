@@ -1,13 +1,12 @@
 import env from '@/env'
-import { drizzle } from 'drizzle-orm/libsql'
+import { drizzle } from 'drizzle-orm/node-postgres'
 import * as schema from './schema'
 
 const db = drizzle({
   connection: {
-    url: env.DATABASE_URL,
-    authToken: env.DATABASE_AUTH_TOKEN,
+    connectionString: env.DATABASE_URL,
   },
-  schema,
+  schema
 })
 
 export default db
