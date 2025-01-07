@@ -1,4 +1,4 @@
-CREATE DATABASE mis
+CREATE DATABASE mis_db
 WITH ENCODING 'UTF8'
 LC_COLLATE='ar_AE.utf8' -- لضبط الترتيب باللغة العربية
 LC_CTYPE='ar_AE.utf8' -- لضبط نوع الأحرف
