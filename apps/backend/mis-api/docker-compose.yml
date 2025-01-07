@@ -11,7 +11,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
       # Add this line to mount the init scripts
-      - ./db/init:/docker-entrypoint-initdb.d
+      - ./src/db/init:/docker-entrypoint-initdb.d
     ports:
       - "5432:5432"
     networks:
