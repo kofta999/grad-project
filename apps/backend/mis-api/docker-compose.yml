@@ -13,6 +13,7 @@ services:
       # Add this line to mount the init scripts
       - ./src/db/init:/docker-entrypoint-initdb.d
     ports:
+      # Try using this IP to connect in pgadmin4 172.26.0.2
       - "5432:5432"
     networks:
       - mis_network
