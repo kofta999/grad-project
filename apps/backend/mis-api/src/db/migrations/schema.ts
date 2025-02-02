@@ -1,4 +1,4 @@
-import { pgTable, unique, serial, text, boolean, timestamp, index, foreignKey, integer, pgEnum } from "drizzle-orm/pg-core"
+import { pgTable, unique, serial, text, boolean, date, timestamp, index, foreignKey, integer, pgEnum } from "drizzle-orm/pg-core"
 import { sql } from "drizzle-orm"
 
 export const addressType = pgEnum("address_type", ['permanent', 'current'])
@@ -18,7 +18,7 @@ export const students = pgTable("students", {
 	phoneNoSec: text("phone_no_sec"),
 	fax: text(),
 	idType: identificationType("id_type").notNull(),
-	idIssuanceDate: timestamp("id_issuance_date", { mode: 'string' }).notNull(),
+	idIssuanceDate: date("id_issuance_date").notNull(),
 	idNumber: text("id_number").notNull(),
 	idAuthority: text("id_authority").notNull(),
 	martialStatus: martialStatus("martial_status"),
@@ -28,9 +28,9 @@ export const students = pgTable("students", {
 	secQuestion: text("sec_question").notNull(),
 	secAnswer: text("sec_answer").notNull(),
 	militaryStatus: text("military_status").notNull(),
-	dob: timestamp({ mode: 'string' }).notNull(),
+	dob: date().notNull(),
 	createdAt: timestamp("created_at", { mode: 'string' }).default(sql`CURRENT_TIMESTAMP`).notNull(),
-	updatedAt: timestamp("updated_at", { mode: 'string' }).notNull(),
+	updatedAt: timestamp("updated_at", { mode: 'string' }).default(sql`CURRENT_TIMESTAMP`).notNull(),
 }, (table) => {
 	return {
 		studentsEmailKey: unique("students_email_key").on(table.email),

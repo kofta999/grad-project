@@ -1,38 +1,68 @@
 import { AppRouteHandler } from "@/lib/types";
-import { LoginRoute, LogoutRoute } from "./auth.routes";
-import * as HttpStatusCodes from 'stoker/http-status-codes'
-import * as HttpStatusPhrases from 'stoker/http-status-phrases'
+import { LoginRoute, LogoutRoute, RegisterStage1Route } from "./auth.routes";
+import * as HttpStatusCodes from "stoker/http-status-codes";
+import * as HttpStatusPhrases from "stoker/http-status-phrases";
 import db from "@/db";
 import { students } from "@/db/schema";
-import { sql } from "drizzle-orm";
+import bcrypt from "bcryptjs";
+
+export const registerStage1: AppRouteHandler<RegisterStage1Route> = async (
+  c,
+) => {
+  let studentData = c.req.valid("json");
+  // TODO: Handle image uploads
+
+  studentData.hashedPassword = await bcrypt.hash(
+    studentData.hashedPassword,
+    10,
+  );
+
+  const newStudents = await db
+    .insert(students)
+    .values(studentData)
+    .returning({ studentId: students.studentId });
+
+  return c.json(
+    { success: true, studentId: newStudents[0].studentId },
+    HttpStatusCodes.OK,
+  );
+};
 
 export const login: AppRouteHandler<LoginRoute> = async (c) => {
-  const { email, password } = c.req.valid('json')
+  const { email, password } = c.req.valid("json");
 
   const user = await db.query.students.findFirst({
     where(fields, operators) {
-      return operators.eq(fields.email, email)
+      return operators.eq(fields.email, email);
     },
     columns: {
       studentId: true,
-      hashedPassword: true
-    }
-  })
-
-
-  // TODO: Password salting / hashing
+      hashedPassword: true,
+    },
+  });
 
   if (!user) {
-    return c.json({ message: HttpStatusPhrases.UNAUTHORIZED }, HttpStatusCodes.UNAUTHORIZED)
+    return c.json(
+      { message: HttpStatusPhrases.UNAUTHORIZED },
+      HttpStatusCodes.UNAUTHORIZED,
+    );
   }
 
-  c.var.session.set('id', user.studentId)
+  if (!(await bcrypt.compare(password, user.hashedPassword))) {
+    console.log("here");
+    return c.json(
+      { message: HttpStatusPhrases.UNAUTHORIZED },
+      HttpStatusCodes.UNAUTHORIZED,
+    );
+  }
 
-  return c.json({}, HttpStatusCodes.OK)
-}
+  c.var.session.set("id", user.studentId);
+
+  return c.json({}, HttpStatusCodes.OK);
+};
 
 export const logout: AppRouteHandler<LogoutRoute> = async (c) => {
-  c.var.session.deleteSession()
+  c.var.session.deleteSession();
 
-  return c.json({}, HttpStatusCodes.OK)
-}
+  return c.json({}, HttpStatusCodes.OK);
+};
