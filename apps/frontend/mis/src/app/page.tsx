@@ -11,17 +11,17 @@ export const metadata = {
   title: "Store | Kitchen Sink",
 };
 export default async function Store() {
-  log("Hey! This is the Store page.");
-  const client = hcWithType("http://127.0.0.1:3000");
-  const data = await (await client.index.$get()).text();
-  console.log(data);
+  // log("Hey! This is the Store page.");
+  // const client = hcWithType("http://127.0.0.1:3000");
+  // const data = await (await client.index.$get()).text();
+  // console.log(data);
 
   return (
     <div className="container">
-      <h1 className="title">
+      <h1 className="bg-red-300">
         Store <br />
         <Suspense fallback={<span>loading</span>}>
-          <span>{data}</span>
+          <span>{"yo"}</span>
         </Suspense>
       </h1>
       <CounterButton />
