@@ -33,7 +33,7 @@ CREATE TABLE "students" (
     "phone_no_sec" TEXT,
     "fax" TEXT,
     "id_type" identification_type NOT NULL,
-    "id_issuance_date" TIMESTAMP NOT NULL,
+    "id_issuance_date" DATE NOT NULL,
     "id_number" TEXT NOT NULL,
     "id_authority" TEXT NOT NULL,
     "martial_status" martial_status,
@@ -43,9 +43,9 @@ CREATE TABLE "students" (
     "sec_question" TEXT NOT NULL,
     "sec_answer" TEXT NOT NULL,
     "military_status" TEXT NOT NULL,
-    "dob" TIMESTAMP NOT NULL,
+    "dob" DATE NOT NULL,
     "created_at" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP NOT NULL
+    "updated_at" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE "applications" (
@@ -103,7 +103,7 @@ CREATE TABLE "academic_qualifications" (
     "qualification" TEXT NOT NULL,
     "specialization" TEXT NOT NULL,
     "year" TEXT NOT NULL,
-    "date" TIMESTAMP NOT NULL,
+    "date" DATE NOT NULL,
     "credit_hours" BOOLEAN NOT NULL,
     "grade" TEXT NOT NULL,
     "gpa" TEXT NOT NULL,
