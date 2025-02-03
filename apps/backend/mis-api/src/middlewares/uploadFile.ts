@@ -4,15 +4,11 @@ import { mkdir } from "fs/promises";
 import { join } from "path";
 import { createMiddleware } from "hono/factory";
 import { AppBindings } from "@/lib/types";
-import { HonoStorageFile } from "@hono-storage/core";
 import { APP_URL } from "@/lib/constants";
 
 export const uploadFile = createMiddleware<AppBindings>(async (c, next) => {
   const image = await c.req.parseBody();
-  const file = new HonoStorageFile(image.file as File, {
-    name: (image.file as File).name,
-    type: "single",
-  });
+  const file = image.file as File;
 
   const finalDest = "./uploads";
   const filename = `${Date.now()}-${file.name}`;

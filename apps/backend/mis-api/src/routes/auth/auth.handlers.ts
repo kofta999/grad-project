@@ -20,7 +20,6 @@ import {
   attachments,
 } from "@/db/schema";
 import bcrypt from "bcryptjs";
-import { HonoStorageFile } from "@hono-storage/core";
 
 export const registerStage1: AppRouteHandler<RegisterStage1Route> = async (
   c,
