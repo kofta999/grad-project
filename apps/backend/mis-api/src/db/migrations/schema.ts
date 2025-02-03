@@ -129,7 +129,7 @@ export const academicQualifications = pgTable("academic_qualifications", {
 	qualification: text().notNull(),
 	specialization: text().notNull(),
 	year: text().notNull(),
-	date: timestamp({ mode: 'string' }).notNull(),
+	date: date().notNull(),
 	creditHours: boolean("credit_hours").notNull(),
 	grade: text().notNull(),
 	gpa: text().notNull(),

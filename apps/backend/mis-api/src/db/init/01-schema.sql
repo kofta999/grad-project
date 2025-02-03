@@ -103,7 +103,7 @@ CREATE TABLE "academic_qualifications" (
     "qualification" TEXT NOT NULL,
     "specialization" TEXT NOT NULL,
     "year" TEXT NOT NULL,
-    "date" TIMESTAMP NOT NULL,
+    "date" DATE NOT NULL,
     "credit_hours" BOOLEAN NOT NULL,
     "grade" TEXT NOT NULL,
     "gpa" TEXT NOT NULL,
