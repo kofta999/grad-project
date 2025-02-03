@@ -1,11 +1,14 @@
-import { loginSchema, registerSchema } from "@/db/validators";
+import {
+  loginSchema,
+  registerStep1Schema,
+  registerStep2Schema,
+} from "@/db/validators";
 import { createRoute, z } from "@hono/zod-openapi";
 import { jsonContent, jsonContentRequired } from "stoker/openapi/helpers";
 import * as HttpStatusCodes from "stoker/http-status-codes";
 import { createErrorSchema } from "stoker/openapi/schemas";
 import { unauthorizedSchema } from "@/lib/constants";
 import { isAuthenticated } from "@/middlewares/isAuthenticated";
-import { HonoDiskStorage } from "@hono-storage/node-disk";
 import { uploadFile } from "@/middlewares/uploadFile";
 
 const FileRequestSchema = z.object({
@@ -17,12 +20,6 @@ const FileRequestSchema = z.object({
     }),
 });
 
-// const storage = new HonoDiskStorage({
-//   dest: "./uploads",
-//   filename: (_, file) =>
-//     `${file.originalname}-${new Date().getTime()}.${file.extension}`,
-// });
-
 const tags = ["Authentication"];
 
 export const registerStage1 = createRoute({
@@ -30,7 +27,7 @@ export const registerStage1 = createRoute({
   method: "post",
   tags,
   request: {
-    body: jsonContentRequired(registerSchema, "Register stage 1 data"),
+    body: jsonContentRequired(registerStep1Schema, "Register stage 1 data"),
   },
   responses: {
     [HttpStatusCodes.OK]: jsonContent(
@@ -38,7 +35,27 @@ export const registerStage1 = createRoute({
       "Register stage 1 completed",
     ),
     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
-      createErrorSchema(registerSchema),
+      createErrorSchema(registerStep1Schema),
+      "The validation error(s)",
+    ),
+  },
+});
+
+export const registerStage2 = createRoute({
+  path: "/register2",
+  method: "post",
+  middleware: [isAuthenticated] as const,
+  tags,
+  request: {
+    body: jsonContentRequired(registerStep2Schema, "Register stage 2 data"),
+  },
+  responses: {
+    [HttpStatusCodes.OK]: jsonContent(
+      z.object({ applicationId: z.number() }),
+      "Register stage 2 completed",
+    ),
+    [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
+      createErrorSchema(registerStep2Schema),
       "The validation error(s)",
     ),
   },
@@ -101,6 +118,8 @@ export const upload = createRoute({
 });
 
 export type RegisterStage1Route = typeof registerStage1;
+
+export type RegisterStage2Route = typeof registerStage2;
 
 export type LoginRoute = typeof login;
 

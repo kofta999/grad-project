@@ -3,12 +3,20 @@ import {
   LoginRoute,
   LogoutRoute,
   RegisterStage1Route,
+  RegisterStage2Route,
   UploadRoute,
 } from "./auth.routes";
 import * as HttpStatusCodes from "stoker/http-status-codes";
 import * as HttpStatusPhrases from "stoker/http-status-phrases";
 import db from "@/db";
-import { students } from "@/db/schema";
+import {
+  academicQualifications,
+  addresses,
+  applications,
+  emergencyContacts,
+  registerations,
+  students,
+} from "@/db/schema";
 import bcrypt from "bcryptjs";
 import { HonoStorageFile } from "@hono-storage/core";
 
@@ -34,6 +42,50 @@ export const registerStage1: AppRouteHandler<RegisterStage1Route> = async (
   );
 };
 
+export const registerStage2: AppRouteHandler<RegisterStage2Route> = async (
+  c,
+) => {
+  let {
+    permanentAddress,
+    currentAddress,
+    qualification,
+    emergencyContact,
+    registration,
+  } = c.req.valid("json");
+
+  // Should be there because of middleware
+  let studentId = c.var.session.get("id")!;
+
+  const newApplication = await db
+    .insert(applications)
+    .values({ studentId })
+    .returning({ applicationId: applications.applicationId });
+
+  const applicationId = newApplication[0].applicationId;
+
+  await db
+    .insert(addresses)
+    .values({ ...permanentAddress, applicationId, type: "permanent" });
+
+  await db
+    .insert(addresses)
+    .values({ ...currentAddress, applicationId, type: "current" });
+
+  if (emergencyContact) {
+    await db
+      .insert(emergencyContacts)
+      .values({ ...emergencyContact, applicationId });
+  }
+
+  await db
+    .insert(academicQualifications)
+    .values({ ...qualification, applicationId });
+
+  await db.insert(registerations).values({ ...registration, applicationId });
+
+  return c.json({ applicationId }, HttpStatusCodes.OK);
+};
+
 export const login: AppRouteHandler<LoginRoute> = async (c) => {
   const { email, password } = c.req.valid("json");
 
@@ -55,7 +107,6 @@ export const login: AppRouteHandler<LoginRoute> = async (c) => {
   }
 
   if (!(await bcrypt.compare(password, user.hashedPassword))) {
-    console.log("here");
     return c.json(
       { message: HttpStatusPhrases.UNAUTHORIZED },
       HttpStatusCodes.UNAUTHORIZED,
@@ -75,8 +126,6 @@ export const logout: AppRouteHandler<LogoutRoute> = async (c) => {
 
 export const upload: AppRouteHandler<UploadRoute> = async (c) => {
   const file = c.var.file;
-
-  console.log(file);
 
   return c.json({ uploadUrl: file! }, HttpStatusCodes.OK);
 };
