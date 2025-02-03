@@ -1,10 +1,16 @@
 import { AppRouteHandler } from "@/lib/types";
-import { LoginRoute, LogoutRoute, RegisterStage1Route } from "./auth.routes";
+import {
+  LoginRoute,
+  LogoutRoute,
+  RegisterStage1Route,
+  UploadRoute,
+} from "./auth.routes";
 import * as HttpStatusCodes from "stoker/http-status-codes";
 import * as HttpStatusPhrases from "stoker/http-status-phrases";
 import db from "@/db";
 import { students } from "@/db/schema";
 import bcrypt from "bcryptjs";
+import { HonoStorageFile } from "@hono-storage/core";
 
 export const registerStage1: AppRouteHandler<RegisterStage1Route> = async (
   c,
@@ -65,4 +71,12 @@ export const logout: AppRouteHandler<LogoutRoute> = async (c) => {
   c.var.session.deleteSession();
 
   return c.json({}, HttpStatusCodes.OK);
+};
+
+export const upload: AppRouteHandler<UploadRoute> = async (c) => {
+  const file = c.var.file;
+
+  console.log(file);
+
+  return c.json({ uploadUrl: file! }, HttpStatusCodes.OK);
 };

@@ -5,6 +5,23 @@ import * as HttpStatusCodes from "stoker/http-status-codes";
 import { createErrorSchema } from "stoker/openapi/schemas";
 import { unauthorizedSchema } from "@/lib/constants";
 import { isAuthenticated } from "@/middlewares/isAuthenticated";
+import { HonoDiskStorage } from "@hono-storage/node-disk";
+import { uploadFile } from "@/middlewares/uploadFile";
+
+const FileRequestSchema = z.object({
+  file: z
+    .custom<File>((v) => v instanceof File)
+    .openapi({
+      type: "string",
+      format: "binary",
+    }),
+});
+
+// const storage = new HonoDiskStorage({
+//   dest: "./uploads",
+//   filename: (_, file) =>
+//     `${file.originalname}-${new Date().getTime()}.${file.extension}`,
+// });
 
 const tags = ["Authentication"];
 
@@ -61,8 +78,32 @@ export const logout = createRoute({
   },
 });
 
+export const upload = createRoute({
+  path: "/upload",
+  method: "post",
+  tags,
+  middleware: [uploadFile] as const,
+  request: {
+    body: {
+      content: {
+        "multipart/form-data": {
+          schema: FileRequestSchema,
+        },
+      },
+    },
+  },
+  responses: {
+    [HttpStatusCodes.OK]: jsonContent(
+      z.object({ uploadUrl: z.string() }),
+      "File uploaded successfully",
+    ),
+  },
+});
+
 export type RegisterStage1Route = typeof registerStage1;
 
 export type LoginRoute = typeof login;
 
 export type LogoutRoute = typeof logout;
+
+export type UploadRoute = typeof upload;
