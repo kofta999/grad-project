@@ -1,4 +1,5 @@
 import {
+  attachmentsSchema,
   loginSchema,
   registerStep1Schema,
   registerStep2Schema,
@@ -53,6 +54,26 @@ export const registerStage2 = createRoute({
     [HttpStatusCodes.OK]: jsonContent(
       z.object({ applicationId: z.number() }),
       "Register stage 2 completed",
+    ),
+    [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
+      createErrorSchema(registerStep2Schema),
+      "The validation error(s)",
+    ),
+  },
+});
+
+export const saveAttachments = createRoute({
+  path: "/attachments",
+  method: "post",
+  middleware: [isAuthenticated] as const,
+  tags,
+  request: {
+    body: jsonContentRequired(attachmentsSchema, "Attachment links with types"),
+  },
+  responses: {
+    [HttpStatusCodes.OK]: jsonContent(
+      z.object({ applicationId: z.number() }),
+      "Attachments saved",
     ),
     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
       createErrorSchema(registerStep2Schema),
@@ -120,6 +141,8 @@ export const upload = createRoute({
 export type RegisterStage1Route = typeof registerStage1;
 
 export type RegisterStage2Route = typeof registerStage2;
+
+export type AttachmentsRoute = typeof saveAttachments;
 
 export type LoginRoute = typeof login;
 

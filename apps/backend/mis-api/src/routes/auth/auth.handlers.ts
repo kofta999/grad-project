@@ -1,5 +1,6 @@
 import { AppRouteHandler } from "@/lib/types";
 import {
+  AttachmentsRoute,
   LoginRoute,
   LogoutRoute,
   RegisterStage1Route,
@@ -16,6 +17,7 @@ import {
   emergencyContacts,
   registerations,
   students,
+  attachments,
 } from "@/db/schema";
 import bcrypt from "bcryptjs";
 import { HonoStorageFile } from "@hono-storage/core";
@@ -83,7 +85,18 @@ export const registerStage2: AppRouteHandler<RegisterStage2Route> = async (
 
   await db.insert(registerations).values({ ...registration, applicationId });
 
-  return c.json({ applicationId }, HttpStatusCodes.OK);
+  return c.json({ success: true, applicationId }, HttpStatusCodes.OK);
+};
+
+export const saveAttachments: AppRouteHandler<AttachmentsRoute> = async (c) => {
+  const { applicationId, attachments: attachmentsArr } = c.req.valid("json");
+  const promises = attachmentsArr.map((attachment) =>
+    db.insert(attachments).values({ ...attachment, applicationId }),
+  );
+
+  await Promise.all(promises);
+
+  return c.json({ success: true, applicationId }, HttpStatusCodes.OK);
 };
 
 export const login: AppRouteHandler<LoginRoute> = async (c) => {
