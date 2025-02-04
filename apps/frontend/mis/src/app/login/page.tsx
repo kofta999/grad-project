@@ -15,14 +15,15 @@ export default function LoginForm() {
 
   return (
     <div
-      className="min-h-screen flex items-center justify-center bg-gray-50 p-4"
+      className="min-h-screen flex items-center justify-center bg-sky-100 p-4"
       dir="rtl"
     >
       <div className="w-full max-w-md space-y-8 bg-white rounded-2xl p-8 shadow-sm">
         <div className="flex flex-col items-center space-y-4">
           {/* You don't need /public */}
           <Image
-            src="/test.jpg"
+            src="/920658.jpg"
+          
             alt="Faculty of Engineering Logo"
             width={120}
             height={120}
@@ -100,7 +101,14 @@ export default function LoginForm() {
             تسجيل الدخول
           </Button>
         </form>
-      </div>
+        <p className="mt-4 text-center text-gray-500"> 
+    غير مسجل على الموقع ؟ 
+    <a href="/register" className="text-blue-500 hover:underline ml-1"> 
+      تسجيل حساب
+    </a>
+  </p>
+     </div>
+      
     </div>
   );
 }
