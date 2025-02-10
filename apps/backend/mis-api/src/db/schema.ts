@@ -6,9 +6,9 @@ import {
   boolean,
   date,
   timestamp,
-  index,
   foreignKey,
   integer,
+  index,
   pgEnum,
 } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
@@ -62,27 +62,6 @@ export const students = pgTable(
   (table) => {
     return {
       studentsEmailKey: unique("students_email_key").on(table.email),
-    };
-  },
-);
-
-export const applications = pgTable(
-  "applications",
-  {
-    applicationId: serial("application_id").primaryKey().notNull(),
-    studentId: integer("student_id").notNull(),
-  },
-  (table) => {
-    return {
-      studentIdIdx: index("applications_student_id_idx").using(
-        "btree",
-        table.studentId.asc().nullsLast(),
-      ),
-      applicationsStudentIdFkey: foreignKey({
-        columns: [table.studentId],
-        foreignColumns: [students.studentId],
-        name: "applications_student_id_fkey",
-      }),
     };
   },
 );
@@ -205,6 +184,28 @@ export const academicQualifications = pgTable(
       academicQualificationsApplicationIdKey: unique(
         "academic_qualifications_application_id_key",
       ).on(table.applicationId),
+    };
+  },
+);
+
+export const applications = pgTable(
+  "applications",
+  {
+    applicationId: serial("application_id").primaryKey().notNull(),
+    studentId: integer("student_id").notNull(),
+    isAdminAccepted: boolean("is_admin_accepted").default(false).notNull(),
+  },
+  (table) => {
+    return {
+      studentIdIdx: index("applications_student_id_idx").using(
+        "btree",
+        table.studentId.asc().nullsLast(),
+      ),
+      applicationsStudentIdFkey: foreignKey({
+        columns: [table.studentId],
+        foreignColumns: [students.studentId],
+        name: "applications_student_id_fkey",
+      }),
     };
   },
 );

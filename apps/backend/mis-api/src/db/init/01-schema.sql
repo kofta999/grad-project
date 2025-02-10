@@ -51,6 +51,7 @@ CREATE TABLE "students" (
 CREATE TABLE "applications" (
     "application_id" SERIAL PRIMARY KEY,
     "student_id" INTEGER NOT NULL,
+    "is_admin_accepted" BOOL NOT NULL DEFAULT FALSE,
     FOREIGN KEY ("student_id") REFERENCES "students"("student_id")
 );
 
