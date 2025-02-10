@@ -51,6 +51,7 @@ CREATE TABLE "students" (
 CREATE TABLE "applications" (
     "application_id" SERIAL PRIMARY KEY,
     "student_id" INTEGER NOT NULL,
+    "is_admin_accepted" BOOL NOT NULL DEFAULT FALSE,
     FOREIGN KEY ("student_id") REFERENCES "students"("student_id")
 );
 
@@ -110,6 +111,31 @@ CREATE TABLE "academic_qualifications" (
     FOREIGN KEY ("application_id") REFERENCES "applications"("application_id")
 );
 
+CREATE TABLE "admins" (
+    "admin_id" SERIAL PRIMARY KEY,
+    "full_name_ar" TEXT NOT NULL,
+    "full_name_en" TEXT NOT NULL,
+    "email" TEXT NOT NULL UNIQUE,
+    -- "phone_no_main" TEXT NOT NULL,
+    -- "phone_no_sec" TEXT,
+    -- "fax" TEXT,
+    -- "id_type" identification_type NOT NULL,
+    -- "id_issuance_date" DATE NOT NULL,
+    -- "id_number" TEXT NOT NULL,
+    -- "id_authority" TEXT NOT NULL,
+    -- "martial_status" martial_status,
+    -- "is_working" BOOLEAN NOT NULL,
+    -- "job_type" TEXT,
+    "hashed_password" TEXT NOT NULL,
+    -- "sec_question" TEXT NOT NULL,
+    -- "sec_answer" TEXT NOT NULL,
+    -- "military_status" TEXT NOT NULL,
+    -- "dob" DATE NOT NULL,
+    "created_at" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+
 -- Create indexes for foreign keys
 CREATE INDEX "applications_student_id_idx" ON "applications"("student_id");
 CREATE INDEX "academic_qualifications_application_id_idx" ON "academic_qualifications"("application_id");
@@ -138,5 +164,10 @@ $$ language 'plpgsql';
 
 CREATE TRIGGER update_students_updated_at
     BEFORE UPDATE ON "students"
+    FOR EACH ROW
+    EXECUTE FUNCTION update_updated_at_column();
+
+CREATE TRIGGER update_students_updated_at
+    BEFORE UPDATE ON "admins"
     FOR EACH ROW
     EXECUTE FUNCTION update_updated_at_column();

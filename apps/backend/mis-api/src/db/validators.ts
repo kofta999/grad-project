@@ -2,17 +2,20 @@ import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import {
   academicQualifications,
   addresses,
+  applications,
   attachments,
   emergencyContacts,
   registerations,
   students,
 } from "./schema";
 import { z } from "zod";
+import { ROLES } from "@/lib/constants";
 
 // Won't use drizzle magic here because it's not worth omitting all fields for only email and pass
 export const loginSchema = z.object({
   email: z.string().email("Email is required"),
   password: z.string().min(6, "Password must be 6 characters or more"),
+  role: z.enum(ROLES),
 });
 
 export const registerStep1Schema = createInsertSchema(students).omit({
@@ -53,4 +56,9 @@ export const attachmentsSchema = z.object({
       applicationId: true,
     }),
   ),
+});
+
+export const acceptApplicationSchema = createSelectSchema(applications).omit({
+  studentId: true,
+  isAdminAccepted: true,
 });
