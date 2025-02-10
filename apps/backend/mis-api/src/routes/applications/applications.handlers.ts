@@ -1,9 +1,20 @@
 import { AppRouteHandler } from "@/lib/types";
-import { AcceptApplicationRoute } from "./applications.routes";
+import {
+  AcceptApplicationRoute,
+  CreateApplicationRoute,
+  SaveApplicationAttachmentsRoute,
+} from "./applications.routes";
 import * as HttpStatusCodes from "stoker/http-status-codes";
 import * as HttpStatusPhrases from "stoker/http-status-phrases";
 import db from "@/db";
-import { applications } from "@/db/schema";
+import {
+  academicQualifications,
+  addresses,
+  applications,
+  attachments,
+  emergencyContacts,
+  registerations,
+} from "@/db/schema";
 import { eq } from "drizzle-orm";
 
 export const acceptApplication: AppRouteHandler<
@@ -40,4 +51,61 @@ export const acceptApplication: AppRouteHandler<
     .where(eq(applications.applicationId, applicationId));
 
   return c.json({ message: "Application accepted" }, HttpStatusCodes.OK);
+};
+
+export const createApplication: AppRouteHandler<
+  CreateApplicationRoute
+> = async (c) => {
+  let {
+    permanentAddress,
+    currentAddress,
+    qualification,
+    emergencyContact,
+    registration,
+  } = c.req.valid("json");
+
+  // Should be there because of middleware
+  let studentId = c.var.session.get("id")!;
+
+  const newApplication = await db
+    .insert(applications)
+    .values({ studentId })
+    .returning({ applicationId: applications.applicationId });
+
+  const applicationId = newApplication[0].applicationId;
+
+  await db
+    .insert(addresses)
+    .values({ ...permanentAddress, applicationId, type: "permanent" });
+
+  await db
+    .insert(addresses)
+    .values({ ...currentAddress, applicationId, type: "current" });
+
+  if (emergencyContact) {
+    await db
+      .insert(emergencyContacts)
+      .values({ ...emergencyContact, applicationId });
+  }
+
+  await db
+    .insert(academicQualifications)
+    .values({ ...qualification, applicationId });
+
+  await db.insert(registerations).values({ ...registration, applicationId });
+
+  return c.json({ success: true, applicationId }, HttpStatusCodes.OK);
+};
+
+export const saveApplicationAttachments: AppRouteHandler<
+  SaveApplicationAttachmentsRoute
+> = async (c) => {
+  const { applicationId, attachments: attachmentsArr } = c.req.valid("json");
+  const promises = attachmentsArr.map((attachment) =>
+    db.insert(attachments).values({ ...attachment, applicationId }),
+  );
+
+  await Promise.all(promises);
+
+  return c.json({ success: true, applicationId }, HttpStatusCodes.OK);
 };

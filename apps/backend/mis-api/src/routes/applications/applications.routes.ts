@@ -1,4 +1,8 @@
-import { acceptApplicationSchema } from "@/db/validators";
+import {
+  acceptApplicationSchema,
+  attachmentsSchema,
+  registerStep2Schema,
+} from "@/db/validators";
 import { isAuthenticated } from "@/middlewares/isAuthenticated";
 import { requireRole } from "@/middlewares/requireRole";
 import { createRoute, z } from "@hono/zod-openapi";
@@ -39,4 +43,48 @@ export const acceptApplication = createRoute({
   },
 });
 
+export const createApplication = createRoute({
+  path: "/",
+  method: "post",
+  middleware: [isAuthenticated, requireRole("student")] as const,
+  tags,
+  request: {
+    body: jsonContentRequired(registerStep2Schema, "Application data"),
+  },
+  responses: {
+    [HttpStatusCodes.OK]: jsonContent(
+      z.object({ applicationId: z.number() }),
+      "Application completed",
+    ),
+    [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
+      createErrorSchema(registerStep2Schema),
+      "The validation error(s)",
+    ),
+  },
+});
+
+export const saveApplicationAttachments = createRoute({
+  path: "/attachments",
+  method: "post",
+  middleware: [isAuthenticated, requireRole("student")] as const,
+  tags,
+  request: {
+    body: jsonContentRequired(attachmentsSchema, "Attachment links with types"),
+  },
+  responses: {
+    [HttpStatusCodes.OK]: jsonContent(
+      z.object({ applicationId: z.number() }),
+      "Attachments saved",
+    ),
+    [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
+      createErrorSchema(attachmentsSchema),
+      "The validation error(s)",
+    ),
+  },
+});
+
 export type AcceptApplicationRoute = typeof acceptApplication;
+
+export type CreateApplicationRoute = typeof createApplication;
+
+export type SaveApplicationAttachmentsRoute = typeof saveApplicationAttachments;

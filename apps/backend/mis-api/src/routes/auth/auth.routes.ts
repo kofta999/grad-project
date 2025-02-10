@@ -1,9 +1,4 @@
-import {
-  attachmentsSchema,
-  loginSchema,
-  registerStep1Schema,
-  registerStep2Schema,
-} from "@/db/validators";
+import { loginSchema, registerStep1Schema } from "@/db/validators";
 import { createRoute, z } from "@hono/zod-openapi";
 import { jsonContent, jsonContentRequired } from "stoker/openapi/helpers";
 import * as HttpStatusCodes from "stoker/http-status-codes";
@@ -11,7 +6,6 @@ import { createErrorSchema } from "stoker/openapi/schemas";
 import { unauthorizedSchema } from "@/lib/constants";
 import { isAuthenticated } from "@/middlewares/isAuthenticated";
 import { uploadFile } from "@/middlewares/uploadFile";
-import { requireRole } from "@/middlewares/requireRole";
 
 const FileRequestSchema = z.object({
   file: z
@@ -24,7 +18,7 @@ const FileRequestSchema = z.object({
 
 const tags = ["Authentication"];
 
-export const registerStage1 = createRoute({
+export const register = createRoute({
   path: "/register1",
   method: "post",
   tags,
@@ -38,46 +32,6 @@ export const registerStage1 = createRoute({
     ),
     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
       createErrorSchema(registerStep1Schema),
-      "The validation error(s)",
-    ),
-  },
-});
-
-export const registerStage2 = createRoute({
-  path: "/register2",
-  method: "post",
-  middleware: [isAuthenticated, requireRole("student")] as const,
-  tags,
-  request: {
-    body: jsonContentRequired(registerStep2Schema, "Register stage 2 data"),
-  },
-  responses: {
-    [HttpStatusCodes.OK]: jsonContent(
-      z.object({ applicationId: z.number() }),
-      "Register stage 2 completed",
-    ),
-    [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
-      createErrorSchema(registerStep2Schema),
-      "The validation error(s)",
-    ),
-  },
-});
-
-export const saveAttachments = createRoute({
-  path: "/attachments",
-  method: "post",
-  middleware: [isAuthenticated, requireRole("student")] as const,
-  tags,
-  request: {
-    body: jsonContentRequired(attachmentsSchema, "Attachment links with types"),
-  },
-  responses: {
-    [HttpStatusCodes.OK]: jsonContent(
-      z.object({ applicationId: z.number() }),
-      "Attachments saved",
-    ),
-    [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
-      createErrorSchema(registerStep2Schema),
       "The validation error(s)",
     ),
   },
@@ -139,11 +93,7 @@ export const upload = createRoute({
   },
 });
 
-export type RegisterStage1Route = typeof registerStage1;
-
-export type RegisterStage2Route = typeof registerStage2;
-
-export type AttachmentsRoute = typeof saveAttachments;
+export type RegisterStage1Route = typeof register;
 
 export type LoginRoute = typeof login;
 
