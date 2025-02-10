@@ -11,6 +11,7 @@ import { createErrorSchema } from "stoker/openapi/schemas";
 import { unauthorizedSchema } from "@/lib/constants";
 import { isAuthenticated } from "@/middlewares/isAuthenticated";
 import { uploadFile } from "@/middlewares/uploadFile";
+import { requireRole } from "@/middlewares/requireRole";
 
 const FileRequestSchema = z.object({
   file: z
@@ -45,7 +46,7 @@ export const registerStage1 = createRoute({
 export const registerStage2 = createRoute({
   path: "/register2",
   method: "post",
-  middleware: [isAuthenticated] as const,
+  middleware: [isAuthenticated, requireRole("student")] as const,
   tags,
   request: {
     body: jsonContentRequired(registerStep2Schema, "Register stage 2 data"),
@@ -65,7 +66,7 @@ export const registerStage2 = createRoute({
 export const saveAttachments = createRoute({
   path: "/attachments",
   method: "post",
-  middleware: [isAuthenticated] as const,
+  middleware: [isAuthenticated, requireRole("student")] as const,
   tags,
   request: {
     body: jsonContentRequired(attachmentsSchema, "Attachment links with types"),

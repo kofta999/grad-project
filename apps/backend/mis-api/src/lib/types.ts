@@ -1,9 +1,11 @@
 import type { OpenAPIHono, RouteConfig, RouteHandler } from "@hono/zod-openapi";
 import type { PinoLogger } from "hono-pino";
 import type { Session } from "hono-sessions";
+import { ROLES } from "./constants";
 
 interface SessionData {
   id: number;
+  role: (typeof ROLES)[number];
 }
 
 export interface AppBindings {

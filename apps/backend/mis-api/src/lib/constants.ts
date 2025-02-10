@@ -9,3 +9,4 @@ export const unauthorizedSchema = createMessageObjectSchema(
   HttpStatusPhrases.UNAUTHORIZED,
 );
 export const APP_URL = `http://localhost:${env.PORT}`;
+export const ROLES = ["student", "admin"] as const;

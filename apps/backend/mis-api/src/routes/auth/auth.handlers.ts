@@ -99,17 +99,35 @@ export const saveAttachments: AppRouteHandler<AttachmentsRoute> = async (c) => {
 };
 
 export const login: AppRouteHandler<LoginRoute> = async (c) => {
-  const { email, password } = c.req.valid("json");
+  const { email, password, role } = c.req.valid("json");
+  let user;
+  let userId;
 
-  const user = await db.query.students.findFirst({
-    where(fields, operators) {
-      return operators.eq(fields.email, email);
-    },
-    columns: {
-      studentId: true,
-      hashedPassword: true,
-    },
-  });
+  if (role === "student") {
+    user = await db.query.students.findFirst({
+      where(fields, operators) {
+        return operators.eq(fields.email, email);
+      },
+      columns: {
+        studentId: true,
+        hashedPassword: true,
+      },
+    });
+
+    userId = user?.studentId;
+  } else if (role === "admin") {
+    user = await db.query.admins.findFirst({
+      where(fields, operators) {
+        return operators.eq(fields.email, email);
+      },
+      columns: {
+        adminId: true,
+        hashedPassword: true,
+      },
+    });
+
+    userId = user?.adminId;
+  }
 
   if (!user) {
     return c.json(
@@ -125,7 +143,8 @@ export const login: AppRouteHandler<LoginRoute> = async (c) => {
     );
   }
 
-  c.var.session.set("id", user.studentId);
+  c.var.session.set("id", userId!);
+  c.var.session.set("role", role);
 
   return c.json({}, HttpStatusCodes.OK);
 };
