@@ -10,13 +10,12 @@ services:
       PGDATA: /var/lib/postgresql/data/pgdata
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      # Add this line to mount the init scripts
       - ./src/db/init:/docker-entrypoint-initdb.d
     ports:
-      # Try using this IP to connect in pgadmin4 172.26.0.2
       - "5432:5432"
     networks:
-      - mis_network
+      mis_network:
+        ipv4_address: 172.20.0.2
 
   pgadmin:
     image: dpage/pgadmin4
@@ -31,7 +30,8 @@ services:
     ports:
       - "5050:80"
     networks:
-      - mis_network
+      mis_network:
+        ipv4_address: 172.20.0.3
     depends_on:
       - postgres
 
@@ -42,3 +42,6 @@ volumes:
 networks:
   mis_network:
     driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16

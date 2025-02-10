@@ -144,3 +144,17 @@ export const academicQualifications = pgTable("academic_qualifications", {
 		academicQualificationsApplicationIdKey: unique("academic_qualifications_application_id_key").on(table.applicationId),
 	}
 });
+
+export const admins = pgTable("admins", {
+	adminId: serial("admin_id").primaryKey().notNull(),
+	fullNameAr: text("full_name_ar").notNull(),
+	fullNameEn: text("full_name_en").notNull(),
+	email: text().notNull(),
+	hashedPassword: text("hashed_password").notNull(),
+	createdAt: timestamp("created_at", { mode: 'string' }).default(sql`CURRENT_TIMESTAMP`).notNull(),
+	updatedAt: timestamp("updated_at", { mode: 'string' }).default(sql`CURRENT_TIMESTAMP`).notNull(),
+}, (table) => {
+	return {
+		adminsEmailKey: unique("admins_email_key").on(table.email),
+	}
+});

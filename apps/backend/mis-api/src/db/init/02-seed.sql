@@ -1,3 +1,4 @@
+-- All passwords are test123
 -- Insert sample students
 INSERT INTO "students" (
     "full_name_ar", "full_name_en", "gender", "email", "nationality",
@@ -24,7 +25,7 @@ VALUES
         'single',
         FALSE,
         NULL,
-        'hashed_pw',
+        '$2a$10$xxRUJhEPNZjZoKcmuQxXr.q/iCJPvZIWCYrxuSNjN61y27KLdr6Ve',
         'What is your favorite color?',
         'Blue',
         'Completed',
@@ -48,7 +49,7 @@ VALUES
         'married',
         TRUE,
         'Full-time',
-        'hashed_pw2',
+        '$2a$10$xxRUJhEPNZjZoKcmuQxXr.q/iCJPvZIWCYrxuSNjN61y27KLdr6Ve',
         'What was your first pet''s name?',
         'Whiskers',
         'Exempted',
@@ -72,7 +73,7 @@ VALUES
         'single',
         FALSE,
         NULL,
-        'hashed_pw3',
+        '$2a$10$xxRUJhEPNZjZoKcmuQxXr.q/iCJPvZIWCYrxuSNjN61y27KLdr6Ve',
         'What is your mother''s maiden name?',
         'Kamal',
         'Not Completed',
@@ -133,3 +134,34 @@ VALUES
     (1, 'Egypt', 'Cairo University', 'Engineering', 'Bachelor', 'BSc', 'Computer Science', '2020', '2020-06-30 00:00:00', TRUE, 'A', '3.8'),
     (2, 'Egypt', 'Alexandria University', 'Science', 'Master', 'MSc', 'Mechanical Engineering', '2022', '2022-07-15 00:00:00', TRUE, 'A+', '4.0'),
     (3, 'Egypt', 'Helwan University', 'Arts', 'Bachelor', 'BA', 'Graphic Design', '2019', '2019-05-20 00:00:00', TRUE, 'B', '3.5');
+
+
+-- Insert sample admins
+INSERT INTO "admins" (
+    "full_name_ar", "full_name_en", "email", "hashed_password", "created_at", "updated_at"
+)
+VALUES
+    (
+        'أحمد عبد الله',
+        'Ahmed Abdullah',
+        'ahmed.abdullah@example.com',
+        '$2a$10$xxRUJhEPNZjZoKcmuQxXr.q/iCJPvZIWCYrxuSNjN61y27KLdr6Ve',
+        CURRENT_TIMESTAMP,
+        CURRENT_TIMESTAMP
+    ),
+    (
+        'ليلى محمد',
+        'Laila Mohamed',
+        'laila.mohamed@example.com',
+        '$2a$10$xxRUJhEPNZjZoKcmuQxXr.q/iCJPvZIWCYrxuSNjN61y27KLdr6Ve',
+        CURRENT_TIMESTAMP,
+        CURRENT_TIMESTAMP
+    ),
+    (
+        'يوسف علي',
+        'Youssef Ali',
+        'youssef.ali@example.com',
+        '$2a$10$xxRUJhEPNZjZoKcmuQxXr.q/iCJPvZIWCYrxuSNjN61y27KLdr6Ve',
+        CURRENT_TIMESTAMP,
+        CURRENT_TIMESTAMP
+    );
