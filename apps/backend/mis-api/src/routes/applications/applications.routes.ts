@@ -2,6 +2,7 @@ import {
   acceptApplicationSchema,
   attachmentsSchema,
   registerStep2Schema,
+  studentApplicationDetailsSchema,
 } from "@/db/validators";
 import { isAuthenticated } from "@/middlewares/isAuthenticated";
 import { requireRole } from "@/middlewares/requireRole";
@@ -12,6 +13,7 @@ import {
   createErrorSchema,
   createMessageObjectSchema,
 } from "stoker/openapi/schemas";
+import { notFoundSchema } from "@/lib/constants";
 
 const tags = ["Applications"];
 
@@ -55,6 +57,25 @@ export const saveApplicationAttachments = createRoute({
   },
 });
 
+export const getApplication = createRoute({
+  path: "/",
+  method: "get",
+  middleware: [isAuthenticated, requireRole("student")],
+  tags,
+  responses: {
+    [HttpStatusCodes.OK]: jsonContent(
+      studentApplicationDetailsSchema,
+      "The application details",
+    ),
+    [HttpStatusCodes.NOT_FOUND]: jsonContent(
+      notFoundSchema,
+      "Application not found",
+    ),
+  },
+});
+
 export type CreateApplicationRoute = typeof createApplication;
 
 export type SaveApplicationAttachmentsRoute = typeof saveApplicationAttachments;
+
+export type GetApplicationRoute = typeof getApplication;

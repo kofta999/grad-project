@@ -13,7 +13,7 @@ export const metadata = {
 export default async function Store() {
   // log("Hey! This is the Store page.");
   const client = hcWithType("http://127.0.0.1:3000");
-  const res = await client.auth.register1.$post({ json: {} });
+  const res = await client.auth.register.$post({ json: {} });
   if (res.status === 200) {
     const json = await res.json();
     json.studentId

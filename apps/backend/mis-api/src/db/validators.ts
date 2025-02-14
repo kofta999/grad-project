@@ -64,36 +64,42 @@ export const acceptApplicationSchema = createSelectSchema(applications).omit({
   isAdminAccepted: true,
 });
 
-export const applicationsListSchema = z.array(
+export const adminApplicationsListSchema = z.array(
   createSelectSchema(adminApplicationsList),
 );
 
-export const applicationDetailsSchema = z.object({
+const applicationDetailsSchema = z.object({
+  applicationId: z.number(),
+  isAccepted: z.boolean(),
+  addresses: z.array(
+    createSelectSchema(addresses).omit({
+      applicationId: true,
+    }),
+  ),
+  academicQualification: createSelectSchema(academicQualifications).omit({
+    applicationId: true,
+  }),
+  emergencyContact: createSelectSchema(emergencyContacts).omit({
+    applicationId: true,
+  }),
+  registration: createSelectSchema(registerations).omit({
+    applicationId: true,
+  }),
+  attachments: z.array(
+    createSelectSchema(attachments).omit({ applicationId: true }),
+  ),
+});
+
+export const adminApplicationDetailsSchema = z.object({
   student: createSelectSchema(students).omit({
     hashedPassword: true,
     secAnswer: true,
     secQuestion: true,
     updatedAt: true,
   }),
-  application: z.object({
-    applicationId: z.number(),
-    isAdminAccepted: z.boolean(),
-    addresses: z.array(
-      createSelectSchema(addresses).omit({
-        applicationId: true,
-      }),
-    ),
-    academicQualification: createSelectSchema(academicQualifications).omit({
-      applicationId: true,
-    }),
-    emergencyContact: createSelectSchema(emergencyContacts).omit({
-      applicationId: true,
-    }),
-    registration: createSelectSchema(registerations).omit({
-      applicationId: true,
-    }),
-    attachments: z.array(
-      createSelectSchema(attachments).omit({ applicationId: true }),
-    ),
-  }),
+  application: applicationDetailsSchema,
+});
+
+export const studentApplicationDetailsSchema = z.object({
+  application: applicationDetailsSchema,
 });

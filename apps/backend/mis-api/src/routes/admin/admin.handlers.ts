@@ -127,7 +127,7 @@ export const getApplicationDetails: AppRouteHandler<
       {
         student,
         application: {
-          isAdminAccepted: application.isAdminAccepted,
+          isAccepted: application.isAdminAccepted,
           applicationId,
           academicQualification,
           addresses,

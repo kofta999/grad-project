@@ -7,6 +7,7 @@ const router = createRouter()
   .openapi(
     routes.saveApplicationAttachments,
     handlers.saveApplicationAttachments,
-  );
+  )
+  .openapi(routes.getApplication, handlers.getApplication);
 
 export default router;

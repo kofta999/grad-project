@@ -1,7 +1,7 @@
 import {
   acceptApplicationSchema,
-  applicationDetailsSchema,
-  applicationsListSchema,
+  adminApplicationDetailsSchema,
+  adminApplicationsListSchema,
 } from "@/db/validators";
 import { isAuthenticated } from "@/middlewares/isAuthenticated";
 import { requireRole } from "@/middlewares/requireRole";
@@ -52,7 +52,7 @@ export const getAllApplications = createRoute({
   middleware: [isAuthenticated, requireRole("admin")] as const,
   responses: {
     [HttpStatusCodes.OK]: jsonContent(
-      applicationsListSchema,
+      adminApplicationsListSchema,
       "A list of all students with applications",
     ),
   },
@@ -68,7 +68,7 @@ export const getApplicationDetails = createRoute({
   middleware: [isAuthenticated, requireRole("admin")] as const,
   responses: {
     [HttpStatusCodes.OK]: jsonContent(
-      applicationDetailsSchema,
+      adminApplicationDetailsSchema,
       "A list of all students with applications",
     ),
     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(

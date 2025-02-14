@@ -1,6 +1,7 @@
 import { AppRouteHandler } from "@/lib/types";
 import {
   CreateApplicationRoute,
+  GetApplicationRoute,
   SaveApplicationAttachmentsRoute,
 } from "./applications.routes";
 import * as HttpStatusCodes from "stoker/http-status-codes";
@@ -70,4 +71,87 @@ export const saveApplicationAttachments: AppRouteHandler<
   await Promise.all(promises);
 
   return c.json({ success: true, applicationId }, HttpStatusCodes.OK);
+};
+
+export const getApplication: AppRouteHandler<GetApplicationRoute> = async (
+  c,
+) => {
+  const studentId = c.var.session.get("id")!;
+
+  const application = await db.query.applications.findFirst({
+    where(f, { eq }) {
+      return eq(f.studentId, studentId);
+    },
+    columns: { studentId: false },
+    orderBy({ applicationId }, { desc }) {
+      return desc(applicationId);
+    },
+  })!;
+
+  if (!application) {
+    return c.json(
+      { message: "Application Not found" },
+      HttpStatusCodes.NOT_FOUND,
+    );
+  }
+
+  const applicationId = application.applicationId;
+
+  const addresses = await db.query.addresses.findMany({
+    where(f, { eq }) {
+      return eq(f.applicationId, applicationId);
+    },
+    columns: { applicationId: false },
+  });
+
+  const academicQualification = await db.query.academicQualifications.findFirst(
+    {
+      where(f, { eq }) {
+        return eq(f.applicationId, applicationId);
+      },
+    },
+  );
+
+  const emergencyContact = await db.query.emergencyContacts.findFirst({
+    where(f, { eq }) {
+      return eq(f.applicationId, applicationId);
+    },
+    columns: { applicationId: false },
+  })!;
+
+  const registration = await db.query.registerations.findFirst({
+    where(f, { eq }) {
+      return eq(f.applicationId, applicationId);
+    },
+    columns: { applicationId: false },
+  })!;
+
+  const attachments = await db.query.attachments.findMany({
+    where(f, { eq }) {
+      return eq(f.applicationId, applicationId);
+    },
+    columns: { applicationId: false },
+  })!;
+
+  if (academicQualification && emergencyContact && registration) {
+    return c.json(
+      {
+        application: {
+          isAccepted: application.isAdminAccepted,
+          applicationId,
+          academicQualification,
+          addresses,
+          attachments,
+          emergencyContact,
+          registration,
+        },
+      },
+      HttpStatusCodes.OK,
+    );
+  }
+
+  return c.json(
+    { message: "Application Not found" },
+    HttpStatusCodes.NOT_FOUND,
+  );
 };
