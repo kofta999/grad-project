@@ -15,34 +15,6 @@ import {
 
 const tags = ["Applications"];
 
-export const acceptApplication = createRoute({
-  path: "/accept",
-  method: "post",
-  tags,
-  middleware: [isAuthenticated, requireRole("admin")],
-  request: {
-    body: jsonContentRequired(acceptApplicationSchema, "Application schema"),
-  },
-  responses: {
-    [HttpStatusCodes.OK]: jsonContent(
-      createMessageObjectSchema("Application accepted"),
-      "Application accepted",
-    ),
-    [HttpStatusCodes.NOT_FOUND]: jsonContent(
-      createMessageObjectSchema("Application not found"),
-      "Application not found",
-    ),
-    [HttpStatusCodes.CONFLICT]: jsonContent(
-      createMessageObjectSchema("Application already accepted"),
-      "Application already accepted",
-    ),
-    [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
-      createErrorSchema(acceptApplicationSchema),
-      "The validation error(s)",
-    ),
-  },
-});
-
 export const createApplication = createRoute({
   path: "/",
   method: "post",
@@ -82,8 +54,6 @@ export const saveApplicationAttachments = createRoute({
     ),
   },
 });
-
-export type AcceptApplicationRoute = typeof acceptApplication;
 
 export type CreateApplicationRoute = typeof createApplication;
 
