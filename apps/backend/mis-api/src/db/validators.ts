@@ -67,3 +67,33 @@ export const acceptApplicationSchema = createSelectSchema(applications).omit({
 export const applicationsListSchema = z.array(
   createSelectSchema(adminApplicationsList),
 );
+
+export const applicationDetailsSchema = z.object({
+  student: createSelectSchema(students).omit({
+    hashedPassword: true,
+    secAnswer: true,
+    secQuestion: true,
+    updatedAt: true,
+  }),
+  application: z.object({
+    applicationId: z.number(),
+    isAdminAccepted: z.boolean(),
+    addresses: z.array(
+      createSelectSchema(addresses).omit({
+        applicationId: true,
+      }),
+    ),
+    academicQualification: createSelectSchema(academicQualifications).omit({
+      applicationId: true,
+    }),
+    emergencyContact: createSelectSchema(emergencyContacts).omit({
+      applicationId: true,
+    }),
+    registration: createSelectSchema(registerations).omit({
+      applicationId: true,
+    }),
+    attachments: z.array(
+      createSelectSchema(attachments).omit({ applicationId: true }),
+    ),
+  }),
+});
