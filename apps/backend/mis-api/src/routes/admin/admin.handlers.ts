@@ -1,9 +1,12 @@
 import db from "@/db";
 import * as HttpStatusCodes from "stoker/http-status-codes";
-import { applications } from "@/db/schema";
+import { adminApplicationsList, applications } from "@/db/schema";
 import { AppRouteHandler } from "@/lib/types";
 import { eq } from "drizzle-orm";
-import { AcceptApplicationRoute } from "./admin.routes";
+import {
+  AcceptApplicationRoute,
+  GetAllApplicationsRoute,
+} from "./admin.routes";
 
 export const acceptApplication: AppRouteHandler<
   AcceptApplicationRoute
@@ -39,4 +42,12 @@ export const acceptApplication: AppRouteHandler<
     .where(eq(applications.applicationId, applicationId));
 
   return c.json({ message: "Application accepted" }, HttpStatusCodes.OK);
+};
+
+export const getAllApplications: AppRouteHandler<
+  GetAllApplicationsRoute
+> = async (c) => {
+  const results = await db.select().from(adminApplicationsList);
+
+  return c.json(results, HttpStatusCodes.OK);
 };

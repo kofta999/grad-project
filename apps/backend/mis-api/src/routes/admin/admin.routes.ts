@@ -1,4 +1,7 @@
-import { acceptApplicationSchema } from "@/db/validators";
+import {
+  acceptApplicationSchema,
+  applicationsListSchema,
+} from "@/db/validators";
 import { isAuthenticated } from "@/middlewares/isAuthenticated";
 import { requireRole } from "@/middlewares/requireRole";
 import { createRoute } from "@hono/zod-openapi";
@@ -39,4 +42,19 @@ export const acceptApplication = createRoute({
   },
 });
 
+export const getAllApplications = createRoute({
+  path: "/applications",
+  method: "get",
+  tags,
+  middleware: [isAuthenticated, requireRole("admin")] as const,
+  responses: {
+    [HttpStatusCodes.OK]: jsonContent(
+      applicationsListSchema,
+      "A list of all students with applications",
+    ),
+  },
+});
+
 export type AcceptApplicationRoute = typeof acceptApplication;
+
+export type GetAllApplicationsRoute = typeof getAllApplications;

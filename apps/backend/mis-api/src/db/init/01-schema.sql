@@ -135,6 +135,14 @@ CREATE TABLE "admins" (
     "updated_at" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Create views
+CREATE VIEW admin_applications_list
+AS
+	SELECT a.application_id, s.full_name_ar AS student_name, r.academic_degree, r.academic_program, a.is_admin_accepted
+	FROM applications a
+	JOIN students s USING(student_id)
+	JOIN registerations r USING(application_id);
+
 
 -- Create indexes for foreign keys
 CREATE INDEX "applications_student_id_idx" ON "applications"("student_id");

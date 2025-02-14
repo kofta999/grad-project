@@ -2,6 +2,7 @@ import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import {
   academicQualifications,
   addresses,
+  adminApplicationsList,
   applications,
   attachments,
   emergencyContacts,
@@ -62,3 +63,7 @@ export const acceptApplicationSchema = createSelectSchema(applications).omit({
   studentId: true,
   isAdminAccepted: true,
 });
+
+export const applicationsListSchema = z.array(
+  createSelectSchema(adminApplicationsList),
+);
