@@ -12,10 +12,14 @@ import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 
 export default function RegistrationForm() {
+  // state for array index == formStep
+  // [Register1, Register2]
+  // initialState = 0
+  // state += 1, state -= 1 + Submit
   return (
     <div className="container mx-auto py-10" dir="rtl">
       <h1 className="text-2xl font-bold text-center mb-6">نموذج التسجيل الأكاديمي</h1>
-
+      
       <div className="max-w-3xl mx-auto space-y-8">
         {/* Basic Information */}
         <Card>
@@ -152,5 +156,6 @@ export default function RegistrationForm() {
         </div>
        </div>
     </div>
+    
   )
 }

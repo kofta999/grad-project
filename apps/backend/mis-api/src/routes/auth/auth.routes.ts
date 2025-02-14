@@ -19,7 +19,7 @@ const FileRequestSchema = z.object({
 const tags = ["Authentication"];
 
 export const register = createRoute({
-  path: "/register1",
+  path: "/register",
   method: "post",
   tags,
   request: {
