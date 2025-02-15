@@ -2,6 +2,7 @@ import {
   acceptApplicationSchema,
   attachmentsSchema,
   registerStep2Schema,
+  studentApplicationDetailsSchema,
 } from "@/db/validators";
 import { isAuthenticated } from "@/middlewares/isAuthenticated";
 import { requireRole } from "@/middlewares/requireRole";
@@ -12,36 +13,9 @@ import {
   createErrorSchema,
   createMessageObjectSchema,
 } from "stoker/openapi/schemas";
+import { notFoundSchema } from "@/lib/constants";
 
 const tags = ["Applications"];
-
-export const acceptApplication = createRoute({
-  path: "/accept",
-  method: "post",
-  tags,
-  middleware: [isAuthenticated, requireRole("admin")],
-  request: {
-    body: jsonContentRequired(acceptApplicationSchema, "Application schema"),
-  },
-  responses: {
-    [HttpStatusCodes.OK]: jsonContent(
-      createMessageObjectSchema("Application accepted"),
-      "Application accepted",
-    ),
-    [HttpStatusCodes.NOT_FOUND]: jsonContent(
-      createMessageObjectSchema("Application not found"),
-      "Application not found",
-    ),
-    [HttpStatusCodes.CONFLICT]: jsonContent(
-      createMessageObjectSchema("Application already accepted"),
-      "Application already accepted",
-    ),
-    [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
-      createErrorSchema(acceptApplicationSchema),
-      "The validation error(s)",
-    ),
-  },
-});
 
 export const createApplication = createRoute({
   path: "/",
@@ -83,8 +57,25 @@ export const saveApplicationAttachments = createRoute({
   },
 });
 
-export type AcceptApplicationRoute = typeof acceptApplication;
+export const getApplication = createRoute({
+  path: "/",
+  method: "get",
+  middleware: [isAuthenticated, requireRole("student")],
+  tags,
+  responses: {
+    [HttpStatusCodes.OK]: jsonContent(
+      studentApplicationDetailsSchema,
+      "The application details",
+    ),
+    [HttpStatusCodes.NOT_FOUND]: jsonContent(
+      notFoundSchema,
+      "Application not found",
+    ),
+  },
+});
 
 export type CreateApplicationRoute = typeof createApplication;
 
 export type SaveApplicationAttachmentsRoute = typeof saveApplicationAttachments;
+
+export type GetApplicationRoute = typeof getApplication;
