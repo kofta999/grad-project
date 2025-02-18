@@ -5,11 +5,17 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Phone } from "lucide-react";
 import { hcWithType } from "@repo/mis-api";
 
-const client = hcWithType("https://127.0.0.1:3000");
+const client = hcWithType("http://127.0.0.1:3000");
 
 export default function RegistrationFormPart3() {
   // State for form data
@@ -64,8 +70,29 @@ export default function RegistrationFormPart3() {
     e.preventDefault();
 
     try {
-      const res = await client.auth.register2.$post({
-        json: formData,
+      const res = await client.applications.$post({
+        json: {
+          ...formData,
+          qualification: {
+            country: "USA",
+            university: "State University",
+            faculty: "Engineering",
+            type: "Bachelor",
+            qualification: "BSc",
+            specialization: "Computer Science",
+            year: "2020",
+            date: "2020-05-15",
+            creditHours: true,
+            grade: "A",
+            gpa: "3.8",
+          },
+          registration: {
+            academicYear: "2021-2022",
+            faculty: "Engineering",
+            academicDegree: "Master",
+            academicProgram: "Software Engineering",
+          },
+        },
       });
 
       if (!res.ok) {
@@ -181,7 +208,9 @@ export default function RegistrationFormPart3() {
         {/* Emergency Contact */}
         <Card>
           <CardContent className="pt-6">
-            <h2 className="text-lg font-semibold mb-4">شخصيات يمكن الرجوع اليها</h2>
+            <h2 className="text-lg font-semibold mb-4">
+              شخصيات يمكن الرجوع اليها
+            </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
                 <Label>الاسم</Label>
@@ -223,7 +252,10 @@ export default function RegistrationFormPart3() {
 
         <div className="flex justify-center gap-4">
           <Button variant="outline">السابق</Button>
-          <Button type="submit" className="bg-gray-600 hover:bg-gray-700 text-white">
+          <Button
+            type="submit"
+            className="bg-gray-600 hover:bg-gray-700 text-white"
+          >
             التالي
           </Button>
         </div>

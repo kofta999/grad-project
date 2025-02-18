@@ -4,7 +4,8 @@
   "version": "1.0.0",
   "scripts": {
     "start": "node dist/server/index.js",
-    "dev": "tsx watch src/index.ts",
+    "start:docker": "docker compose up -d",
+    "dev": "bun run start:docker && tsx watch src/index.ts",
     "dev:tsc": "tsc -p tsconfig.build.json --watch",
     "build": "tsc -p tsconfig.build.json",
     "clean": "rm -rf dist",

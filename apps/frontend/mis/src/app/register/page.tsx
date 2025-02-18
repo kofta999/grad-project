@@ -3,27 +3,38 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Card, CardContent } from "@/components/ui/card";
 import { CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { hcWithType } from "@repo/mis-api";
 
-const client = hcWithType("https://127.0.0.1:3000");
+const client = hcWithType("http://127.0.0.1:3000");
 
 export default function RegistrationForm() {
   // State for form data
   const [formData, setFormData] = useState({
     fullNameAr: "",
     fullNameEn: "",
-    gender: false, 
+    gender: false,
     email: "",
     nationality: "",
-    imageUrl: "", 
+    imageUrl: "",
     phoneNoMain: "",
-    idType: "national_id" as "national_id" | "passport", 
+    phoneNoSec: "",
+    idType: "national_id" as "national_id" | "passport",
     idIssuanceDate: "",
     hashedPassword: "",
     secQuestion: "",
@@ -41,20 +52,26 @@ export default function RegistrationForm() {
     e.preventDefault();
 
     try {
-      const res = await client.auth.register1.$post({
+      const res = await client.auth.register.$post({
         json: {
           fullNameAr: formData.fullNameAr,
           fullNameEn: formData.fullNameEn,
-          gender: formData.gender, 
+          gender: formData.gender,
           email: formData.email,
           nationality: formData.nationality,
-          imageUrl: formData.imageUrl, 
+          imageUrl: formData.imageUrl,
           phoneNoMain: formData.phoneNoMain,
+          phoneNoSec: formData.phoneNoSec,
           idType: formData.idType,
-          idIssuanceDate: formData.idIssuanceDate,
           hashedPassword: formData.hashedPassword,
           secQuestion: formData.secQuestion,
           secAnswer: formData.secAnswer,
+          dob: "2020-10-10",
+          idAuthority: "Suez",
+          idIssuanceDate: "2020-10-10",
+          idNumber: "1111111",
+          isWorking: false,
+          militaryStatus: "Exempted",
         },
       });
 
@@ -73,7 +90,9 @@ export default function RegistrationForm() {
 
   return (
     <div className="container mx-auto py-10" dir="rtl">
-      <h1 className="text-2xl font-bold text-center mb-6">نموذج التسجيل الأكاديمي</h1>
+      <h1 className="text-2xl font-bold text-center mb-6">
+        نموذج التسجيل الأكاديمي
+      </h1>
 
       <form onSubmit={handleSubmit} className="max-w-3xl mx-auto space-y-8">
         {/* Basic Information */}
@@ -124,7 +143,10 @@ export default function RegistrationForm() {
                 </Label>
                 <Select
                   onValueChange={(value) =>
-                    setFormData((prev) => ({ ...prev, gender: value === "male" }))
+                    setFormData((prev) => ({
+                      ...prev,
+                      gender: value === "male",
+                    }))
                   }
                   value={formData.gender ? "male" : "female"}
                 >
@@ -144,7 +166,10 @@ export default function RegistrationForm() {
                 </Label>
                 <Select
                   onValueChange={(value) =>
-                    setFormData((prev) => ({ ...prev, idType: value as "national_id" | "passport" }))
+                    setFormData((prev) => ({
+                      ...prev,
+                      idType: value as "national_id" | "passport",
+                    }))
                   }
                   value={formData.idType}
                 >
@@ -164,7 +189,12 @@ export default function RegistrationForm() {
                 </Label>
                 <Popover>
                   <PopoverTrigger asChild>
-                    <Button variant={"outline"} className={cn("w-full justify-start text-right font-normal")}>
+                    <Button
+                      variant={"outline"}
+                      className={cn(
+                        "w-full justify-start text-right font-normal",
+                      )}
+                    >
                       <CalendarIcon className="ml-2 h-4 w-4" />
                       <span>اختر التاريخ</span>
                     </Button>
@@ -172,9 +202,16 @@ export default function RegistrationForm() {
                   <PopoverContent className="w-auto p-0">
                     <Calendar
                       mode="single"
-                      selected={formData.idIssuanceDate ? new Date(formData.idIssuanceDate) : undefined}
+                      selected={
+                        formData.idIssuanceDate
+                          ? new Date(formData.idIssuanceDate)
+                          : undefined
+                      }
                       onSelect={(date) =>
-                        setFormData((prev) => ({ ...prev, idIssuanceDate: date?.toISOString() || "" }))
+                        setFormData((prev) => ({
+                          ...prev,
+                          idIssuanceDate: date?.toISOString() || "",
+                        }))
                       }
                       initialFocus
                     />
@@ -214,6 +251,18 @@ export default function RegistrationForm() {
                   value={formData.phoneNoMain}
                   onChange={handleInputChange}
                   required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>
+                  رقم الهاتف الثاني:
+                  <span className="text-red-500">*</span>
+                </Label>
+                <Input
+                  type="tel"
+                  name="phoneNoSec"
+                  value={formData.phoneNoSec}
+                  onChange={handleInputChange}
                 />
               </div>
               <div className="space-y-2">
