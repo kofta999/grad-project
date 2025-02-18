@@ -8,11 +8,50 @@ import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
+import { hcWithType } from "@repo/mis-api";
+
 
 export default function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [userType, setUserType] = useState("supervisor");
+  const [email, setEmail] = useState('');
+  const [password, setpassword] =useState('');
+  const [Loading, setLoading] = useState('');
+  const [error, setError] = useState<string | null>(null);
 
+  const client = hcWithType("https://127.0.0.1:3000"); 
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    //setLoading(true);
+    setError(null);
+
+    try {
+      const res = await client.auth.login.$post({
+        json: {
+          email: email,
+          password: password,
+         // role: userType,
+        },
+      });
+    
+  if (!res.ok) {
+    throw new Error(`HTTP errpr! Status: ${res.status}`);
+  }
+  
+  const result = await res.json();
+  console.log("Login succesful", result);
+
+  alert("تم الدخول بنجاح");
+}catch (err) {
+ setError(err instanceof Error ? err.message :"فشل تسجيل الدخول حاول مرة اخرى") 
+};
+  } //finally {
+  //setLoading(false);
+//}
+  
+ 
   return (
     <div
       className="min-h-screen flex items-center justify-center bg-sky-100 p-4"
