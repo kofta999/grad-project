@@ -8,10 +8,65 @@ import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
+import { hcWithType } from "@repo/mis-api";
 
 export default function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
-  const [userType, setUserType] = useState("supervisor");
+  const [userType, setUserType] = useState<"student" | "admin">("student");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState("");
+  const [error, setError] = useState<string | null>(null);
+
+  const client = hcWithType("http://localhost:3000", {
+    init: { credentials: "include" },
+  });
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    //setLoading(true);
+    setError(null);
+
+    try {
+      const res = await client.auth.login.$post({
+        json: {
+          email: email,
+          password: password,
+          role: userType,
+        },
+      });
+
+      if (!res.ok) {
+        throw new Error(`HTTP error! Status: ${res.status}`);
+      }
+
+      console.log(res.headers);
+
+      const result = await res.json();
+      console.log("Login succesful", result);
+
+      alert("تم الدخول بنجاح");
+
+      // TODO: Redirect after login
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "فشل تسجيل الدخول حاول مرة اخرى",
+      );
+    }
+  }; //finally {
+  //setLoading(false);
+  //}
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    console.log(name, value);
+    if (name === "email") {
+      setEmail(value);
+    } else {
+      setPassword(value);
+    }
+  };
 
   return (
     <div
@@ -23,7 +78,6 @@ export default function LoginForm() {
           {/* You don't need /public */}
           <Image
             src="/920658.jpg"
-          
             alt="Faculty of Engineering Logo"
             width={120}
             height={120}
@@ -35,33 +89,39 @@ export default function LoginForm() {
           </p>
         </div>
 
-        <form className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-2">
             <Label className="text-gray-700">إسم المستخدم</Label>
             <Input
               type="text"
               placeholder="مثل: أحمد خالد"
               className="text-right"
+              value={email}
+              name="email"
+              onChange={handleInputChange}
             />
           </div>
 
           <div className="space-y-4">
             <RadioGroup
               defaultValue={userType}
+              // @ts-ignore Ik what im doing
               onValueChange={setUserType}
               className="flex justify-end gap-6"
             >
+              {/* will set admin for now */}
               <div className="flex items-center space-x-2 space-x-reverse">
-                <Label htmlFor="supervisor">مشرف</Label>
-                <RadioGroupItem value="supervisor" id="supervisor" />
+                <Label htmlFor="admin">مشرف</Label>
+                <RadioGroupItem value="admin" id="admin" />
               </div>
               <div className="flex items-center space-x-2 space-x-reverse">
                 <Label htmlFor="student">طالب</Label>
                 <RadioGroupItem value="student" id="student" />
               </div>
+              {/* Should be doctor but will set admin for now */}
               <div className="flex items-center space-x-2 space-x-reverse">
-                <Label htmlFor="doctor">دكتور</Label>
-                <RadioGroupItem value="doctor" id="doctor" />
+                <Label htmlFor="admin">دكتور</Label>
+                <RadioGroupItem value="admin" id="admin" />
               </div>
             </RadioGroup>
           </div>
@@ -72,6 +132,9 @@ export default function LoginForm() {
               <Input
                 type={showPassword ? "text" : "password"}
                 className="text-right pr-4 pl-10"
+                onChange={handleInputChange}
+                value={password}
+                name="password"
                 placeholder="7442#23"
               />
               <button
@@ -101,14 +164,13 @@ export default function LoginForm() {
             تسجيل الدخول
           </Button>
         </form>
-        <p className="mt-4 text-center text-gray-500"> 
-    غير مسجل على الموقع ؟ 
-    <a href="/register" className="text-blue-500 hover:underline ml-1"> 
-      تسجيل حساب
-    </a>
-  </p>
-     </div>
-      
+        <p className="mt-4 text-center text-gray-500">
+          غير مسجل على الموقع ؟
+          <a href="/register" className="text-blue-500 hover:underline ml-1">
+            تسجيل حساب
+          </a>
+        </p>
+      </div>
     </div>
   );
 }

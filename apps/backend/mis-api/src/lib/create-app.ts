@@ -5,6 +5,7 @@ import { notFound, onError, serveEmojiFavicon } from "stoker/middlewares";
 import { defaultHook } from "stoker/openapi";
 import { MemoryStore, sessionMiddleware } from "hono-sessions";
 import { serveStatic } from "@hono/node-server/serve-static";
+import { cors } from "hono/cors";
 import env from "@/env";
 
 export function createRouter() {
@@ -16,16 +17,16 @@ export default function createApp() {
   // TODO: Decide on using / not using a memory store
   const store = new MemoryStore();
 
+  app.use(cors({ origin: "*", credentials: true }));
+
   app.use(
     sessionMiddleware({
-      // TODO: Update session expiry time
       store,
       expireAfterSeconds: 3600,
       cookieOptions: {
         httpOnly: true,
-        sameSite: "Lax",
         path: "/",
-        secure: env.NODE_ENV == "production",
+        secure: env.NODE_ENV !== "development", // Ensure Secure is set in production
       },
       sessionCookieName: "sessionId",
     }),
