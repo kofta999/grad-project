@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardGrid, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Select,
   SelectContent,
@@ -14,10 +14,12 @@ import {
 } from "@/components/ui/select";
 import { Phone } from "lucide-react";
 import { hcWithType } from "@repo/mis-api";
+import { Container,ContainerTitle } from "@/components/ui/container";
+import  Link  from 'next/link';
 
 const client = hcWithType("http://127.0.0.1:3000");
 
-export default function RegistrationFormPart3() {
+export default function ApplicationForm1() {
   // State for form data
   const [formData, setFormData] = useState({
     permanentAddress: {
@@ -54,7 +56,7 @@ export default function RegistrationFormPart3() {
 
   // Handle select changes
   const handleSelectChange = (name: string, value: string) => {
-    const [parent, child] = name.split("."); // Split nested field names
+    const [parent, child] = name.split(".");
 
     setFormData((prev) => ({
       ...prev,
@@ -68,7 +70,6 @@ export default function RegistrationFormPart3() {
   // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     try {
       const res = await client.applications.$post({
         json: {
@@ -109,15 +110,17 @@ export default function RegistrationFormPart3() {
   };
 
   return (
-    <div className="container mx-auto py-10" dir="rtl">
-      <h1 className="text-2xl font-bold text-center mb-6">بيانات التسجيل</h1>
+    <Container>
+      <ContainerTitle>بيانات التسجيل</ContainerTitle>
 
-      <form onSubmit={handleSubmit} className="max-w-3xl mx-auto space-y-8">
+      <form onSubmit={handleSubmit}>
         {/* Permanent Address */}
         <Card>
-          <CardContent className="pt-6">
-            <h2 className="text-lg font-semibold mb-4">العنوان الدائم</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <CardContent>
+            <CardHeader>
+              العنوان الدائم
+            </CardHeader>
+            <CardGrid>
               <div className="space-y-2">
                 <Label>رقم المنزل</Label>
                 <Input
@@ -155,15 +158,15 @@ export default function RegistrationFormPart3() {
                   </SelectContent>
                 </Select>
               </div>
-            </div>
+            </CardGrid>
           </CardContent>
         </Card>
 
         {/* Current Address */}
         <Card>
-          <CardContent className="pt-6">
-            <h2 className="text-lg font-semibold mb-4">العنوان الحالي</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <CardContent>
+            <CardTitle>العنوان الحالي</CardTitle>
+            <CardGrid>
               <div className="space-y-2">
                 <Label>
                   محافظة / مدينة / شارع / حي
@@ -193,7 +196,7 @@ export default function RegistrationFormPart3() {
                   onChange={handleInputChange}
                 />
               </div>
-              <div className="space-y-2">
+              <div className="space-y-2 md:col-span-2">
                 <Label>رقم المنزل</Label>
                 <Input
                   name="currentAddress.houseNumber"
@@ -201,17 +204,17 @@ export default function RegistrationFormPart3() {
                   onChange={handleInputChange}
                 />
               </div>
-            </div>
+            </CardGrid>
           </CardContent>
         </Card>
 
         {/* Emergency Contact */}
         <Card>
-          <CardContent className="pt-6">
-            <h2 className="text-lg font-semibold mb-4">
+          <CardContent>
+            <CardHeader>
               شخصيات يمكن الرجوع اليها
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            </CardHeader>
+            <CardGrid>
               <div className="space-y-2">
                 <Label>الاسم</Label>
                 <Input
@@ -246,20 +249,25 @@ export default function RegistrationFormPart3() {
                   onChange={handleInputChange}
                 />
               </div>
-            </div>
+            </CardGrid>
           </CardContent>
         </Card>
 
         <div className="flex justify-center gap-4">
+          <Link href="/register/step2">
           <Button variant="outline">السابق</Button>
-          <Button
-            type="submit"
-            className="bg-gray-600 hover:bg-gray-700 text-white"
-          >
-            التالي
-          </Button>
+          </Link>
+          <Link href="/applications/step2">
+            <Button
+              type="submit"
+              className="bg-gray-600 hover:bg-gray-700 text-white"
+            >
+              التالي
+            </Button>
+          </Link>
+          
         </div>
       </form>
-    </div>
+    </Container>
   );
 }
