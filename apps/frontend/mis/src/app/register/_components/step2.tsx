@@ -18,10 +18,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import Image from "next/image";
-import { useState } from "react";
 import { Container, ContainerTitle } from "@/components/ui/container";
 import { FormType } from "../page";
 import { cn } from "@/lib/utils";
+import { apiClient } from "@/lib/client";
 
 interface Step2Props {
   onSubmit: (formData: Partial<FormType>) => void;
@@ -38,12 +38,17 @@ export default function Step2({
   formData,
   setFormData,
 }: Step2Props) {
-  const handlePhotoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePhotoUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
     const file = event.target.files?.[0];
     if (file) {
-      const url = URL.createObjectURL(file);
-      // TODO: Actual file upload
-      setFormData((prev) => ({ ...prev, imageUrl: url }));
+      const res = await apiClient.auth.upload.$post({ form: { file } });
+
+      if (res.ok) {
+        const { uploadUrl } = await res.json();
+        setFormData((prev) => ({ ...prev, imageUrl: uploadUrl }));
+      }
     }
   };
 
