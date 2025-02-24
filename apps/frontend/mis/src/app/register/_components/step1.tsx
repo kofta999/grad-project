@@ -142,7 +142,7 @@ export default function Step1({
                     onSelect={(date) =>
                       setFormData((prev) => ({
                         ...prev,
-                        dob: date ? date.toISOString().split("T")[0] : "",
+                        dob: date ? date.toLocaleDateString("en-US") : "",
                       }))
                     }
                     initialFocus

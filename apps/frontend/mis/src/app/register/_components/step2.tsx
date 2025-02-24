@@ -139,7 +139,7 @@ export default function Step2({
                       setFormData((prev) => ({
                         ...prev,
                         idIssuanceDate: date
-                          ? date.toISOString().split("T")[0]
+                          ? date.toLocaleDateString("en-US")
                           : "",
                       }))
                     }
