@@ -1,6 +1,12 @@
 "use client";
 
-import React, { createContext, useContext, useState, ReactNode } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from "react";
 
 interface ApplicationIdContextType {
   applicationId: number | null;
@@ -26,7 +32,20 @@ export const ApplicationIdProvider = ({
 }: {
   children: ReactNode;
 }) => {
-  const [applicationId, setApplicationId] = useState<number | null>(null);
+  const [applicationId, setApplicationId] = useState<number | null>(() => {
+    // Initialize state from localStorage
+    const storedId = localStorage.getItem("applicationId");
+    return storedId ? JSON.parse(storedId) : null;
+  });
+
+  useEffect(() => {
+    // Update localStorage whenever applicationId changes
+    if (applicationId !== null) {
+      localStorage.setItem("applicationId", JSON.stringify(applicationId));
+    } else {
+      localStorage.removeItem("applicationId");
+    }
+  }, [applicationId]);
 
   return (
     <ApplicationIdContext.Provider value={{ applicationId, setApplicationId }}>

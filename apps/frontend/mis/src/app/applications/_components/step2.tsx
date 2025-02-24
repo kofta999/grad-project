@@ -20,6 +20,7 @@ import {
 import { CalendarIcon } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import { FormType } from "../page";
+import { cn } from "@/lib/utils";
 
 interface Step2Props {
   // onSubmit: (formData: Partial<FormType>) => void;
@@ -235,18 +236,46 @@ export default function Step2({
                   <Popover>
                     <PopoverTrigger asChild>
                       <Button
-                        variant="outline"
-                        className="w-full flex justify-between text-right font-normal"
+                        variant={"outline"}
+                        className={cn(
+                          "w-full justify-start text-right font-normal",
+                          !formData.qualification.date &&
+                            "text-muted-foreground",
+                        )}
                       >
-                        <span>اختر التاريخ</span>
-                        <CalendarIcon className="ml-2 h-4 w-4" />
+                        {formData.qualification.date ? (
+                          formData.qualification.date
+                        ) : (
+                          <span>اختر التاريخ</span>
+                        )}
+                        <CalendarIcon className="mr-auto h-4 w-4 text-mainColor" />
                       </Button>
                     </PopoverTrigger>
                     <PopoverContent className="w-auto p-0">
-                      <Calendar mode="single" initialFocus />
+                      <Calendar
+                        mode="single"
+                        selected={
+                          formData.qualification.date
+                            ? new Date(formData.qualification.date)
+                            : undefined
+                        }
+                        onSelect={(date) =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            qualification: {
+                              ...prev.qualification,
+                              date: date
+                                ? date.toLocaleDateString("en-US")
+                                : "",
+                            },
+                          }))
+                        }
+                        initialFocus
+                      />
                     </PopoverContent>
                   </Popover>
                 </div>
+                {/* TODO: FIX */}
                 <div className="space-y-2">
                   <Label>نوع الدراسة</Label>
                   <Select
