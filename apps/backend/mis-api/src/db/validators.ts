@@ -64,11 +64,17 @@ export const registerSchema = createInsertSchema(students, {
   dob: z.string().refine((date) => !isNaN(Date.parse(date)), {
     message: "Invalid date of birth",
   }),
-}).omit({
-  studentId: true,
-  createdAt: true,
-  updatedAt: true,
-});
+})
+  .omit({
+    studentId: true,
+    createdAt: true,
+    updatedAt: true,
+  })
+  .extend({
+    confirmPassword: z
+      .string()
+      .min(8, "Password must be at least 8 characters long"),
+  });
 
 export const applicationSchema = z.object({
   permanentAddress: createInsertSchema(addresses).omit({
