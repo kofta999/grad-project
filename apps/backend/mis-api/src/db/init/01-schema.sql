@@ -78,8 +78,8 @@ CREATE TABLE "attachments" (
 CREATE TABLE "addresses" (
     "address_id" SERIAL PRIMARY KEY,
     "application_id" INTEGER NOT NULL,
-    "house_number" TEXT NOT NULL,
-    "street" TEXT NOT NULL,
+    "full_address" TEXT NOT NULL,
+    "country" TEXT NOT NULL,
     "city" TEXT NOT NULL,
     "type" address_type NOT NULL,
     FOREIGN KEY ("application_id") REFERENCES "applications"("application_id")
