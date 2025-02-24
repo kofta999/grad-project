@@ -37,14 +37,21 @@ export const registerSchema = createInsertSchema(students, {
   phoneNoMain: z.string().min(1, "Main phone number is required"),
   phoneNoSec: z.string().optional(),
   fax: z.string().optional(),
-  idType: z.enum(["national_id", "passport", "other"]),
+  idType: z.enum(["national_id", "passport"]),
   idIssuanceDate: z.string().refine((date) => !isNaN(Date.parse(date)), {
     message: "Invalid date for ID issuance",
   }),
   idNumber: z.string().min(1, "ID number is required"),
   idAuthority: z.string().min(1, "ID authority is required"),
   martialStatus: z
-    .enum(["single", "married", "divorced", "widowed"])
+    .enum([
+      "single",
+      "married",
+      "married_with_dependents",
+      "divorced",
+      "widow",
+      "other",
+    ])
     .optional(),
   isWorking: z.boolean(),
   jobType: z.string().optional(),
