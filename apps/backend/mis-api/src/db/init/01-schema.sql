@@ -153,6 +153,7 @@ COMMENT ON TABLE "students" IS 'جدول الطلاب';
 COMMENT ON TABLE "registerations" IS 'That''s what the student/alumn want to apply for';
 COMMENT ON TABLE "emergency_contacts" IS 'Do I need more than an emergency contact? we use 1 to 1 so far';
 COMMENT ON COLUMN "students"."full_name_en" IS 'It''s a composite attribute that includes student name, dad, grandfather, family name';
+COMMENT ON COLUMN "students"."gender" IS 'True is male, false is female';
 COMMENT ON COLUMN "students"."full_name_ar" IS 'الاسم الكامل بالعربية';
 COMMENT ON COLUMN "students"."nationality" IS 'Should we use an enum, string or a json/another table';
 COMMENT ON COLUMN "students"."id_type" IS 'If he''s egyptian, it''ll use national ID, otherwise passport ID';
