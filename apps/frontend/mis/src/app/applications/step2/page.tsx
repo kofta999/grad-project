@@ -20,7 +20,6 @@ import {
 import { CalendarIcon } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 
-
 export default function ApplicationFormPart2() {
   return (
     <>
@@ -186,7 +185,7 @@ export default function ApplicationFormPart2() {
                     </SelectContent>
                   </Select>
                 </div>
-                <div className="space-y-2 md:col-span-2">
+                <div className="space-y-2 col-span-2 justify-self-center md:w-full md:max-w-[calc(100%/2)]">
                   <Label>النسبة المئوية / المعدل التراكمي</Label>
                   <Input />
                 </div>

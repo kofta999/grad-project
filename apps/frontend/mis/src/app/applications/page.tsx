@@ -126,24 +126,31 @@ export default function ApplicationForm1() {
             <CardHeader>العنوان الدائم</CardHeader>
             <CardGrid>
               <div className="space-y-2">
-                <Label>رقم المنزل</Label>
-                <Input
-                  name="permanentAddress.houseNumber"
-                  value={formData.permanentAddress.houseNumber}
-                  onChange={handleInputChange}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>الشارع</Label>
-                <Input
-                  name="permanentAddress.street"
-                  value={formData.permanentAddress.street}
-                  onChange={handleInputChange}
-                />
-              </div>
-              <div className="space-y-2 md:col-span-2">
                 <Label>
-                  محافظة / مدينة / شارع / حي
+                  الدولة
+                  <span className="text-red-500">*</span>
+                </Label>
+                <Select
+                  onValueChange={(value) =>
+                    handleSelectChange("permanentAddress.country", value)
+                  }
+                  value={formData.permanentAddress.country}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="اختر الدولة" />
+                  </SelectTrigger>
+                  {/* TODO: Add real countries */}
+                  <SelectContent>
+                    <SelectItem value="region1">المنطقة 1</SelectItem>
+                    <SelectItem value="region2">المنطقة 2</SelectItem>
+                    <SelectItem value="region3">المنطقة 3</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label>
+                  المدينة
                   <span className="text-red-500">*</span>
                 </Label>
                 <Select
@@ -153,7 +160,7 @@ export default function ApplicationForm1() {
                   value={formData.permanentAddress.city}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="اختر المنطقة" />
+                    <SelectValue placeholder="اختر المدينة" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="region1">المنطقة 1</SelectItem>
@@ -162,6 +169,19 @@ export default function ApplicationForm1() {
                   </SelectContent>
                 </Select>
               </div>
+
+              <div className="space-y-2 md:col-span-2">
+                <Label>
+                  العنوان
+                  <span className="text-red-500">*</span>
+                </Label>
+                <Input
+                  name="permanentAddress.street"
+                  value={formData.permanentAddress.fullAddress}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
             </CardGrid>
           </CardContent>
         </Card>
@@ -169,11 +189,34 @@ export default function ApplicationForm1() {
         {/* Current Address */}
         <Card>
           <CardContent>
-            <CardTitle>العنوان الحالي</CardTitle>
+            <CardHeader>العنوان الحالي</CardHeader>
             <CardGrid>
               <div className="space-y-2">
                 <Label>
-                  محافظة / مدينة / شارع / حي
+                  الدولة
+                  <span className="text-red-500">*</span>
+                </Label>
+                <Select
+                  onValueChange={(value) =>
+                    handleSelectChange("currentAddress.country", value)
+                  }
+                  value={formData.currentAddress.country}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="اختر الدولة" />
+                  </SelectTrigger>
+                  {/* TODO: Add real countries */}
+                  <SelectContent>
+                    <SelectItem value="region1">المنطقة 1</SelectItem>
+                    <SelectItem value="region2">المنطقة 2</SelectItem>
+                    <SelectItem value="region3">المنطقة 3</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label>
+                  المدينة
                   <span className="text-red-500">*</span>
                 </Label>
                 <Select
@@ -183,7 +226,7 @@ export default function ApplicationForm1() {
                   value={formData.currentAddress.city}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="اختر المنطقة" />
+                    <SelectValue placeholder="اختر المدينة" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="region1">المنطقة 1</SelectItem>
@@ -192,20 +235,17 @@ export default function ApplicationForm1() {
                   </SelectContent>
                 </Select>
               </div>
-              <div className="space-y-2">
-                <Label>الشارع</Label>
-                <Input
-                  name="currentAddress.street"
-                  value={formData.currentAddress.street}
-                  onChange={handleInputChange}
-                />
-              </div>
+
               <div className="space-y-2 md:col-span-2">
-                <Label>رقم المنزل</Label>
+                <Label>
+                  العنوان
+                  <span className="text-red-500">*</span>
+                </Label>
                 <Input
-                  name="currentAddress.houseNumber"
-                  value={formData.currentAddress.houseNumber}
+                  name="permanentAddress.street"
+                  value={formData.currentAddress.fullAddress}
                   onChange={handleInputChange}
+                  required
                 />
               </div>
             </CardGrid>
