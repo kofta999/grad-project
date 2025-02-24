@@ -71,7 +71,7 @@ export default function Step2({
 
   return (
     <Container>
-      <ContainerTitle>تابع نموذج التسجيل الأكاديمي</ContainerTitle>
+      <ContainerTitle>تابع إنشاء حسابك</ContainerTitle>
       {/* Identity Information */}
       <Card>
         <CardContent>
@@ -119,12 +119,12 @@ export default function Step2({
                       !formData.idIssuanceDate && "text-muted-foreground",
                     )}
                   >
-                    <CalendarIcon className="ml-2 h-4 w-4" />
                     {formData.idIssuanceDate ? (
                       formData.idIssuanceDate
                     ) : (
                       <span>اختر التاريخ</span>
                     )}
+                    <CalendarIcon className="mr-auto h-4 w-4 text-mainColor" />
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0">
@@ -153,7 +153,7 @@ export default function Step2({
                 جهة الاصدار<span className="text-red-500">*</span>
               </Label>
               <Input
-                name="idIssuanceAuthority"
+                name="idAuthority"
                 value={formData.idAuthority}
                 onChange={handleInputChange}
               />
@@ -183,8 +183,12 @@ export default function Step2({
                 <SelectContent>
                   <SelectItem value="single">أعزب</SelectItem>
                   <SelectItem value="married">متزوج</SelectItem>
+                  <SelectItem value="married_with_dependents">
+                    متزوج ويعول
+                  </SelectItem>
                   <SelectItem value="divorced">مطلق</SelectItem>
                   <SelectItem value="widowed">أرمل</SelectItem>
+                  <SelectItem value="other">أخرى</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -199,20 +203,11 @@ export default function Step2({
               />
             </div>
             <div className="space-y-2">
-              <Label>جهة العمل</Label>
-              <Input
-                type="text"
-                name="jobType"
-                value={formData.jobType as any}
-                onChange={handleInputChange}
-              />
-            </div>
-            <div className="space-y-2">
               <Label>
                 الطالب يعمل؟<span className="text-red-500">*</span>
               </Label>
               <RadioGroup
-                name="isStudentWorking"
+                name="isWorking"
                 value={formData.isWorking ? "yes" : "no"}
                 onValueChange={(value) =>
                   setFormData((prev) => ({
@@ -220,17 +215,35 @@ export default function Step2({
                     isWorking: value === "yes",
                   }))
                 }
-                className="flex gap-4 pt-2"
+                className="flex gap-4 pt-2 justify-end"
               >
-                <div className="flex items-center space-x-2 space-x-reverse">
-                  <RadioGroupItem value="yes" id="yes" />
+                <div className="flex items-center gap-2 space-x-2 space-x-reverse">
                   <Label htmlFor="yes">نعم</Label>
+                  <RadioGroupItem
+                    className="text-mainColor border-[#8C8686]"
+                    value="yes"
+                    id="yes"
+                  />
                 </div>
-                <div className="flex items-center space-x-2 space-x-reverse">
-                  <RadioGroupItem value="no" id="no" />
+                <div className="flex items-center gap-2 space-x-2 space-x-reverse">
                   <Label htmlFor="no">لا</Label>
+                  <RadioGroupItem
+                    className="text-mainColor border-[#8C8686]"
+                    value="no"
+                    id="no"
+                  />
                 </div>
               </RadioGroup>
+            </div>
+            <div className="space-y-2">
+              <Label>جهة العمل</Label>
+              <Input
+                type="text"
+                name="jobType"
+                value={formData.jobType as any}
+                onChange={handleInputChange}
+                disabled={!formData.isWorking}
+              />
             </div>
           </CardGrid>
         </CardContent>
@@ -256,7 +269,7 @@ export default function Step2({
             </div>
             <div className="w-full">
               <Label className="w-full">
-                <div className="bg-gray-100 py-3 px-4 rounded text-center cursor-pointer hover:bg-gray-200 transition-colors">
+                <div className="bg-mainColor py-3 px-4 rounded text-center cursor-pointer hover:bg-blue-700 transition-colors text-white">
                   اختر صورة للتحميل
                 </div>
                 <Input
@@ -275,12 +288,16 @@ export default function Step2({
       </Card>
 
       {/* Submit Buttons */}
-      <div className="flex justify-center gap-4">
-        <Button variant="outline" onClick={goPrevStep}>
+      <div className="flex justify-center gap-16">
+        <Button
+          variant="outline"
+          className="border-[#BABABA]"
+          onClick={goPrevStep}
+        >
           السابق
         </Button>
         <Button
-          className="bg-gray-600 hover:bg-gray-700 text-white"
+          className="bg-mainColor hover:bg-blue-700 text-white"
           onClick={handleSubmit}
         >
           التسجيل

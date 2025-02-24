@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Step1 from "./_components/step1";
 import Step2 from "./_components/step2";
 import { hcWithType, InferRequestType } from "@repo/mis-api";
+import { Progress } from "@/components/ui/progress";
 
 const client = hcWithType("http://localhost:3000");
 export type FormType = InferRequestType<
@@ -30,13 +31,9 @@ export default function RegistrationForm() {
     secAnswer: "",
     secQuestion: "",
     phoneNoSec: "",
+    confirmPassword: "",
   });
   const [step, setStep] = useState(1);
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
 
   const handleStepSubmit = (data: Partial<FormType>) => {
     setFormData((old) => ({ ...old, ...data }));
@@ -71,15 +68,18 @@ export default function RegistrationForm() {
 
     if (step === 3) {
       submit();
+      setStep(2);
     }
   }, [step]);
 
   return (
     <>
+      <Progress value={step === 1 ? 0 : 50} className="sticky top-0 z-10" />
+
       {step === 1 && (
         <Step1
           onSubmit={handleStepSubmit}
-          updateStep={() => setStep((s) => s + 1)}
+          updateStep={() => setStep(2)}
           formData={formData}
           setFormData={setFormData}
         />
@@ -88,8 +88,8 @@ export default function RegistrationForm() {
       {step !== 1 && (
         <Step2
           onSubmit={handleStepSubmit}
-          goNextStep={() => setStep((s) => s + 1)}
-          goPrevStep={() => setStep((s) => s - 1)}
+          goNextStep={() => setStep(3)}
+          goPrevStep={() => setStep(1)}
           formData={formData}
           setFormData={setFormData}
         />

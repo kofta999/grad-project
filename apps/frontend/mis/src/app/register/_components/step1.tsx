@@ -18,8 +18,8 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Container, ContainerTitle } from "@/components/ui/container";
-import { useState } from "react";
 import { FormType } from "../page";
+import { Progress } from "@/components/ui/progress";
 
 interface Step1Props {
   onSubmit: (formData: Partial<FormType>) => void;
@@ -54,7 +54,7 @@ export default function Step1({
 
   return (
     <Container>
-      <ContainerTitle>نموذج التسجيل الأكاديمي</ContainerTitle>
+      <ContainerTitle>إنشاء حساب جديد</ContainerTitle>
 
       {/* Basic Information */}
       <Card>
@@ -63,23 +63,23 @@ export default function Step1({
           <CardGrid>
             <div className="space-y-2">
               <Label>
-                الاسم الرباعي (بالانجليزية)
-                <span className="text-red-500">*</span>
-              </Label>
-              <Input
-                name="fullNameEn"
-                value={formData.fullNameEn}
-                onChange={handleInputChange}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label>
                 الاسم الرباعي (بالعربية)
                 <span className="text-red-500">*</span>
               </Label>
               <Input
                 name="fullNameAr"
                 value={formData.fullNameAr}
+                onChange={handleInputChange}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>
+                الاسم الرباعي (بالانجليزية)
+                <span className="text-red-500">*</span>
+              </Label>
+              <Input
+                name="fullNameEn"
+                value={formData.fullNameEn}
                 onChange={handleInputChange}
               />
             </div>
@@ -117,7 +117,7 @@ export default function Step1({
                 </SelectContent>
               </Select>
             </div>
-            <div className="space-y-2">
+            <div className="space-y-2 col-span-2 justify-self-center w-full max-w-[calc(100%/2)]">
               <Label>
                 تاريخ الميلاد
                 <span className="text-red-500">*</span>
@@ -131,8 +131,8 @@ export default function Step1({
                       !formData.dob && "text-muted-foreground",
                     )}
                   >
-                    <CalendarIcon className="ml-2 h-4 w-4" />
                     {formData.dob ? formData.dob : <span>اختر التاريخ</span>}
+                    <CalendarIcon className="mr-auto h-4 w-4 text-mainColor" />
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0">
@@ -170,6 +170,15 @@ export default function Step1({
                 type="email"
                 name="email"
                 value={formData.email}
+                onChange={handleInputChange}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>فاكس</Label>
+              <Input
+                type="tel"
+                name="fax"
+                value={formData.fax ?? ""}
                 onChange={handleInputChange}
               />
             </div>
@@ -221,12 +230,12 @@ export default function Step1({
                 <span className="text-red-500">*</span>
               </Label>
               {/* TODO: FIX */}
-              {/* <Input
+              <Input
                 type="password"
                 name="confirmPassword"
                 value={formData.confirmPassword}
                 onChange={handleInputChange}
-              /> */}
+              />
             </div>
             <div className="space-y-2">
               <Label>
@@ -257,7 +266,7 @@ export default function Step1({
       <div className="flex justify-center items-center">
         <Button
           onClick={handleSubmit}
-          className="px-8 py-2 bg-indigo-600 hover:bg-indigo-700 text-white"
+          className="px-8 py-2 bg-mainColor hover:bg-blue-700 text-white"
         >
           التالي
         </Button>
