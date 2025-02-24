@@ -5,12 +5,14 @@ import { InferRequestType } from "@repo/mis-api";
 import { apiClient } from "@/lib/client";
 import Step1 from "./_components/step1";
 import Step2 from "./_components/step2";
+import { useApplicationIdContext } from "./application-id-context";
 
 export type FormType = InferRequestType<
   typeof apiClient.applications.$post
 >["json"];
 
 export default function ApplicationForm1() {
+  const { applicationId, setApplicationId } = useApplicationIdContext();
   // State for form data
   const [formData, setFormData] = useState<FormType>({
     permanentAddress: {
@@ -74,6 +76,7 @@ export default function ApplicationForm1() {
         }
 
         const result = await res.json();
+        setApplicationId(result.applicationId);
         console.log("Registration successful:", result);
         alert("تم التسجيل بنجاح!");
       } catch (err) {
