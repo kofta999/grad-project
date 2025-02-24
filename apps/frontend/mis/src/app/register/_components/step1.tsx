@@ -19,17 +19,14 @@ import {
 } from "@/components/ui/popover";
 import { Container, ContainerTitle } from "@/components/ui/container";
 import { FormType } from "../page";
-import { Progress } from "@/components/ui/progress";
 
 interface Step1Props {
-  onSubmit: (formData: Partial<FormType>) => void;
   updateStep: () => void;
   formData: FormType;
   setFormData: React.Dispatch<React.SetStateAction<FormType>>;
 }
 
 export default function Step1({
-  onSubmit,
   updateStep,
   formData,
   setFormData,
@@ -40,7 +37,6 @@ export default function Step1({
 
     try {
       updateStep();
-      onSubmit(formData);
     } catch (err) {
       console.error("Registration failed:", err);
       alert("فشل التسجيل. الرجاء المحاولة مرة أخرى.");

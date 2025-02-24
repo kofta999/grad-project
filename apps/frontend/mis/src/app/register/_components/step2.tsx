@@ -24,7 +24,6 @@ import { cn } from "@/lib/utils";
 import { apiClient } from "@/lib/client";
 
 interface Step2Props {
-  onSubmit: (formData: Partial<FormType>) => void;
   goNextStep: () => void;
   goPrevStep: () => void;
   formData: FormType;
@@ -32,7 +31,6 @@ interface Step2Props {
 }
 
 export default function Step2({
-  onSubmit,
   goNextStep,
   goPrevStep,
   formData,
@@ -62,7 +60,6 @@ export default function Step2({
 
     try {
       goNextStep();
-      onSubmit(formData);
     } catch (err) {
       console.error("Registration failed:", err);
       alert("فشل التسجيل. الرجاء المحاولة مرة أخرى.");
