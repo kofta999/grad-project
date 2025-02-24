@@ -4,7 +4,13 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardGrid, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardGrid,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import {
   Select,
   SelectContent,
@@ -14,8 +20,8 @@ import {
 } from "@/components/ui/select";
 import { Phone } from "lucide-react";
 import { hcWithType } from "@repo/mis-api";
-import { Container,ContainerTitle } from "@/components/ui/container";
-import  Link  from 'next/link';
+import { Container, ContainerTitle } from "@/components/ui/container";
+import Link from "next/link";
 
 const client = hcWithType("http://127.0.0.1:3000");
 
@@ -117,9 +123,7 @@ export default function ApplicationForm1() {
         {/* Permanent Address */}
         <Card>
           <CardContent>
-            <CardHeader>
-              العنوان الدائم
-            </CardHeader>
+            <CardHeader>العنوان الدائم</CardHeader>
             <CardGrid>
               <div className="space-y-2">
                 <Label>رقم المنزل</Label>
@@ -211,9 +215,7 @@ export default function ApplicationForm1() {
         {/* Emergency Contact */}
         <Card>
           <CardContent>
-            <CardHeader>
-              شخصيات يمكن الرجوع اليها
-            </CardHeader>
+            <CardHeader>شخصيات يمكن الرجوع اليها</CardHeader>
             <CardGrid>
               <div className="space-y-2">
                 <Label>الاسم</Label>
@@ -255,7 +257,7 @@ export default function ApplicationForm1() {
 
         <div className="flex justify-center gap-4">
           <Link href="/register/step2">
-          <Button variant="outline">السابق</Button>
+            <Button variant="outline">السابق</Button>
           </Link>
           <Link href="/applications/step2">
             <Button
@@ -265,7 +267,6 @@ export default function ApplicationForm1() {
               التالي
             </Button>
           </Link>
-          
         </div>
       </form>
     </Container>
