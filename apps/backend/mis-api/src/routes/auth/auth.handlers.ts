@@ -12,8 +12,11 @@ import { students } from "@/db/schema";
 import bcrypt from "bcryptjs";
 
 export const register: AppRouteHandler<RegisterStage1Route> = async (c) => {
-  let studentData = c.req.valid("json");
-  // TODO: Handle image uploads
+  let { confirmPassword, ...studentData } = c.req.valid("json");
+
+  if (studentData.hashedPassword !== confirmPassword) {
+    throw new Error("TODO: FIXME");
+  }
 
   studentData.hashedPassword = await bcrypt.hash(
     studentData.hashedPassword,

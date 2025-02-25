@@ -3,6 +3,7 @@
 -- WITH ENCODING 'UTF8'
 -- LC_COLLATE='ar_AE.utf8' -- لضبط الترتيب باللغة العربية
 -- LC_CTYPE='ar_AE.utf8' -- لضبط نوع الأحرف
+-- LC_TIME = 'en_US.UTF-8' -- لضبط شكل التاريخ والوقت
 -- TEMPLATE template0;
 
 -- Set client encoding to UTF-8 for Arabic support
@@ -77,8 +78,8 @@ CREATE TABLE "attachments" (
 CREATE TABLE "addresses" (
     "address_id" SERIAL PRIMARY KEY,
     "application_id" INTEGER NOT NULL,
-    "house_number" TEXT NOT NULL,
-    "street" TEXT NOT NULL,
+    "full_address" TEXT NOT NULL,
+    "country" TEXT NOT NULL,
     "city" TEXT NOT NULL,
     "type" address_type NOT NULL,
     FOREIGN KEY ("application_id") REFERENCES "applications"("application_id")
@@ -153,6 +154,7 @@ COMMENT ON TABLE "students" IS 'جدول الطلاب';
 COMMENT ON TABLE "registerations" IS 'That''s what the student/alumn want to apply for';
 COMMENT ON TABLE "emergency_contacts" IS 'Do I need more than an emergency contact? we use 1 to 1 so far';
 COMMENT ON COLUMN "students"."full_name_en" IS 'It''s a composite attribute that includes student name, dad, grandfather, family name';
+COMMENT ON COLUMN "students"."gender" IS 'True is male, false is female';
 COMMENT ON COLUMN "students"."full_name_ar" IS 'الاسم الكامل بالعربية';
 COMMENT ON COLUMN "students"."nationality" IS 'Should we use an enum, string or a json/another table';
 COMMENT ON COLUMN "students"."id_type" IS 'If he''s egyptian, it''ll use national ID, otherwise passport ID';

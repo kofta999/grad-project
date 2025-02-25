@@ -19,9 +19,62 @@ import {
 } from "@/components/ui/popover";
 import { CalendarIcon } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
+import { FormType } from "../page";
+import { cn } from "@/lib/utils";
 
+interface Step2Props {
+  // onSubmit: (formData: Partial<FormType>) => void;
+  goNextStep: () => void;
+  goPrevStep: () => void;
+  formData: FormType;
+  setFormData: React.Dispatch<React.SetStateAction<FormType>>;
+}
 
-export default function ApplicationFormPart2() {
+export default function Step2({
+  formData,
+  goNextStep,
+  goPrevStep,
+  // onSubmit,
+  setFormData,
+}: Step2Props) {
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    try {
+      goNextStep();
+    } catch (err) {
+      console.error("Registration failed:", err);
+      alert("فشل التسجيل. الرجاء المحاولة مرة أخرى.");
+    }
+  };
+
+  // Handle input changes
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    const [parent, child] = name.split("."); // Split nested field names
+
+    setFormData((prev) => ({
+      ...prev,
+      [parent]: {
+        ...prev[parent as keyof typeof formData],
+        [child]: value,
+      },
+    }));
+  };
+
+  // Handle select changes
+  const handleSelectChange = (name: string, value: string) => {
+    const [parent, child] = name.split(".");
+
+    setFormData((prev) => ({
+      ...prev,
+      [parent]: {
+        ...prev[parent as keyof typeof formData],
+        [child]: value,
+      },
+    }));
+  };
+
   return (
     <>
       <Container>
@@ -33,9 +86,14 @@ export default function ApplicationFormPart2() {
               <CardGrid>
                 <div className="space-y-2">
                   <Label>الدولة</Label>
-                  <Select>
+                  <Select
+                    onValueChange={(value: string) =>
+                      handleSelectChange("qualification.country", value)
+                    }
+                    value={formData.qualification.country}
+                  >
                     <SelectTrigger>
-                      <SelectValue />
+                      <SelectValue placeholder="اختر الدولة" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="region1">المنطقة 1</SelectItem>
@@ -49,9 +107,14 @@ export default function ApplicationFormPart2() {
                     الجامعة
                     <span className="text-red-500">*</span>
                   </Label>
-                  <Select>
+                  <Select
+                    onValueChange={(value: string) =>
+                      handleSelectChange("qualification.university", value)
+                    }
+                    value={formData.qualification.university}
+                  >
                     <SelectTrigger>
-                      <SelectValue />
+                      <SelectValue placeholder="اختر الجامعة" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="region1">المنطقة 1</SelectItem>
@@ -65,9 +128,14 @@ export default function ApplicationFormPart2() {
                     الكلية
                     <span className="text-red-500">*</span>
                   </Label>
-                  <Select>
+                  <Select
+                    onValueChange={(value: string) =>
+                      handleSelectChange("qualification.faculty", value)
+                    }
+                    value={formData.qualification.faculty}
+                  >
                     <SelectTrigger>
-                      <SelectValue />
+                      <SelectValue placeholder="اختر الكلية" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="region1">المنطقة 1</SelectItem>
@@ -81,9 +149,14 @@ export default function ApplicationFormPart2() {
                     نوع المؤهل
                     <span className="text-red-500">*</span>
                   </Label>
-                  <Select>
+                  <Select
+                    onValueChange={(value: string) =>
+                      handleSelectChange("qualification.type", value)
+                    }
+                    value={formData.qualification.type}
+                  >
                     <SelectTrigger>
-                      <SelectValue />
+                      <SelectValue placeholder="اختر نوع المؤهل" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="region1">المنطقة 1</SelectItem>
@@ -97,9 +170,14 @@ export default function ApplicationFormPart2() {
                     المؤهل
                     <span className="text-red-500">*</span>
                   </Label>
-                  <Select>
+                  <Select
+                    onValueChange={(value: string) =>
+                      handleSelectChange("qualification.qualification", value)
+                    }
+                    value={formData.qualification.qualification}
+                  >
                     <SelectTrigger>
-                      <SelectValue />
+                      <SelectValue placeholder="اختر المؤهل" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="region1">المنطقة 1</SelectItem>
@@ -113,9 +191,14 @@ export default function ApplicationFormPart2() {
                     التخصص
                     <span className="text-red-500">*</span>
                   </Label>
-                  <Select>
+                  <Select
+                    onValueChange={(value: string) =>
+                      handleSelectChange("qualification.specialization", value)
+                    }
+                    value={formData.qualification.specialization}
+                  >
                     <SelectTrigger>
-                      <SelectValue />
+                      <SelectValue placeholder="اختر التخصص" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="region1">المنطقة 1</SelectItem>
@@ -129,9 +212,14 @@ export default function ApplicationFormPart2() {
                     سنة المؤهل
                     <span className="text-red-500">*</span>
                   </Label>
-                  <Select>
+                  <Select
+                    onValueChange={(value: string) =>
+                      handleSelectChange("qualification.year", value)
+                    }
+                    value={formData.qualification.year}
+                  >
                     <SelectTrigger>
-                      <SelectValue />
+                      <SelectValue placeholder="اختر سنة المؤهل" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="region1">المنطقة 1</SelectItem>
@@ -148,23 +236,56 @@ export default function ApplicationFormPart2() {
                   <Popover>
                     <PopoverTrigger asChild>
                       <Button
-                        variant="outline"
-                        className="w-full flex justify-between text-right font-normal"
+                        variant={"outline"}
+                        className={cn(
+                          "w-full justify-start text-right font-normal",
+                          !formData.qualification.date &&
+                            "text-muted-foreground",
+                        )}
                       >
-                        <span>اختر التاريخ</span>
-                        <CalendarIcon className="ml-2 h-4 w-4" />
+                        {formData.qualification.date ? (
+                          formData.qualification.date
+                        ) : (
+                          <span>اختر التاريخ</span>
+                        )}
+                        <CalendarIcon className="mr-auto h-4 w-4 text-mainColor" />
                       </Button>
                     </PopoverTrigger>
                     <PopoverContent className="w-auto p-0">
-                      <Calendar mode="single" initialFocus />
+                      <Calendar
+                        mode="single"
+                        selected={
+                          formData.qualification.date
+                            ? new Date(formData.qualification.date)
+                            : undefined
+                        }
+                        onSelect={(date) =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            qualification: {
+                              ...prev.qualification,
+                              date: date
+                                ? date.toLocaleDateString("en-US")
+                                : "",
+                            },
+                          }))
+                        }
+                        initialFocus
+                      />
                     </PopoverContent>
                   </Popover>
                 </div>
+                {/* TODO: FIX */}
                 <div className="space-y-2">
                   <Label>نوع الدراسة</Label>
-                  <Select>
+                  <Select
+                    onValueChange={(value: string) =>
+                      handleSelectChange("qualification.creditHours", value)
+                    }
+                    value={formData.qualification.creditHours}
+                  >
                     <SelectTrigger>
-                      <SelectValue />
+                      <SelectValue placeholder="اختر نوع الدراسة" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="region1">المنطقة 1</SelectItem>
@@ -175,9 +296,14 @@ export default function ApplicationFormPart2() {
                 </div>
                 <div className="space-y-2">
                   <Label>التقدير</Label>
-                  <Select>
+                  <Select
+                    onValueChange={(value: string) =>
+                      handleSelectChange("qualification.grade", value)
+                    }
+                    value={formData.qualification.grade}
+                  >
                     <SelectTrigger>
-                      <SelectValue />
+                      <SelectValue placeholder="اختر التقدير" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="region1">المنطقة 1</SelectItem>
@@ -186,9 +312,13 @@ export default function ApplicationFormPart2() {
                     </SelectContent>
                   </Select>
                 </div>
-                <div className="space-y-2 md:col-span-2">
+                <div className="space-y-2 col-span-2 justify-self-center md:w-full md:max-w-[calc(100%/2)]">
                   <Label>النسبة المئوية / المعدل التراكمي</Label>
-                  <Input />
+                  <Input
+                    name="qualification.gpa"
+                    value={formData.qualification.gpa}
+                    onChange={handleInputChange}
+                  />
                 </div>
               </CardGrid>
             </CardContent>
@@ -200,9 +330,14 @@ export default function ApplicationFormPart2() {
                 <div className="space-y-2">
                   <Label>العام الاكاديمي للتسجيل</Label>
                   <span className="text-red-500">*</span>
-                  <Select>
+                  <Select
+                    onValueChange={(value: string) =>
+                      handleSelectChange("registration.academicYear", value)
+                    }
+                    value={formData.registration.academicYear}
+                  >
                     <SelectTrigger>
-                      <SelectValue />
+                      <SelectValue placeholder="اختر العام الأكاديمي" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="region1">المنطقة 1</SelectItem>
@@ -213,9 +348,14 @@ export default function ApplicationFormPart2() {
                 </div>
                 <div className="space-y-2">
                   <Label>الكلية</Label>
-                  <Select>
+                  <Select
+                    onValueChange={(value: string) =>
+                      handleSelectChange("registration.faculty", value)
+                    }
+                    value={formData.registration.faculty}
+                  >
                     <SelectTrigger>
-                      <SelectValue />
+                      <SelectValue placeholder="اختر الكلية" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="region1">المنطقة 1</SelectItem>
@@ -229,9 +369,14 @@ export default function ApplicationFormPart2() {
                     الدرجات العلمية
                     <span className="text-red-500">*</span>
                   </Label>
-                  <Select>
+                  <Select
+                    onValueChange={(value: string) =>
+                      handleSelectChange("registration.academicDegree", value)
+                    }
+                    value={formData.registration.academicDegree}
+                  >
                     <SelectTrigger>
-                      <SelectValue />
+                      <SelectValue placeholder="اختر الدرجة العلمية" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="region1">المنطقة 1</SelectItem>
@@ -245,9 +390,14 @@ export default function ApplicationFormPart2() {
                     البرامج / التخصص
                     <span className="text-red-500">*</span>
                   </Label>
-                  <Select>
+                  <Select
+                    onValueChange={(value: string) =>
+                      handleSelectChange("registration.academicProgram", value)
+                    }
+                    value={formData.registration.academicProgram}
+                  >
                     <SelectTrigger>
-                      <SelectValue />
+                      <SelectValue placeholder="اختر البرنامج / التخصص" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="region1">المنطقة 1</SelectItem>
@@ -259,18 +409,22 @@ export default function ApplicationFormPart2() {
               </CardGrid>
             </CardContent>
           </Card>
-          <div className="flex justify-center gap-4">
-            <Link href="/applications">
-              <Button variant="outline">السابق</Button>
-            </Link>
-            <Link href="/applications/step3">
-              <Button
-                className="bg-gray-600 hover:bg-gray-700 text-white"
-                type="submit"
-              >
-                التالي
-              </Button>
-            </Link>
+
+          {/* Submit Buttons */}
+          <div className="flex justify-center gap-16">
+            <Button
+              variant="outline"
+              className="border-[#BABABA]"
+              onClick={goPrevStep}
+            >
+              السابق
+            </Button>
+            <Button
+              className="bg-mainColor hover:bg-blue-700 text-white"
+              onClick={handleSubmit}
+            >
+              التسجيل
+            </Button>
           </div>
         </form>
       </Container>

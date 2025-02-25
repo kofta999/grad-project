@@ -8,19 +8,20 @@ import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
-import { hcWithType } from "@repo/mis-api";
+import { hcWithType, InferRequestType } from "@repo/mis-api";
+import { apiClient } from "@/lib/client";
+
+type FormState = InferRequestType<typeof apiClient.auth.login.$post>["json"];
 
 export default function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
-  const [userType, setUserType] = useState<"student" | "admin">("student");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState("");
-  const [error, setError] = useState<string | null>(null);
-
-  const client = hcWithType("http://localhost:3000", {
-    init: { credentials: "include" },
+  const [formState, setFormState] = useState<FormState>({
+    email: "",
+    password: "",
+    role: "student",
   });
+  const [error, setError] = useState<string | null>(null);
+  // const [loading, setLoading] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,12 +30,8 @@ export default function LoginForm() {
     setError(null);
 
     try {
-      const res = await client.auth.login.$post({
-        json: {
-          email: email,
-          password: password,
-          role: userType,
-        },
+      const res = await apiClient.auth.login.$post({
+        json: formState,
       });
 
       if (!res.ok) {
@@ -44,7 +41,7 @@ export default function LoginForm() {
       console.log(res.headers);
 
       const result = await res.json();
-      console.log("Login succesful", result);
+      console.log("Login successful", result);
 
       alert("تم الدخول بنجاح");
 
@@ -61,11 +58,17 @@ export default function LoginForm() {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     console.log(name, value);
-    if (name === "email") {
-      setEmail(value);
-    } else {
-      setPassword(value);
-    }
+    setFormState((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
+
+  const handleRoleChange = (value: "student" | "admin") => {
+    setFormState((prevState) => ({
+      ...prevState,
+      role: value,
+    }));
   };
 
   return (
@@ -96,7 +99,7 @@ export default function LoginForm() {
               type="text"
               placeholder="مثل: أحمد خالد"
               className="text-right"
-              value={email}
+              value={formState.email}
               name="email"
               onChange={handleInputChange}
             />
@@ -104,9 +107,9 @@ export default function LoginForm() {
 
           <div className="space-y-4">
             <RadioGroup
-              defaultValue={userType}
+              defaultValue={formState.role}
               // @ts-ignore Ik what im doing
-              onValueChange={setUserType}
+              onValueChange={handleRoleChange}
               className="flex justify-end gap-6"
             >
               {/* will set admin for now */}
@@ -133,7 +136,7 @@ export default function LoginForm() {
                 type={showPassword ? "text" : "password"}
                 className="text-right pr-4 pl-10"
                 onChange={handleInputChange}
-                value={password}
+                value={formState.password}
                 name="password"
                 placeholder="7442#23"
               />
@@ -143,9 +146,9 @@ export default function LoginForm() {
                 className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
               >
                 {showPassword ? (
-                  <EyeOffIcon className="h-4 w-4" />
-                ) : (
                   <EyeIcon className="h-4 w-4" />
+                ) : (
+                  <EyeOffIcon className="h-4 w-4" />
                 )}
               </button>
             </div>

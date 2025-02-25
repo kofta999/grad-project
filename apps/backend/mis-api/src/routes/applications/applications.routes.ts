@@ -1,7 +1,7 @@
 import {
   acceptApplicationSchema,
   attachmentsSchema,
-  registerStep2Schema,
+  applicationSchema,
   studentApplicationDetailsSchema,
 } from "@/db/validators";
 import { isAuthenticated } from "@/middlewares/isAuthenticated";
@@ -23,7 +23,7 @@ export const createApplication = createRoute({
   middleware: [isAuthenticated, requireRole("student")] as const,
   tags,
   request: {
-    body: jsonContentRequired(registerStep2Schema, "Application data"),
+    body: jsonContentRequired(applicationSchema, "Application data"),
   },
   responses: {
     [HttpStatusCodes.OK]: jsonContent(
@@ -31,7 +31,7 @@ export const createApplication = createRoute({
       "Application completed",
     ),
     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
-      createErrorSchema(registerStep2Schema),
+      createErrorSchema(applicationSchema),
       "The validation error(s)",
     ),
   },
