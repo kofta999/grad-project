@@ -3,6 +3,7 @@ import {
   AcceptApplicationRoute,
   CreateApplicationRoute,
   SaveApplicationAttachmentsRoute,
+  EditStudentInfoRoute,
 } from "./applications.routes";
 import * as HttpStatusCodes from "stoker/http-status-codes";
 import * as HttpStatusPhrases from "stoker/http-status-phrases";
@@ -14,6 +15,7 @@ import {
   attachments,
   emergencyContacts,
   registerations,
+  students,
 } from "@/db/schema";
 import { eq } from "drizzle-orm";
 
@@ -108,4 +110,29 @@ export const saveApplicationAttachments: AppRouteHandler<
   await Promise.all(promises);
 
   return c.json({ success: true, applicationId }, HttpStatusCodes.OK);
+};
+
+export const editStudentInfo: AppRouteHandler<EditStudentInfoRoute> = async (c) => {
+  const studentId = c.var.session.get("id");
+
+  if (!studentId) {
+    return c.json({ message: "Unauthorized" }, HttpStatusCodes.UNAUTHORIZED);
+  }
+
+  const updatedData = c.req.valid("json");
+
+  const existingStudent = await db.query.students.findFirst({
+    where(fields, operators) {
+      return operators.eq(fields.studentId, studentId);
+    },
+    columns: { studentId: true },
+  });
+
+  if (!existingStudent) {
+    return c.json({ message: "Student not found" }, HttpStatusCodes.NOT_FOUND);
+  }
+
+  await db.update(students).set(updatedData).where(eq(students.studentId, studentId));
+
+  return c.json({ message: "Student info updated successfully" }, HttpStatusCodes.OK);
 };

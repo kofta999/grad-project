@@ -8,6 +8,7 @@ const router = createRouter()
   .openapi(
     routes.saveApplicationAttachments,
     handlers.saveApplicationAttachments,
-  );
+  )
+  .openapi(routes.editStudentInfoRoute, handlers.editStudentInfo);
 
 export default router;

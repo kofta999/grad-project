@@ -62,3 +62,10 @@ export const acceptApplicationSchema = createSelectSchema(applications).omit({
   studentId: true,
   isAdminAccepted: true,
 });
+
+//I don't sure of this data yet ya darsh. Just for test
+export const editStudentInfoSchema = z.object({
+  name: z.string().optional(),
+  email: z.string().email().optional(),
+  phone: z.string().optional(),
+});
