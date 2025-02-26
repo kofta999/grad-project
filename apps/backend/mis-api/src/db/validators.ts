@@ -6,6 +6,7 @@ import {
 import {
   academicQualifications,
   addresses,
+  adminApplicationsList,
   applications,
   attachments,
   emergencyContacts,
@@ -22,13 +23,64 @@ export const loginSchema = z.object({
   role: z.enum(ROLES),
 });
 
-export const registerStep1Schema = createInsertSchema(students).omit({
-  studentId: true,
-  createdAt: true,
-  updatedAt: true,
-});
+// export const registerSchema = createInsertSchema(students, {
 
-export const registerStep2Schema = z.object({
+// }).omit({
+//   studentId: true,
+//   createdAt: true,
+//   updatedAt: true,
+// });
+
+export const registerSchema = createInsertSchema(students, {
+  fullNameAr: z.string().min(1, "Full name in Arabic is required"),
+  fullNameEn: z.string().min(1, "Full name in English is required"),
+  gender: z.boolean(),
+  email: z.string().email("Invalid email address"),
+  nationality: z.string().min(1, "Nationality is required"),
+  imageUrl: z.string().url("Invalid URL for image"),
+  phoneNoMain: z.string().min(1, "Main phone number is required"),
+  phoneNoSec: z.string().optional(),
+  fax: z.string().optional(),
+  idType: z.enum(["national_id", "passport"]),
+  idIssuanceDate: z.string().refine((date) => !isNaN(Date.parse(date)), {
+    message: "Invalid date for ID issuance",
+  }),
+  idNumber: z.string().min(1, "ID number is required"),
+  idAuthority: z.string().min(1, "ID authority is required"),
+  martialStatus: z
+    .enum([
+      "single",
+      "married",
+      "married_with_dependents",
+      "divorced",
+      "widow",
+      "other",
+    ])
+    .optional(),
+  isWorking: z.boolean(),
+  jobType: z.string().optional(),
+  hashedPassword: z
+    .string()
+    .min(8, "Password must be at least 8 characters long"),
+  secQuestion: z.string().min(1, "Security question is required"),
+  secAnswer: z.string().min(1, "Security answer is required"),
+  militaryStatus: z.string().min(1, "Military status is required"),
+  dob: z.string().refine((date) => !isNaN(Date.parse(date)), {
+    message: "Invalid date of birth",
+  }),
+})
+  .omit({
+    studentId: true,
+    createdAt: true,
+    updatedAt: true,
+  })
+  .extend({
+    confirmPassword: z
+      .string()
+      .min(8, "Password must be at least 8 characters long"),
+  });
+
+export const applicationSchema = z.object({
   permanentAddress: createInsertSchema(addresses).omit({
     addressId: true,
     applicationId: true,
@@ -65,6 +117,46 @@ export const attachmentsSchema = z.object({
 export const acceptApplicationSchema = createSelectSchema(applications).omit({
   studentId: true,
   isAdminAccepted: true,
+});
+
+export const adminApplicationsListSchema = z.array(
+  createSelectSchema(adminApplicationsList),
+);
+
+const applicationDetailsSchema = z.object({
+  applicationId: z.number(),
+  isAccepted: z.boolean(),
+  addresses: z.array(
+    createSelectSchema(addresses).omit({
+      applicationId: true,
+    }),
+  ),
+  academicQualification: createSelectSchema(academicQualifications).omit({
+    applicationId: true,
+  }),
+  emergencyContact: createSelectSchema(emergencyContacts).omit({
+    applicationId: true,
+  }),
+  registration: createSelectSchema(registerations).omit({
+    applicationId: true,
+  }),
+  attachments: z.array(
+    createSelectSchema(attachments).omit({ applicationId: true }),
+  ),
+});
+
+export const adminApplicationDetailsSchema = z.object({
+  student: createSelectSchema(students).omit({
+    hashedPassword: true,
+    secAnswer: true,
+    secQuestion: true,
+    updatedAt: true,
+  }),
+  application: applicationDetailsSchema,
+});
+
+export const studentApplicationDetailsSchema = z.object({
+  application: applicationDetailsSchema,
 });
 
 //I don't sure of this data yet ya darsh. Just for test

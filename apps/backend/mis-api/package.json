@@ -4,7 +4,8 @@
   "version": "1.0.0",
   "scripts": {
     "start": "node dist/server/index.js",
-    "dev": "tsx watch src/index.ts",
+    "start:docker": "docker compose up -d",
+    "dev": "bun run start:docker && tsx watch src/index.ts",
     "dev:tsc": "tsc -p tsconfig.build.json --watch",
     "build": "tsc -p tsconfig.build.json",
     "clean": "rm -rf dist",
@@ -22,7 +23,7 @@
     "@asteasolutions/zod-to-openapi": "^7.2.0",
     "@hono/node-server": "^1.13.8",
     "@hono/zod-openapi": "^0.16.4",
-    "@scalar/hono-api-reference": "^0.5.158",
+    "@scalar/hono-api-reference": "^0.5.173",
     "@web-std/file": "^3.0.3",
     "bcryptjs": "^2.4.3",
     "dotenv": "^16.4.5",

@@ -9,6 +9,7 @@ import {
   foreignKey,
   integer,
   index,
+  pgView,
   pgEnum,
 } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
@@ -138,10 +139,10 @@ export const addresses = pgTable(
   {
     addressId: serial("address_id").primaryKey().notNull(),
     applicationId: integer("application_id").notNull(),
-    houseNumber: text("house_number").notNull(),
-    street: text().notNull(),
     city: text().notNull(),
     type: addressType().notNull(),
+    country: text().default("").notNull(),
+    fullAddress: text("full_address").default("").notNull(),
   },
   (table) => {
     return {
@@ -230,4 +231,13 @@ export const admins = pgTable(
       adminsEmailKey: unique("admins_email_key").on(table.email),
     };
   },
+);
+export const adminApplicationsList = pgView("admin_applications_list", {
+  applicationId: integer("application_id"),
+  studentName: text("student_name"),
+  academicDegree: text("academic_degree"),
+  academicProgram: text("academic_program"),
+  isAdminAccepted: boolean("is_admin_accepted"),
+}).as(
+  sql`SELECT a.application_id, s.full_name_ar AS student_name, r.academic_degree, r.academic_program, a.is_admin_accepted FROM applications a JOIN students s USING (student_id) JOIN registerations r USING (application_id)`,
 );

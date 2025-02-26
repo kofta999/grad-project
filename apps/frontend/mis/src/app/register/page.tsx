@@ -1,161 +1,163 @@
-"use client"
-import Link from 'next/link';
-import { useRouter } from 'next/router';
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Card, CardContent } from "@/components/ui/card"
-import { CalendarIcon } from "lucide-react"
-import { cn } from "@/lib/utils"
-import { Calendar } from "@/components/ui/calendar"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+"use client";
+
+import { useEffect, useState } from "react";
+import Step1 from "./_components/step1";
+import Step2 from "./_components/step2";
+import { InferRequestType } from "@repo/mis-api";
+import { Progress } from "@/components/ui/progress";
+import { apiClient } from "@/lib/client";
+import toast, { Toaster } from "react-hot-toast";
+import * as Yup from "yup";
+import { useFormik, FormikProps } from "formik";
+
+export type FormType = InferRequestType<
+  typeof apiClient.auth.register.$post
+>["json"];
+
+export type FormStep1Type = Yup.InferType<typeof step1Schema>;
+export type FormStep2Type = Yup.InferType<typeof step2Schema>;
+
+const step1Schema = Yup.object().shape({
+  fullNameAr: Yup.string().required("الاسم الكامل بالعربية مطلوب"),
+  fullNameEn: Yup.string().required("الاسم الكامل بالإنجليزية مطلوب"),
+  gender: Yup.boolean().required(),
+  nationality: Yup.string().required("الجنسية مطلوبة"),
+  dob: Yup.date()
+    .typeError("تاريخ الميلاد غير صالح")
+    .required("تاريخ الميلاد مطلوب"),
+  email: Yup.string().email("البريد الإلكتروني غير صالح").required("البريد الإلكتروني غير صالح"),
+  fax: Yup.string().optional(),
+  phoneNoMain: Yup.string().required("رقم الهاتف الرئيسي مطلوب"),
+  phoneNoSec: Yup.string().optional(),
+  hashedPassword: Yup.string()
+    .min(8, "كلمة المرور يجب أن تكون 8 أحرف على الأقل")
+    .required("كلمة المرور مطلوبة"),
+  confirmPassword: Yup.string()
+    .min(8, "تأكيد كلمة المرور يجب أن يكون 8 أحرف على الأقل")
+    .required("تأكيد كلمة المرور مطلوب")
+    .oneOf([Yup.ref("hashedPassword")], "كلمة المرور وتأكيدها غير متطابقين"),
+  secQuestion: Yup.string().required("سؤال الأمان مطلوب"),
+  secAnswer: Yup.string().required("إجابة سؤال الأمان مطلوبة"),
+});
+
+const step2Schema = Yup.object().shape({
+  // Will not use url() because its too strict the errors even if the link is correct
+  // Trust me on this one lil bro
+  imageUrl: Yup.string().required("الصورة الشخصية مطلوبة"),
+  idType: Yup.string()
+    .oneOf(["national_id", "passport"])
+    .required("نوع الهوية مطلوب"),
+  idIssuanceDate: Yup.date()
+    .typeError("تاريخ إصدار الهوية غير صالح")
+    .required("تاريخ إصدار الهوية مطلوب"),
+  idNumber: Yup.string().required("رقم الهوية مطلوب"),
+  idAuthority: Yup.string().required("جهة إصدار الهوية مطلوبة"),
+  martialStatus: Yup.string()
+    .oneOf([
+      "single",
+      "married",
+      "married_with_dependents",
+      "divorced",
+      "widow",
+      "other",
+    ])
+    .optional(),
+  isWorking: Yup.boolean().required(),
+  jobType: Yup.string().optional(),
+  militaryStatus: Yup.string().required("حالة الخدمة العسكرية مطلوبة"),
+});
 
 export default function RegistrationForm() {
-  // state for array index == formStep
-  // [Register1, Register2]
-  // initialState = 0
-  // state += 1, state -= 1 + Submit
+  const [step, setStep] = useState(1);
+
+  const handleStep1Submit = async () => {
+    try {
+      await formikStep1.validateForm();
+      if (Object.keys(formikStep1.errors).length === 0) {
+        // toast.success("تم التسجيل بنجاح!");
+        setStep(2);
+      } else {
+        toast.error("الرجاء تصحيح الأخطاء قبل المتابعة.");
+      }
+    } catch (err) {
+      toast.error("حدث خطأ غير متوقع. الرجاء المحاولة مرة أخرى.");
+    }
+  };
+
+  const handleStep2Submit = async (values: FormStep2Type) => {
+    try {
+      const res = await apiClient.auth.register.$post({
+        json: {
+          ...values,
+          ...formikStep1.values,
+          dob: formikStep1.values.dob.toLocaleDateString("en-US"),
+          idIssuanceDate:
+            formikStep2.values.idIssuanceDate.toLocaleDateString("en-US"),
+        },
+      });
+
+      if (!res.ok) {
+        throw new Error(`HTTP error! Status: ${res.status}`);
+      }
+
+      const result = await res.json();
+      console.log("Registration successful:", result);
+      toast.success("تم التسجيل بنجاح!");
+    } catch (err) {
+      console.error("Registration failed:", err);
+      toast.error("فشل التسجيل. الرجاء المحاولة مرة أخرى.");
+    }
+  };
+
+  let formikStep1 = useFormik<FormStep1Type>({
+    initialValues: {
+      fullNameAr: "",
+      fullNameEn: "",
+      gender: false,
+      nationality: "",
+      // @ts-ignore
+      dob: null,
+      email: "",
+      fax: "",
+      phoneNoMain: "",
+      phoneNoSec: "",
+      hashedPassword: "",
+      confirmPassword: "",
+      secQuestion: "",
+      secAnswer: "",
+    },
+    validationSchema: step1Schema,
+    onSubmit: handleStep1Submit,
+  });
+
+  let formikStep2 = useFormik<FormStep2Type>({
+    initialValues: {
+      idAuthority: "",
+      // @ts-ignore
+      idIssuanceDate: null,
+      idNumber: "",
+      idType: "national_id",
+      imageUrl: "",
+      isWorking: false,
+      militaryStatus: "",
+      jobType: "",
+      martialStatus: "single",
+    },
+    validationSchema: step2Schema,
+    onSubmit: handleStep2Submit,
+  });
+
   return (
-    <div className="container mx-auto py-10" dir="rtl">
-      <h1 className="text-2xl font-bold text-center mb-6">نموذج التسجيل الأكاديمي</h1>
-      
-      <div className="max-w-3xl mx-auto space-y-8">
-        {/* Basic Information */}
-        <Card>
-          <CardContent className="pt-6">
-            <h2 className="text-lg font-semibold mb-4">المعلومات الأساسية</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <Label>
-                  الاسم الرباعي (بالانجليزية)
-                  <span className="text-red-500">*</span>
-                </Label>
-                <Input />
-              </div>
-              <div className="space-y-2">
-                <Label>
-                  الاسم الرباعي (بالعربية)
-                  <span className="text-red-500">*</span>
-                </Label>
-                <Input />
-              </div>
-              <div className="space-y-2">
-                <Label>
-                  الجنسية
-                  <span className="text-red-500">*</span>
-                </Label>
-                <Input />
-              </div>
-              <div className="space-y-2">
-                <Label>
-                  النوع (الجنس)
-                  <span className="text-red-500">*</span>
-                </Label>
-                <Select>
-                  <SelectTrigger>
-                    <SelectValue placeholder="اختر النوع" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="male">ذكر</SelectItem>
-                    <SelectItem value="female">أنثى</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <Label>
-                  تاريخ الميلاد
-                  <span className="text-red-500">*</span>
-                </Label>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button variant={"outline"} className={cn("w-full justify-start text-right font-normal")}>
-                      <CalendarIcon className="ml-2 h-4 w-4" />
-                      <span>اختر التاريخ</span>
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0">
-                    <Calendar mode="single" initialFocus />
-                  </PopoverContent>
-                </Popover>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+    <>
+      <Progress value={step === 1 ? 0 : 50} className="sticky top-0 z-40" />
 
-        {/* Contact Information */}
-        <Card>
-          <CardContent className="pt-6">
-            <h2 className="text-lg font-semibold mb-4">معلومات الاتصال</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <Label>
-                  البريد الإلكتروني
-                  <span className="text-red-500">*</span>
-                </Label>
-                <Input type="email" />
-              </div>
-              <div className="space-y-2">
-                <Label>
-                  رقم الهاتف
-                  <span className="text-red-500">*</span>
-                </Label>
-                <Input type="tel" />
-              </div>
-              <div className="space-y-2">
-                <Label>رقم هاتف آخر</Label>
-                <Input type="tel" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+      {step === 1 && <Step1 formik={formikStep1} />}
 
-        {/* Security */}
-        <Card>
-          <CardContent className="pt-6">
-            <h2 className="text-lg font-semibold mb-4">الأمان</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <Label>
-                  كلمة المرور
-                  <span className="text-red-500">*</span>
-                </Label>
-                <Input type="password" />
-              </div>
-              <div className="space-y-2">
-                <Label>
-                  تأكيد كلمة المرور
-                  <span className="text-red-500">*</span>
-                </Label>
-                <Input type="password" />
-              </div>
-              <div className="space-y-2">
-                <Label>
-                  سؤال الأمان
-                  <span className="text-red-500">*</span>
-                </Label>
-                <Input />
-              </div>
-              <div className="space-y-2">
-                <Label>
-                  إجابة سؤال الأمان
-                  <span className="text-red-500">*</span>
-                </Label>
-                <Input />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+      {step !== 1 && (
+        <Step2 goPrevStep={() => setStep(1)} formik={formikStep2} />
+      )}
 
-        <div className="flex justify-center">
-        <Link href="/register/step2">
-           <button className="px-8 py-2 bg-indigo-600 hover:bg-indigo-700 text-white">
-               التالي
-          </button>
-         </Link>
-        </div>
-       </div>
-    </div>
-    
-  )
+      <Toaster />
+    </>
+  );
 }

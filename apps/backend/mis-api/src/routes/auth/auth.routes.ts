@@ -1,4 +1,4 @@
-import { loginSchema, registerStep1Schema } from "@/db/validators";
+import { loginSchema, registerSchema } from "@/db/validators";
 import { createRoute, z } from "@hono/zod-openapi";
 import { jsonContent, jsonContentRequired } from "stoker/openapi/helpers";
 import * as HttpStatusCodes from "stoker/http-status-codes";
@@ -23,7 +23,7 @@ export const register = createRoute({
   method: "post",
   tags,
   request: {
-    body: jsonContentRequired(registerStep1Schema, "Register stage 1 data"),
+    body: jsonContentRequired(registerSchema, "Register stage 1 data"),
   },
   responses: {
     [HttpStatusCodes.OK]: jsonContent(
@@ -31,7 +31,7 @@ export const register = createRoute({
       "Register stage 1 completed",
     ),
     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
-      createErrorSchema(registerStep1Schema),
+      createErrorSchema(registerSchema),
       "The validation error(s)",
     ),
   },
