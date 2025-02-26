@@ -160,6 +160,7 @@ export const studentApplicationDetailsSchema = z.object({
 });
 
 export const editStudentInfoSchema = createUpdateSchema(students).omit({
+  studentId: true,
   createdAt: true,
   updatedAt: true,
 });
