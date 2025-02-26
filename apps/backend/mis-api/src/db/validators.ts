@@ -159,7 +159,6 @@ export const studentApplicationDetailsSchema = z.object({
   application: applicationDetailsSchema,
 });
 
-//I don't sure of this data yet ya darsh. Just for test
 export const editStudentInfoSchema = createUpdateSchema(students).omit({
   createdAt: true,
   updatedAt: true,
