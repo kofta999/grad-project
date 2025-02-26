@@ -21,6 +21,7 @@ import { CalendarIcon } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import { FormType } from "../page";
 import { cn } from "@/lib/utils";
+import toast, { Toaster } from 'react-hot-toast';
 
 interface Step2Props {
   // onSubmit: (formData: Partial<FormType>) => void;
@@ -44,7 +45,7 @@ export default function Step2({
       goNextStep();
     } catch (err) {
       console.error("Registration failed:", err);
-      alert("فشل التسجيل. الرجاء المحاولة مرة أخرى.");
+      toast.error("فشل التسجيل. الرجاء المحاولة مرة أخرى.");
     }
   };
 

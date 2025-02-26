@@ -6,6 +6,7 @@ import { apiClient } from "@/lib/client";
 import Step1 from "./_components/step1";
 import Step2 from "./_components/step2";
 import { useApplicationIdContext } from "./application-id-context";
+import toast, { Toaster } from "react-hot-toast";
 
 export type FormType = InferRequestType<
   typeof apiClient.applications.$post
@@ -78,10 +79,10 @@ export default function ApplicationForm1() {
         const result = await res.json();
         setApplicationId(result.applicationId);
         console.log("Registration successful:", result);
-        alert("تم التسجيل بنجاح!");
+        toast.success("تم التسجيل بنجاح!");
       } catch (err) {
         console.error("Registration failed:", err);
-        alert("فشل التسجيل. الرجاء المحاولة مرة أخرى.");
+        toast.error("فشل التسجيل. الرجاء المحاولة مرة أخرى.");
       }
     };
 
@@ -113,6 +114,8 @@ export default function ApplicationForm1() {
           setFormData={setFormData}
         />
       )}
+
+      <Toaster />
     </>
   );
 }

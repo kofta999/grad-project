@@ -22,5 +22,8 @@
     "apps/frontend/*",
     "apps/backend/*",
     "packages/*"
-  ]
+  ],
+  "dependencies": {
+    "zod": "^3.24.2"
+  }
 }
