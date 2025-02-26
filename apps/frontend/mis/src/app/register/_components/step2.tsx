@@ -3,7 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardGrid, CardHeader } from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { CalendarIcon, Upload } from "lucide-react";
+import { Briefcase, Building, CalendarIcon, CreditCard, Shield, Upload } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
@@ -22,284 +22,307 @@ import { Container, ContainerTitle } from "@/components/ui/container";
 import { FormType } from "../page";
 import { cn } from "@/lib/utils";
 import { apiClient } from "@/lib/client";
+import { FormikProps } from 'formik';
+
 
 interface Step2Props {
   goNextStep: () => void;
   goPrevStep: () => void;
   formData: FormType;
-  setFormData: React.Dispatch<React.SetStateAction<FormType>>;
+  formik: FormikProps<FormType>;
 }
+
 
 export default function Step2({
   goNextStep,
   goPrevStep,
-  formData,
-  setFormData,
+  formik
 }: Step2Props) {
+  
   const handlePhotoUpload = async (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      const res = await apiClient.auth.upload.$post({ form: { file } });
+  event: React.ChangeEvent<HTMLInputElement>,
+) => {
+  const file = event.target.files?.[0];
+  if (file) {
+    const res = await apiClient.auth.upload.$post({ form: { file } });
 
-      if (res.ok) {
-        const { uploadUrl } = await res.json();
-        setFormData((prev) => ({ ...prev, imageUrl: uploadUrl }));
-      }
+    if (res.ok) {
+      const { uploadUrl } = await res.json();
+      formik.setFieldValue("imageUrl", uploadUrl);
     }
-  };
+  }
+};
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    try {
-      goNextStep();
-    } catch (err) {
-      console.error("Registration failed:", err);
-      alert("فشل التسجيل. الرجاء المحاولة مرة أخرى.");
-    }
-  };
 
   return (
     <Container>
       <ContainerTitle>تابع إنشاء حسابك</ContainerTitle>
-      {/* Identity Information */}
-      <Card>
-        <CardContent>
-          <CardHeader>الهوية</CardHeader>
-          <CardGrid>
-            <div className="space-y-2">
-              <Label>
-                نوع الهوية<span className="text-red-500">*</span>
-              </Label>
-              <Select
-                name="idType"
-                onValueChange={(value: "national_id" | "passport") =>
-                  setFormData((prev) => ({ ...prev, idType: value }))
-                }
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="اختر نوع الهوية" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="national_id">بطاقة وطنية</SelectItem>
-                  <SelectItem value="passport">جواز سفر</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <Label>
-                رقم الهوية<span className="text-red-500">*</span>
-              </Label>
-              <Input
-                name="idNumber"
-                value={formData.idNumber}
-                onChange={handleInputChange}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label>
-                تاريخ اصدار الهوية<span className="text-red-500">*</span>
-              </Label>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant={"outline"}
-                    className={cn(
-                      "w-full justify-start text-right font-normal",
-                      !formData.idIssuanceDate && "text-muted-foreground",
-                    )}
-                  >
-                    {formData.idIssuanceDate ? (
-                      formData.idIssuanceDate
-                    ) : (
-                      <span>اختر التاريخ</span>
-                    )}
-                    <CalendarIcon className="mr-auto h-4 w-4 text-mainColor" />
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0">
-                  <Calendar
-                    mode="single"
-                    selected={
-                      formData.idIssuanceDate
-                        ? new Date(formData.idIssuanceDate)
-                        : undefined
-                    }
-                    onSelect={(date) =>
-                      setFormData((prev) => ({
-                        ...prev,
-                        idIssuanceDate: date
-                          ? date.toLocaleDateString("en-US")
-                          : "",
-                      }))
-                    }
-                    initialFocus
-                  />
-                </PopoverContent>
-              </Popover>
-            </div>
-            <div className="space-y-2">
-              <Label>
-                جهة الاصدار<span className="text-red-500">*</span>
-              </Label>
-              <Input
-                name="idAuthority"
-                value={formData.idAuthority}
-                onChange={handleInputChange}
-              />
-            </div>
-          </CardGrid>
-        </CardContent>
-      </Card>
-
-      {/* Additional Information */}
-      <Card>
-        <CardContent>
-          <CardHeader>معلومات إضافية</CardHeader>
-          <CardGrid>
-            <div className="space-y-2">
-              <Label>
-                الحالة الاجتماعية<span className="text-red-500">*</span>
-              </Label>
-              <Select
-                name="maritalStatus"
-                onValueChange={(value: FormType["martialStatus"]) =>
-                  setFormData((prev) => ({ ...prev, martialStatus: value }))
-                }
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="اختر الحالة" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="single">أعزب</SelectItem>
-                  <SelectItem value="married">متزوج</SelectItem>
-                  <SelectItem value="married_with_dependents">
-                    متزوج ويعول
-                  </SelectItem>
-                  <SelectItem value="divorced">مطلق</SelectItem>
-                  <SelectItem value="widowed">أرمل</SelectItem>
-                  <SelectItem value="other">أخرى</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <Label>
-                الحالة العسكرية<span className="text-red-500">*</span>
-              </Label>
-              <Input
-                name="militaryStatus"
-                value={formData.militaryStatus}
-                onChange={handleInputChange}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label>
-                الطالب يعمل؟<span className="text-red-500">*</span>
-              </Label>
-              <RadioGroup
-                name="isWorking"
-                value={formData.isWorking ? "yes" : "no"}
-                onValueChange={(value) =>
-                  setFormData((prev) => ({
-                    ...prev,
-                    isWorking: value === "yes",
-                  }))
-                }
-                className="flex gap-4 pt-2 justify-end"
-              >
-                <div className="flex items-center gap-2 space-x-2 space-x-reverse">
-                  <Label htmlFor="yes">نعم</Label>
-                  <RadioGroupItem
-                    className="text-mainColor border-[#8C8686]"
-                    value="yes"
-                    id="yes"
-                  />
-                </div>
-                <div className="flex items-center gap-2 space-x-2 space-x-reverse">
-                  <Label htmlFor="no">لا</Label>
-                  <RadioGroupItem
-                    className="text-mainColor border-[#8C8686]"
-                    value="no"
-                    id="no"
-                  />
-                </div>
-              </RadioGroup>
-            </div>
-            <div className="space-y-2">
-              <Label>جهة العمل</Label>
-              <Input
-                type="text"
-                name="jobType"
-                value={formData.jobType as any}
-                onChange={handleInputChange}
-                disabled={!formData.isWorking}
-              />
-            </div>
-          </CardGrid>
-        </CardContent>
-      </Card>
-
-      {/* Personal Photo */}
-      <Card>
-        <CardContent>
-          <CardHeader>الصورة الشخصية</CardHeader>
-          <div className="flex flex-col items-center gap-4">
-            <div className="w-32 h-32 rounded-full bg-gray-100 border-2 border-dashed border-gray-300 flex items-center justify-center overflow-hidden">
-              {formData.imageUrl ? (
-                <Image
-                  src={formData.imageUrl || "/placeholder.svg"}
-                  alt="Personal photo"
-                  width={128}
-                  height={128}
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <Upload className="w-8 h-8 text-gray-400" />
-              )}
-            </div>
-            <div className="w-full">
-              <Label className="w-full">
-                <div className="bg-mainColor py-3 px-4 rounded text-center cursor-pointer hover:bg-blue-700 transition-colors text-white">
-                  اختر صورة للتحميل
-                </div>
+      <form onSubmit={formik.handleSubmit}>
+        {/* Identity Information */}
+        <Card>
+          <CardContent>
+            <CardHeader>الهوية</CardHeader>
+            <CardGrid>
+              <div className="space-y-2">
+                <Label>
+                  نوع الهوية<span className="text-red-500">*</span>
+                </Label>
+                <Select
+                  name="idType"
+                  value={formik.values.idType}
+                  onValueChange={(value) =>
+                    formik.setFieldValue("idType", value)
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="اختر نوع الهوية" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="national_id">بطاقة وطنية</SelectItem>
+                    <SelectItem value="passport">جواز سفر</SelectItem>
+                  </SelectContent>
+                </Select>
+                {formik.touched.idType && formik.errors.idType && (
+                  <p className="text-red-500 text-sm">{formik.errors.idType}</p>
+                )}
+              </div>
+              <div className="space-y-2">
+                <Label>
+                  رقم الهوية<span className="text-red-500">*</span>
+                </Label>
                 <Input
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  onChange={handlePhotoUpload}
+                  name="idNumber"
+                  value={formik.values.idNumber}
+                  onChange={formik.handleChange}
+                  icon={<CreditCard className="h-4 w-4" />}
                 />
-              </Label>
-              <p className="text-sm text-red-500 text-center mt-2">
-                * يجب أن لا يزيد الملف عن 2 ميجا بايت
-              </p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+                {formik.touched.idNumber && formik.errors.idNumber && (
+                  <p className="text-red-500 text-sm">
+                    {formik.errors.idNumber}
+                  </p>
+                )}
+              </div>
+              <div className="space-y-2">
+                <Label>
+                  تاريخ اصدار الهوية<span className="text-red-500">*</span>
+                </Label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant={"outline"}
+                      className={cn(
+                        "w-full justify-start text-right font-normal",
+                        !formik.values.idIssuanceDate && "text-muted-foreground"
+                      )}
+                    >
+                      {formik.values.idIssuanceDate ? (
+                        // Format the date for display
+                        formik.values.idIssuanceDate.toLocaleDateString("en-US")
+                      ) : (
+                        <span>اختر التاريخ</span>
+                      )}
+                      <CalendarIcon className="mr-auto h-4 w-4 text-mainColor" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0">
+                    <Calendar
+                      mode="single"
+                      selected={formik.values.idIssuanceDate}
+                      onSelect={(date) => {
+                        if (date) {
+                          formik.setFieldValue("idIssuanceDate", date);
+                        }
+                      }}
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
+                {formik.touched.idIssuanceDate &&
+                  formik.errors.idIssuanceDate && (
+                    <p className="text-red-500 text-sm">
+                      {formik.errors.idIssuanceDate}
+                    </p>
+                  )}
+              </div>
+              <div className="space-y-2">
+                <Label>
+                  جهة الاصدار<span className="text-red-500">*</span>
+                </Label>
+                <Input
+                  name="idAuthority"
+                  value={formik.values.idAuthority}
+                  onChange={formik.handleChange}
+                  icon={<Building className="h-4 w-4" />}
+                />
+                {formik.touched.idAuthority && formik.errors.idAuthority && (
+                  <p className="text-red-500 text-sm">
+                    {formik.errors.idAuthority}
+                  </p>
+                )}
+              </div>
+            </CardGrid>
+          </CardContent>
+        </Card>
 
-      {/* Submit Buttons */}
-      <div className="flex justify-center gap-16">
-        <Button
-          variant="outline"
-          className="border-[#BABABA]"
-          onClick={goPrevStep}
-        >
-          السابق
-        </Button>
-        <Button
-          className="bg-mainColor hover:bg-blue-700 text-white"
-          onClick={handleSubmit}
-        >
-          التسجيل
-        </Button>
-      </div>
+        {/* Additional Information */}
+        <Card>
+          <CardContent>
+            <CardHeader>معلومات إضافية</CardHeader>
+            <CardGrid>
+              <div className="space-y-2">
+                <Label>
+                  الحالة الاجتماعية<span className="text-red-500">*</span>
+                </Label>
+                <Select
+                  name="maritalStatus"
+                  value={formik.values.maritalStatus} // Bind Formik state
+                  onValueChange={(value) =>
+                    formik.setFieldValue("maritalStatus", value)
+                  } // Update Formik state
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="اختر الحالة" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="single">أعزب</SelectItem>
+                    <SelectItem value="married">متزوج</SelectItem>
+                    <SelectItem value="married_with_dependents">
+                      متزوج ويعول
+                    </SelectItem>
+                    <SelectItem value="divorced">مطلق</SelectItem>
+                    <SelectItem value="widowed">أرمل</SelectItem>
+                    <SelectItem value="other">أخرى</SelectItem>
+                  </SelectContent>
+                </Select>
+
+                {formik.touched.martialStatus &&
+                  formik.errors.martialStatus && (
+                    <p className="text-red-500 text-sm">
+                      {formik.errors.martialStatus}
+                    </p>
+                  )}
+              </div>
+              <div className="space-y-2">
+                <Label>
+                  الحالة العسكرية<span className="text-red-500">*</span>
+                </Label>
+                <Input
+                  name="militaryStatus"
+                  value={formik.values.militaryStatus}
+                  onChange={formik.handleChange}
+                  icon={<Shield className="h-4 w-4" />}
+                />
+                {formik.touched.militaryStatus &&
+                  formik.errors.militaryStatus && (
+                    <p className="text-red-500 text-sm">
+                      {formik.errors.militaryStatus}
+                    </p>
+                  )}
+              </div>
+              <div className="space-y-2">
+                <Label>
+                  الطالب يعمل؟<span className="text-red-500">*</span>
+                </Label>
+                <RadioGroup
+                  name="isWorking"
+                  value={formik.values.isWorking ? "yes" : "no"}
+                  onValueChange={(value) =>
+                    formik.setFieldValue("isWorking", value === "yes")
+                  }
+                  className="flex gap-4 pt-2 justify-end"
+                >
+                  <div className="flex items-center gap-2 space-x-2 space-x-reverse">
+                    <Label htmlFor="yes">نعم</Label>
+                    <RadioGroupItem value="yes" id="yes" />
+                  </div>
+                  <div className="flex items-center gap-2 space-x-2 space-x-reverse">
+                    <Label htmlFor="no">لا</Label>
+                    <RadioGroupItem value="no" id="no" />
+                  </div>
+                </RadioGroup>
+                {formik.touched.isWorking && formik.errors.isWorking && (
+                  <p className="text-red-500 text-sm">
+                    {formik.errors.isWorking}
+                  </p>
+                )}
+              </div>
+              <div className="space-y-2">
+                <Label>جهة العمل</Label>
+                <Input
+                  type="text"
+                  name="jobType"
+                  value={formik.values.jobType as any}
+                  onChange={formik.handleChange}
+                  disabled={!formik.values.isWorking}
+                  icon={<Briefcase className="h-4 w-4" />}
+                />
+              </div>
+              {formik.touched.jobType && formik.errors.jobType && (
+                <p className="text-red-500 text-sm">{formik.errors.jobType}</p>
+              )}
+            </CardGrid>
+          </CardContent>
+        </Card>
+
+        {/* Personal Photo */}
+        <Card>
+          <CardContent>
+            <CardHeader>الصورة الشخصية</CardHeader>
+            <div className="flex flex-col items-center gap-4">
+              <div className="w-32 h-32 rounded-full bg-gray-100 border-2 border-dashed border-gray-300 flex items-center justify-center overflow-hidden">
+                {formik.values.imageUrl ? (
+                  <Image
+                    src={formik.values.imageUrl || "/placeholder.svg"}
+                    alt="Personal photo"
+                    width={128}
+                    height={128}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <Upload className="w-8 h-8 text-gray-400" />
+                )}
+              </div>
+              <div className="w-full">
+                <Label className="w-full">
+                  <div className="bg-mainColor py-3 px-4 rounded text-center cursor-pointer hover:bg-blue-700 transition-colors text-white">
+                    اختر صورة للتحميل
+                  </div>
+                  <Input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={handlePhotoUpload}
+                  />
+                </Label>
+                <p className="text-sm text-red-500 text-center mt-2">
+                  * يجب أن لا يزيد الملف عن 2 ميجا بايت
+                </p>
+              </div>
+            </div>
+            {formik.touched.imageUrl && formik.errors.imageUrl && (
+              <p className="text-red-500 text-sm">{formik.errors.imageUrl}</p>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Submit Buttons */}
+        <div className="flex justify-center gap-16">
+          <Button
+            variant="outline"
+            className="border-[#BABABA]"
+            onClick={goPrevStep}
+          >
+            السابق
+          </Button>
+          <Button
+            className="bg-mainColor hover:bg-blue-700 text-white"
+            type="submit"
+            onClick={goNextStep}
+          >
+            التسجيل
+          </Button>
+        </div>
+      </form>
     </Container>
   );
 }

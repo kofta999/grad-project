@@ -118,7 +118,7 @@ export default function SideNav() {
     <>
       {/* Hamburger Button */}
       <button
-        className="xl:hidden fixed top-4 right-4 bg-blue-600 text-white p-2 rounded-full z-50"
+        className="xl:hidden fixed top-6 right-4 bg-blue-600 text-white p-2 rounded-full z-50"
         onClick={() => setIsOpen(true)}
       >
         <Menu />
@@ -126,7 +126,7 @@ export default function SideNav() {
 
       {/* Sidebar */}
       <div
-        className={`fixed top-0 right-0 h-screen overflow-y-auto bg-white shadow-lg p-4 flex flex-col justify-between w-[320px] transition-transform duration-300 
+        className={`fixed top-0 right-0 h-screen overflow-y-auto bg-white z-50 shadow-lg p-4 flex flex-col justify-between w-[320px] transition-transform duration-300 
         ${isOpen ? "translate-x-0 z-50" : "translate-x-full"} xl:translate-x-0 md:p-6`}
       >
         {/* Close Button (Only Visible on Small Screens) */}

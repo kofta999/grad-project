@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import toast, { Toaster } from "react-hot-toast";
 import {
   Card,
   CardContent,
@@ -15,7 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Phone } from "lucide-react";
+import { MapPin, Phone,User, Mail } from "lucide-react";
 import { hcWithType } from "@repo/mis-api";
 import { Container, ContainerTitle } from "@/components/ui/container";
 import Link from "next/link";
@@ -42,7 +43,7 @@ export default function Step1({
       // onSubmit(formData);
     } catch (err) {
       console.error("Registration failed:", err);
-      alert("فشل التسجيل. الرجاء المحاولة مرة أخرى.");
+      toast.error("فشل التسجيل. الرجاء المحاولة مرة أخرى.");
     }
   };
 
@@ -128,7 +129,7 @@ export default function Step1({
                 </Select>
               </div>
 
-              <div className="space-y-2 md:col-span-2">
+              <div className="space-y-2 md:col-span-2 w-full md:w-1/2 mx-auto">
                 <Label>
                   العنوان
                   <span className="text-red-500">*</span>
@@ -138,6 +139,7 @@ export default function Step1({
                   value={formData.permanentAddress.fullAddress}
                   onChange={handleInputChange}
                   required
+                  icon={<MapPin className="h-4 w-4" />}
                 />
               </div>
             </CardGrid>
@@ -194,7 +196,7 @@ export default function Step1({
                 </Select>
               </div>
 
-              <div className="space-y-2 md:col-span-2">
+              <div className="space-y-2 md:col-span-2 w-full md:w-1/2 mx-auto">
                 <Label>
                   العنوان
                   <span className="text-red-500">*</span>
@@ -204,6 +206,7 @@ export default function Step1({
                   value={formData.currentAddress.fullAddress}
                   onChange={handleInputChange}
                   required
+                  icon={<MapPin className="h-4 w-4" />}
                 />
               </div>
             </CardGrid>
@@ -221,6 +224,7 @@ export default function Step1({
                   name="emergencyContact.name"
                   value={formData.emergencyContact?.name}
                   onChange={handleInputChange}
+                  icon={<User className="h-4 w-4" />}
                 />
               </div>
               <div className="space-y-2">
@@ -229,6 +233,8 @@ export default function Step1({
                   name="emergencyContact.address"
                   value={formData.emergencyContact?.address ?? ""}
                   onChange={handleInputChange}
+                  icon={<MapPin className="h-4 w-4" />}
+
                 />
               </div>
               <div className="space-y-2">
@@ -238,6 +244,8 @@ export default function Step1({
                   name="emergencyContact.phoneNumber"
                   value={formData.emergencyContact?.phoneNumber}
                   onChange={handleInputChange}
+                  icon={<Phone className="h-4 w-4" />}
+
                 />
               </div>
               <div className="space-y-2">
@@ -247,6 +255,8 @@ export default function Step1({
                   name="emergencyContact.email"
                   value={formData.emergencyContact?.email ?? ""}
                   onChange={handleInputChange}
+                  icon={<Mail className="h-4 w-4" />}
+
                 />
               </div>
             </CardGrid>
