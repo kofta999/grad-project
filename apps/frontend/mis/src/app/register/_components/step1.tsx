@@ -9,7 +9,17 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardGrid } from "@/components/ui/card";
-import { CalendarIcon, Flag, User, Mail, Printer, UserCheck, Eye, Phone, Shield } from "lucide-react";
+import {
+  CalendarIcon,
+  Flag,
+  User,
+  Mail,
+  Printer,
+  UserCheck,
+  Eye,
+  Phone,
+  Shield,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Calendar } from "@/components/ui/calendar";
 import {
@@ -18,43 +28,20 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Container, ContainerTitle } from "@/components/ui/container";
-import { FormType, registerSchema } from "../page";
-import toast from 'react-hot-toast';
-import { FormikProps } from 'formik';
-
+import { FormStep1Type } from "../page";
+import { FormikProps } from "formik";
 
 interface Step1Props {
-  updateStep: () => void;
-  formData: FormType;
-  formik: FormikProps<FormType>
+  formik: FormikProps<FormStep1Type>;
 }
 
-export default function Step1({
-  updateStep,
-  formik
-}: Step1Props) { 
-
-
-// Handle form submission
-  const handleStep1Submit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  try {
-    await formik.validateForm();
-    if (Object.keys(formik.errors).length === 0) {
-      toast.success("تم التسجيل بنجاح!");
-      updateStep();
-    } else {
-      toast.error("الرجاء تصحيح الأخطاء قبل المتابعة.");
-    }
-  } catch (err) {
-    toast.error("حدث خطأ غير متوقع. الرجاء المحاولة مرة أخرى.");
-  }
-};
+export default function Step1({ formik }: Step1Props) {
+  // Handle form submission
 
   return (
     <Container>
       <ContainerTitle>إنشاء حساب جديد</ContainerTitle>
-      <form onSubmit={handleStep1Submit}>
+      <form onSubmit={formik.handleSubmit}>
         {/* Basic Information */}
         <Card>
           <CardContent>
@@ -148,7 +135,7 @@ export default function Step1({
                       variant={"outline"}
                       className={cn(
                         "w-full justify-start text-right font-normal",
-                        !formik.values.dob && "text-muted-foreground"
+                        !formik.values.dob && "text-muted-foreground",
                       )}
                     >
                       {formik.values.dob ? (
@@ -174,7 +161,9 @@ export default function Step1({
                   </PopoverContent>
                 </Popover>
                 {formik.touched.dob && formik.errors.dob && (
-                  <p className="text-red-500 text-sm">{formik.errors.dob}</p>
+                  <p className="text-red-500 text-sm">
+                    <>{formik.errors.dob}</>
+                  </p>
                 )}
               </div>
             </CardGrid>
@@ -356,4 +345,4 @@ export default function Step1({
       </form>
     </Container>
   );
-};
+}

@@ -3,7 +3,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardGrid, CardHeader } from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Briefcase, Building, CalendarIcon, CreditCard, Shield, Upload } from "lucide-react";
+import {
+  Briefcase,
+  Building,
+  CalendarIcon,
+  CreditCard,
+  Shield,
+  Upload,
+} from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
@@ -19,40 +26,31 @@ import {
 } from "@/components/ui/select";
 import Image from "next/image";
 import { Container, ContainerTitle } from "@/components/ui/container";
-import { FormType } from "../page";
+import { FormStep2Type, FormType } from "../page";
 import { cn } from "@/lib/utils";
 import { apiClient } from "@/lib/client";
-import { FormikProps } from 'formik';
-
+import { FormikProps } from "formik";
 
 interface Step2Props {
-  goNextStep: () => void;
   goPrevStep: () => void;
-  formData: FormType;
-  formik: FormikProps<FormType>;
+  formik: FormikProps<FormStep2Type>;
 }
 
-
-export default function Step2({
-  goNextStep,
-  goPrevStep,
-  formik
-}: Step2Props) {
-  
+export default function Step2({ goPrevStep, formik }: Step2Props) {
   const handlePhotoUpload = async (
-  event: React.ChangeEvent<HTMLInputElement>,
-) => {
-  const file = event.target.files?.[0];
-  if (file) {
-    const res = await apiClient.auth.upload.$post({ form: { file } });
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const res = await apiClient.auth.upload.$post({ form: { file } });
 
-    if (res.ok) {
-      const { uploadUrl } = await res.json();
-      formik.setFieldValue("imageUrl", uploadUrl);
+      if (res.ok) {
+        const { uploadUrl } = await res.json();
+        console.log(uploadUrl);
+        formik.setFieldValue("imageUrl", uploadUrl);
+      }
     }
-  }
-};
-
+  };
 
   return (
     <Container>
@@ -70,7 +68,7 @@ export default function Step2({
                 <Select
                   name="idType"
                   value={formik.values.idType}
-                  onValueChange={(value) =>
+                  onValueChange={(value: string) =>
                     formik.setFieldValue("idType", value)
                   }
                 >
@@ -112,7 +110,8 @@ export default function Step2({
                       variant={"outline"}
                       className={cn(
                         "w-full justify-start text-right font-normal",
-                        !formik.values.idIssuanceDate && "text-muted-foreground"
+                        !formik.values.idIssuanceDate &&
+                          "text-muted-foreground",
                       )}
                     >
                       {formik.values.idIssuanceDate ? (
@@ -140,7 +139,7 @@ export default function Step2({
                 {formik.touched.idIssuanceDate &&
                   formik.errors.idIssuanceDate && (
                     <p className="text-red-500 text-sm">
-                      {formik.errors.idIssuanceDate}
+                      <>{formik.errors.idIssuanceDate}</>
                     </p>
                   )}
               </div>
@@ -175,9 +174,9 @@ export default function Step2({
                 </Label>
                 <Select
                   name="maritalStatus"
-                  value={formik.values.maritalStatus} // Bind Formik state
-                  onValueChange={(value) =>
-                    formik.setFieldValue("maritalStatus", value)
+                  value={formik.values.martialStatus} // Bind Formik state
+                  onValueChange={(value: string) =>
+                    formik.setFieldValue("martialStatus", value)
                   } // Update Formik state
                 >
                   <SelectTrigger>
@@ -226,7 +225,7 @@ export default function Step2({
                 <RadioGroup
                   name="isWorking"
                   value={formik.values.isWorking ? "yes" : "no"}
-                  onValueChange={(value) =>
+                  onValueChange={(value: string) =>
                     formik.setFieldValue("isWorking", value === "yes")
                   }
                   className="flex gap-4 pt-2 justify-end"
@@ -317,7 +316,6 @@ export default function Step2({
           <Button
             className="bg-mainColor hover:bg-blue-700 text-white"
             type="submit"
-            onClick={goNextStep}
           >
             التسجيل
           </Button>
