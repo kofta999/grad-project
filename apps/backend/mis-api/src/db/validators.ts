@@ -1,4 +1,8 @@
-import { createInsertSchema, createSelectSchema } from "drizzle-zod";
+import {
+  createInsertSchema,
+  createSelectSchema,
+  createUpdateSchema,
+} from "drizzle-zod";
 import {
   academicQualifications,
   addresses,
@@ -64,8 +68,7 @@ export const acceptApplicationSchema = createSelectSchema(applications).omit({
 });
 
 //I don't sure of this data yet ya darsh. Just for test
-export const editStudentInfoSchema = z.object({
-  name: z.string().optional(),
-  email: z.string().email().optional(),
-  phone: z.string().optional(),
+export const editStudentInfoSchema = createUpdateSchema(students).omit({
+  createdAt: true,
+  updatedAt: true,
 });

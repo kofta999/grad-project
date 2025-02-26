@@ -112,7 +112,9 @@ export const saveApplicationAttachments: AppRouteHandler<
   return c.json({ success: true, applicationId }, HttpStatusCodes.OK);
 };
 
-export const editStudentInfo: AppRouteHandler<EditStudentInfoRoute> = async (c) => {
+export const editStudentInfo: AppRouteHandler<EditStudentInfoRoute> = async (
+  c,
+) => {
   const studentId = c.var.session.get("id");
 
   if (!studentId) {
@@ -132,7 +134,13 @@ export const editStudentInfo: AppRouteHandler<EditStudentInfoRoute> = async (c) 
     return c.json({ message: "Student not found" }, HttpStatusCodes.NOT_FOUND);
   }
 
-  await db.update(students).set(updatedData).where(eq(students.studentId, studentId));
+  await db
+    .update(students)
+    .set(updatedData)
+    .where(eq(students.studentId, studentId));
 
-  return c.json({ message: "Student info updated successfully" }, HttpStatusCodes.OK);
+  return c.json(
+    { message: "Student info updated successfully" },
+    HttpStatusCodes.OK,
+  );
 };
