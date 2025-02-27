@@ -1,4 +1,8 @@
-import { createInsertSchema, createSelectSchema } from "drizzle-zod";
+import {
+  createInsertSchema,
+  createSelectSchema,
+  createUpdateSchema,
+} from "drizzle-zod";
 import {
   academicQualifications,
   addresses,
@@ -153,4 +157,10 @@ export const adminApplicationDetailsSchema = z.object({
 
 export const studentApplicationDetailsSchema = z.object({
   application: applicationDetailsSchema,
+});
+
+export const editStudentInfoSchema = createUpdateSchema(students).omit({
+  studentId: true,
+  createdAt: true,
+  updatedAt: true,
 });
