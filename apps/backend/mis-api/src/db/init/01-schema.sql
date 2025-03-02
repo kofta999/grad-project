@@ -152,7 +152,7 @@ CREATE TABLE courses (
     title TEXT NOT NULL,
     -- Refers to a prerequisite course
     prerequisite INT DEFAULT NULL,
-    total_hours INT,
+    total_hours INT
 );
 
 CREATE TABLE department_courses (
