@@ -163,6 +163,15 @@ CREATE TABLE department_courses (
     PRIMARY KEY (course_id, department_id) -- Composite primary key
 );
 
+CREATE TABLE course_results (
+    result_id SERIAL PRIMARY KEY,
+    course_id INT NOT NULL,
+    application_id INT NOT NULL,
+    grade INT NOT NULL,
+    FOREIGN KEY (course_id) REFERENCES courses(course_id),
+    FOREIGN KEY (application_id) REFERENCES applications(application_id)
+);
+
 
 -- Create views
 CREATE VIEW admin_applications_list

@@ -8,6 +8,7 @@ import {
   academicQualifications,
   students,
   courses,
+  courseResults,
   departmentCourses,
   departments,
 } from "./schema";
@@ -31,6 +32,7 @@ export const applicationsRelations = relations(
       fields: [applications.studentId],
       references: [students.studentId],
     }),
+    courseResults: many(courseResults),
   }),
 );
 
@@ -72,6 +74,22 @@ export const studentsRelations = relations(students, ({ many }) => ({
   applications: many(applications),
 }));
 
+export const courseResultsRelations = relations(courseResults, ({ one }) => ({
+  course: one(courses, {
+    fields: [courseResults.courseId],
+    references: [courses.courseId],
+  }),
+  application: one(applications, {
+    fields: [courseResults.applicationId],
+    references: [applications.applicationId],
+  }),
+}));
+
+export const coursesRelations = relations(courses, ({ many }) => ({
+  courseResults: many(courseResults),
+  departmentCourses: many(departmentCourses),
+}));
+
 export const departmentCoursesRelations = relations(
   departmentCourses,
   ({ one }) => ({
@@ -85,10 +103,6 @@ export const departmentCoursesRelations = relations(
     }),
   }),
 );
-
-export const coursesRelations = relations(courses, ({ many }) => ({
-  departmentCourses: many(departmentCourses),
-}));
 
 export const departmentsRelations = relations(departments, ({ many }) => ({
   departmentCourses: many(departmentCourses),

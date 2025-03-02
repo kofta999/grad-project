@@ -208,3 +208,14 @@ INSERT INTO department_courses (course_id, department_id, is_compulsory) VALUES
 ((SELECT course_id FROM courses WHERE code = 'EMPE 511'), (SELECT department_id FROM departments WHERE code = 'EPS'), FALSE),
 ((SELECT course_id FROM courses WHERE code = 'EMPE 510'), (SELECT department_id FROM departments WHERE code = 'PE'), FALSE),
 ((SELECT course_id FROM courses WHERE code = 'EMPE 511'), (SELECT department_id FROM departments WHERE code = 'PE'), FALSE);
+
+-- Example inserts with application_id (assuming you have an 'applications' table)
+INSERT INTO course_results (course_id, application_id, grade) VALUES
+  ((SELECT course_id FROM courses WHERE code = 'EMPE 501'), 1, 85),  -- Application 1 in Project
+  ((SELECT course_id FROM courses WHERE code = 'EMPE 502'), 1, 78),  -- Application 1 in Planning and Design...
+  ((SELECT course_id FROM courses WHERE code = 'EMPE 503'), 1, 92),  -- Application 1 in Electrical Power Transmission...
+  ((SELECT course_id FROM courses WHERE code = 'EMPE 501'), 2, 76),  -- Application 2 in Project
+  ((SELECT course_id FROM courses WHERE code = 'EMPE 506'), 2, 88),  -- Application 2 in Electronic Control of AC Circuits
+  ((SELECT course_id FROM courses WHERE code = 'EMPE 507'), 2, 65),  -- Application 2 in Industrial Electronics
+  ((SELECT course_id FROM courses WHERE code = 'EMPE 510'), 2, 95),  -- Application 2 in Power System Protection (optional)
+  ((SELECT course_id FROM courses WHERE code = 'EMPE 511'), 2, 70);  -- Application 2 in Renewable Energy Systems (optional)

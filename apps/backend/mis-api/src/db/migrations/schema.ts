@@ -176,6 +176,26 @@ export const courses = pgTable("courses", {
 	totalHours: integer("total_hours"),
 });
 
+export const courseResults = pgTable("course_results", {
+	resultId: serial("result_id").primaryKey().notNull(),
+	courseId: integer("course_id").notNull(),
+	applicationId: integer("application_id").notNull(),
+	grade: integer().notNull(),
+}, (table) => {
+	return {
+		courseResultsCourseIdFkey: foreignKey({
+			columns: [table.courseId],
+			foreignColumns: [courses.courseId],
+			name: "course_results_course_id_fkey"
+		}),
+		courseResultsApplicationIdFkey: foreignKey({
+			columns: [table.applicationId],
+			foreignColumns: [applications.applicationId],
+			name: "course_results_application_id_fkey"
+		}),
+	}
+});
+
 export const departmentCourses = pgTable("department_courses", {
 	courseId: integer("course_id").notNull(),
 	departmentId: integer("department_id").notNull(),
