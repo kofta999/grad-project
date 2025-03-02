@@ -219,3 +219,20 @@ INSERT INTO course_results (course_id, application_id, grade) VALUES
   ((SELECT course_id FROM courses WHERE code = 'EMPE 507'), 2, 65),  -- Application 2 in Industrial Electronics
   ((SELECT course_id FROM courses WHERE code = 'EMPE 510'), 2, 95),  -- Application 2 in Power System Protection (optional)
   ((SELECT course_id FROM courses WHERE code = 'EMPE 511'), 2, 70);  -- Application 2 in Renewable Energy Systems (optional)
+  
+  
+INSERT INTO course_registrations (course_id, application_id, semester, academic_year) VALUES
+    ((SELECT course_id FROM courses WHERE code = 'EMPE 501'), 1, 'first', '2024-2025'),  -- Application 1 registered for EMPE 501 in the first semester of 2024-2025
+    ((SELECT course_id FROM courses WHERE code = 'EMPE 502'), 1, 'first', '2024-2025'),  -- Application 1 registered for EMPE 502 in the first semester of 2024-2025
+    ((SELECT course_id FROM courses WHERE code = 'EMPE 503'), 1, 'second', '2024-2025'), -- Application 1 registered for EMPE 503 in the second semester of 2024-2025
+    ((SELECT course_id FROM courses WHERE code = 'EMPE 501'), 2, 'first', '2024-2025'),  -- Application 2 registered for EMPE 501 in the first semester of 2024-2025
+    ((SELECT course_id FROM courses WHERE code = 'EMPE 506'), 2, 'first', '2024-2025'),  -- Application 2 registered for EMPE 506 in the first semester of 2024-2025
+    ((SELECT course_id FROM courses WHERE code = 'EMPE 507'), 2, 'second', '2024-2025'), -- Application 2 registered for EMPE 507 in the second semester of 2024-2025
+    ((SELECT course_id FROM courses WHERE code = 'EMPE 510'), 3, 'first', '2024-2025'),  -- Application 3 registered for EMPE 510 (optional) in the first semester of 2024-2025
+    ((SELECT course_id FROM courses WHERE code = 'EMPE 511'), 4, 'second', '2025-2026'); -- Application 4 registered for EMPE 511 (optional) in the second semester of 2025-2026
+
+INSERT INTO course_results (course_registration_id, grade) VALUES
+    (1, 85), -- Application 1 got 85 in EMPE 501 (linked by course_registration_id)
+    (2, 78), -- Application 1 got 78 in EMPE 502
+    (4, 76), -- Application 2 got 76 in EMPE 501
+    (5, 88); -- Application 2 got 88 in EMPE 506

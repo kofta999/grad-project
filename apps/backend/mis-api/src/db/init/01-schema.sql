@@ -21,6 +21,7 @@ CREATE TYPE "martial_status" AS ENUM (
     'other' -- اخرى
 );
 CREATE TYPE "department_type" AS ENUM ('diploma', 'masters', 'phd');
+CREATE TYPE "semester_type" AS ENUM ('first', 'second', 'third');
 
 -- Create tables with plural names
 CREATE TABLE "students" (
@@ -163,13 +164,24 @@ CREATE TABLE department_courses (
     PRIMARY KEY (course_id, department_id) -- Composite primary key
 );
 
-CREATE TABLE course_results (
-    result_id SERIAL PRIMARY KEY,
+CREATE TABLE course_registrations (
+    course_registration_id SERIAL PRIMARY KEY,
     course_id INT NOT NULL,
     application_id INT NOT NULL,
-    grade INT NOT NULL,
+    semester semester_type NOT NULL,
+    -- May create a table for that later but lets leave it like that for now
+    academic_year TEXT NOT NULL,
+    -- May add a status (registered | completed | withdrawn) field
     FOREIGN KEY (course_id) REFERENCES courses(course_id),
     FOREIGN KEY (application_id) REFERENCES applications(application_id)
+);
+
+CREATE TABLE course_results (
+    result_id SERIAL PRIMARY KEY,
+    course_registration_id INT NOT NULL,
+    grade INT NOT NULL,
+    -- May add something like a computed property for (failed | passed)
+    FOREIGN KEY (course_registration_id) REFERENCES course_registrations(course_registration_id)
 );
 
 
