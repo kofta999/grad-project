@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm/relations";
-import { applications, registerations, emergencyContacts, attachments, addresses, academicQualifications, students } from "./schema";
+import { applications, registerations, emergencyContacts, attachments, addresses, academicQualifications, students, courses, departmentCourses, departments } from "./schema";
 
 export const registerationsRelations = relations(registerations, ({one}) => ({
 	application: one(applications, {
@@ -50,4 +50,23 @@ export const academicQualificationsRelations = relations(academicQualifications,
 
 export const studentsRelations = relations(students, ({many}) => ({
 	applications: many(applications),
+}));
+
+export const departmentCoursesRelations = relations(departmentCourses, ({one}) => ({
+	course: one(courses, {
+		fields: [departmentCourses.courseId],
+		references: [courses.courseId]
+	}),
+	department: one(departments, {
+		fields: [departmentCourses.departmentId],
+		references: [departments.departmentId]
+	}),
+}));
+
+export const coursesRelations = relations(courses, ({many}) => ({
+	departmentCourses: many(departmentCourses),
+}));
+
+export const departmentsRelations = relations(departments, ({many}) => ({
+	departmentCourses: many(departmentCourses),
 }));

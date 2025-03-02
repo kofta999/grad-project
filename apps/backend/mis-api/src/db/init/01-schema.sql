@@ -20,6 +20,7 @@ CREATE TYPE "martial_status" AS ENUM (
     'widow', -- أرمل
     'other' -- اخرى
 );
+CREATE TYPE "department_type" AS ENUM ('diploma', 'masters', 'phd');
 
 -- Create tables with plural names
 CREATE TABLE "students" (
@@ -135,6 +136,33 @@ CREATE TABLE "admins" (
     "created_at" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE TABLE departments (
+    department_id SERIAL PRIMARY KEY,
+    code TEXT NOT NULL,
+    title TEXT NOT NULL,
+    type department_type NOT NULL
+);
+
+CREATE TABLE courses (
+    course_id SERIAL PRIMARY KEY,
+    -- Probably has a definite length but eh
+    code TEXT NOT NULL,
+    title TEXT NOT NULL,
+    -- Refers to a prerequisite course
+    prerequisite INT DEFAULT NULL,
+    total_hours INT,
+);
+
+CREATE TABLE department_courses (
+    course_id INT NOT NULL,
+    department_id INT NOT NULL,
+    is_compulsory BOOLEAN NOT NULL,
+    FOREIGN KEY (course_id) REFERENCES courses(course_id),
+    FOREIGN KEY (department_id) REFERENCES departments(department_id),
+    PRIMARY KEY (course_id, department_id) -- Composite primary key
+);
+
 
 -- Create views
 CREATE VIEW admin_applications_list
