@@ -5,6 +5,7 @@ export const addressType = pgEnum("address_type", ['permanent', 'current'])
 export const departmentType = pgEnum("department_type", ['diploma', 'masters', 'phd'])
 export const identificationType = pgEnum("identification_type", ['national_id', 'passport'])
 export const martialStatus = pgEnum("martial_status", ['single', 'married', 'married_with_dependents', 'divorced', 'widow', 'other'])
+export const semesterType = pgEnum("semester_type", ['first', 'second', 'third'])
 
 
 export const students = pgTable("students", {
@@ -176,22 +177,37 @@ export const courses = pgTable("courses", {
 	totalHours: integer("total_hours"),
 });
 
-export const courseResults = pgTable("course_results", {
-	resultId: serial("result_id").primaryKey().notNull(),
+export const courseRegistrations = pgTable("course_registrations", {
+	courseRegistrationId: serial("course_registration_id").primaryKey().notNull(),
 	courseId: integer("course_id").notNull(),
 	applicationId: integer("application_id").notNull(),
+	semester: semesterType().notNull(),
+	academicYear: text("academic_year").notNull(),
+}, (table) => {
+	return {
+		courseRegistrationsCourseIdFkey: foreignKey({
+			columns: [table.courseId],
+			foreignColumns: [courses.courseId],
+			name: "course_registrations_course_id_fkey"
+		}),
+		courseRegistrationsApplicationIdFkey: foreignKey({
+			columns: [table.applicationId],
+			foreignColumns: [applications.applicationId],
+			name: "course_registrations_application_id_fkey"
+		}),
+	}
+});
+
+export const courseResults = pgTable("course_results", {
+	resultId: serial("result_id").primaryKey().notNull(),
+	courseRegistrationId: integer("course_registration_id").notNull(),
 	grade: integer().notNull(),
 }, (table) => {
 	return {
-		courseResultsCourseIdFkey: foreignKey({
-			columns: [table.courseId],
-			foreignColumns: [courses.courseId],
-			name: "course_results_course_id_fkey"
-		}),
-		courseResultsApplicationIdFkey: foreignKey({
-			columns: [table.applicationId],
-			foreignColumns: [applications.applicationId],
-			name: "course_results_application_id_fkey"
+		courseResultsCourseRegistrationIdFkey: foreignKey({
+			columns: [table.courseRegistrationId],
+			foreignColumns: [courseRegistrations.courseRegistrationId],
+			name: "course_results_course_registration_id_fkey"
 		}),
 	}
 });

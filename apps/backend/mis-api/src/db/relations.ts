@@ -8,6 +8,7 @@ import {
   academicQualifications,
   students,
   courses,
+  courseRegistrations,
   courseResults,
   departmentCourses,
   departments,
@@ -32,7 +33,7 @@ export const applicationsRelations = relations(
       fields: [applications.studentId],
       references: [students.studentId],
     }),
-    courseResults: many(courseResults),
+    courseRegistrations: many(courseRegistrations),
   }),
 );
 
@@ -74,20 +75,31 @@ export const studentsRelations = relations(students, ({ many }) => ({
   applications: many(applications),
 }));
 
-export const courseResultsRelations = relations(courseResults, ({ one }) => ({
-  course: one(courses, {
-    fields: [courseResults.courseId],
-    references: [courses.courseId],
+export const courseRegistrationsRelations = relations(
+  courseRegistrations,
+  ({ one, many }) => ({
+    course: one(courses, {
+      fields: [courseRegistrations.courseId],
+      references: [courses.courseId],
+    }),
+    application: one(applications, {
+      fields: [courseRegistrations.applicationId],
+      references: [applications.applicationId],
+    }),
+    courseResults: many(courseResults),
   }),
-  application: one(applications, {
-    fields: [courseResults.applicationId],
-    references: [applications.applicationId],
-  }),
-}));
+);
 
 export const coursesRelations = relations(courses, ({ many }) => ({
-  courseResults: many(courseResults),
+  courseRegistrations: many(courseRegistrations),
   departmentCourses: many(departmentCourses),
+}));
+
+export const courseResultsRelations = relations(courseResults, ({ one }) => ({
+  courseRegistration: one(courseRegistrations, {
+    fields: [courseResults.courseRegistrationId],
+    references: [courseRegistrations.courseRegistrationId],
+  }),
 }));
 
 export const departmentCoursesRelations = relations(

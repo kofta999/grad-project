@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm/relations";
-import { applications, registerations, emergencyContacts, attachments, addresses, academicQualifications, students, courses, courseResults, departmentCourses, departments } from "./schema";
+import { applications, registerations, emergencyContacts, attachments, addresses, academicQualifications, students, courses, courseRegistrations, courseResults, departmentCourses, departments } from "./schema";
 
 export const registerationsRelations = relations(registerations, ({one}) => ({
 	application: one(applications, {
@@ -18,7 +18,7 @@ export const applicationsRelations = relations(applications, ({one, many}) => ({
 		fields: [applications.studentId],
 		references: [students.studentId]
 	}),
-	courseResults: many(courseResults),
+	courseRegistrations: many(courseRegistrations),
 }));
 
 export const emergencyContactsRelations = relations(emergencyContacts, ({one}) => ({
@@ -53,20 +53,28 @@ export const studentsRelations = relations(students, ({many}) => ({
 	applications: many(applications),
 }));
 
-export const courseResultsRelations = relations(courseResults, ({one}) => ({
+export const courseRegistrationsRelations = relations(courseRegistrations, ({one, many}) => ({
 	course: one(courses, {
-		fields: [courseResults.courseId],
+		fields: [courseRegistrations.courseId],
 		references: [courses.courseId]
 	}),
 	application: one(applications, {
-		fields: [courseResults.applicationId],
+		fields: [courseRegistrations.applicationId],
 		references: [applications.applicationId]
 	}),
+	courseResults: many(courseResults),
 }));
 
 export const coursesRelations = relations(courses, ({many}) => ({
-	courseResults: many(courseResults),
+	courseRegistrations: many(courseRegistrations),
 	departmentCourses: many(departmentCourses),
+}));
+
+export const courseResultsRelations = relations(courseResults, ({one}) => ({
+	courseRegistration: one(courseRegistrations, {
+		fields: [courseResults.courseRegistrationId],
+		references: [courseRegistrations.courseRegistrationId]
+	}),
 }));
 
 export const departmentCoursesRelations = relations(departmentCourses, ({one}) => ({
