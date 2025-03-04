@@ -6,9 +6,9 @@ import {
   boolean,
   date,
   timestamp,
+  index,
   foreignKey,
   integer,
-  index,
   primaryKey,
   pgView,
   pgEnum,
@@ -74,6 +74,28 @@ export const students = pgTable(
   (table) => {
     return {
       studentsEmailKey: unique("students_email_key").on(table.email),
+    };
+  },
+);
+
+export const applications = pgTable(
+  "applications",
+  {
+    applicationId: serial("application_id").primaryKey().notNull(),
+    studentId: integer("student_id").notNull(),
+    isAdminAccepted: boolean("is_admin_accepted").default(false).notNull(),
+  },
+  (table) => {
+    return {
+      studentIdIdx: index("applications_student_id_idx").using(
+        "btree",
+        table.studentId.asc().nullsLast(),
+      ),
+      applicationsStudentIdFkey: foreignKey({
+        columns: [table.studentId],
+        foreignColumns: [students.studentId],
+        name: "applications_student_id_fkey",
+      }),
     };
   },
 );
@@ -150,10 +172,10 @@ export const addresses = pgTable(
   {
     addressId: serial("address_id").primaryKey().notNull(),
     applicationId: integer("application_id").notNull(),
+    fullAddress: text("full_address").notNull(),
+    country: text().notNull(),
     city: text().notNull(),
     type: addressType().notNull(),
-    country: text().default("").notNull(),
-    fullAddress: text("full_address").default("").notNull(),
   },
   (table) => {
     return {
@@ -200,28 +222,6 @@ export const academicQualifications = pgTable(
   },
 );
 
-export const applications = pgTable(
-  "applications",
-  {
-    applicationId: serial("application_id").primaryKey().notNull(),
-    studentId: integer("student_id").notNull(),
-    isAdminAccepted: boolean("is_admin_accepted").default(false).notNull(),
-  },
-  (table) => {
-    return {
-      studentIdIdx: index("applications_student_id_idx").using(
-        "btree",
-        table.studentId.asc().nullsLast(),
-      ),
-      applicationsStudentIdFkey: foreignKey({
-        columns: [table.studentId],
-        foreignColumns: [students.studentId],
-        name: "applications_student_id_fkey",
-      }),
-    };
-  },
-);
-
 export const admins = pgTable(
   "admins",
   {
@@ -244,19 +244,19 @@ export const admins = pgTable(
   },
 );
 
-export const departments = pgTable("departments", {
-  departmentId: serial("department_id").primaryKey().notNull(),
-  code: text().notNull(),
-  title: text().notNull(),
-  type: departmentType().notNull(),
-});
-
 export const courses = pgTable("courses", {
   courseId: serial("course_id").primaryKey().notNull(),
   code: text().notNull(),
   title: text().notNull(),
   prerequisite: integer(),
   totalHours: integer("total_hours"),
+});
+
+export const departments = pgTable("departments", {
+  departmentId: serial("department_id").primaryKey().notNull(),
+  code: text().notNull(),
+  title: text().notNull(),
+  type: departmentType().notNull(),
 });
 
 export const courseRegistrations = pgTable(
@@ -338,4 +338,11 @@ export const adminApplicationsList = pgView("admin_applications_list", {
   isAdminAccepted: boolean("is_admin_accepted"),
 }).as(
   sql`SELECT a.application_id, s.full_name_ar AS student_name, r.academic_degree, r.academic_program, a.is_admin_accepted FROM applications a JOIN students s USING (student_id) JOIN registerations r USING (application_id)`,
+);
+
+export const acceptedApplications = pgView("accepted_applications", {
+  applicationId: integer("application_id"),
+  studentId: integer("student_id"),
+}).as(
+  sql`SELECT applications.application_id, applications.student_id FROM applications WHERE applications.is_admin_accepted = true`,
 );

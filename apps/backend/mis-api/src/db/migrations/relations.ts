@@ -1,24 +1,28 @@
 import { relations } from "drizzle-orm/relations";
-import { applications, registerations, emergencyContacts, attachments, addresses, academicQualifications, students, courses, courseRegistrations, courseResults, departmentCourses, departments } from "./schema";
+import { students, applications, registerations, emergencyContacts, attachments, addresses, academicQualifications, courses, courseRegistrations, courseResults, departmentCourses, departments } from "./schema";
+
+export const applicationsRelations = relations(applications, ({one, many}) => ({
+	student: one(students, {
+		fields: [applications.studentId],
+		references: [students.studentId]
+	}),
+	registerations: many(registerations),
+	emergencyContacts: many(emergencyContacts),
+	attachments: many(attachments),
+	addresses: many(addresses),
+	academicQualifications: many(academicQualifications),
+	courseRegistrations: many(courseRegistrations),
+}));
+
+export const studentsRelations = relations(students, ({many}) => ({
+	applications: many(applications),
+}));
 
 export const registerationsRelations = relations(registerations, ({one}) => ({
 	application: one(applications, {
 		fields: [registerations.applicationId],
 		references: [applications.applicationId]
 	}),
-}));
-
-export const applicationsRelations = relations(applications, ({one, many}) => ({
-	registerations: many(registerations),
-	emergencyContacts: many(emergencyContacts),
-	attachments: many(attachments),
-	addresses: many(addresses),
-	academicQualifications: many(academicQualifications),
-	student: one(students, {
-		fields: [applications.studentId],
-		references: [students.studentId]
-	}),
-	courseRegistrations: many(courseRegistrations),
 }));
 
 export const emergencyContactsRelations = relations(emergencyContacts, ({one}) => ({
@@ -47,10 +51,6 @@ export const academicQualificationsRelations = relations(academicQualifications,
 		fields: [academicQualifications.applicationId],
 		references: [applications.applicationId]
 	}),
-}));
-
-export const studentsRelations = relations(students, ({many}) => ({
-	applications: many(applications),
 }));
 
 export const courseRegistrationsRelations = relations(courseRegistrations, ({one, many}) => ({
