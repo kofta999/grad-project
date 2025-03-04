@@ -57,7 +57,7 @@ export const applications = pgTable("applications", {
 export const registerations = pgTable("registerations", {
 	registerationId: serial("registeration_id").primaryKey().notNull(),
 	applicationId: integer("application_id").notNull(),
-	academicYear: text("academic_year").notNull(),
+	academicYearId: integer("academic_year_id").notNull(),
 	faculty: text().notNull(),
 	academicDegree: text("academic_degree").notNull(),
 	academicProgram: text("academic_program").notNull(),
@@ -68,26 +68,19 @@ export const registerations = pgTable("registerations", {
 			foreignColumns: [applications.applicationId],
 			name: "registerations_application_id_fkey"
 		}),
+		registerationsAcademicYearIdFkey: foreignKey({
+			columns: [table.academicYearId],
+			foreignColumns: [academicYears.academicYearId],
+			name: "registerations_academic_year_id_fkey"
+		}),
 		registerationsApplicationIdKey: unique("registerations_application_id_key").on(table.applicationId),
 	}
 });
 
-export const emergencyContacts = pgTable("emergency_contacts", {
-	contactId: serial("contact_id").primaryKey().notNull(),
-	applicationId: integer("application_id").notNull(),
-	name: text().notNull(),
-	address: text(),
-	phoneNumber: text("phone_number").notNull(),
-	email: text(),
-}, (table) => {
-	return {
-		emergencyContactsApplicationIdFkey: foreignKey({
-			columns: [table.applicationId],
-			foreignColumns: [applications.applicationId],
-			name: "emergency_contacts_application_id_fkey"
-		}),
-		emergencyContactsApplicationIdKey: unique("emergency_contacts_application_id_key").on(table.applicationId),
-	}
+export const academicYears = pgTable("academic_years", {
+	academicYearId: serial("academic_year_id").primaryKey().notNull(),
+	startDate: date("start_date").notNull(),
+	endDate: date("end_date").notNull(),
 });
 
 export const attachments = pgTable("attachments", {
@@ -119,6 +112,24 @@ export const addresses = pgTable("addresses", {
 			foreignColumns: [applications.applicationId],
 			name: "addresses_application_id_fkey"
 		}),
+	}
+});
+
+export const emergencyContacts = pgTable("emergency_contacts", {
+	contactId: serial("contact_id").primaryKey().notNull(),
+	applicationId: integer("application_id").notNull(),
+	name: text().notNull(),
+	address: text(),
+	phoneNumber: text("phone_number").notNull(),
+	email: text(),
+}, (table) => {
+	return {
+		emergencyContactsApplicationIdFkey: foreignKey({
+			columns: [table.applicationId],
+			foreignColumns: [applications.applicationId],
+			name: "emergency_contacts_application_id_fkey"
+		}),
+		emergencyContactsApplicationIdKey: unique("emergency_contacts_application_id_key").on(table.applicationId),
 	}
 });
 
@@ -182,7 +193,7 @@ export const courseRegistrations = pgTable("course_registrations", {
 	courseId: integer("course_id").notNull(),
 	applicationId: integer("application_id").notNull(),
 	semester: semesterType().notNull(),
-	academicYear: text("academic_year").notNull(),
+	academicYearId: integer("academic_year_id").notNull(),
 }, (table) => {
 	return {
 		courseRegistrationsCourseIdFkey: foreignKey({
@@ -194,6 +205,11 @@ export const courseRegistrations = pgTable("course_registrations", {
 			columns: [table.applicationId],
 			foreignColumns: [applications.applicationId],
 			name: "course_registrations_application_id_fkey"
+		}),
+		courseRegistrationsAcademicYearIdFkey: foreignKey({
+			columns: [table.academicYearId],
+			foreignColumns: [academicYears.academicYearId],
+			name: "course_registrations_academic_year_id_fkey"
 		}),
 	}
 });
