@@ -3,6 +3,7 @@ import {
   applicationSchema,
   studentApplicationDetailsSchema,
   editStudentInfoSchema,
+  currentAcademicYearsSchema,
 } from "@/db/validators";
 import { isAuthenticated } from "@/middlewares/isAuthenticated";
 import { requireRole } from "@/middlewares/requireRole";
@@ -16,6 +17,19 @@ import {
 import { notFoundSchema } from "@/lib/constants";
 
 const tags = ["Applications"];
+
+export const getCurrentAcademicYears = createRoute({
+  path: "/currentAcademicYears",
+  method: "get",
+  middleware: [isAuthenticated, requireRole("student")],
+  tags,
+  responses: {
+    [HttpStatusCodes.OK]: jsonContent(
+      currentAcademicYearsSchema,
+      "An array of available academic years",
+    ),
+  },
+});
 
 export const createApplication = createRoute({
   path: "/",
@@ -105,6 +119,8 @@ export const getApplication = createRoute({
     ),
   },
 });
+
+export type GetCurrentAcademicYears = typeof getCurrentAcademicYears;
 
 export type CreateApplicationRoute = typeof createApplication;
 

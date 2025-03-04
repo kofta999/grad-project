@@ -4,6 +4,7 @@ import {
   GetApplicationRoute,
   SaveApplicationAttachmentsRoute,
   EditStudentInfoRoute,
+  GetCurrentAcademicYears,
 } from "./applications.routes";
 import * as HttpStatusCodes from "stoker/http-status-codes";
 import * as HttpStatusPhrases from "stoker/http-status-phrases";
@@ -17,7 +18,25 @@ import {
   registerations,
   students,
 } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
+
+export const getCurrentAcademicYears: AppRouteHandler<
+  GetCurrentAcademicYears
+> = async (c) => {
+  const years = await db.query.academicYears.findMany({
+    where(f, { gte }) {
+      return gte(f.startDate, new Date().toDateString());
+    },
+  });
+
+  return c.json(
+    years.map((year) => ({
+      academicYearId: year.academicYearId,
+      year: `${new Date(year.startDate).getFullYear()}-${new Date(year.endDate).getFullYear()}`,
+    })),
+    HttpStatusCodes.OK,
+  );
+};
 
 export const createApplication: AppRouteHandler<
   CreateApplicationRoute

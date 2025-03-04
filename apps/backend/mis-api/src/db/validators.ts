@@ -5,6 +5,7 @@ import {
 } from "drizzle-zod";
 import {
   academicQualifications,
+  academicYears,
   addresses,
   adminApplicationsList,
   applications,
@@ -30,6 +31,12 @@ export const loginSchema = z.object({
 //   createdAt: true,
 //   updatedAt: true,
 // });
+
+export const currentAcademicYearsSchema = z.array(
+  createSelectSchema(academicYears)
+    .omit({ endDate: true, startDate: true })
+    .extend({ year: z.string() }),
+);
 
 export const registerSchema = createInsertSchema(students, {
   fullNameAr: z.string().min(1, "Full name in Arabic is required"),
