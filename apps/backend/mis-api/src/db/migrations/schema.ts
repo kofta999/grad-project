@@ -59,8 +59,8 @@ export const registerations = pgTable("registerations", {
 	applicationId: integer("application_id").notNull(),
 	academicYearId: integer("academic_year_id").notNull(),
 	faculty: text().notNull(),
-	academicDegree: text("academic_degree").notNull(),
-	academicProgram: text("academic_program").notNull(),
+	academicDegree: departmentType("academic_degree").notNull(),
+	departmentId: integer("department_id").notNull(),
 }, (table) => {
 	return {
 		registerationsApplicationIdFkey: foreignKey({
@@ -73,6 +73,11 @@ export const registerations = pgTable("registerations", {
 			foreignColumns: [academicYears.academicYearId],
 			name: "registerations_academic_year_id_fkey"
 		}),
+		registerationsDepartmentIdFkey: foreignKey({
+			columns: [table.departmentId],
+			foreignColumns: [departments.departmentId],
+			name: "registerations_department_id_fkey"
+		}),
 		registerationsApplicationIdKey: unique("registerations_application_id_key").on(table.applicationId),
 	}
 });
@@ -81,6 +86,13 @@ export const academicYears = pgTable("academic_years", {
 	academicYearId: serial("academic_year_id").primaryKey().notNull(),
 	startDate: date("start_date").notNull(),
 	endDate: date("end_date").notNull(),
+});
+
+export const departments = pgTable("departments", {
+	departmentId: serial("department_id").primaryKey().notNull(),
+	code: text().notNull(),
+	title: text().notNull(),
+	type: departmentType().notNull(),
 });
 
 export const attachments = pgTable("attachments", {
@@ -181,13 +193,6 @@ export const courses = pgTable("courses", {
 	totalHours: integer("total_hours"),
 });
 
-export const departments = pgTable("departments", {
-	departmentId: serial("department_id").primaryKey().notNull(),
-	code: text().notNull(),
-	title: text().notNull(),
-	type: departmentType().notNull(),
-});
-
 export const courseRegistrations = pgTable("course_registrations", {
 	courseRegistrationId: serial("course_registration_id").primaryKey().notNull(),
 	courseId: integer("course_id").notNull(),
@@ -249,10 +254,10 @@ export const departmentCourses = pgTable("department_courses", {
 });
 export const adminApplicationsList = pgView("admin_applications_list", {	applicationId: integer("application_id"),
 	studentName: text("student_name"),
-	academicDegree: text("academic_degree"),
-	academicProgram: text("academic_program"),
+	academicDegree: departmentType("academic_degree"),
+	department: text(),
 	isAdminAccepted: boolean("is_admin_accepted"),
-}).as(sql`SELECT a.application_id, s.full_name_ar AS student_name, r.academic_degree, r.academic_program, a.is_admin_accepted FROM applications a JOIN students s USING (student_id) JOIN registerations r USING (application_id)`);
+}).as(sql`SELECT a.application_id, s.full_name_ar AS student_name, r.academic_degree, d.title AS department, a.is_admin_accepted FROM applications a JOIN students s USING (student_id) JOIN registerations r USING (application_id) JOIN departments d ON d.department_id = r.department_id`);
 
 export const acceptedApplications = pgView("accepted_applications", {	applicationId: integer("application_id"),
 	studentId: integer("student_id"),

@@ -4,6 +4,7 @@ import {
   applications,
   registerations,
   academicYears,
+  departments,
   attachments,
   addresses,
   emergencyContacts,
@@ -12,7 +13,6 @@ import {
   courseRegistrations,
   courseResults,
   departmentCourses,
-  departments,
 } from "./schema";
 
 export const applicationsRelations = relations(
@@ -44,11 +44,20 @@ export const registerationsRelations = relations(registerations, ({ one }) => ({
     fields: [registerations.academicYearId],
     references: [academicYears.academicYearId],
   }),
+  department: one(departments, {
+    fields: [registerations.departmentId],
+    references: [departments.departmentId],
+  }),
 }));
 
 export const academicYearsRelations = relations(academicYears, ({ many }) => ({
   registerations: many(registerations),
   courseRegistrations: many(courseRegistrations),
+}));
+
+export const departmentsRelations = relations(departments, ({ many }) => ({
+  registerations: many(registerations),
+  departmentCourses: many(departmentCourses),
 }));
 
 export const attachmentsRelations = relations(attachments, ({ one }) => ({
@@ -129,7 +138,3 @@ export const departmentCoursesRelations = relations(
     }),
   }),
 );
-
-export const departmentsRelations = relations(departments, ({ many }) => ({
-  departmentCourses: many(departmentCourses),
-}));
