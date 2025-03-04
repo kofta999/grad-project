@@ -33,6 +33,13 @@ CREATE TABLE academic_years (
 	end_date date NOT NULL
 );
 
+CREATE TABLE departments (
+	department_id serial PRIMARY KEY,
+	code TEXT NOT NULL,
+	title TEXT NOT NULL,
+	type department_type NOT NULL
+);
+
 -- Create tables with plural names
 CREATE TABLE "students" (
 	"student_id" serial PRIMARY KEY,
@@ -74,10 +81,12 @@ CREATE TABLE "registerations" (
 	"application_id" INTEGER UNIQUE NOT NULL,
 	"academic_year_id" INT NOT NULL,
 	"faculty" TEXT NOT NULL,
-	"academic_degree" TEXT NOT NULL,
-	"academic_program" TEXT NOT NULL,
+	"academic_degree" department_type NOT NULL,
+	-- academic_program = department
+	"department_id" INT NOT NULL,
 	FOREIGN key ("application_id") REFERENCES "applications" ("application_id"),
-	FOREIGN key ("academic_year_id") REFERENCES "academic_years" ("academic_year_id")
+	FOREIGN key ("academic_year_id") REFERENCES "academic_years" ("academic_year_id"),
+	FOREIGN key ("department_id") REFERENCES "departments" ("department_id")
 );
 
 CREATE TABLE "attachments" (
@@ -149,13 +158,6 @@ CREATE TABLE "admins" (
 	"updated_at" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE departments (
-	department_id serial PRIMARY KEY,
-	code TEXT NOT NULL,
-	title TEXT NOT NULL,
-	type department_type NOT NULL
-);
-
 CREATE TABLE courses (
 	course_id serial PRIMARY KEY,
 	-- Probably has a definite length but eh
@@ -202,12 +204,14 @@ SELECT
 	a.application_id,
 	s.full_name_ar AS student_name,
 	r.academic_degree,
-	r.academic_program,
+	-- TODO: Add real dep name
+	d.title AS department,
 	a.is_admin_accepted
 FROM
 	applications a
 	JOIN students s USING (student_id)
-	JOIN registerations r USING (application_id);
+	JOIN registerations r USING (application_id)
+	JOIN departments d ON d.department_id = r.department_id;
 
 CREATE VIEW "accepted_applications" AS
 SELECT
@@ -217,6 +221,39 @@ FROM
 	applications
 WHERE
 	is_admin_accepted = TRUE;
+
+-- Need to WHERE with application_id
+CREATE VIEW "available_courses_for_application" AS
+SELECT
+	c.course_id,
+	c.code,
+	c.title,
+	c.prerequisite,
+	c.total_hours
+FROM
+	accepted_applications a
+	JOIN registerations r ON r.application_id = a.application_id
+	JOIN department_courses d_c ON d_c.department_id = r.department_id
+	JOIN courses c ON c.course_id = d_c.course_id
+WHERE
+	r.academic_year_id = get_current_academic_year ();
+
+-- TODO: Should be by semester
+CREATE VIEW "courses_registered_for_application" AS
+SELECT
+	c.course_id,
+	c.code,
+	c.title,
+	c.prerequisite,
+	c.total_hours
+FROM
+	course_registrations c_r
+	JOIN department_courses d_c ON d_c.course_id = c_r.course_id
+	JOIN courses c ON c.course_id = c_r.course_id
+	JOIN registerations r ON r.application_id = c_r.application_id
+WHERE
+	c_r.academic_year_id = get_current_academic_year ()
+	AND d_c.department_id = r.department_id;
 
 -- Create functions
 CREATE FUNCTION get_current_academic_year () returns INT AS $$

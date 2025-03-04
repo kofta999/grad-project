@@ -1,10 +1,12 @@
 -- All passwords are test123
-
 -- Insert sample academic_years
-INSERT INTO academic_years (start_date, end_date) VALUES
-('2024-09-01', '2025-06-30'),  -- Example academic year 2024-2025
-('2025-09-01', '2026-06-30');  -- Example academic year 2025-2026
+INSERT INTO
+	academic_years (start_date, end_date)
+VALUES
+	('2024-09-01', '2025-06-30'), -- Example academic year 2024-2025
+	('2025-09-01', '2026-06-30');
 
+-- Example academic year 2025-2026
 -- Insert sample students
 INSERT INTO
 	"students" (
@@ -105,6 +107,13 @@ VALUES
 		CURRENT_TIMESTAMP
 	);
 
+-- Departments Table
+INSERT INTO
+	departments (code, title, type)
+VALUES
+	('EPS', 'دبلوم في نظم الطاقة الكهربية', 'diploma'),
+	('PE', 'دبلوم في إلكترونيات القوى', 'diploma');
+
 -- Insert sample applications
 INSERT INTO
 	"applications" ("student_id", "is_admin_accepted")
@@ -120,30 +129,12 @@ INSERT INTO
 		"academic_year_id",
 		"faculty",
 		"academic_degree",
-		"academic_program"
+		"department_id"
 	)
 VALUES
-	(
-		1,
-		1,
-		'Engineering',
-		'Bachelor',
-		'Computer Science'
-	),
-	(
-		2,
-		1,
-		'Science',
-		'Master',
-		'Mechanical Engineering'
-	),
-	(
-		3,
-		1,
-		'Arts',
-		'Bachelor',
-		'Graphic Design'
-	);
+	(1, 1, 'Engineering', 'diploma', 1),
+	(2, 1, 'Science', 'masters', 2),
+	(3, 1, 'Arts', 'phd', 1);
 
 -- Insert sample attachments
 INSERT INTO
@@ -313,13 +304,6 @@ VALUES
 		CURRENT_TIMESTAMP,
 		CURRENT_TIMESTAMP
 	);
-
--- Departments Table
-INSERT INTO
-	departments (code, title, type)
-VALUES
-	('EPS', 'دبلوم في نظم الطاقة الكهربية', 'diploma'),
-	('PE', 'دبلوم في إلكترونيات القوى', 'diploma');
 
 -- Courses Table
 INSERT INTO
