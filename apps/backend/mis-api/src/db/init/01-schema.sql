@@ -20,6 +20,8 @@ CREATE TYPE "martial_status" AS ENUM (
     'widow', -- أرمل
     'other' -- اخرى
 );
+CREATE TYPE "department_type" AS ENUM ('diploma', 'masters', 'phd');
+CREATE TYPE "semester_type" AS ENUM ('first', 'second', 'third');
 
 -- Create tables with plural names
 CREATE TABLE "students" (
@@ -135,6 +137,53 @@ CREATE TABLE "admins" (
     "created_at" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE TABLE departments (
+    department_id SERIAL PRIMARY KEY,
+    code TEXT NOT NULL,
+    title TEXT NOT NULL,
+    type department_type NOT NULL
+);
+
+CREATE TABLE courses (
+    course_id SERIAL PRIMARY KEY,
+    -- Probably has a definite length but eh
+    code TEXT NOT NULL,
+    title TEXT NOT NULL,
+    -- Refers to a prerequisite course
+    prerequisite INT DEFAULT NULL,
+    total_hours INT
+);
+
+CREATE TABLE department_courses (
+    course_id INT NOT NULL,
+    department_id INT NOT NULL,
+    is_compulsory BOOLEAN NOT NULL,
+    FOREIGN KEY (course_id) REFERENCES courses(course_id),
+    FOREIGN KEY (department_id) REFERENCES departments(department_id),
+    PRIMARY KEY (course_id, department_id) -- Composite primary key
+);
+
+CREATE TABLE course_registrations (
+    course_registration_id SERIAL PRIMARY KEY,
+    course_id INT NOT NULL,
+    application_id INT NOT NULL,
+    semester semester_type NOT NULL,
+    -- May create a table for that later but lets leave it like that for now
+    academic_year TEXT NOT NULL,
+    -- May add a status (registered | completed | withdrawn) field
+    FOREIGN KEY (course_id) REFERENCES courses(course_id),
+    FOREIGN KEY (application_id) REFERENCES applications(application_id)
+);
+
+CREATE TABLE course_results (
+    result_id SERIAL PRIMARY KEY,
+    course_registration_id INT NOT NULL,
+    grade INT NOT NULL,
+    -- May add something like a computed property for (failed | passed)
+    FOREIGN KEY (course_registration_id) REFERENCES course_registrations(course_registration_id)
+);
+
 
 -- Create views
 CREATE VIEW admin_applications_list

@@ -165,3 +165,61 @@ VALUES
         CURRENT_TIMESTAMP,
         CURRENT_TIMESTAMP
     );
+
+-- Departments Table
+INSERT INTO departments (code, title, type) VALUES
+('EPS', 'دبلوم في نظم الطاقة الكهربية', 'diploma'),
+('PE', 'دبلوم في إلكترونيات القوى', 'diploma');
+
+-- Courses Table
+INSERT INTO courses (code, title, prerequisite, total_hours) VALUES
+('EMPE 501', 'مشروع', NULL, 3),
+('EMPE 502', 'تخطيط وتصميم شبكات توزيع الطاقة الكهربية', NULL, 3),
+('EMPE 503', 'نظم نقل الطاقة الكهربية', NULL, 3),
+('EMPE 504', 'إدارة الأحمال والحفاظ على الطاقة', NULL, 3),
+('EMPE 505', 'دراسة أداء نظم الطاقة الكهربية', NULL, 3),
+('EMPE 506', 'التحكم الإلكتروني في دوائر التيار المتردد', NULL, 3),
+('EMPE 507', 'الإلكترونيات الصناعية', NULL, 3),
+('EMPE 508', 'التوافقيات في نظم الطاقة الكهربية', NULL, 3),
+('EMPE 509', 'التحكم الإلكتروني في آلات التيار المتردد', NULL, 3),
+('EMPE 510', 'Power System Protection', NULL, 3), -- Optional
+('EMPE 511', 'Renewable Energy Systems', NULL, 3); -- Optional
+
+-- Department_Courses Table
+-- Electrical Power Systems (EPS) - Compulsory
+INSERT INTO department_courses (course_id, department_id, is_compulsory) VALUES
+((SELECT course_id FROM courses WHERE code = 'EMPE 501'), (SELECT department_id FROM departments WHERE code = 'EPS'), TRUE),
+((SELECT course_id FROM courses WHERE code = 'EMPE 502'), (SELECT department_id FROM departments WHERE code = 'EPS'), TRUE),
+((SELECT course_id FROM courses WHERE code = 'EMPE 503'), (SELECT department_id FROM departments WHERE code = 'EPS'), TRUE),
+((SELECT course_id FROM courses WHERE code = 'EMPE 504'), (SELECT department_id FROM departments WHERE code = 'EPS'), TRUE),
+((SELECT course_id FROM courses WHERE code = 'EMPE 505'), (SELECT department_id FROM departments WHERE code = 'EPS'), TRUE);
+
+-- Power Electronics (PE) - Compulsory
+INSERT INTO department_courses (course_id, department_id, is_compulsory) VALUES
+((SELECT course_id FROM courses WHERE code = 'EMPE 501'), (SELECT department_id FROM departments WHERE code = 'PE'), TRUE),
+((SELECT course_id FROM courses WHERE code = 'EMPE 506'), (SELECT department_id FROM departments WHERE code = 'PE'), TRUE),
+((SELECT course_id FROM courses WHERE code = 'EMPE 507'), (SELECT department_id FROM departments WHERE code = 'PE'), TRUE),
+((SELECT course_id FROM courses WHERE code = 'EMPE 508'), (SELECT department_id FROM departments WHERE code = 'PE'), TRUE),
+((SELECT course_id FROM courses WHERE code = 'EMPE 509'), (SELECT department_id FROM departments WHERE code = 'PE'), TRUE);
+
+-- Both Departments - Optional
+INSERT INTO department_courses (course_id, department_id, is_compulsory) VALUES
+((SELECT course_id FROM courses WHERE code = 'EMPE 510'), (SELECT department_id FROM departments WHERE code = 'EPS'), FALSE),
+((SELECT course_id FROM courses WHERE code = 'EMPE 511'), (SELECT department_id FROM departments WHERE code = 'EPS'), FALSE),
+((SELECT course_id FROM courses WHERE code = 'EMPE 510'), (SELECT department_id FROM departments WHERE code = 'PE'), FALSE),
+((SELECT course_id FROM courses WHERE code = 'EMPE 511'), (SELECT department_id FROM departments WHERE code = 'PE'), FALSE);
+  
+INSERT INTO course_registrations (course_id, application_id, semester, academic_year) VALUES
+    ((SELECT course_id FROM courses WHERE code = 'EMPE 501'), 1, 'first', '2024-2025'),  -- Application 1 registered for EMPE 501 in the first semester of 2024-2025
+    ((SELECT course_id FROM courses WHERE code = 'EMPE 502'), 1, 'first', '2024-2025'),  -- Application 1 registered for EMPE 502 in the first semester of 2024-2025
+    ((SELECT course_id FROM courses WHERE code = 'EMPE 503'), 1, 'second', '2024-2025'), -- Application 1 registered for EMPE 503 in the second semester of 2024-2025
+    ((SELECT course_id FROM courses WHERE code = 'EMPE 501'), 2, 'first', '2024-2025'),  -- Application 2 registered for EMPE 501 in the first semester of 2024-2025
+    ((SELECT course_id FROM courses WHERE code = 'EMPE 506'), 2, 'first', '2024-2025'),  -- Application 2 registered for EMPE 506 in the first semester of 2024-2025
+    ((SELECT course_id FROM courses WHERE code = 'EMPE 507'), 2, 'second', '2024-2025'), -- Application 2 registered for EMPE 507 in the second semester of 2024-2025
+    ((SELECT course_id FROM courses WHERE code = 'EMPE 510'), 3, 'first', '2024-2025');  -- Application 3 registered for EMPE 510 (optional) in the first semester of 2024-2025
+
+INSERT INTO course_results (course_registration_id, grade) VALUES
+    (1, 85), -- Application 1 got 85 in EMPE 501 (linked by course_registration_id)
+    (2, 78), -- Application 1 got 78 in EMPE 502
+    (4, 76), -- Application 2 got 76 in EMPE 501
+    (5, 88); -- Application 2 got 88 in EMPE 506

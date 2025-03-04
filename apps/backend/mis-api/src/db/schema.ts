@@ -9,12 +9,18 @@ import {
   foreignKey,
   integer,
   index,
+  primaryKey,
   pgView,
   pgEnum,
 } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
 
 export const addressType = pgEnum("address_type", ["permanent", "current"]);
+export const departmentType = pgEnum("department_type", [
+  "diploma",
+  "masters",
+  "phd",
+]);
 export const identificationType = pgEnum("identification_type", [
   "national_id",
   "passport",
@@ -26,6 +32,11 @@ export const martialStatus = pgEnum("martial_status", [
   "divorced",
   "widow",
   "other",
+]);
+export const semesterType = pgEnum("semester_type", [
+  "first",
+  "second",
+  "third",
 ]);
 
 export const students = pgTable(
@@ -229,6 +240,93 @@ export const admins = pgTable(
   (table) => {
     return {
       adminsEmailKey: unique("admins_email_key").on(table.email),
+    };
+  },
+);
+
+export const departments = pgTable("departments", {
+  departmentId: serial("department_id").primaryKey().notNull(),
+  code: text().notNull(),
+  title: text().notNull(),
+  type: departmentType().notNull(),
+});
+
+export const courses = pgTable("courses", {
+  courseId: serial("course_id").primaryKey().notNull(),
+  code: text().notNull(),
+  title: text().notNull(),
+  prerequisite: integer(),
+  totalHours: integer("total_hours"),
+});
+
+export const courseRegistrations = pgTable(
+  "course_registrations",
+  {
+    courseRegistrationId: serial("course_registration_id")
+      .primaryKey()
+      .notNull(),
+    courseId: integer("course_id").notNull(),
+    applicationId: integer("application_id").notNull(),
+    semester: semesterType().notNull(),
+    academicYear: text("academic_year").notNull(),
+  },
+  (table) => {
+    return {
+      courseRegistrationsCourseIdFkey: foreignKey({
+        columns: [table.courseId],
+        foreignColumns: [courses.courseId],
+        name: "course_registrations_course_id_fkey",
+      }),
+      courseRegistrationsApplicationIdFkey: foreignKey({
+        columns: [table.applicationId],
+        foreignColumns: [applications.applicationId],
+        name: "course_registrations_application_id_fkey",
+      }),
+    };
+  },
+);
+
+export const courseResults = pgTable(
+  "course_results",
+  {
+    resultId: serial("result_id").primaryKey().notNull(),
+    courseRegistrationId: integer("course_registration_id").notNull(),
+    grade: integer().notNull(),
+  },
+  (table) => {
+    return {
+      courseResultsCourseRegistrationIdFkey: foreignKey({
+        columns: [table.courseRegistrationId],
+        foreignColumns: [courseRegistrations.courseRegistrationId],
+        name: "course_results_course_registration_id_fkey",
+      }),
+    };
+  },
+);
+
+export const departmentCourses = pgTable(
+  "department_courses",
+  {
+    courseId: integer("course_id").notNull(),
+    departmentId: integer("department_id").notNull(),
+    isCompulsory: boolean("is_compulsory").notNull(),
+  },
+  (table) => {
+    return {
+      departmentCoursesCourseIdFkey: foreignKey({
+        columns: [table.courseId],
+        foreignColumns: [courses.courseId],
+        name: "department_courses_course_id_fkey",
+      }),
+      departmentCoursesDepartmentIdFkey: foreignKey({
+        columns: [table.departmentId],
+        foreignColumns: [departments.departmentId],
+        name: "department_courses_department_id_fkey",
+      }),
+      departmentCoursesPkey: primaryKey({
+        columns: [table.courseId, table.departmentId],
+        name: "department_courses_pkey",
+      }),
     };
   },
 );
