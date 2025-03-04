@@ -222,38 +222,81 @@ FROM
 WHERE
 	is_admin_accepted = TRUE;
 
--- Need to WHERE with application_id
-CREATE VIEW "available_courses_for_application" AS
-SELECT
-	c.course_id,
-	c.code,
-	c.title,
-	c.prerequisite,
-	c.total_hours
-FROM
-	accepted_applications a
-	JOIN registerations r ON r.application_id = a.application_id
-	JOIN department_courses d_c ON d_c.department_id = r.department_id
-	JOIN courses c ON c.course_id = d_c.course_id
-WHERE
-	r.academic_year_id = get_current_academic_year ();
+-- -- Need to WHERE with application_id
+-- CREATE VIEW "available_courses_for_application" AS
+-- SELECT
+-- 	c.course_id,
+-- 	c.code,
+-- 	c.title,
+-- 	c.prerequisite,
+-- 	c.total_hours
+-- FROM
+-- 	accepted_applications a
+-- 	JOIN registerations r ON r.application_id = a.application_id
+-- 	JOIN department_courses d_c ON d_c.department_id = r.department_id
+-- 	JOIN courses c ON c.course_id = d_c.course_id
+-- WHERE
+-- 	r.academic_year_id = get_current_academic_year ();
+-- -- TODO: Should be by semester
+-- CREATE VIEW "courses_registered_for_application" AS
+-- SELECT
+-- 	c.course_id,
+-- 	c.code,
+-- 	c.title,
+-- 	c.prerequisite,
+-- 	c.total_hours
+-- FROM
+-- 	course_registrations c_r
+-- 	JOIN department_courses d_c ON d_c.course_id = c_r.course_id
+-- 	JOIN courses c ON c.course_id = c_r.course_id
+-- 	JOIN registerations r ON r.application_id = c_r.application_id
+-- WHERE
+-- 	c_r.academic_year_id = get_current_academic_year ()
+-- 	AND d_c.department_id = r.department_id;
+-- 
+CREATE
+OR REPLACE function available_courses_for_application (p_application_id INT) returns setof courses AS $$
+BEGIN
+    RETURN QUERY
+    SELECT
+        c.course_id,
+        c.code,
+        c.title,
+        c.prerequisite,
+        c.total_hours
+    FROM
+        accepted_applications a
+        JOIN registerations r ON r.application_id = a.application_id
+        JOIN department_courses d_c ON d_c.department_id = r.department_id
+        JOIN courses c ON c.course_id = d_c.course_id
+    WHERE
+        r.academic_year_id = get_current_academic_year()
+        AND a.application_id = p_application_id;
+END;
+$$ language plpgsql;
 
--- TODO: Should be by semester
-CREATE VIEW "courses_registered_for_application" AS
-SELECT
-	c.course_id,
-	c.code,
-	c.title,
-	c.prerequisite,
-	c.total_hours
-FROM
-	course_registrations c_r
-	JOIN department_courses d_c ON d_c.course_id = c_r.course_id
-	JOIN courses c ON c.course_id = c_r.course_id
-	JOIN registerations r ON r.application_id = c_r.application_id
-WHERE
-	c_r.academic_year_id = get_current_academic_year ()
-	AND d_c.department_id = r.department_id;
+CREATE
+OR REPLACE function courses_registered_for_application_this_semester (p_application_id INT, p_semester INT) returns setof courses AS $$
+BEGIN
+    RETURN QUERY
+    SELECT
+        c.course_id,
+        c.code,
+        c.title,
+        c.prerequisite,
+        c.total_hours
+    FROM
+        course_registrations c_r
+        JOIN department_courses d_c ON d_c.course_id = c_r.course_id
+        JOIN courses c ON c.course_id = c_r.course_id
+        JOIN registerations r ON r.application_id = c_r.application_id
+    WHERE
+        c_r.academic_year_id = get_current_academic_year()
+        AND d_c.department_id = r.department_id
+        AND c_r.application_id = p_application_id
+        AND c_r.semester = p_semester;
+END;
+$$ language plpgsql;
 
 -- Create functions
 CREATE FUNCTION get_current_academic_year () returns INT AS $$
@@ -268,6 +311,83 @@ BEGIN
     RETURN current_year_id;
 END;
 $$ language plpgsql;
+
+-- Procedures
+CREATE
+OR REPLACE procedure register_course (
+	p_application_id INT,
+	p_course_id INT,
+	p_semester semester_type
+) language plpgsql AS $$
+DECLARE
+    v_prerequisite INT;
+    v_total_hours INT;
+    v_course_hours INT;
+    v_max_hours INT := 10; -- Assuming the maximum allowed hours is 10
+BEGIN
+	-- Check if the application is accepted
+	IF NOT EXISTS (
+		SELECT 1
+		FROM accepted_applications
+		WHERE application_id = p_application_id
+	) THEN
+		RAISE EXCEPTION 'Application is not yet accepted';
+	END IF;
+
+    -- Check if the course is already registered
+    IF EXISTS (
+        SELECT 1
+        FROM course_registrations
+        WHERE application_id = p_application_id
+          AND course_id = p_course_id
+          AND semester = p_semester
+    ) THEN
+        RAISE EXCEPTION 'Course is already registered for this application and semester';
+    END IF;
+
+    -- Check if the course has a prerequisite (NOT TESTED YET)
+    SELECT prerequisite INTO v_prerequisite
+    FROM courses
+    WHERE course_id = p_course_id;
+
+    IF v_prerequisite IS NOT NULL THEN
+        -- Check if the prerequisite course is completed
+        IF NOT EXISTS (
+            SELECT 1
+            FROM course_registrations cr
+            JOIN course_results crs ON cr.course_registration_id = crs.course_registration_id
+            WHERE cr.application_id = p_application_id
+              AND cr.course_id = v_prerequisite
+              AND crs.grade >= 50 -- Assuming a passing grade is 50
+        ) THEN
+            RAISE EXCEPTION 'Prerequisite course is not completed';
+        END IF;
+    END IF;
+
+    -- Check if total hours + course hours is less than max hours for this semester
+    SELECT SUM(c.total_hours) INTO v_total_hours
+    FROM course_registrations cr
+    JOIN courses c ON cr.course_id = c.course_id
+    WHERE cr.application_id = p_application_id
+      AND cr.semester = p_semester;
+
+    SELECT total_hours INTO v_course_hours
+    FROM courses
+    WHERE course_id = p_course_id;
+
+	RAISE NOTICE '% %', v_course_hours, v_total_hours;
+
+    IF (v_total_hours + v_course_hours) > v_max_hours THEN
+        RAISE EXCEPTION 'Total hours exceed the maximum allowed hours for this semester';
+    END IF;
+
+    -- Insert into course_registrations
+    INSERT INTO course_registrations (course_id, application_id, semester, academic_year_id)
+    VALUES (p_course_id, p_application_id, p_semester, get_current_academic_year());
+
+    RAISE NOTICE 'Course registered successfully';
+END;
+$$;
 
 -- Create indexes for foreign keys
 CREATE INDEX "applications_student_id_idx" ON "applications" ("student_id");
