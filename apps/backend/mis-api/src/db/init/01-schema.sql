@@ -27,6 +27,12 @@ CREATE TYPE "department_type" AS ENUM('diploma', 'masters', 'phd');
 
 CREATE TYPE "semester_type" AS ENUM('first', 'second', 'third');
 
+CREATE TABLE academic_years (
+	academic_year_id serial PRIMARY KEY,
+	start_date date NOT NULL,
+	end_date date NOT NULL
+);
+
 -- Create tables with plural names
 CREATE TABLE "students" (
 	"student_id" serial PRIMARY KEY,
@@ -66,11 +72,12 @@ CREATE TABLE "registerations" (
 	-- TODO: Add الترشيح الوزاري
 	"registeration_id" serial PRIMARY KEY,
 	"application_id" INTEGER UNIQUE NOT NULL,
-	"academic_year" TEXT NOT NULL,
+	"academic_year_id" INT NOT NULL,
 	"faculty" TEXT NOT NULL,
 	"academic_degree" TEXT NOT NULL,
 	"academic_program" TEXT NOT NULL,
-	FOREIGN key ("application_id") REFERENCES "applications" ("application_id")
+	FOREIGN key ("application_id") REFERENCES "applications" ("application_id"),
+	FOREIGN key ("academic_year_id") REFERENCES "academic_years" ("academic_year_id")
 );
 
 CREATE TABLE "attachments" (
@@ -174,10 +181,11 @@ CREATE TABLE course_registrations (
 	application_id INT NOT NULL,
 	semester semester_type NOT NULL,
 	-- May create a table for that later but lets leave it like that for now
-	academic_year TEXT NOT NULL,
+	academic_year_id INT NOT NULL,
 	-- May add a status (registered | completed | withdrawn) field
 	FOREIGN key (course_id) REFERENCES courses (course_id),
-	FOREIGN key (application_id) REFERENCES applications (application_id)
+	FOREIGN key (application_id) REFERENCES applications (application_id),
+	FOREIGN key (academic_year_id) REFERENCES academic_years (academic_year_id)
 );
 
 CREATE TABLE course_results (
@@ -209,6 +217,20 @@ FROM
 	applications
 WHERE
 	is_admin_accepted = TRUE;
+
+-- Create functions
+CREATE FUNCTION get_current_academic_year () returns INT AS $$
+DECLARE
+    current_date DATE := CURRENT_DATE;
+    current_year_id INT;
+BEGIN
+    SELECT academic_year_id INTO current_year_id
+    FROM academic_years
+    WHERE current_date BETWEEN start_date AND end_date;
+
+    RETURN current_year_id;
+END;
+$$ language plpgsql;
 
 -- Create indexes for foreign keys
 CREATE INDEX "applications_student_id_idx" ON "applications" ("student_id");

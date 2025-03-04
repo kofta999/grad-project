@@ -3,9 +3,10 @@ import {
   students,
   applications,
   registerations,
-  emergencyContacts,
+  academicYears,
   attachments,
   addresses,
+  emergencyContacts,
   academicQualifications,
   courses,
   courseRegistrations,
@@ -22,9 +23,9 @@ export const applicationsRelations = relations(
       references: [students.studentId],
     }),
     registerations: many(registerations),
-    emergencyContacts: many(emergencyContacts),
     attachments: many(attachments),
     addresses: many(addresses),
+    emergencyContacts: many(emergencyContacts),
     academicQualifications: many(academicQualifications),
     courseRegistrations: many(courseRegistrations),
   }),
@@ -39,17 +40,16 @@ export const registerationsRelations = relations(registerations, ({ one }) => ({
     fields: [registerations.applicationId],
     references: [applications.applicationId],
   }),
+  academicYear: one(academicYears, {
+    fields: [registerations.academicYearId],
+    references: [academicYears.academicYearId],
+  }),
 }));
 
-export const emergencyContactsRelations = relations(
-  emergencyContacts,
-  ({ one }) => ({
-    application: one(applications, {
-      fields: [emergencyContacts.applicationId],
-      references: [applications.applicationId],
-    }),
-  }),
-);
+export const academicYearsRelations = relations(academicYears, ({ many }) => ({
+  registerations: many(registerations),
+  courseRegistrations: many(courseRegistrations),
+}));
 
 export const attachmentsRelations = relations(attachments, ({ one }) => ({
   application: one(applications, {
@@ -64,6 +64,16 @@ export const addressesRelations = relations(addresses, ({ one }) => ({
     references: [applications.applicationId],
   }),
 }));
+
+export const emergencyContactsRelations = relations(
+  emergencyContacts,
+  ({ one }) => ({
+    application: one(applications, {
+      fields: [emergencyContacts.applicationId],
+      references: [applications.applicationId],
+    }),
+  }),
+);
 
 export const academicQualificationsRelations = relations(
   academicQualifications,
@@ -85,6 +95,10 @@ export const courseRegistrationsRelations = relations(
     application: one(applications, {
       fields: [courseRegistrations.applicationId],
       references: [applications.applicationId],
+    }),
+    academicYear: one(academicYears, {
+      fields: [courseRegistrations.academicYearId],
+      references: [academicYears.academicYearId],
     }),
     courseResults: many(courseResults),
   }),

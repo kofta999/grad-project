@@ -1,4 +1,10 @@
 -- All passwords are test123
+
+-- Insert sample academic_years
+INSERT INTO academic_years (start_date, end_date) VALUES
+('2024-09-01', '2025-06-30'),  -- Example academic year 2024-2025
+('2025-09-01', '2026-06-30');  -- Example academic year 2025-2026
+
 -- Insert sample students
 INSERT INTO
 	"students" (
@@ -111,7 +117,7 @@ VALUES
 INSERT INTO
 	"registerations" (
 		"application_id",
-		"academic_year",
+		"academic_year_id",
 		"faculty",
 		"academic_degree",
 		"academic_program"
@@ -119,21 +125,21 @@ INSERT INTO
 VALUES
 	(
 		1,
-		'2023/2024',
+		1,
 		'Engineering',
 		'Bachelor',
 		'Computer Science'
 	),
 	(
 		2,
-		'2023/2024',
+		1,
 		'Science',
 		'Master',
 		'Mechanical Engineering'
 	),
 	(
 		3,
-		'2023/2024',
+		1,
 		'Arts',
 		'Bachelor',
 		'Graphic Design'
@@ -649,7 +655,7 @@ INSERT INTO
 		course_id,
 		application_id,
 		semester,
-		academic_year
+		academic_year_id
 	)
 VALUES
 	(
@@ -663,7 +669,7 @@ VALUES
 		),
 		1,
 		'first',
-		'2024-2025'
+		1
 	), -- Application 1 registered for EMPE 501 in the first semester of 2024-2025
 	(
 		(
@@ -676,7 +682,7 @@ VALUES
 		),
 		1,
 		'first',
-		'2024-2025'
+		1
 	), -- Application 1 registered for EMPE 502 in the first semester of 2024-2025
 	(
 		(
@@ -689,7 +695,7 @@ VALUES
 		),
 		1,
 		'second',
-		'2024-2025'
+		1
 	), -- Application 1 registered for EMPE 503 in the second semester of 2024-2025
 	(
 		(
@@ -702,7 +708,7 @@ VALUES
 		),
 		2,
 		'first',
-		'2024-2025'
+		1
 	), -- Application 2 registered for EMPE 501 in the first semester of 2024-2025
 	(
 		(
@@ -715,7 +721,7 @@ VALUES
 		),
 		2,
 		'first',
-		'2024-2025'
+		1
 	), -- Application 2 registered for EMPE 506 in the first semester of 2024-2025
 	(
 		(
@@ -728,7 +734,7 @@ VALUES
 		),
 		2,
 		'second',
-		'2024-2025'
+		1
 	), -- Application 2 registered for EMPE 507 in the second semester of 2024-2025
 	(
 		(
@@ -741,7 +747,7 @@ VALUES
 		),
 		3,
 		'first',
-		'2024-2025'
+		1
 	);
 
 -- Application 3 registered for EMPE 510 (optional) in the first semester of 2024-2025
