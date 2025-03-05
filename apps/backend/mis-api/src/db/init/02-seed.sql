@@ -109,10 +109,10 @@ VALUES
 
 -- Departments Table
 INSERT INTO
-	departments (code, title, type)
+	departments (code, title, type, courses_hours, compulsory_hours, thesis_hours)
 VALUES
-	('EPS', 'دبلوم في نظم الطاقة الكهربية', 'diploma'),
-	('PE', 'دبلوم في إلكترونيات القوى', 'diploma');
+	('EPS', 'دبلوم في نظم الطاقة الكهربية', 'diploma', 24, 15, 0),
+	('PE', 'دبلوم في إلكترونيات القوى', 'diploma', 24, 15, 0);
 
 -- Insert sample applications
 INSERT INTO
