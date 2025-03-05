@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm/relations";
-import { students, applications, registerations, academicYears, attachments, addresses, emergencyContacts, academicQualifications, courses, courseRegistrations, courseResults, departmentCourses, departments } from "./schema";
+import { students, applications, registerations, academicYears, departments, attachments, addresses, emergencyContacts, academicQualifications, courses, courseRegistrations, courseResults, departmentCourses } from "./schema";
 
 export const applicationsRelations = relations(applications, ({one, many}) => ({
 	student: one(students, {
@@ -27,11 +27,20 @@ export const registerationsRelations = relations(registerations, ({one}) => ({
 		fields: [registerations.academicYearId],
 		references: [academicYears.academicYearId]
 	}),
+	department: one(departments, {
+		fields: [registerations.departmentId],
+		references: [departments.departmentId]
+	}),
 }));
 
 export const academicYearsRelations = relations(academicYears, ({many}) => ({
 	registerations: many(registerations),
 	courseRegistrations: many(courseRegistrations),
+}));
+
+export const departmentsRelations = relations(departments, ({many}) => ({
+	registerations: many(registerations),
+	departmentCourses: many(departmentCourses),
 }));
 
 export const attachmentsRelations = relations(attachments, ({one}) => ({
@@ -99,8 +108,4 @@ export const departmentCoursesRelations = relations(departmentCourses, ({one}) =
 		fields: [departmentCourses.departmentId],
 		references: [departments.departmentId]
 	}),
-}));
-
-export const departmentsRelations = relations(departments, ({many}) => ({
-	departmentCourses: many(departmentCourses),
 }));
