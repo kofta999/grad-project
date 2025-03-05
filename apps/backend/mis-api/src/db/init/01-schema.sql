@@ -37,7 +37,10 @@ CREATE TABLE departments (
 	department_id serial PRIMARY KEY,
 	code TEXT NOT NULL,
 	title TEXT NOT NULL,
-	type department_type NOT NULL
+	type department_type NOT NULL,
+	courses_hours INT NOT NULL,
+	compulsory_hours INT NOT NULL,
+	thesis_hours INT NOT NULL
 );
 
 -- Create tables with plural names
@@ -414,7 +417,13 @@ comment ON COLUMN "students"."id_authority" IS 'The city that issued your id';
 
 comment ON COLUMN "students"."military_status" IS 'A string so far, may use an enum later';
 
-comment ON COLUMN "academic_qualifications"."grade" IS 'Will later make it all a numeric and add a hashmap to conver it to grades if it''s not credit hours (GPA)';
+comment ON COLUMN "academic_qualifications"."grade" IS 'Will later make it all a numeric and add a hashmap to convert it to grades if it''s not credit hours (GPA)';
+
+comment ON COLUMN "departments"."courses_hours" IS 'Is the hours required to complete before being able to submit a thesis';
+
+comment ON COLUMN "departments"."compulsory_hours" IS 'Is the hours that must be registered from the compulsory courses, non-compulsory ones is courses_hours - this';
+
+comment ON COLUMN "departments"."thesis_hours" IS 'Is the hours that doing thesis gives you';
 
 -- Create a trigger for updated_at timestamps
 CREATE
