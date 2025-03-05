@@ -276,7 +276,7 @@ END;
 $$ language plpgsql;
 
 CREATE
-OR REPLACE function courses_registered_for_application_this_semester (p_application_id INT, p_semester INT) returns setof courses AS $$
+OR REPLACE function courses_registered_for_application_this_semester (p_application_id INT, p_semester semester_type) returns setof courses AS $$
 BEGIN
     RETURN QUERY
     SELECT
@@ -323,7 +323,7 @@ DECLARE
     v_prerequisite INT;
     v_total_hours INT;
     v_course_hours INT;
-    v_max_hours INT := 10; -- Assuming the maximum allowed hours is 10
+    v_max_hours INT := 16; -- The maximum allowed hours per semester is 16
 BEGIN
 	-- Check if the application is accepted
 	IF NOT EXISTS (
@@ -345,7 +345,7 @@ BEGIN
         RAISE EXCEPTION 'Course is already registered for this application and semester';
     END IF;
 
-    -- Check if the course has a prerequisite (NOT TESTED YET)
+    -- Check if the course has a prerequisite
     SELECT prerequisite INTO v_prerequisite
     FROM courses
     WHERE course_id = p_course_id;
@@ -360,6 +360,7 @@ BEGIN
               AND cr.course_id = v_prerequisite
               AND crs.grade >= 50 -- Assuming a passing grade is 50
         ) THEN
+			-- TODO: Add which prerequisite course is it
             RAISE EXCEPTION 'Prerequisite course is not completed';
         END IF;
     END IF;
@@ -374,8 +375,6 @@ BEGIN
     SELECT total_hours INTO v_course_hours
     FROM courses
     WHERE course_id = p_course_id;
-
-	RAISE NOTICE '% %', v_course_hours, v_total_hours;
 
     IF (v_total_hours + v_course_hours) > v_max_hours THEN
         RAISE EXCEPTION 'Total hours exceed the maximum allowed hours for this semester';
