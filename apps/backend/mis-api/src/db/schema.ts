@@ -18,7 +18,7 @@ import { sql } from "drizzle-orm";
 export const addressType = pgEnum("address_type", ["permanent", "current"]);
 export const departmentType = pgEnum("department_type", [
   "diploma",
-  "masters",
+  "master",
   "phd",
 ]);
 export const identificationType = pgEnum("identification_type", [
@@ -145,6 +145,9 @@ export const departments = pgTable("departments", {
   code: text().notNull(),
   title: text().notNull(),
   type: departmentType().notNull(),
+  coursesHours: integer("courses_hours").notNull(),
+  compulsoryHours: integer("compulsory_hours").notNull(),
+  thesisHours: integer("thesis_hours").notNull(),
 });
 
 export const attachments = pgTable(
@@ -267,13 +270,21 @@ export const admins = pgTable(
   },
 );
 
-export const courses = pgTable("courses", {
-  courseId: serial("course_id").primaryKey().notNull(),
-  code: text().notNull(),
-  title: text().notNull(),
-  prerequisite: integer(),
-  totalHours: integer("total_hours"),
-});
+export const courses = pgTable(
+  "courses",
+  {
+    courseId: serial("course_id").primaryKey().notNull(),
+    code: text().notNull(),
+    title: text().notNull(),
+    prerequisite: integer(),
+    totalHours: integer("total_hours"),
+  },
+  (table) => {
+    return {
+      coursesCodeKey: unique("courses_code_key").on(table.code),
+    };
+  },
+);
 
 export const courseRegistrations = pgTable(
   "course_registrations",
@@ -366,4 +377,20 @@ export const acceptedApplications = pgView("accepted_applications", {
   studentId: integer("student_id"),
 }).as(
   sql`SELECT applications.application_id, applications.student_id FROM applications WHERE applications.is_admin_accepted = true`,
+);
+
+export const detailedCourseRegistrationsView = pgView(
+  "detailed_course_registrations_view",
+  {
+    courseId: integer("course_id"),
+    code: text(),
+    title: text(),
+    prerequisite: integer(),
+    totalHours: integer("total_hours"),
+    academicYearId: integer("academic_year_id"),
+    semester: semesterType(),
+    applicationId: integer("application_id"),
+  },
+).as(
+  sql`SELECT c.course_id, c.code, c.title, c.prerequisite, c.total_hours, c_r.academic_year_id, c_r.semester, c_r.application_id FROM course_registrations c_r JOIN department_courses d_c ON d_c.course_id = c_r.course_id JOIN courses c ON c.course_id = c_r.course_id JOIN registerations r ON r.application_id = c_r.application_id WHERE d_c.department_id = r.department_id`,
 );

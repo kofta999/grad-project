@@ -2,7 +2,7 @@ import { pgTable, unique, serial, text, boolean, date, timestamp, index, foreign
 import { sql } from "drizzle-orm"
 
 export const addressType = pgEnum("address_type", ['permanent', 'current'])
-export const departmentType = pgEnum("department_type", ['diploma', 'masters', 'phd'])
+export const departmentType = pgEnum("department_type", ['diploma', 'master', 'phd'])
 export const identificationType = pgEnum("identification_type", ['national_id', 'passport'])
 export const martialStatus = pgEnum("martial_status", ['single', 'married', 'married_with_dependents', 'divorced', 'widow', 'other'])
 export const semesterType = pgEnum("semester_type", ['first', 'second', 'third'])
@@ -93,6 +93,9 @@ export const departments = pgTable("departments", {
 	code: text().notNull(),
 	title: text().notNull(),
 	type: departmentType().notNull(),
+	coursesHours: integer("courses_hours").notNull(),
+	compulsoryHours: integer("compulsory_hours").notNull(),
+	thesisHours: integer("thesis_hours").notNull(),
 });
 
 export const attachments = pgTable("attachments", {
@@ -191,6 +194,10 @@ export const courses = pgTable("courses", {
 	title: text().notNull(),
 	prerequisite: integer(),
 	totalHours: integer("total_hours"),
+}, (table) => {
+	return {
+		coursesCodeKey: unique("courses_code_key").on(table.code),
+	}
 });
 
 export const courseRegistrations = pgTable("course_registrations", {
@@ -262,3 +269,13 @@ export const adminApplicationsList = pgView("admin_applications_list", {	applica
 export const acceptedApplications = pgView("accepted_applications", {	applicationId: integer("application_id"),
 	studentId: integer("student_id"),
 }).as(sql`SELECT applications.application_id, applications.student_id FROM applications WHERE applications.is_admin_accepted = true`);
+
+export const detailedCourseRegistrationsView = pgView("detailed_course_registrations_view", {	courseId: integer("course_id"),
+	code: text(),
+	title: text(),
+	prerequisite: integer(),
+	totalHours: integer("total_hours"),
+	academicYearId: integer("academic_year_id"),
+	semester: semesterType(),
+	applicationId: integer("application_id"),
+}).as(sql`SELECT c.course_id, c.code, c.title, c.prerequisite, c.total_hours, c_r.academic_year_id, c_r.semester, c_r.application_id FROM course_registrations c_r JOIN department_courses d_c ON d_c.course_id = c_r.course_id JOIN courses c ON c.course_id = c_r.course_id JOIN registerations r ON r.application_id = c_r.application_id WHERE d_c.department_id = r.department_id`);

@@ -45,9 +45,13 @@ function nukeAndInitDB() {
   runCommand(
     "docker exec -i mis_postgres psql -U mis_user -d mis_db -f /docker-entrypoint-initdb.d/01-schema.sql",
   );
+  
+  runCommand(
+    "docker exec -i mis_postgres psql -U mis_user -d mis_db -f /docker-entrypoint-initdb.d/02-courses-departments.sql",
+  );
 
   runCommand(
-    "docker exec -i mis_postgres psql -U mis_user -d mis_db -f /docker-entrypoint-initdb.d/02-seed.sql",
+    "docker exec -i mis_postgres psql -U mis_user -d mis_db -f /docker-entrypoint-initdb.d/03-seed.sql",
   );
 }
 
