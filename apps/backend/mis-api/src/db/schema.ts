@@ -18,7 +18,7 @@ import { sql } from "drizzle-orm";
 export const addressType = pgEnum("address_type", ["permanent", "current"]);
 export const departmentType = pgEnum("department_type", [
   "diploma",
-  "masters",
+  "master",
   "phd",
 ]);
 export const identificationType = pgEnum("identification_type", [
@@ -270,13 +270,21 @@ export const admins = pgTable(
   },
 );
 
-export const courses = pgTable("courses", {
-  courseId: serial("course_id").primaryKey().notNull(),
-  code: text().notNull(),
-  title: text().notNull(),
-  prerequisite: integer(),
-  totalHours: integer("total_hours"),
-});
+export const courses = pgTable(
+  "courses",
+  {
+    courseId: serial("course_id").primaryKey().notNull(),
+    code: text().notNull(),
+    title: text().notNull(),
+    prerequisite: integer(),
+    totalHours: integer("total_hours"),
+  },
+  (table) => {
+    return {
+      coursesCodeKey: unique("courses_code_key").on(table.code),
+    };
+  },
+);
 
 export const courseRegistrations = pgTable(
   "course_registrations",

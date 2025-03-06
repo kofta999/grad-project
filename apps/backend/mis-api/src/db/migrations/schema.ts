@@ -2,7 +2,7 @@ import { pgTable, unique, serial, text, boolean, date, timestamp, index, foreign
 import { sql } from "drizzle-orm"
 
 export const addressType = pgEnum("address_type", ['permanent', 'current'])
-export const departmentType = pgEnum("department_type", ['diploma', 'masters', 'phd'])
+export const departmentType = pgEnum("department_type", ['diploma', 'master', 'phd'])
 export const identificationType = pgEnum("identification_type", ['national_id', 'passport'])
 export const martialStatus = pgEnum("martial_status", ['single', 'married', 'married_with_dependents', 'divorced', 'widow', 'other'])
 export const semesterType = pgEnum("semester_type", ['first', 'second', 'third'])
@@ -194,6 +194,10 @@ export const courses = pgTable("courses", {
 	title: text().notNull(),
 	prerequisite: integer(),
 	totalHours: integer("total_hours"),
+}, (table) => {
+	return {
+		coursesCodeKey: unique("courses_code_key").on(table.code),
+	}
 });
 
 export const courseRegistrations = pgTable("course_registrations", {
