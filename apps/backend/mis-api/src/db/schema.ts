@@ -382,14 +382,14 @@ export const acceptedApplications = pgView("accepted_applications", {
 export const detailedCourseRegistrationsView = pgView(
   "detailed_course_registrations_view",
   {
-    courseId: integer("course_id"),
-    code: text(),
-    title: text(),
-    prerequisite: integer(),
-    totalHours: integer("total_hours"),
-    academicYearId: integer("academic_year_id"),
-    semester: semesterType(),
-    applicationId: integer("application_id"),
+    courseId: integer("course_id").notNull(),
+    code: text().notNull(),
+    title: text().notNull(),
+    prerequisite: integer().notNull(),
+    totalHours: integer("total_hours").notNull(),
+    academicYearId: integer("academic_year_id").notNull(),
+    semester: semesterType().notNull(),
+    applicationId: integer("application_id").notNull(),
   },
 ).as(
   sql`SELECT c.course_id, c.code, c.title, c.prerequisite, c.total_hours, c_r.academic_year_id, c_r.semester, c_r.application_id FROM course_registrations c_r JOIN department_courses d_c ON d_c.course_id = c_r.course_id JOIN courses c ON c.course_id = c_r.course_id JOIN registerations r ON r.application_id = c_r.application_id WHERE d_c.department_id = r.department_id`,

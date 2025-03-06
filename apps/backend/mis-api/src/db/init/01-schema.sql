@@ -336,7 +336,7 @@ BEGIN
 	) THEN
 		RAISE EXCEPTION 'Application is not yet accepted';
 	END IF;
-
+	
     -- Check if the course is already registered
     IF EXISTS (
         SELECT 1
@@ -397,6 +397,28 @@ BEGIN
     ) THEN
         RAISE EXCEPTION 'This course is not available for this academic program';
     END IF;
+    
+    -- Check if passed before or not
+	IF EXISTS (
+	   SELECT 1
+		FROM course_results
+		JOIN course_registrations USING (course_registration_id)
+		WHERE course_registrations.course_id = p_course_id
+		-- Assume passing grade is 50
+		AND grade >= 50
+	) THEN
+	   RAISE WARNING 'Course is already passed before';
+	END IF;
+	
+	-- Check if the course is registered before or not
+	IF EXISTS (
+	   SELECT 1
+		FROM course_registrations
+		WHERE course_registrations.course_id = p_course_id
+	) THEN
+	   RAISE WARNING 'Course is already registered in a previous semester';
+	END IF;
+
 
     -- Insert into course_registrations
     INSERT INTO course_registrations (course_id, application_id, semester, academic_year_id)
