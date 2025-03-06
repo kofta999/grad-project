@@ -10,6 +10,7 @@ import {
   adminApplicationsList,
   applications,
   attachments,
+  detailedCourseRegistrationsView,
   emergencyContacts,
   registerations,
   students,
@@ -171,3 +172,17 @@ export const editStudentInfoSchema = createUpdateSchema(students).omit({
   createdAt: true,
   updatedAt: true,
 });
+
+export const applicantRegisteredCoursesRequestSchema = z.object({
+  applicationId: z.number(),
+  semester: z.enum(["first", "second", "third"]),
+  academicYearId: z.number(),
+});
+
+export const applicantRegisteredCoursesResponseSchema = z.array(
+  createSelectSchema(detailedCourseRegistrationsView).omit({
+    academicYearId: true,
+    applicationId: true,
+    semester: true,
+  }),
+);
