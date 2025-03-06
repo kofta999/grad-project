@@ -13,6 +13,7 @@ import {
   emergencyContacts,
   registerations,
   students,
+  courses,
 } from "./schema";
 import { z } from "zod";
 import { ROLES } from "@/lib/constants";
@@ -171,3 +172,17 @@ export const editStudentInfoSchema = createUpdateSchema(students).omit({
   createdAt: true,
   updatedAt: true,
 });
+
+export const AvailableCoursesSchema = z.object({
+  application_id: z.number().int().positive(),
+});
+
+export const availableCoursesSchema = z.array(
+  z.object({
+    course_id: z.number().int(),
+    code: z.string(),
+    title: z.string(),
+    prerequisite: z.string().nullable(),
+    total_hours: z.number().int(),
+  })
+);
