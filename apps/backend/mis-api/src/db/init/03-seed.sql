@@ -634,113 +634,75 @@ VALUES
 -- 		FALSE
 -- 	);
 
+-- Register master's student (application 2) for master's level courses
 INSERT INTO
-	course_registrations (
-		course_id,
-		application_id,
-		semester,
-		academic_year_id
-	)
+    course_registrations (
+        course_id,
+        application_id,
+        semester,
+        academic_year_id
+    )
 VALUES
-	(
-		(
-			SELECT
-				course_id
-			FROM
-				courses
-			WHERE
-				code = 'EMPE 501'
-		),
-		1,
-		'first',
-		1
-	), -- Application 1 registered for EMPE 501 in the first semester of 2024-2025
-	(
-		(
-			SELECT
-				course_id
-			FROM
-				courses
-			WHERE
-				code = 'EMPE 502'
-		),
-		1,
-		'first',
-		1
-	), -- Application 1 registered for EMPE 502 in the first semester of 2024-2025
-	(
-		(
-			SELECT
-				course_id
-			FROM
-				courses
-			WHERE
-				code = 'EMPE 503'
-		),
-		1,
-		'second',
-		1
-	), -- Application 1 registered for EMPE 503 in the second semester of 2024-2025
-	(
-		(
-			SELECT
-				course_id
-			FROM
-				courses
-			WHERE
-				code = 'EMPE 501'
-		),
-		2,
-		'first',
-		1
-	), -- Application 2 registered for EMPE 501 in the first semester of 2024-2025
-	(
-		(
-			SELECT
-				course_id
-			FROM
-				courses
-			WHERE
-				code = 'EMPE 506'
-		),
-		2,
-		'first',
-		1
-	), -- Application 2 registered for EMPE 506 in the first semester of 2024-2025
-	(
-		(
-			SELECT
-				course_id
-			FROM
-				courses
-			WHERE
-				code = 'EMPE 507'
-		),
-		2,
-		'second',
-		1
-	), -- Application 2 registered for EMPE 507 in the second semester of 2024-2025
-	(
-		(
-			SELECT
-				course_id
-			FROM
-				courses
-			WHERE
-				code = 'EMPE 510'
-		),
-		3,
-		'first',
-		1
-	);
+    (
+        (SELECT course_id FROM courses WHERE code = 'ELEC 600'),
+        2,
+        'first',
+        1
+    ), -- Master's student registered for ELEC 600 (required master's course)
+    (
+        (SELECT course_id FROM courses WHERE code = 'ELEC 601'),
+        2,
+        'first',
+        1
+    ), -- Master's student registered for ELEC 601 (required master's course)
+    (
+        (SELECT course_id FROM courses WHERE code = 'EMPE 603'),
+        2,
+        'second',
+        1
+    ), -- Master's student registered for EMPE 603 (master's level course)
+    (
+        (SELECT course_id FROM courses WHERE code = 'EMPE 604'),
+        2,
+        'second',
+        1
+    ); -- Master's student registered for EMPE 604 (master's level course)
 
--- Application 3 registered for EMPE 510 (optional) in the first semester of 2024-2025
+-- Register PhD student (application 3) for PhD level courses
 INSERT INTO
-	course_results (course_registration_id, grade)
+    course_registrations (
+        course_id,
+        application_id,
+        semester,
+        academic_year_id
+    )
 VALUES
-	(1, 85), -- Application 1 got 85 in EMPE 501 (linked by course_registration_id)
-	(2, 78), -- Application 1 got 78 in EMPE 502
-	(4, 76), -- Application 2 got 76 in EMPE 501
-	(5, 88);
+    (
+        (SELECT course_id FROM courses WHERE code = 'EMPE 701'),
+        3,
+        'first',
+        1
+    ), -- PhD student registered for EMPE 701 (required PhD course)
+    (
+        (SELECT course_id FROM courses WHERE code = 'EMPE 702'),
+        3,
+        'first',
+        1
+    ), -- PhD student registered for EMPE 702 (required PhD course)
+    (
+        (SELECT course_id FROM courses WHERE code = 'EMPE 704'),
+        3,
+        'second',
+        1
+    ); -- PhD student registered for EMPE 704 (PhD elective course)
 
+-- Insert grades for the registered courses
+INSERT INTO
+    course_results (course_registration_id, grade)
+VALUES
+    (1, 85), -- Application 2 got 85 in ELEC 600
+    (2, 88), -- Application 2 got 88 in ELEC 601
+    (3, 90), -- Application 2 got 90 in EMPE 603
+    (5, 92), -- Application 3 got 92 in EMPE 701
+    (6, 87); -- Application 3 got 87 in EMPE 702
 -- Application 2 got 88 in EMPE 506
