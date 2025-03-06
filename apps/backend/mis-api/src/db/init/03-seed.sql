@@ -107,12 +107,12 @@ VALUES
 		CURRENT_TIMESTAMP
 	);
 
--- Departments Table
-INSERT INTO
-	departments (code, title, type, courses_hours, compulsory_hours, thesis_hours)
-VALUES
-	('EPS', 'دبلوم في نظم الطاقة الكهربية', 'diploma', 24, 15, 0),
-	('PE', 'دبلوم في إلكترونيات القوى', 'diploma', 24, 15, 0);
+-- -- Departments Table
+-- INSERT INTO
+-- 	departments (code, title, type, courses_hours, compulsory_hours, thesis_hours)
+-- VALUES
+-- 	('EPS', 'دبلوم في نظم الطاقة الكهربية', 'diploma', 24, 15, 0),
+-- 	('PE', 'دبلوم في إلكترونيات القوى', 'diploma', 24, 15, 0);
 
 -- Insert sample applications
 INSERT INTO
@@ -133,8 +133,8 @@ INSERT INTO
 	)
 VALUES
 	(1, 1, 'Engineering', 'diploma', 1),
-	(2, 1, 'Science', 'masters', 2),
-	(3, 1, 'Arts', 'phd', 1);
+	(2, 1, 'Science', 'master', 3),
+	(3, 1, 'Arts', 'phd', 7);
 
 -- Insert sample attachments
 INSERT INTO
@@ -305,334 +305,334 @@ VALUES
 		CURRENT_TIMESTAMP
 	);
 
--- Courses Table
-INSERT INTO
-	courses (code, title, prerequisite, total_hours)
-VALUES
-	('EMPE 501', 'مشروع', NULL, 3),
-	(
-		'EMPE 502',
-		'تخطيط وتصميم شبكات توزيع الطاقة الكهربية',
-		NULL,
-		3
-	),
-	('EMPE 503', 'نظم نقل الطاقة الكهربية', NULL, 3),
-	(
-		'EMPE 504',
-		'إدارة الأحمال والحفاظ على الطاقة',
-		NULL,
-		3
-	),
-	(
-		'EMPE 505',
-		'دراسة أداء نظم الطاقة الكهربية',
-		NULL,
-		3
-	),
-	(
-		'EMPE 506',
-		'التحكم الإلكتروني في دوائر التيار المتردد',
-		NULL,
-		3
-	),
-	('EMPE 507', 'الإلكترونيات الصناعية', NULL, 3),
-	(
-		'EMPE 508',
-		'التوافقيات في نظم الطاقة الكهربية',
-		NULL,
-		3
-	),
-	(
-		'EMPE 509',
-		'التحكم الإلكتروني في آلات التيار المتردد',
-		NULL,
-		3
-	),
-	('EMPE 510', 'Power System Protection', NULL, 3), -- Optional
-	('EMPE 511', 'Renewable Energy Systems', NULL, 3);
+-- -- Courses Table
+-- INSERT INTO
+-- 	courses (code, title, prerequisite, total_hours)
+-- VALUES
+-- 	('EMPE 501', 'مشروع', NULL, 3),
+-- 	(
+-- 		'EMPE 502',
+-- 		'تخطيط وتصميم شبكات توزيع الطاقة الكهربية',
+-- 		NULL,
+-- 		3
+-- 	),
+-- 	('EMPE 503', 'نظم نقل الطاقة الكهربية', NULL, 3),
+-- 	(
+-- 		'EMPE 504',
+-- 		'إدارة الأحمال والحفاظ على الطاقة',
+-- 		NULL,
+-- 		3
+-- 	),
+-- 	(
+-- 		'EMPE 505',
+-- 		'دراسة أداء نظم الطاقة الكهربية',
+-- 		NULL,
+-- 		3
+-- 	),
+-- 	(
+-- 		'EMPE 506',
+-- 		'التحكم الإلكتروني في دوائر التيار المتردد',
+-- 		NULL,
+-- 		3
+-- 	),
+-- 	('EMPE 507', 'الإلكترونيات الصناعية', NULL, 3),
+-- 	(
+-- 		'EMPE 508',
+-- 		'التوافقيات في نظم الطاقة الكهربية',
+-- 		NULL,
+-- 		3
+-- 	),
+-- 	(
+-- 		'EMPE 509',
+-- 		'التحكم الإلكتروني في آلات التيار المتردد',
+-- 		NULL,
+-- 		3
+-- 	),
+-- 	('EMPE 510', 'Power System Protection', NULL, 3), -- Optional
+-- 	('EMPE 511', 'Renewable Energy Systems', NULL, 3);
 
--- Optional
--- Department_Courses Table
--- Electrical Power Systems (EPS) - Compulsory
-INSERT INTO
-	department_courses (course_id, department_id, is_compulsory)
-VALUES
-	(
-		(
-			SELECT
-				course_id
-			FROM
-				courses
-			WHERE
-				code = 'EMPE 501'
-		),
-		(
-			SELECT
-				department_id
-			FROM
-				departments
-			WHERE
-				code = 'EPS'
-		),
-		TRUE
-	),
-	(
-		(
-			SELECT
-				course_id
-			FROM
-				courses
-			WHERE
-				code = 'EMPE 502'
-		),
-		(
-			SELECT
-				department_id
-			FROM
-				departments
-			WHERE
-				code = 'EPS'
-		),
-		TRUE
-	),
-	(
-		(
-			SELECT
-				course_id
-			FROM
-				courses
-			WHERE
-				code = 'EMPE 503'
-		),
-		(
-			SELECT
-				department_id
-			FROM
-				departments
-			WHERE
-				code = 'EPS'
-		),
-		TRUE
-	),
-	(
-		(
-			SELECT
-				course_id
-			FROM
-				courses
-			WHERE
-				code = 'EMPE 504'
-		),
-		(
-			SELECT
-				department_id
-			FROM
-				departments
-			WHERE
-				code = 'EPS'
-		),
-		TRUE
-	),
-	(
-		(
-			SELECT
-				course_id
-			FROM
-				courses
-			WHERE
-				code = 'EMPE 505'
-		),
-		(
-			SELECT
-				department_id
-			FROM
-				departments
-			WHERE
-				code = 'EPS'
-		),
-		TRUE
-	);
+-- -- Optional
+-- -- Department_Courses Table
+-- -- Electrical Power Systems (EPS) - Compulsory
+-- INSERT INTO
+-- 	department_courses (course_id, department_id, is_compulsory)
+-- VALUES
+-- 	(
+-- 		(
+-- 			SELECT
+-- 				course_id
+-- 			FROM
+-- 				courses
+-- 			WHERE
+-- 				code = 'EMPE 501'
+-- 		),
+-- 		(
+-- 			SELECT
+-- 				department_id
+-- 			FROM
+-- 				departments
+-- 			WHERE
+-- 				code = 'EPS'
+-- 		),
+-- 		TRUE
+-- 	),
+-- 	(
+-- 		(
+-- 			SELECT
+-- 				course_id
+-- 			FROM
+-- 				courses
+-- 			WHERE
+-- 				code = 'EMPE 502'
+-- 		),
+-- 		(
+-- 			SELECT
+-- 				department_id
+-- 			FROM
+-- 				departments
+-- 			WHERE
+-- 				code = 'EPS'
+-- 		),
+-- 		TRUE
+-- 	),
+-- 	(
+-- 		(
+-- 			SELECT
+-- 				course_id
+-- 			FROM
+-- 				courses
+-- 			WHERE
+-- 				code = 'EMPE 503'
+-- 		),
+-- 		(
+-- 			SELECT
+-- 				department_id
+-- 			FROM
+-- 				departments
+-- 			WHERE
+-- 				code = 'EPS'
+-- 		),
+-- 		TRUE
+-- 	),
+-- 	(
+-- 		(
+-- 			SELECT
+-- 				course_id
+-- 			FROM
+-- 				courses
+-- 			WHERE
+-- 				code = 'EMPE 504'
+-- 		),
+-- 		(
+-- 			SELECT
+-- 				department_id
+-- 			FROM
+-- 				departments
+-- 			WHERE
+-- 				code = 'EPS'
+-- 		),
+-- 		TRUE
+-- 	),
+-- 	(
+-- 		(
+-- 			SELECT
+-- 				course_id
+-- 			FROM
+-- 				courses
+-- 			WHERE
+-- 				code = 'EMPE 505'
+-- 		),
+-- 		(
+-- 			SELECT
+-- 				department_id
+-- 			FROM
+-- 				departments
+-- 			WHERE
+-- 				code = 'EPS'
+-- 		),
+-- 		TRUE
+-- 	);
 
--- Power Electronics (PE) - Compulsory
-INSERT INTO
-	department_courses (course_id, department_id, is_compulsory)
-VALUES
-	(
-		(
-			SELECT
-				course_id
-			FROM
-				courses
-			WHERE
-				code = 'EMPE 501'
-		),
-		(
-			SELECT
-				department_id
-			FROM
-				departments
-			WHERE
-				code = 'PE'
-		),
-		TRUE
-	),
-	(
-		(
-			SELECT
-				course_id
-			FROM
-				courses
-			WHERE
-				code = 'EMPE 506'
-		),
-		(
-			SELECT
-				department_id
-			FROM
-				departments
-			WHERE
-				code = 'PE'
-		),
-		TRUE
-	),
-	(
-		(
-			SELECT
-				course_id
-			FROM
-				courses
-			WHERE
-				code = 'EMPE 507'
-		),
-		(
-			SELECT
-				department_id
-			FROM
-				departments
-			WHERE
-				code = 'PE'
-		),
-		TRUE
-	),
-	(
-		(
-			SELECT
-				course_id
-			FROM
-				courses
-			WHERE
-				code = 'EMPE 508'
-		),
-		(
-			SELECT
-				department_id
-			FROM
-				departments
-			WHERE
-				code = 'PE'
-		),
-		TRUE
-	),
-	(
-		(
-			SELECT
-				course_id
-			FROM
-				courses
-			WHERE
-				code = 'EMPE 509'
-		),
-		(
-			SELECT
-				department_id
-			FROM
-				departments
-			WHERE
-				code = 'PE'
-		),
-		TRUE
-	);
+-- -- Power Electronics (PE) - Compulsory
+-- INSERT INTO
+-- 	department_courses (course_id, department_id, is_compulsory)
+-- VALUES
+-- 	(
+-- 		(
+-- 			SELECT
+-- 				course_id
+-- 			FROM
+-- 				courses
+-- 			WHERE
+-- 				code = 'EMPE 501'
+-- 		),
+-- 		(
+-- 			SELECT
+-- 				department_id
+-- 			FROM
+-- 				departments
+-- 			WHERE
+-- 				code = 'PE'
+-- 		),
+-- 		TRUE
+-- 	),
+-- 	(
+-- 		(
+-- 			SELECT
+-- 				course_id
+-- 			FROM
+-- 				courses
+-- 			WHERE
+-- 				code = 'EMPE 506'
+-- 		),
+-- 		(
+-- 			SELECT
+-- 				department_id
+-- 			FROM
+-- 				departments
+-- 			WHERE
+-- 				code = 'PE'
+-- 		),
+-- 		TRUE
+-- 	),
+-- 	(
+-- 		(
+-- 			SELECT
+-- 				course_id
+-- 			FROM
+-- 				courses
+-- 			WHERE
+-- 				code = 'EMPE 507'
+-- 		),
+-- 		(
+-- 			SELECT
+-- 				department_id
+-- 			FROM
+-- 				departments
+-- 			WHERE
+-- 				code = 'PE'
+-- 		),
+-- 		TRUE
+-- 	),
+-- 	(
+-- 		(
+-- 			SELECT
+-- 				course_id
+-- 			FROM
+-- 				courses
+-- 			WHERE
+-- 				code = 'EMPE 508'
+-- 		),
+-- 		(
+-- 			SELECT
+-- 				department_id
+-- 			FROM
+-- 				departments
+-- 			WHERE
+-- 				code = 'PE'
+-- 		),
+-- 		TRUE
+-- 	),
+-- 	(
+-- 		(
+-- 			SELECT
+-- 				course_id
+-- 			FROM
+-- 				courses
+-- 			WHERE
+-- 				code = 'EMPE 509'
+-- 		),
+-- 		(
+-- 			SELECT
+-- 				department_id
+-- 			FROM
+-- 				departments
+-- 			WHERE
+-- 				code = 'PE'
+-- 		),
+-- 		TRUE
+--	);
 
--- Both Departments - Optional
-INSERT INTO
-	department_courses (course_id, department_id, is_compulsory)
-VALUES
-	(
-		(
-			SELECT
-				course_id
-			FROM
-				courses
-			WHERE
-				code = 'EMPE 510'
-		),
-		(
-			SELECT
-				department_id
-			FROM
-				departments
-			WHERE
-				code = 'EPS'
-		),
-		FALSE
-	),
-	(
-		(
-			SELECT
-				course_id
-			FROM
-				courses
-			WHERE
-				code = 'EMPE 511'
-		),
-		(
-			SELECT
-				department_id
-			FROM
-				departments
-			WHERE
-				code = 'EPS'
-		),
-		FALSE
-	),
-	(
-		(
-			SELECT
-				course_id
-			FROM
-				courses
-			WHERE
-				code = 'EMPE 510'
-		),
-		(
-			SELECT
-				department_id
-			FROM
-				departments
-			WHERE
-				code = 'PE'
-		),
-		FALSE
-	),
-	(
-		(
-			SELECT
-				course_id
-			FROM
-				courses
-			WHERE
-				code = 'EMPE 511'
-		),
-		(
-			SELECT
-				department_id
-			FROM
-				departments
-			WHERE
-				code = 'PE'
-		),
-		FALSE
-	);
+-- -- Both Departments - Optional
+-- INSERT INTO
+-- 	department_courses (course_id, department_id, is_compulsory)
+-- VALUES
+-- 	(
+-- 		(
+-- 			SELECT
+-- 				course_id
+-- 			FROM
+-- 				courses
+-- 			WHERE
+-- 				code = 'EMPE 510'
+-- 		),
+-- 		(
+-- 			SELECT
+-- 				department_id
+-- 			FROM
+-- 				departments
+-- 			WHERE
+-- 				code = 'EPS'
+-- 		),
+-- 		FALSE
+-- 	),
+-- 	(
+-- 		(
+-- 			SELECT
+-- 				course_id
+-- 			FROM
+-- 				courses
+-- 			WHERE
+-- 				code = 'EMPE 511'
+-- 		),
+-- 		(
+-- 			SELECT
+-- 				department_id
+-- 			FROM
+-- 				departments
+-- 			WHERE
+-- 				code = 'EPS'
+-- 		),
+-- 		FALSE
+-- 	),
+-- 	(
+-- 		(
+-- 			SELECT
+-- 				course_id
+-- 			FROM
+-- 				courses
+-- 			WHERE
+-- 				code = 'EMPE 510'
+-- 		),
+-- 		(
+-- 			SELECT
+-- 				department_id
+-- 			FROM
+-- 				departments
+-- 			WHERE
+-- 				code = 'PE'
+-- 		),
+-- 		FALSE
+-- 	),
+-- 	(
+-- 		(
+-- 			SELECT
+-- 				course_id
+-- 			FROM
+-- 				courses
+-- 			WHERE
+-- 				code = 'EMPE 511'
+-- 		),
+-- 		(
+-- 			SELECT
+-- 				department_id
+-- 			FROM
+-- 				departments
+-- 			WHERE
+-- 				code = 'PE'
+-- 		),
+-- 		FALSE
+-- 	);
 
 INSERT INTO
 	course_registrations (
