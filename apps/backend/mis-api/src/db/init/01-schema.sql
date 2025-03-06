@@ -224,6 +224,27 @@ FROM
 	applications
 WHERE
 	is_admin_accepted = TRUE;
+	
+-- WHERE it using 
+-- c_r.academic_year_id, c_r.semester, c_r.application_id
+CREATE OR REPLACE VIEW detailed_course_registrations_view AS
+SELECT
+		c.course_id,
+		c.code,
+		c.title,
+		c.prerequisite,
+		c.total_hours,
+		c_r.academic_year_id,
+		c_r.semester,
+		c_r.application_id
+FROM
+		course_registrations c_r
+		JOIN department_courses d_c ON d_c.course_id = c_r.course_id
+		JOIN courses c ON c.course_id = c_r.course_id
+		JOIN registerations r ON r.application_id = c_r.application_id
+WHERE
+		-- c_r.academic_year_id = get_current_academic_year ()
+		d_c.department_id = r.department_id;
 
 -- -- Need to WHERE with application_id
 -- CREATE VIEW "available_courses_for_application" AS
@@ -275,29 +296,6 @@ BEGIN
     WHERE
         r.academic_year_id = get_current_academic_year()
         AND a.application_id = p_application_id;
-END;
-$$ language plpgsql;
-
-CREATE
-OR REPLACE function courses_registered_for_application_this_semester (p_application_id INT, p_semester semester_type) returns setof courses AS $$
-BEGIN
-    RETURN QUERY
-    SELECT
-        c.course_id,
-        c.code,
-        c.title,
-        c.prerequisite,
-        c.total_hours
-    FROM
-        course_registrations c_r
-        JOIN department_courses d_c ON d_c.course_id = c_r.course_id
-        JOIN courses c ON c.course_id = c_r.course_id
-        JOIN registerations r ON r.application_id = c_r.application_id
-    WHERE
-        c_r.academic_year_id = get_current_academic_year()
-        AND d_c.department_id = r.department_id
-        AND c_r.application_id = p_application_id
-        AND c_r.semester = p_semester;
 END;
 $$ language plpgsql;
 
