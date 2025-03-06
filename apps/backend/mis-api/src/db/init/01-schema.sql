@@ -23,7 +23,7 @@ CREATE TYPE "martial_status" AS ENUM(
 	'other' -- اخرى
 );
 
-CREATE TYPE "department_type" AS ENUM('diploma', 'masters', 'phd');
+CREATE TYPE "department_type" AS ENUM('diploma', 'master', 'phd');
 
 CREATE TYPE "semester_type" AS ENUM('first', 'second', 'third');
 
@@ -84,6 +84,7 @@ CREATE TABLE "registerations" (
 	"application_id" INTEGER UNIQUE NOT NULL,
 	"academic_year_id" INT NOT NULL,
 	"faculty" TEXT NOT NULL,
+	-- TODO: I may not need that as the department has it all
 	"academic_degree" department_type NOT NULL,
 	-- academic_program = department
 	"department_id" INT NOT NULL,
@@ -164,7 +165,7 @@ CREATE TABLE "admins" (
 CREATE TABLE courses (
 	course_id serial PRIMARY KEY,
 	-- Probably has a definite length but eh
-	code TEXT NOT NULL,
+	code TEXT NOT NULL UNIQUE,
 	title TEXT NOT NULL,
 	-- Refers to a prerequisite course
 	prerequisite INT DEFAULT NULL,
@@ -324,6 +325,7 @@ DECLARE
     v_prerequisite INT;
     v_total_hours INT;
     v_course_hours INT;
+    v_department_id INT;
     v_max_hours INT := 16; -- The maximum allowed hours per semester is 16
 BEGIN
 	-- Check if the application is accepted
@@ -379,6 +381,21 @@ BEGIN
 
     IF (v_total_hours + v_course_hours) > v_max_hours THEN
         RAISE EXCEPTION 'Total hours exceed the maximum allowed hours for this semester';
+    END IF;
+    
+    
+    -- Check if the course is available for applicant's department
+    SELECT department_id INTO v_department_id
+    FROM registerations
+    WHERE application_id = p_application_id;
+    
+    IF NOT EXISTS (
+        SELECT 1
+        FROM department_courses
+        WHERE department_id = v_department_id
+          AND course_id = p_course_id
+    ) THEN
+        RAISE EXCEPTION 'This course is not available for this academic program';
     END IF;
 
     -- Insert into course_registrations
