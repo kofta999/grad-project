@@ -1,10 +1,9 @@
 import { createRouter } from "@/lib/create-app";
-import * as handlers from "./admin.handlers";
-import * as routes from "./admin.routes";
+import applicationsRouter from "./applications/applications.index";
+import coursesRouter from "./courses/courses.index";
 
 const router = createRouter()
-  .openapi(routes.acceptApplication, handlers.acceptApplication)
-  .openapi(routes.getAllApplications, handlers.getAllApplications)
-  .openapi(routes.getApplicationDetails, handlers.getApplicationDetails);
+  .route("/applications", applicationsRouter)
+  .route("/courses", coursesRouter);
 
 export default router;

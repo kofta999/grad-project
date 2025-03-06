@@ -7,7 +7,7 @@ import {
   AcceptApplicationRoute,
   GetAllApplicationsRoute,
   GetApplicationDetailsRoute,
-} from "./admin.routes";
+} from "./applications.routes";
 
 export const acceptApplication: AppRouteHandler<
   AcceptApplicationRoute
