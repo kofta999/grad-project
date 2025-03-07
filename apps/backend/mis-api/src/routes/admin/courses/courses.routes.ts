@@ -45,10 +45,10 @@ export const getAvailableCourses = createRoute({
       availableCoursesSchema,
       "Available courses",
     ),
-    // [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
-    //   createErrorSchema(z.object({ error: z.string() })),
-    //   "Validation error",
-    // ),
+    [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
+      createErrorSchema(z.object({ error: z.string() })),
+      "Validation error",
+    ),
     // [HttpStatusCodes.INTERNAL_SERVER_ERROR]: jsonContent(
     //   createErrorSchema(z.object({ error: z.string() })),
     //   "Server error",
