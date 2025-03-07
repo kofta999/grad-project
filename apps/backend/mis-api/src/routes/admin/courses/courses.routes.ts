@@ -38,7 +38,17 @@ export const getAvailableCourses = createRoute({
   middleware: [isAuthenticated, requireRole("admin")],
   tags,
   request: {
-    params: IdParamsSchema
+    params: z.object({
+      applicationId: z.coerce.number().openapi({
+        param: {
+          name: "applicationId",
+          in: "path",
+          required: true,
+        },
+        required: ["id"],
+        example: 1,
+      }),
+    }),
   },
   responses: {
     [HttpStatusCodes.OK]: jsonContent(
