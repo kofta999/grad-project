@@ -10,6 +10,7 @@ import {
   adminApplicationsList,
   applications,
   attachments,
+  detailedCourseRegistrationsView,
   emergencyContacts,
   registerations,
   students,
@@ -184,5 +185,18 @@ export const availableCoursesSchema = z.array(
     title: z.string(),
     prerequisite: z.string().nullable(),
     total_hours: z.number().int(),
-  })
+  });
+
+export const applicantRegisteredCoursesRequestSchema = z.object({
+  applicationId: z.number(),
+  semester: z.enum(["first", "second", "third"]),
+  academicYearId: z.number(),
+});
+
+export const applicantRegisteredCoursesResponseSchema = z.array(
+  createSelectSchema(detailedCourseRegistrationsView).omit({
+    academicYearId: true,
+    applicationId: true,
+    semester: true,
+  }),
 );
