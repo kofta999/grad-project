@@ -1,11 +1,14 @@
 import { AppRouteHandler } from "@/lib/types";
 import * as HttpStatusCodes from "stoker/http-status-codes";
-import { GetApplicantRegisteredCoursesRoute, GetAvailableCoursesRoute, RegisterCourseRoute} from "./courses.routes";
+import {
+  GetApplicantRegisteredCoursesRoute,
+  GetAvailableCoursesRoute,
+  RegisterCourseRoute,
+} from "./courses.routes";
 import db from "@/db";
-import { detailedCourseRegistrationsView as dcv } from "@/db/schema";
+import { courses, detailedCourseRegistrationsView as dcv } from "@/db/schema";
 import { and, eq } from "drizzle-orm";
 import { sql } from "drizzle-orm";
-
 
 export const getApplicantRegisteredCourses: AppRouteHandler<
   GetApplicantRegisteredCoursesRoute
@@ -32,35 +35,29 @@ export const getApplicantRegisteredCourses: AppRouteHandler<
   return c.json(courses, HttpStatusCodes.OK);
 };
 
-export const getAvailableCoursesForApplication: AppRouteHandler<GetAvailableCoursesRoute> = async (c) => {
-  const application_id = c.req.param("application_id");
+export const getAvailableCoursesForApplication: AppRouteHandler<
+  GetAvailableCoursesRoute
+> = async (c) => {
+  const applicationId = c.req.param("applicationId");
 
-  try {
-    const courses = await db.execute(
-      sql`SELECT * FROM available_courses_for_application(${application_id})`
-    );
+  const availableCourses = await db.execute<typeof courses.$inferSelect>(
+    sql`SELECT * FROM available_courses_for_application(${applicationId})`,
+  );
 
-    return c.json({ courses: courses.rows }, HttpStatusCodes.OK);
-  } catch (error) {
-    console.error("Error fetching available courses:", error);
-
-    const errorMessage =
-      error instanceof Error ? error.message : "Failed to fetch courses";
-
-    return c.json({ error: errorMessage }, HttpStatusCodes.INTERNAL_SERVER_ERROR);
-  }
+  return c.json(availableCourses.rows, HttpStatusCodes.OK);
 };
 
-
-export const registerCourse: AppRouteHandler<RegisterCourseRoute> = async (c) => {
+export const registerCourse: AppRouteHandler<RegisterCourseRoute> = async (
+  c,
+) => {
   const { applicationId, courseId, semester } = c.req.valid("json");
   try {
     await db.execute(
-      sql`CALL register_course(${applicationId}, ${courseId}, ${semester})`
+      sql`CALL register_course(${applicationId}, ${courseId}, ${semester})`,
     );
     return c.json(
       { message: "Course registered successfully" },
-      HttpStatusCodes.CREATED
+      HttpStatusCodes.CREATED,
     );
   } catch (error) {
     console.error("Error registering course:", error);
@@ -69,4 +66,3 @@ export const registerCourse: AppRouteHandler<RegisterCourseRoute> = async (c) =>
     return c.json({ error: errorMessage }, HttpStatusCodes.BAD_REQUEST);
   }
 };
-
