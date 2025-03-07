@@ -185,7 +185,7 @@ export const availableCoursesSchema = z.array(
     title: z.string(),
     prerequisite: z.string().nullable(),
     total_hours: z.number().int(),
-  });
+  }));
 
 export const applicantRegisteredCoursesRequestSchema = z.object({
   applicationId: z.number(),
