@@ -1,6 +1,6 @@
 import { AppRouteHandler } from "@/lib/types";
 import * as HttpStatusCodes from "stoker/http-status-codes";
-import { GetApplicantRegisteredCoursesRoute, GetAvailableCoursesRoute} from "./courses.routes";
+import { GetApplicantRegisteredCoursesRoute, GetAvailableCoursesRoute, RegisterCourseRoute} from "./courses.routes";
 import db from "@/db";
 import { detailedCourseRegistrationsView as dcv } from "@/db/schema";
 import { and, eq } from "drizzle-orm";
@@ -40,15 +40,33 @@ export const getAvailableCoursesForApplication: AppRouteHandler<GetAvailableCour
       sql`SELECT * FROM available_courses_for_application(${application_id})`
     );
 
-    return c.json(
-      {courses: courses.rows},
-      HttpStatusCodes.OK
-    );
+    return c.json({ courses: courses.rows }, HttpStatusCodes.OK);
   } catch (error) {
-    console.error(error);
-    return c.json(
-      { error: "Failed to fetch courses" },
-      HttpStatusCodes.INTERNAL_SERVER_ERROR
-    );
+    console.error("Error fetching available courses:", error);
+
+    const errorMessage =
+      error instanceof Error ? error.message : "Failed to fetch courses";
+
+    return c.json({ error: errorMessage }, HttpStatusCodes.INTERNAL_SERVER_ERROR);
   }
 };
+
+
+export const registerCourse: AppRouteHandler<RegisterCourseRoute> = async (c) => {
+  const { applicationId, courseId, semester } = c.req.valid("json");
+  try {
+    await db.execute(
+      sql`CALL register_course(${applicationId}, ${courseId}, ${semester})`
+    );
+    return c.json(
+      { message: "Course registered successfully" },
+      HttpStatusCodes.CREATED
+    );
+  } catch (error) {
+    console.error("Error registering course:", error);
+    const errorMessage =
+      error instanceof Error ? error.message : "Failed to register course";
+    return c.json({ error: errorMessage }, HttpStatusCodes.BAD_REQUEST);
+  }
+};
+

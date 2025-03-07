@@ -2,6 +2,7 @@ import {
   applicantRegisteredCoursesRequestSchema,
   applicantRegisteredCoursesResponseSchema,
   availableCoursesSchema,
+  registerCourseSchema,
 } from "@/db/validators";
 import { isAuthenticated } from "@/middlewares/isAuthenticated";
 import { requireRole } from "@/middlewares/requireRole";
@@ -53,8 +54,32 @@ export const getApplicantRegisteredCourses = createRoute({
     },
   });
   
-
+  export const registerCourseRoute = createRoute({
+    path: "/register",
+    method: "post",
+    tags,
+    middleware: [isAuthenticated, requireRole("admin")],
+    request: {
+      body: jsonContentRequired(
+        registerCourseSchema,
+        "Params to register a course"
+      ),
+    },
+    responses: {
+      // @todo -> i will add more responses for later, first i will try to make it works🥲
+      [HttpStatusCodes.CREATED]: {
+        description: "Course registered successfully",
+        content: { "application/json": { schema: z.object({ message: z.string() }) } },
+      },
+      [HttpStatusCodes.BAD_REQUEST]: {
+        description: "Error registering course",
+        content: { "application/json": { schema: z.object({ error: z.string() }) } },
+      },
+    },
+  });
   
+export type RegisterCourseRoute = typeof registerCourseRoute;
+
 export type GetAvailableCoursesRoute = typeof getAvailableCourses;
 
 export type GetApplicantRegisteredCoursesRoute =
