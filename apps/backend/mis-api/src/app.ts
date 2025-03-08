@@ -2,7 +2,7 @@ import createApp from "@/lib/create-app";
 import index from "@/routes/index.route";
 import auth from "@/routes/auth/auth.index";
 import admin from "@/routes/admin/admin.index";
-import applications from "@/routes/applications/applications.index";
+import student from "@/routes/student/student.index";
 import configureOpenAPI from "./lib/configure-open-api";
 
 const app = createApp();
@@ -18,7 +18,7 @@ configureOpenAPI(app);
 export const _app = app
   .route("", index)
   .route("/auth", auth)
-  .route("/applications", applications)
+  .route("/student", student)
   .route("/admin", admin);
 
 export default app;

@@ -9,7 +9,7 @@ import { useApplicationIdContext } from "./application-id-context";
 import toast, { Toaster } from "react-hot-toast";
 
 export type FormType = InferRequestType<
-  typeof apiClient.applications.$post
+  typeof apiClient.student.applications.$post
 >["json"];
 
 export default function ApplicationForm1() {
@@ -46,10 +46,10 @@ export default function ApplicationForm1() {
       gpa: "",
     },
     registration: {
-      academicYear: "",
+      academicYearId: 0,
       faculty: "",
-      academicDegree: "",
-      academicProgram: "",
+      academicDegree: "diploma",
+      departmentId: 0,
     },
   });
   const [step, setStep] = useState(1);
@@ -68,7 +68,7 @@ export default function ApplicationForm1() {
       console.log("submitting");
 
       try {
-        const res = await apiClient.applications.$post({
+        const res = await apiClient.student.applications.$post({
           json: formData,
         });
 
