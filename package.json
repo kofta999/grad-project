@@ -11,7 +11,8 @@
   },
   "devDependencies": {
     "prettier": "^3.2.5",
-    "turbo": "^2.3.0"
+    "turbo": "^2.3.0",
+    "@types/bun": "latest"
   },
   "engines": {
     "node": ">=18"
@@ -25,5 +26,10 @@
   ],
   "dependencies": {
     "zod": "^3.24.2"
+  },
+  "module": "index.ts",
+  "type": "module",
+  "peerDependencies": {
+    "typescript": "^5"
   }
 }
