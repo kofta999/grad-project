@@ -221,6 +221,7 @@ CREATE OR REPLACE VIEW "accepted_applications" AS
 SELECT
 	a.application_id,
 	a.student_id,
+	r.department_id,
 	sum(c.total_hours) AS total_completed_hours,
 	sum(
 		CASE
@@ -240,7 +241,7 @@ WHERE
 	a.is_admin_accepted = TRUE
 	AND c_res.grade >= 50
 GROUP BY
-	a.application_id;
+	a.application_id, r.department_id;
 
 -- WHERE it using 
 -- c_r.academic_year_id, c_r.semester, c_r.application_id
@@ -329,6 +330,67 @@ BEGIN
     RETURN current_year_id;
 END;
 $$ language plpgsql;
+
+CREATE OR REPLACE FUNCTION is_thesis_available (p_application_id INT)
+RETURNS BOOLEAN
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    v_department_id INT;
+    v_required_hours INT;
+    v_required_compulsory_hours INT;
+    v_completed_compulsory_hours INT = 0;
+    v_completed_hours INT = 0;
+BEGIN
+    -- First check if this is an accepted application
+    IF NOT EXISTS (
+        SELECT 1 FROM accepted_applications 
+        WHERE application_id = p_application_id
+    ) THEN
+	    RAISE EXCEPTION 'Application ID % is not found or not accepted', p_application_id;
+	END IF;
+
+    -- Get application data
+    SELECT
+        department_id,
+        total_completed_hours,
+        completed_compulsory_hours 
+    INTO 
+        v_department_id,
+        v_completed_hours,
+        v_completed_compulsory_hours
+    FROM
+        accepted_applications a
+    WHERE
+        a.application_id = p_application_id;
+    
+    -- Get department requirements
+    SELECT
+        courses_hours,
+        compulsory_hours
+    INTO 
+        v_required_hours,
+        v_required_compulsory_hours
+    FROM
+        departments 
+    WHERE
+        department_id = v_department_id;
+
+	-- Check compulsory hours requirement
+    IF COALESCE(v_completed_compulsory_hours, 0) < v_required_compulsory_hours THEN
+        RAISE EXCEPTION 'Completed compulsory hours (%) is less than required compulsory hours (%) for thesis submission',
+            v_completed_compulsory_hours, v_required_compulsory_hours;
+    END IF;
+    
+    -- Check total hours requirement
+    IF COALESCE(v_completed_hours, 0) < v_required_hours THEN
+        RAISE EXCEPTION 'Completed hours (%) is less than required hours (%) for thesis submission', 
+            v_completed_hours, v_required_hours;
+    END IF;
+
+    RETURN TRUE;
+END;
+$$;
 
 -- Procedures
 CREATE
