@@ -16,7 +16,7 @@ import {
 } from "stoker/openapi/schemas";
 import { notFoundSchema } from "@/lib/constants";
 
-const tags = ["Applications"];
+const tags = ["Student"];
 
 export const getCurrentAcademicYears = createRoute({
   path: "/currentAcademicYears",
