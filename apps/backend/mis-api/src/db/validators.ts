@@ -40,6 +40,7 @@ export const currentAcademicYearsSchema = z.array(
     .extend({ year: z.string() }),
 );
 
+
 export const registerSchema = createInsertSchema(students, {
   fullNameAr: z.string().min(1, "Full name in Arabic is required"),
   fullNameEn: z.string().min(1, "Full name in English is required"),

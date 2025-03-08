@@ -31,6 +31,25 @@ export const getCurrentAcademicYears = createRoute({
   },
 });
 
+export const getAvailableDepartments = createRoute({
+  path: "/availableDepartments",
+  method: "get",
+  request: {
+    query: z.object({
+      // TODO: Abstract this enum across the app
+      type: z.enum(["diploma", "master", "phd"]),
+    }),
+  },
+  middleware: [isAuthenticated, requireRole("student")],
+  tags,
+  responses: {
+    [HttpStatusCodes.OK]: jsonContent(
+      z.array(z.object({ departmentId: z.number(), title: z.string() })),
+      "An array of available departments for this type",
+    ),
+  },
+});
+
 export const createApplication = createRoute({
   path: "/",
   method: "post",
@@ -121,6 +140,8 @@ export const getApplication = createRoute({
 });
 
 export type GetCurrentAcademicYears = typeof getCurrentAcademicYears;
+
+export type GetAvailableDepartmentsRoute = typeof getAvailableDepartments;
 
 export type CreateApplicationRoute = typeof createApplication;
 
