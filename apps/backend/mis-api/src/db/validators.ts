@@ -10,9 +10,11 @@ import {
   adminApplicationsList,
   applications,
   attachments,
+  detailedCourseRegistrationsView,
   emergencyContacts,
   registerations,
   students,
+  courses,
 } from "./schema";
 import { z } from "zod";
 import { ROLES } from "@/lib/constants";
@@ -170,4 +172,30 @@ export const editStudentInfoSchema = createUpdateSchema(students).omit({
   studentId: true,
   createdAt: true,
   updatedAt: true,
+});
+
+export const AvailableCoursesSchema = z.object({
+  application_id: z.number().int().positive(),
+});
+
+export const availableCoursesSchema = z.array(createSelectSchema(courses));
+
+export const applicantRegisteredCoursesRequestSchema = z.object({
+  applicationId: z.number(),
+  semester: z.enum(["first", "second", "third"]),
+  academicYearId: z.number(),
+});
+
+export const applicantRegisteredCoursesResponseSchema = z.array(
+  createSelectSchema(detailedCourseRegistrationsView).omit({
+    academicYearId: true,
+    applicationId: true,
+    semester: true,
+  }),
+);
+
+export const registerCourseSchema = z.object({
+  applicationId: z.number().int().positive(),
+  courseId: z.number().int().positive(),
+  semester: z.enum(["first", "second", "third"]),
 });

@@ -23,7 +23,7 @@ CREATE TYPE "martial_status" AS ENUM(
 	'other' -- اخرى
 );
 
-CREATE TYPE "department_type" AS ENUM('diploma', 'masters', 'phd');
+CREATE TYPE "department_type" AS ENUM('diploma', 'master', 'phd');
 
 CREATE TYPE "semester_type" AS ENUM('first', 'second', 'third');
 
@@ -31,6 +31,16 @@ CREATE TABLE academic_years (
 	academic_year_id serial PRIMARY KEY,
 	start_date date NOT NULL,
 	end_date date NOT NULL
+);
+
+CREATE TABLE departments (
+	department_id serial PRIMARY KEY,
+	code TEXT NOT NULL,
+	title TEXT NOT NULL,
+	type department_type NOT NULL,
+	courses_hours INT NOT NULL,
+	compulsory_hours INT NOT NULL,
+	thesis_hours INT NOT NULL
 );
 
 -- Create tables with plural names
@@ -74,10 +84,13 @@ CREATE TABLE "registerations" (
 	"application_id" INTEGER UNIQUE NOT NULL,
 	"academic_year_id" INT NOT NULL,
 	"faculty" TEXT NOT NULL,
-	"academic_degree" TEXT NOT NULL,
-	"academic_program" TEXT NOT NULL,
+	-- TODO: I may not need that as the department has it all
+	"academic_degree" department_type NOT NULL,
+	-- academic_program = department
+	"department_id" INT NOT NULL,
 	FOREIGN key ("application_id") REFERENCES "applications" ("application_id"),
-	FOREIGN key ("academic_year_id") REFERENCES "academic_years" ("academic_year_id")
+	FOREIGN key ("academic_year_id") REFERENCES "academic_years" ("academic_year_id"),
+	FOREIGN key ("department_id") REFERENCES "departments" ("department_id")
 );
 
 CREATE TABLE "attachments" (
@@ -149,17 +162,10 @@ CREATE TABLE "admins" (
 	"updated_at" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE departments (
-	department_id serial PRIMARY KEY,
-	code TEXT NOT NULL,
-	title TEXT NOT NULL,
-	type department_type NOT NULL
-);
-
 CREATE TABLE courses (
 	course_id serial PRIMARY KEY,
 	-- Probably has a definite length but eh
-	code TEXT NOT NULL,
+	code TEXT NOT NULL UNIQUE,
 	title TEXT NOT NULL,
 	-- Refers to a prerequisite course
 	prerequisite INT DEFAULT NULL,
@@ -202,12 +208,14 @@ SELECT
 	a.application_id,
 	s.full_name_ar AS student_name,
 	r.academic_degree,
-	r.academic_program,
+	-- TODO: Add real dep name
+	d.title AS department,
 	a.is_admin_accepted
 FROM
 	applications a
 	JOIN students s USING (student_id)
-	JOIN registerations r USING (application_id);
+	JOIN registerations r USING (application_id)
+	JOIN departments d ON d.department_id = r.department_id;
 
 CREATE VIEW "accepted_applications" AS
 SELECT
@@ -217,6 +225,80 @@ FROM
 	applications
 WHERE
 	is_admin_accepted = TRUE;
+	
+-- WHERE it using 
+-- c_r.academic_year_id, c_r.semester, c_r.application_id
+CREATE OR REPLACE VIEW detailed_course_registrations_view AS
+SELECT
+		c.course_id,
+		c.code,
+		c.title,
+		c.prerequisite,
+		c.total_hours,
+		c_r.academic_year_id,
+		c_r.semester,
+		c_r.application_id
+FROM
+		course_registrations c_r
+		JOIN department_courses d_c ON d_c.course_id = c_r.course_id
+		JOIN courses c ON c.course_id = c_r.course_id
+		JOIN registerations r ON r.application_id = c_r.application_id
+WHERE
+		-- c_r.academic_year_id = get_current_academic_year ()
+		d_c.department_id = r.department_id;
+
+-- -- Need to WHERE with application_id
+-- CREATE VIEW "available_courses_for_application" AS
+-- SELECT
+-- 	c.course_id,
+-- 	c.code,
+-- 	c.title,
+-- 	c.prerequisite,
+-- 	c.total_hours
+-- FROM
+-- 	accepted_applications a
+-- 	JOIN registerations r ON r.application_id = a.application_id
+-- 	JOIN department_courses d_c ON d_c.department_id = r.department_id
+-- 	JOIN courses c ON c.course_id = d_c.course_id
+-- WHERE
+-- 	r.academic_year_id = get_current_academic_year ();
+-- -- TODO: Should be by semester
+-- CREATE VIEW "courses_registered_for_application" AS
+-- SELECT
+-- 	c.course_id,
+-- 	c.code,
+-- 	c.title,
+-- 	c.prerequisite,
+-- 	c.total_hours
+-- FROM
+-- 	course_registrations c_r
+-- 	JOIN department_courses d_c ON d_c.course_id = c_r.course_id
+-- 	JOIN courses c ON c.course_id = c_r.course_id
+-- 	JOIN registerations r ON r.application_id = c_r.application_id
+-- WHERE
+-- 	c_r.academic_year_id = get_current_academic_year ()
+-- 	AND d_c.department_id = r.department_id;
+-- 
+CREATE
+OR REPLACE function available_courses_for_application (p_application_id INT) returns setof courses AS $$
+BEGIN
+    RETURN QUERY
+    SELECT
+        c.course_id,
+        c.code,
+        c.title,
+        c.prerequisite,
+        c.total_hours
+    FROM
+        accepted_applications a
+        JOIN registerations r ON r.application_id = a.application_id
+        JOIN department_courses d_c ON d_c.department_id = r.department_id
+        JOIN courses c ON c.course_id = d_c.course_id
+    WHERE
+        r.academic_year_id = get_current_academic_year()
+        AND a.application_id = p_application_id;
+END;
+$$ language plpgsql;
 
 -- Create functions
 CREATE FUNCTION get_current_academic_year () returns INT AS $$
@@ -231,6 +313,120 @@ BEGIN
     RETURN current_year_id;
 END;
 $$ language plpgsql;
+
+-- Procedures
+CREATE
+OR REPLACE procedure register_course (
+	p_application_id INT,
+	p_course_id INT,
+	p_semester semester_type
+) language plpgsql AS $$
+DECLARE
+    v_prerequisite INT;
+    v_total_hours INT;
+    v_course_hours INT;
+    v_department_id INT;
+    v_max_hours INT := 16; -- The maximum allowed hours per semester is 16
+BEGIN
+	-- Check if the application is accepted
+	IF NOT EXISTS (
+		SELECT 1
+		FROM accepted_applications
+		WHERE application_id = p_application_id
+	) THEN
+		RAISE EXCEPTION 'Application is not yet accepted';
+	END IF;
+	
+    -- Check if the course is already registered
+    IF EXISTS (
+        SELECT 1
+        FROM course_registrations
+        WHERE application_id = p_application_id
+          AND course_id = p_course_id
+          AND semester = p_semester
+    ) THEN
+        RAISE EXCEPTION 'Course is already registered for this application and semester';
+    END IF;
+
+    -- Check if the course has a prerequisite
+    SELECT prerequisite INTO v_prerequisite
+    FROM courses
+    WHERE course_id = p_course_id;
+
+    IF v_prerequisite IS NOT NULL THEN
+        -- Check if the prerequisite course is completed
+        IF NOT EXISTS (
+            SELECT 1
+            FROM course_registrations cr
+            JOIN course_results crs ON cr.course_registration_id = crs.course_registration_id
+            WHERE cr.application_id = p_application_id
+              AND cr.course_id = v_prerequisite
+              AND crs.grade >= 50 -- Assuming a passing grade is 50
+        ) THEN
+			-- TODO: Add which prerequisite course is it
+            RAISE EXCEPTION 'Prerequisite course is not completed';
+        END IF;
+    END IF;
+
+    -- Check if total hours + course hours is less than max hours for this semester
+    SELECT SUM(c.total_hours) INTO v_total_hours
+    FROM course_registrations cr
+    JOIN courses c ON cr.course_id = c.course_id
+    WHERE cr.application_id = p_application_id
+      AND cr.semester = p_semester;
+
+    SELECT total_hours INTO v_course_hours
+    FROM courses
+    WHERE course_id = p_course_id;
+
+    IF (v_total_hours + v_course_hours) > v_max_hours THEN
+        RAISE EXCEPTION 'Total hours exceed the maximum allowed hours for this semester';
+    END IF;
+    
+    
+    -- Check if the course is available for applicant's department
+    SELECT department_id INTO v_department_id
+    FROM registerations
+    WHERE application_id = p_application_id;
+    
+    IF NOT EXISTS (
+        SELECT 1
+        FROM department_courses
+        WHERE department_id = v_department_id
+          AND course_id = p_course_id
+    ) THEN
+        RAISE EXCEPTION 'This course is not available for this academic program';
+    END IF;
+    
+    -- Check if passed before or not
+	IF EXISTS (
+	   SELECT 1
+		FROM course_results
+		JOIN course_registrations USING (course_registration_id)
+		WHERE course_registrations.course_id = p_course_id
+		-- Assume passing grade is 50
+		AND grade >= 50
+	) THEN
+	   RAISE WARNING 'Course is already passed before';
+	END IF;
+	
+	-- Check if the course is registered before or not
+	IF EXISTS (
+	   SELECT 1
+		FROM course_registrations
+		WHERE course_registrations.course_id = p_course_id
+	) THEN
+	   RAISE WARNING 'Course is already registered in a previous semester';
+	END IF;
+
+
+    -- Insert into course_registrations
+    INSERT INTO course_registrations (course_id, application_id, semester, academic_year_id)
+    VALUES (p_course_id, p_application_id, p_semester, get_current_academic_year());
+
+    RAISE NOTICE 'Course registered successfully';
+END;
+$$;
 
 -- Create indexes for foreign keys
 CREATE INDEX "applications_student_id_idx" ON "applications" ("student_id");
@@ -258,7 +454,13 @@ comment ON COLUMN "students"."id_authority" IS 'The city that issued your id';
 
 comment ON COLUMN "students"."military_status" IS 'A string so far, may use an enum later';
 
-comment ON COLUMN "academic_qualifications"."grade" IS 'Will later make it all a numeric and add a hashmap to conver it to grades if it''s not credit hours (GPA)';
+comment ON COLUMN "academic_qualifications"."grade" IS 'Will later make it all a numeric and add a hashmap to convert it to grades if it''s not credit hours (GPA)';
+
+comment ON COLUMN "departments"."courses_hours" IS 'Is the hours required to complete before being able to submit a thesis';
+
+comment ON COLUMN "departments"."compulsory_hours" IS 'Is the hours that must be registered from the compulsory courses, non-compulsory ones is courses_hours - this';
+
+comment ON COLUMN "departments"."thesis_hours" IS 'Is the hours that doing thesis gives you';
 
 -- Create a trigger for updated_at timestamps
 CREATE

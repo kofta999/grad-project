@@ -18,7 +18,7 @@ import { notFoundSchema } from "@/lib/constants";
 const tags = ["Admin"];
 
 export const acceptApplication = createRoute({
-  path: "/applications/accept",
+  path: "/accept",
   method: "post",
   tags,
   middleware: [isAuthenticated, requireRole("admin")],
@@ -46,7 +46,7 @@ export const acceptApplication = createRoute({
 });
 
 export const getAllApplications = createRoute({
-  path: "/applications",
+  path: "/",
   method: "get",
   tags,
   middleware: [isAuthenticated, requireRole("admin")] as const,
@@ -59,7 +59,7 @@ export const getAllApplications = createRoute({
 });
 
 export const getApplicationDetails = createRoute({
-  path: "/applications/{id}",
+  path: "/{id}",
   method: "get",
   request: {
     params: IdParamsSchema,

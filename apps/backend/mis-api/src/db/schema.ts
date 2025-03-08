@@ -18,7 +18,7 @@ import { sql } from "drizzle-orm";
 export const addressType = pgEnum("address_type", ["permanent", "current"]);
 export const departmentType = pgEnum("department_type", [
   "diploma",
-  "masters",
+  "master",
   "phd",
 ]);
 export const identificationType = pgEnum("identification_type", [
@@ -107,8 +107,8 @@ export const registerations = pgTable(
     applicationId: integer("application_id").notNull(),
     academicYearId: integer("academic_year_id").notNull(),
     faculty: text().notNull(),
-    academicDegree: text("academic_degree").notNull(),
-    academicProgram: text("academic_program").notNull(),
+    academicDegree: departmentType("academic_degree").notNull(),
+    departmentId: integer("department_id").notNull(),
   },
   (table) => {
     return {
@@ -122,6 +122,11 @@ export const registerations = pgTable(
         foreignColumns: [academicYears.academicYearId],
         name: "registerations_academic_year_id_fkey",
       }),
+      registerationsDepartmentIdFkey: foreignKey({
+        columns: [table.departmentId],
+        foreignColumns: [departments.departmentId],
+        name: "registerations_department_id_fkey",
+      }),
       registerationsApplicationIdKey: unique(
         "registerations_application_id_key",
       ).on(table.applicationId),
@@ -133,6 +138,16 @@ export const academicYears = pgTable("academic_years", {
   academicYearId: serial("academic_year_id").primaryKey().notNull(),
   startDate: date("start_date").notNull(),
   endDate: date("end_date").notNull(),
+});
+
+export const departments = pgTable("departments", {
+  departmentId: serial("department_id").primaryKey().notNull(),
+  code: text().notNull(),
+  title: text().notNull(),
+  type: departmentType().notNull(),
+  coursesHours: integer("courses_hours").notNull(),
+  compulsoryHours: integer("compulsory_hours").notNull(),
+  thesisHours: integer("thesis_hours").notNull(),
 });
 
 export const attachments = pgTable(
@@ -255,20 +270,21 @@ export const admins = pgTable(
   },
 );
 
-export const courses = pgTable("courses", {
-  courseId: serial("course_id").primaryKey().notNull(),
-  code: text().notNull(),
-  title: text().notNull(),
-  prerequisite: integer(),
-  totalHours: integer("total_hours"),
-});
-
-export const departments = pgTable("departments", {
-  departmentId: serial("department_id").primaryKey().notNull(),
-  code: text().notNull(),
-  title: text().notNull(),
-  type: departmentType().notNull(),
-});
+export const courses = pgTable(
+  "courses",
+  {
+    courseId: serial("course_id").primaryKey().notNull(),
+    code: text().notNull(),
+    title: text().notNull(),
+    prerequisite: integer(),
+    totalHours: integer("total_hours"),
+  },
+  (table) => {
+    return {
+      coursesCodeKey: unique("courses_code_key").on(table.code),
+    };
+  },
+);
 
 export const courseRegistrations = pgTable(
   "course_registrations",
@@ -349,11 +365,11 @@ export const departmentCourses = pgTable(
 export const adminApplicationsList = pgView("admin_applications_list", {
   applicationId: integer("application_id"),
   studentName: text("student_name"),
-  academicDegree: text("academic_degree"),
-  academicProgram: text("academic_program"),
+  academicDegree: departmentType("academic_degree"),
+  department: text(),
   isAdminAccepted: boolean("is_admin_accepted"),
 }).as(
-  sql`SELECT a.application_id, s.full_name_ar AS student_name, r.academic_degree, r.academic_program, a.is_admin_accepted FROM applications a JOIN students s USING (student_id) JOIN registerations r USING (application_id)`,
+  sql`SELECT a.application_id, s.full_name_ar AS student_name, r.academic_degree, d.title AS department, a.is_admin_accepted FROM applications a JOIN students s USING (student_id) JOIN registerations r USING (application_id) JOIN departments d ON d.department_id = r.department_id`,
 );
 
 export const acceptedApplications = pgView("accepted_applications", {
@@ -361,4 +377,20 @@ export const acceptedApplications = pgView("accepted_applications", {
   studentId: integer("student_id"),
 }).as(
   sql`SELECT applications.application_id, applications.student_id FROM applications WHERE applications.is_admin_accepted = true`,
+);
+
+export const detailedCourseRegistrationsView = pgView(
+  "detailed_course_registrations_view",
+  {
+    courseId: integer("course_id").notNull(),
+    code: text().notNull(),
+    title: text().notNull(),
+    prerequisite: integer().notNull(),
+    totalHours: integer("total_hours").notNull(),
+    academicYearId: integer("academic_year_id").notNull(),
+    semester: semesterType().notNull(),
+    applicationId: integer("application_id").notNull(),
+  },
+).as(
+  sql`SELECT c.course_id, c.code, c.title, c.prerequisite, c.total_hours, c_r.academic_year_id, c_r.semester, c_r.application_id FROM course_registrations c_r JOIN department_courses d_c ON d_c.course_id = c_r.course_id JOIN courses c ON c.course_id = c_r.course_id JOIN registerations r ON r.application_id = c_r.application_id WHERE d_c.department_id = r.department_id`,
 );
