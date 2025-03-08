@@ -10,6 +10,7 @@ const router = createRouter()
   )
   .openapi(routes.getApplication, handlers.getApplication)
   .openapi(routes.editStudentInfo, handlers.editStudentInfo)
-  .openapi(routes.getCurrentAcademicYears, handlers.getCurrentAcademicYears);
+  .openapi(routes.getCurrentAcademicYears, handlers.getCurrentAcademicYears)
+  .openapi(routes.getAvailableDepartments, handlers.getAvailableDepartments);
 
 export default router;

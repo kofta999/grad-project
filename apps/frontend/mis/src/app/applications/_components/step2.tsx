@@ -409,17 +409,31 @@ export default function Step2({
                   </Label>
                   <Select
                     onValueChange={(value: string) =>
-                      handleSelectChange("registration.academicProgram", value)
+                      handleSelectChange(
+                        "registration.departmentId",
+                        parseInt(value),
+                      )
                     }
-                    value={formData.registration.academicProgram}
+                    value={
+                      formData.registration.departmentId === 0
+                        ? undefined
+                        : formData.registration.departmentId.toString()
+                    }
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="اختر البرنامج / التخصص" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="region1">المنطقة 1</SelectItem>
-                      <SelectItem value="region2">المنطقة 2</SelectItem>
-                      <SelectItem value="region3">المنطقة 3</SelectItem>
+                      {initialData.availableDepartments.map(
+                        ({ title, departmentId }) => (
+                          <SelectItem
+                            key={departmentId}
+                            value={departmentId.toString()}
+                          >
+                            {title}
+                          </SelectItem>
+                        ),
+                      )}
                     </SelectContent>
                   </Select>
                 </div>

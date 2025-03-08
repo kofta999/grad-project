@@ -16,26 +16,17 @@ export type InitialFormDataType = {
   currentAcademicYears: InferResponseType<
     typeof apiClient.student.applications.currentAcademicYears.$get
   >;
+  availableDepartments: InferResponseType<
+    typeof apiClient.student.applications.availableDepartments.$get
+  >;
 };
 
 export default function ApplicationForm1() {
   const { setApplicationId } = useApplicationIdContext();
   const [initialData, setInitialData] = useState<InitialFormDataType>({
     currentAcademicYears: [],
+    availableDepartments: [],
   });
-
-  useEffect(() => {
-    const getAcademicYears = async () => {
-      const res =
-        await apiClient.student.applications.currentAcademicYears.$get();
-
-      const data = await res.json();
-
-      setInitialData((prev) => ({ ...prev, currentAcademicYears: data }));
-    };
-
-    getAcademicYears();
-  }, []);
 
   // State for form data
   const [formData, setFormData] = useState<FormType>({
@@ -117,18 +108,48 @@ export default function ApplicationForm1() {
     }
   }, [step]);
 
+  useEffect(() => {
+    const getAcademicYears = async () => {
+      const res =
+        await apiClient.student.applications.currentAcademicYears.$get();
+
+      const data = await res.json();
+
+      setInitialData((prev) => ({ ...prev, currentAcademicYears: data }));
+    };
+
+    getAcademicYears();
+  }, []);
+
+  useEffect(() => {
+    const getAvailableDepartments = async (
+      type: FormType["registration"]["academicDegree"],
+    ) => {
+      const res =
+        await apiClient.student.applications.availableDepartments.$get({
+          query: { type },
+        });
+
+      const data = await res.json();
+
+      setInitialData((prev) => ({ ...prev, availableDepartments: data }));
+    };
+
+    getAvailableDepartments(formData.registration.academicDegree);
+  }, [formData.registration.academicDegree]);
+
   return (
     <>
-      {/* {step === 1 && (
+      {step === 1 && (
         <Step1
           // onSubmit={handleStepSubmit}
           updateStep={() => setStep(2)}
           formData={formData}
           setFormData={setFormData}
         />
-      )} */}
+      )}
 
-      {step === 1 && (
+      {step !== 1 && (
         <Step2
           // onSubmit={handleStepSubmit}
           goNextStep={() => setStep(3)}

@@ -4,7 +4,8 @@ import {
   GetApplicationRoute,
   SaveApplicationAttachmentsRoute,
   EditStudentInfoRoute,
-  GetCurrentAcademicYears,
+  GetCurrentAcademicYears as GetCurrentAcademicYearsRoute,
+  GetAvailableDepartmentsRoute,
 } from "./applications.routes";
 import * as HttpStatusCodes from "stoker/http-status-codes";
 import * as HttpStatusPhrases from "stoker/http-status-phrases";
@@ -21,7 +22,7 @@ import {
 import { eq, sql } from "drizzle-orm";
 
 export const getCurrentAcademicYears: AppRouteHandler<
-  GetCurrentAcademicYears
+  GetCurrentAcademicYearsRoute
 > = async (c) => {
   const years = await db.query.academicYears.findMany({
     where(f, { gte }) {
@@ -36,6 +37,22 @@ export const getCurrentAcademicYears: AppRouteHandler<
     })),
     HttpStatusCodes.OK,
   );
+};
+
+export const getAvailableDepartments: AppRouteHandler<
+  GetAvailableDepartmentsRoute
+> = async (c) => {
+  const { type } = c.req.valid("query");
+
+  const departments = await db.query.departments.findMany({
+    columns: {
+      departmentId: true,
+      title: true,
+    },
+    where: (f, { eq }) => eq(f.type, type),
+  });
+
+  return c.json(departments, HttpStatusCodes.OK);
 };
 
 export const createApplication: AppRouteHandler<
