@@ -363,11 +363,11 @@ export const departmentCourses = pgTable(
   },
 );
 export const adminApplicationsList = pgView("admin_applications_list", {
-  applicationId: integer("application_id"),
-  studentName: text("student_name"),
-  academicDegree: departmentType("academic_degree"),
-  department: text(),
-  isAdminAccepted: boolean("is_admin_accepted"),
+  applicationId: integer("application_id").notNull(),
+  studentName: text("student_name").notNull(),
+  academicDegree: departmentType("academic_degree").notNull(),
+  department: text().notNull(),
+  isAdminAccepted: boolean("is_admin_accepted").notNull(),
 }).as(
   sql`SELECT a.application_id, s.full_name_ar AS student_name, r.academic_degree, d.title AS department, a.is_admin_accepted FROM applications a JOIN students s USING (student_id) JOIN registerations r USING (application_id) JOIN departments d ON d.department_id = r.department_id`,
 );
