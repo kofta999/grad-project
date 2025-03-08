@@ -137,21 +137,19 @@ export default function ApplicationForm1() {
 
     getAvailableDepartments(formData.registration.academicDegree);
   }, [formData.registration.academicDegree]);
-  
-  console.log(initialData)
 
   return (
     <>
-      {/* {step === 1 && (
+      {step === 1 && (
         <Step1
           // onSubmit={handleStepSubmit}
           updateStep={() => setStep(2)}
           formData={formData}
           setFormData={setFormData}
         />
-      )} */}
+      )}
 
-      {step === 1 && (
+      {step !== 1 && (
         <Step2
           // onSubmit={handleStepSubmit}
           goNextStep={() => setStep(3)}
