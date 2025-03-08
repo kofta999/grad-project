@@ -19,15 +19,16 @@ import {
 } from "@/components/ui/popover";
 import { CalendarIcon } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
-import { FormType } from "../page";
+import { FormType, InitialFormDataType } from "../page";
 import { cn } from "@/lib/utils";
-import toast, { Toaster } from 'react-hot-toast';
+import toast, { Toaster } from "react-hot-toast";
 
 interface Step2Props {
   // onSubmit: (formData: Partial<FormType>) => void;
   goNextStep: () => void;
   goPrevStep: () => void;
   formData: FormType;
+  initialData: InitialFormDataType;
   setFormData: React.Dispatch<React.SetStateAction<FormType>>;
 }
 
@@ -35,6 +36,7 @@ export default function Step2({
   formData,
   goNextStep,
   goPrevStep,
+  initialData,
   // onSubmit,
   setFormData,
 }: Step2Props) {
@@ -64,7 +66,7 @@ export default function Step2({
   };
 
   // Handle select changes
-  const handleSelectChange = (name: string, value: string) => {
+  const handleSelectChange = (name: string, value: string | number) => {
     const [parent, child] = name.split(".");
 
     setFormData((prev) => ({
@@ -333,17 +335,31 @@ export default function Step2({
                   <span className="text-red-500">*</span>
                   <Select
                     onValueChange={(value: string) =>
-                      handleSelectChange("registration.academicYear", value)
+                      handleSelectChange(
+                        "registration.academicYearId",
+                        parseInt(value),
+                      )
                     }
-                    value={formData.registration.academicYear}
+                    value={
+                      formData.registration.academicYearId === 0
+                        ? undefined
+                        : formData.registration.academicYearId.toString()
+                    }
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="اختر العام الأكاديمي" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="region1">المنطقة 1</SelectItem>
-                      <SelectItem value="region2">المنطقة 2</SelectItem>
-                      <SelectItem value="region3">المنطقة 3</SelectItem>
+                      {initialData.currentAcademicYears.map(
+                        ({ academicYearId, year }) => (
+                          <SelectItem
+                            key={academicYearId}
+                            value={academicYearId.toString()}
+                          >
+                            {year}
+                          </SelectItem>
+                        ),
+                      )}
                     </SelectContent>
                   </Select>
                 </div>

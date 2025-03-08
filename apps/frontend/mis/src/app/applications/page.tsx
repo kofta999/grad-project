@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { InferRequestType } from "@repo/mis-api";
+import { InferRequestType, InferResponseType } from "@repo/mis-api";
 import { apiClient } from "@/lib/client";
 import Step1 from "./_components/step1";
 import Step2 from "./_components/step2";
@@ -12,8 +12,31 @@ export type FormType = InferRequestType<
   typeof apiClient.student.applications.$post
 >["json"];
 
+export type InitialFormDataType = {
+  currentAcademicYears: InferResponseType<
+    typeof apiClient.student.applications.currentAcademicYears.$get
+  >;
+};
+
 export default function ApplicationForm1() {
-  const { applicationId, setApplicationId } = useApplicationIdContext();
+  const { setApplicationId } = useApplicationIdContext();
+  const [initialData, setInitialData] = useState<InitialFormDataType>({
+    currentAcademicYears: [],
+  });
+
+  useEffect(() => {
+    const getAcademicYears = async () => {
+      const res =
+        await apiClient.student.applications.currentAcademicYears.$get();
+
+      const data = await res.json();
+
+      setInitialData((prev) => ({ ...prev, currentAcademicYears: data }));
+    };
+
+    getAcademicYears();
+  }, []);
+
   // State for form data
   const [formData, setFormData] = useState<FormType>({
     permanentAddress: {
@@ -96,20 +119,21 @@ export default function ApplicationForm1() {
 
   return (
     <>
-      {step === 1 && (
+      {/* {step === 1 && (
         <Step1
           // onSubmit={handleStepSubmit}
           updateStep={() => setStep(2)}
           formData={formData}
           setFormData={setFormData}
         />
-      )}
+      )} */}
 
-      {step !== 1 && (
+      {step === 1 && (
         <Step2
           // onSubmit={handleStepSubmit}
           goNextStep={() => setStep(3)}
           goPrevStep={() => setStep(1)}
+          initialData={initialData}
           formData={formData}
           setFormData={setFormData}
         />
