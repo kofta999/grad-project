@@ -29,14 +29,15 @@ export const checkThesisAvailability: AppRouteHandler<
       sql`SELECT 1 FROM is_thesis_available(${application.applicationId})`,
     );
 
-    return c.json({ available: true }, HttpStatusCodes.OK);
+    // Don't ask me why I did this, it needs that as for it to work
+    return c.json({ available: true as true }, HttpStatusCodes.OK);
   } catch (error) {
     console.error("Error checking thesis:", error);
     const errorMessage =
       error instanceof Error ? error.message : "Failed to check thesis";
 
     return c.json(
-      { available: false, reason: errorMessage },
+      { available: false as false, reason: errorMessage },
       HttpStatusCodes.FORBIDDEN,
     );
   }
