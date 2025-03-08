@@ -396,9 +396,9 @@ export default function Step2({
                       <SelectValue placeholder="اختر الدرجة العلمية" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="region1">المنطقة 1</SelectItem>
-                      <SelectItem value="region2">المنطقة 2</SelectItem>
-                      <SelectItem value="region3">المنطقة 3</SelectItem>
+                      <SelectItem value="diploma">دبلوم</SelectItem>
+                      <SelectItem value="master">ماجيستير</SelectItem>
+                      <SelectItem value="phd">دكتوراه</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
