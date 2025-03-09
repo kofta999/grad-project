@@ -1,5 +1,4 @@
 "use client";
-
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
@@ -10,24 +9,29 @@ import { Label } from "@/components/ui/label";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 import { hcWithType, InferRequestType } from "@repo/mis-api";
 import { apiClient } from "@/lib/client";
+import toast, { Toaster } from "react-hot-toast";
+import { useRouter } from "next/navigation";
+import { useUserContext } from "@/context/UserContext";
+import { Loader } from "@/components/ui/loader";
 
 type FormState = InferRequestType<typeof apiClient.auth.login.$post>["json"];
 
 export default function LoginForm() {
+  const router = useRouter();
+
+  const { setLoggedInUser } = useUserContext();
+
   const [showPassword, setShowPassword] = useState(false);
   const [formState, setFormState] = useState<FormState>({
     email: "",
     password: "",
     role: "student",
   });
-  const [error, setError] = useState<string | null>(null);
-  // const [loading, setLoading] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    //setLoading(true);
-    setError(null);
+    setLoading(true);
 
     try {
       const res = await apiClient.auth.login.$post({
@@ -38,26 +42,21 @@ export default function LoginForm() {
         throw new Error(`HTTP error! Status: ${res.status}`);
       }
 
-      console.log(res.headers);
-
       const result = await res.json();
-      console.log("Login successful", result);
+      setLoggedInUser(result);
+      setLoading(false);
 
-      alert("تم الدخول بنجاح");
-
-      // TODO: Redirect after login
+      router.push("/");
+      toast.success("تم الدخول بنجاح");
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : "فشل تسجيل الدخول حاول مرة اخرى",
-      );
+      console.error("Login error:", err);
+      toast.error("فشل تسجيل الدخول حاول مرة اخرى");
+      setLoading(false);
     }
-  }; //finally {
-  //setLoading(false);
-  //}
+  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    console.log(name, value);
     setFormState((prevState) => ({
       ...prevState,
       [name]: value,
@@ -162,18 +161,20 @@ export default function LoginForm() {
 
           <Button
             type="submit"
-            className="w-full bg-indigo-600 hover:bg-indigo-700 text-white"
+            className="w-full bg-mainColor hover:bg-mainColor/80 text-white text-lg"
+            disabled={loading}
           >
-            تسجيل الدخول
+            {loading ? <Loader /> : "تسجيل الدخول"}
           </Button>
         </form>
         <p className="mt-4 text-center text-gray-500">
-          غير مسجل على الموقع ؟
+          غير مسجل على الموقع ؟{"  "}
           <a href="/register" className="text-blue-500 hover:underline ml-1">
             تسجيل حساب
           </a>
         </p>
       </div>
+      <Toaster />
     </div>
   );
 }

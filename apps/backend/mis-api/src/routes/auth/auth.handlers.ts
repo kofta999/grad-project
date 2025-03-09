@@ -20,7 +20,7 @@ export const register: AppRouteHandler<RegisterStage1Route> = async (c) => {
 
   studentData.hashedPassword = await bcrypt.hash(
     studentData.hashedPassword,
-    10,
+    10
   );
 
   const newStudents = await db
@@ -30,7 +30,7 @@ export const register: AppRouteHandler<RegisterStage1Route> = async (c) => {
 
   return c.json(
     { success: true, studentId: newStudents[0].studentId },
-    HttpStatusCodes.OK,
+    HttpStatusCodes.OK
   );
 };
 
@@ -68,14 +68,14 @@ export const login: AppRouteHandler<LoginRoute> = async (c) => {
   if (!user) {
     return c.json(
       { message: HttpStatusPhrases.UNAUTHORIZED },
-      HttpStatusCodes.UNAUTHORIZED,
+      HttpStatusCodes.UNAUTHORIZED
     );
   }
 
   if (!(await bcrypt.compare(password, user.hashedPassword))) {
     return c.json(
       { message: HttpStatusPhrases.UNAUTHORIZED },
-      HttpStatusCodes.UNAUTHORIZED,
+      HttpStatusCodes.UNAUTHORIZED
     );
   }
 
