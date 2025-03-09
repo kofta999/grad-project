@@ -6,6 +6,7 @@ import {
   EditStudentInfoRoute,
   GetCurrentAcademicYears as GetCurrentAcademicYearsRoute,
   GetAvailableDepartmentsRoute,
+  GetApplicantRegisteredCourses,
 } from "./applications.routes";
 import * as HttpStatusCodes from "stoker/http-status-codes";
 import * as HttpStatusPhrases from "stoker/http-status-phrases";
@@ -18,8 +19,13 @@ import {
   emergencyContacts,
   registerations,
   students,
+  courseResults,
 } from "@/db/schema";
-import { eq, sql } from "drizzle-orm";
+import { eq, sql, and} from "drizzle-orm";
+import {detailedCourseRegistrationsViewForStudent as dcv } from "@/db/schema";
+import { HTTPException } from "hono/http-exception";
+
+
 
 export const getCurrentAcademicYears: AppRouteHandler<
   GetCurrentAcademicYearsRoute
@@ -226,4 +232,44 @@ export const editStudentInfo: AppRouteHandler<EditStudentInfoRoute> = async (
     { message: "Student info updated successfully" },
     HttpStatusCodes.OK,
   );
+};
+
+export const getApplicantRegisteredCourses: AppRouteHandler<GetApplicantRegisteredCourses> = async (c) => {
+  const { academicYearId, semester } = c.req.valid("query");
+  const studentId = c.var.session.get("id");
+
+  if (!studentId) {
+    return c.json({ message: "Unauthorized" }, HttpStatusCodes.UNAUTHORIZED);
+  }
+
+  const application = await db.query.applications.findFirst({
+    where(f, { eq }) {
+      return eq(f.studentId, studentId);
+    },
+    columns: { applicationId: true },
+  });
+
+  if (!application) {
+    return c.json({ message: "Application(Student) not found" }, HttpStatusCodes.NOT_FOUND);
+  }
+
+  const courses = await db
+    .select({
+      courseId: dcv.courseId,
+      code: dcv.code,
+      title: dcv.title,
+      prerequisite: dcv.prerequisite,
+      totalHours: dcv.totalHours,
+      grade: dcv.grade,
+    })
+    .from(dcv)
+    .where(
+      and(
+        eq(dcv.academicYearId, academicYearId),
+        eq(dcv.semester, semester),
+        eq(dcv.applicationId, application.applicationId)
+      )
+    );
+
+  return c.json(courses, HttpStatusCodes.OK);
 };

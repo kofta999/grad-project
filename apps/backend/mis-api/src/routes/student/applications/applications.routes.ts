@@ -4,6 +4,8 @@ import {
   studentApplicationDetailsSchema,
   editStudentInfoSchema,
   currentAcademicYearsSchema,
+  applicantRegisteredCoursesRequestSchemaForStudend,
+  applicantRegisteredCoursesResponseSchemaForStudent,
 } from "@/db/validators";
 import { isAuthenticated } from "@/middlewares/isAuthenticated";
 import { requireRole } from "@/middlewares/requireRole";
@@ -15,6 +17,7 @@ import {
   createMessageObjectSchema,
 } from "stoker/openapi/schemas";
 import { notFoundSchema } from "@/lib/constants";
+import exp from "constants";
 
 const tags = ["Student"];
 
@@ -138,6 +141,32 @@ export const getApplication = createRoute({
     ),
   },
 });
+
+export const getApplicantRegisteredCourses = createRoute({
+  path: "/ApplicantRegisteredCourses",
+  method: "get",
+  tags,
+  middleware: [isAuthenticated, requireRole("student")] as const,
+  request: {
+    query: applicantRegisteredCoursesRequestSchemaForStudend,
+  },
+  responses: {
+    [HttpStatusCodes.OK]: jsonContent(
+      applicantRegisteredCoursesResponseSchemaForStudent,
+      "A list of all applicant's registered courses",
+    ),
+    [HttpStatusCodes.NOT_FOUND]: jsonContent(
+      createMessageObjectSchema("Application not found"),
+      "Application not found",
+    ),
+    [HttpStatusCodes.UNAUTHORIZED]: jsonContent(
+      createMessageObjectSchema("Unauthorized"),
+      "Unauthorized",
+    ),
+  },
+});
+
+export type GetApplicantRegisteredCourses = typeof getApplicantRegisteredCourses;
 
 export type GetCurrentAcademicYears = typeof getCurrentAcademicYears;
 
