@@ -38,15 +38,19 @@ const SIDENAV_ITEMS = [
   { title: "المصروفات", path: "/messages", icon: <Wallet /> },
   {
     title: "الرسالة",
-    path: "/messsages",
+    path: "/thesis",
     icon: <File />,
+
+  },
+  { title: "الاعدادات", 
+    path: "/settings", 
+    icon: <Settings /> ,
     submenu: true,
     subMenuItems: [
       { title: "Account", path: "/settings/account" },
       { title: "Privacy", path: "/settings/privacy" },
     ],
   },
-  { title: "الاعدادات", path: "/settings", icon: <Settings /> },
 ];
 
 export default function SideNav() {
