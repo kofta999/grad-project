@@ -11,6 +11,7 @@ import {
   integer,
   primaryKey,
   pgView,
+  bigint,
   pgEnum,
 } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
@@ -112,6 +113,15 @@ export const registerations = pgTable(
   },
   (table) => {
     return {
+      idxRegisterationsAcademicYearId: index(
+        "idx_registerations_academic_year_id",
+      ).using("btree", table.academicYearId.asc().nullsLast()),
+      idxRegisterationsApplicationId: index(
+        "idx_registerations_application_id",
+      ).using("btree", table.applicationId.asc().nullsLast()),
+      idxRegisterationsDepartmentId: index(
+        "idx_registerations_department_id",
+      ).using("btree", table.departmentId.asc().nullsLast()),
       registerationsApplicationIdFkey: foreignKey({
         columns: [table.applicationId],
         foreignColumns: [applications.applicationId],
@@ -160,6 +170,9 @@ export const attachments = pgTable(
   },
   (table) => {
     return {
+      idxAttachmentsApplicationId: index(
+        "idx_attachments_application_id",
+      ).using("btree", table.applicationId.asc().nullsLast()),
       attachmentsApplicationIdFkey: foreignKey({
         columns: [table.applicationId],
         foreignColumns: [applications.applicationId],
@@ -181,6 +194,10 @@ export const addresses = pgTable(
   },
   (table) => {
     return {
+      idxAddressesApplicationId: index("idx_addresses_application_id").using(
+        "btree",
+        table.applicationId.asc().nullsLast(),
+      ),
       addressesApplicationIdFkey: foreignKey({
         columns: [table.applicationId],
         foreignColumns: [applications.applicationId],
@@ -281,6 +298,10 @@ export const courses = pgTable(
   },
   (table) => {
     return {
+      idxCoursesPrerequisite: index("idx_courses_prerequisite").using(
+        "btree",
+        table.prerequisite.asc().nullsLast(),
+      ),
       coursesCodeKey: unique("courses_code_key").on(table.code),
     };
   },
@@ -299,6 +320,22 @@ export const courseRegistrations = pgTable(
   },
   (table) => {
     return {
+      idxCourseRegistrationsAcademicYearId: index(
+        "idx_course_registrations_academic_year_id",
+      ).using("btree", table.academicYearId.asc().nullsLast()),
+      idxCourseRegistrationsAppSemester: index(
+        "idx_course_registrations_app_semester",
+      ).using(
+        "btree",
+        table.applicationId.asc().nullsLast(),
+        table.semester.asc().nullsLast(),
+      ),
+      idxCourseRegistrationsApplicationId: index(
+        "idx_course_registrations_application_id",
+      ).using("btree", table.applicationId.asc().nullsLast()),
+      idxCourseRegistrationsCourseId: index(
+        "idx_course_registrations_course_id",
+      ).using("btree", table.courseId.asc().nullsLast()),
       courseRegistrationsCourseIdFkey: foreignKey({
         columns: [table.courseId],
         foreignColumns: [courses.courseId],
@@ -327,6 +364,13 @@ export const courseResults = pgTable(
   },
   (table) => {
     return {
+      idxCourseResultsCourseRegistrationId: index(
+        "idx_course_results_course_registration_id",
+      ).using("btree", table.courseRegistrationId.asc().nullsLast()),
+      idxCourseResultsGrade: index("idx_course_results_grade").using(
+        "btree",
+        table.grade.asc().nullsLast(),
+      ),
       courseResultsCourseRegistrationIdFkey: foreignKey({
         columns: [table.courseRegistrationId],
         foreignColumns: [courseRegistrations.courseRegistrationId],
@@ -373,10 +417,18 @@ export const adminApplicationsList = pgView("admin_applications_list", {
 );
 
 export const acceptedApplications = pgView("accepted_applications", {
-  applicationId: integer("application_id"),
-  studentId: integer("student_id"),
+  applicationId: integer("application_id").notNull(),
+  studentId: integer("student_id").notNull(),
+  // You can use { mode: "bigint" } if numbers are exceeding js number limitations
+  totalCompletedHours: bigint("total_completed_hours", {
+    mode: "number",
+  }).notNull(),
+  // You can use { mode: "bigint" } if numbers are exceeding js number limitations
+  completedCompulsoryHours: bigint("completed_compulsory_hours", {
+    mode: "number",
+  }).notNull(),
 }).as(
-  sql`SELECT applications.application_id, applications.student_id FROM applications WHERE applications.is_admin_accepted = true`,
+  sql`SELECT a.application_id, a.student_id, sum(c.total_hours) AS total_completed_hours, sum( CASE WHEN d_c.is_compulsory = true THEN c.total_hours ELSE 0 END) AS completed_compulsory_hours FROM applications a JOIN registerations r ON r.application_id = a.application_id JOIN course_registrations c_reg ON c_reg.application_id = a.application_id JOIN course_results c_res ON c_res.course_registration_id = c_reg.course_registration_id JOIN courses c ON c.course_id = c_reg.course_id JOIN department_courses d_c ON d_c.course_id = c_reg.course_id AND d_c.department_id = r.department_id WHERE a.is_admin_accepted = true AND c_res.grade >= 50 GROUP BY a.application_id`,
 );
 
 export const detailedCourseRegistrationsView = pgView(
