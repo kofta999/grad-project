@@ -40,6 +40,7 @@ export const currentAcademicYearsSchema = z.array(
     .extend({ year: z.string() }),
 );
 
+
 export const registerSchema = createInsertSchema(students, {
   fullNameAr: z.string().min(1, "Full name in Arabic is required"),
   fullNameEn: z.string().min(1, "Full name in English is required"),
@@ -199,3 +200,20 @@ export const registerCourseSchema = z.object({
   courseId: z.number().int().positive(),
   semester: z.enum(["first", "second", "third"]),
 });
+
+export const applicantRegisteredCoursesRequestSchemaForStudend = z.object({
+  semester: z.enum(["first", "second", "third"]),
+  academicYearId: z.number(),
+});
+
+export const applicantRegisteredCoursesResponseSchemaForStudent = z.array(
+  createSelectSchema(detailedCourseRegistrationsView)
+    .omit({
+      academicYearId: true,
+      applicationId: true,
+      semester: true,
+    })
+    .extend({
+      grade: z.number().nullable(),
+    })
+);

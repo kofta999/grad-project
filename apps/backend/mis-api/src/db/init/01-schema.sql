@@ -217,35 +217,52 @@ FROM
 	JOIN registerations r USING (application_id)
 	JOIN departments d ON d.department_id = r.department_id;
 
-CREATE VIEW "accepted_applications" AS
+CREATE OR REPLACE VIEW "accepted_applications" AS
 SELECT
-	application_id,
-	student_id
+	a.application_id,
+	a.student_id,
+	r.department_id,
+	sum(c.total_hours) AS total_completed_hours,
+	sum(
+		CASE
+			WHEN d_c.is_compulsory = TRUE THEN c.total_hours
+			ELSE 0
+		END
+	) AS completed_compulsory_hours
 FROM
-	applications
+	applications a
+	JOIN registerations r ON r.application_id = a.application_id
+	JOIN course_registrations c_reg ON c_reg.application_id = a.application_id
+	JOIN course_results c_res ON c_res.course_registration_id = c_reg.course_registration_id
+	JOIN courses c ON c.course_id = c_reg.course_id
+	JOIN department_courses d_c ON d_c.course_id = c_reg.course_id
+	AND d_c.department_id = r.department_id
 WHERE
-	is_admin_accepted = TRUE;
-	
+	a.is_admin_accepted = TRUE
+	AND c_res.grade >= 50
+GROUP BY
+	a.application_id, r.department_id;
+
 -- WHERE it using 
 -- c_r.academic_year_id, c_r.semester, c_r.application_id
 CREATE OR REPLACE VIEW detailed_course_registrations_view AS
 SELECT
-		c.course_id,
-		c.code,
-		c.title,
-		c.prerequisite,
-		c.total_hours,
-		c_r.academic_year_id,
-		c_r.semester,
-		c_r.application_id
+	c.course_id,
+	c.code,
+	c.title,
+	c.prerequisite,
+	c.total_hours,
+	c_r.academic_year_id,
+	c_r.semester,
+	c_r.application_id
 FROM
-		course_registrations c_r
-		JOIN department_courses d_c ON d_c.course_id = c_r.course_id
-		JOIN courses c ON c.course_id = c_r.course_id
-		JOIN registerations r ON r.application_id = c_r.application_id
+	course_registrations c_r
+	JOIN department_courses d_c ON d_c.course_id = c_r.course_id
+	JOIN courses c ON c.course_id = c_r.course_id
+	JOIN registerations r ON r.application_id = c_r.application_id
 WHERE
-		-- c_r.academic_year_id = get_current_academic_year ()
-		d_c.department_id = r.department_id;
+	-- c_r.academic_year_id = get_current_academic_year ()
+	d_c.department_id = r.department_id;
 
 -- -- Need to WHERE with application_id
 -- CREATE VIEW "available_courses_for_application" AS
@@ -314,6 +331,67 @@ BEGIN
 END;
 $$ language plpgsql;
 
+CREATE OR REPLACE FUNCTION is_thesis_available (p_application_id INT)
+RETURNS BOOLEAN
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    v_department_id INT;
+    v_required_hours INT;
+    v_required_compulsory_hours INT;
+    v_completed_compulsory_hours INT = 0;
+    v_completed_hours INT = 0;
+BEGIN
+    -- First check if this is an accepted application
+    IF NOT EXISTS (
+        SELECT 1 FROM accepted_applications 
+        WHERE application_id = p_application_id
+    ) THEN
+	    RAISE EXCEPTION 'Application ID % is not found or not accepted', p_application_id;
+	END IF;
+
+    -- Get application data
+    SELECT
+        department_id,
+        total_completed_hours,
+        completed_compulsory_hours 
+    INTO 
+        v_department_id,
+        v_completed_hours,
+        v_completed_compulsory_hours
+    FROM
+        accepted_applications a
+    WHERE
+        a.application_id = p_application_id;
+    
+    -- Get department requirements
+    SELECT
+        courses_hours,
+        compulsory_hours
+    INTO 
+        v_required_hours,
+        v_required_compulsory_hours
+    FROM
+        departments 
+    WHERE
+        department_id = v_department_id;
+
+	-- Check compulsory hours requirement
+    IF COALESCE(v_completed_compulsory_hours, 0) < v_required_compulsory_hours THEN
+        RAISE EXCEPTION 'Completed compulsory hours (%) is less than required compulsory hours (%) for thesis submission',
+            v_completed_compulsory_hours, v_required_compulsory_hours;
+    END IF;
+    
+    -- Check total hours requirement
+    IF COALESCE(v_completed_hours, 0) < v_required_hours THEN
+        RAISE EXCEPTION 'Completed hours (%) is less than required hours (%) for thesis submission', 
+            v_completed_hours, v_required_hours;
+    END IF;
+
+    RETURN TRUE;
+END;
+$$;
+
 -- Procedures
 CREATE
 OR REPLACE procedure register_course (
@@ -379,7 +457,7 @@ BEGIN
     FROM courses
     WHERE course_id = p_course_id;
 
-    IF (v_total_hours + v_course_hours) > v_max_hours THEN
+    IF (COALESCE(v_total_hours, 0) + v_course_hours) > v_max_hours THEN
         RAISE EXCEPTION 'Total hours exceed the maximum allowed hours for this semester';
     END IF;
     
@@ -404,6 +482,7 @@ BEGIN
 		FROM course_results
 		JOIN course_registrations USING (course_registration_id)
 		WHERE course_registrations.course_id = p_course_id
+		AND course_registrations.application_id = p_application_id
 		-- Assume passing grade is 50
 		AND grade >= 50
 	) THEN
@@ -415,6 +494,7 @@ BEGIN
 	   SELECT 1
 		FROM course_registrations
 		WHERE course_registrations.course_id = p_course_id
+		AND course_registrations.application_id = p_application_id
 	) THEN
 	   RAISE WARNING 'Course is already registered in a previous semester';
 	END IF;
@@ -432,6 +512,42 @@ $$;
 CREATE INDEX "applications_student_id_idx" ON "applications" ("student_id");
 
 CREATE INDEX "academic_qualifications_application_id_idx" ON "academic_qualifications" ("application_id");
+
+-- For registerations table
+CREATE INDEX idx_registerations_application_id ON registerations(application_id);
+CREATE INDEX idx_registerations_academic_year_id ON registerations(academic_year_id);
+CREATE INDEX idx_registerations_department_id ON registerations(department_id);
+
+-- For attachments table
+CREATE INDEX idx_attachments_application_id ON attachments(application_id);
+
+-- For addresses table
+CREATE INDEX idx_addresses_application_id ON addresses(application_id);
+
+-- For emergency_contacts table
+-- (application_id already has UNIQUE constraint which creates an index)
+
+-- For academic_qualifications table
+-- (application_id already has UNIQUE constraint which creates an index)
+
+-- For department_courses table
+-- (Both columns are part of the PRIMARY KEY, which creates an index)
+
+-- For course_registrations table
+CREATE INDEX idx_course_registrations_course_id ON course_registrations(course_id);
+CREATE INDEX idx_course_registrations_application_id ON course_registrations(application_id);
+CREATE INDEX idx_course_registrations_academic_year_id ON course_registrations(academic_year_id);
+-- Composite index for queries filtering by both semester and application_id
+CREATE INDEX idx_course_registrations_app_semester ON course_registrations(application_id, semester);
+
+-- For course_results table
+CREATE INDEX idx_course_results_course_registration_id ON course_results(course_registration_id);
+-- Index to help with queries that check for passing grades
+CREATE INDEX idx_course_results_grade ON course_results(grade);
+
+-- For courses table
+-- (prerequisite field is queried in the register_course procedure)
+CREATE INDEX idx_courses_prerequisite ON courses(prerequisite);
 
 -- Set table and column comments for Arabic support
 comment ON TABLE "students" IS 'جدول الطلاب';

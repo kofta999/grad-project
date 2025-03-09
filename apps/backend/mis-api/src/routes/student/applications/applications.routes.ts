@@ -16,7 +16,7 @@ import {
 } from "stoker/openapi/schemas";
 import { notFoundSchema } from "@/lib/constants";
 
-const tags = ["Applications"];
+const tags = ["Student"];
 
 export const getCurrentAcademicYears = createRoute({
   path: "/currentAcademicYears",
@@ -27,6 +27,25 @@ export const getCurrentAcademicYears = createRoute({
     [HttpStatusCodes.OK]: jsonContent(
       currentAcademicYearsSchema,
       "An array of available academic years",
+    ),
+  },
+});
+
+export const getAvailableDepartments = createRoute({
+  path: "/availableDepartments",
+  method: "get",
+  request: {
+    query: z.object({
+      // TODO: Abstract this enum across the app
+      type: z.enum(["diploma", "master", "phd"]),
+    }),
+  },
+  middleware: [isAuthenticated, requireRole("student")],
+  tags,
+  responses: {
+    [HttpStatusCodes.OK]: jsonContent(
+      z.array(z.object({ departmentId: z.number(), title: z.string() })),
+      "An array of available departments for this type",
     ),
   },
 });
@@ -121,6 +140,8 @@ export const getApplication = createRoute({
 });
 
 export type GetCurrentAcademicYears = typeof getCurrentAcademicYears;
+
+export type GetAvailableDepartmentsRoute = typeof getAvailableDepartments;
 
 export type CreateApplicationRoute = typeof createApplication;
 
