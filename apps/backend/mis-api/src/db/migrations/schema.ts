@@ -280,11 +280,12 @@ export const adminApplicationsList = pgView("admin_applications_list", {	applica
 
 export const acceptedApplications = pgView("accepted_applications", {	applicationId: integer("application_id"),
 	studentId: integer("student_id"),
+	departmentId: integer("department_id"),
 	// You can use { mode: "bigint" } if numbers are exceeding js number limitations
 	totalCompletedHours: bigint("total_completed_hours", { mode: "number" }),
 	// You can use { mode: "bigint" } if numbers are exceeding js number limitations
 	completedCompulsoryHours: bigint("completed_compulsory_hours", { mode: "number" }),
-}).as(sql`SELECT a.application_id, a.student_id, sum(c.total_hours) AS total_completed_hours, sum( CASE WHEN d_c.is_compulsory = true THEN c.total_hours ELSE 0 END) AS completed_compulsory_hours FROM applications a JOIN registerations r ON r.application_id = a.application_id JOIN course_registrations c_reg ON c_reg.application_id = a.application_id JOIN course_results c_res ON c_res.course_registration_id = c_reg.course_registration_id JOIN courses c ON c.course_id = c_reg.course_id JOIN department_courses d_c ON d_c.course_id = c_reg.course_id AND d_c.department_id = r.department_id WHERE a.is_admin_accepted = true AND c_res.grade >= 50 GROUP BY a.application_id`);
+}).as(sql`SELECT a.application_id, a.student_id, r.department_id, sum(c.total_hours) AS total_completed_hours, sum( CASE WHEN d_c.is_compulsory = true THEN c.total_hours ELSE 0 END) AS completed_compulsory_hours FROM applications a JOIN registerations r ON r.application_id = a.application_id JOIN course_registrations c_reg ON c_reg.application_id = a.application_id JOIN course_results c_res ON c_res.course_registration_id = c_reg.course_registration_id JOIN courses c ON c.course_id = c_reg.course_id JOIN department_courses d_c ON d_c.course_id = c_reg.course_id AND d_c.department_id = r.department_id WHERE a.is_admin_accepted = true AND c_res.grade >= 50 GROUP BY a.application_id, r.department_id`);
 
 export const detailedCourseRegistrationsView = pgView("detailed_course_registrations_view", {	courseId: integer("course_id"),
 	code: text(),
@@ -294,4 +295,5 @@ export const detailedCourseRegistrationsView = pgView("detailed_course_registrat
 	academicYearId: integer("academic_year_id"),
 	semester: semesterType(),
 	applicationId: integer("application_id"),
-}).as(sql`SELECT c.course_id, c.code, c.title, c.prerequisite, c.total_hours, c_r.academic_year_id, c_r.semester, c_r.application_id FROM course_registrations c_r JOIN department_courses d_c ON d_c.course_id = c_r.course_id JOIN courses c ON c.course_id = c_r.course_id JOIN registerations r ON r.application_id = c_r.application_id WHERE d_c.department_id = r.department_id`);
+	courseRegistrationId: integer("course_registration_id"),
+}).as(sql`SELECT c.course_id, c.code, c.title, c.prerequisite, c.total_hours, c_r.academic_year_id, c_r.semester, c_r.application_id, c_r.course_registration_id FROM course_registrations c_r JOIN department_courses d_c ON d_c.course_id = c_r.course_id JOIN courses c ON c.course_id = c_r.course_id JOIN registerations r ON r.application_id = c_r.application_id WHERE d_c.department_id = r.department_id`);
