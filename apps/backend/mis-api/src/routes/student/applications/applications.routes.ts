@@ -4,7 +4,7 @@ import {
   studentApplicationDetailsSchema,
   editStudentInfoSchema,
   currentAcademicYearsSchema,
-  applicantRegisteredCoursesRequestSchemaForStudend,
+  applicantRegisteredCoursesRequestSchemaForStudent,
   applicantRegisteredCoursesResponseSchemaForStudent,
 } from "@/db/validators";
 import { isAuthenticated } from "@/middlewares/isAuthenticated";
@@ -17,7 +17,6 @@ import {
   createMessageObjectSchema,
 } from "stoker/openapi/schemas";
 import { notFoundSchema } from "@/lib/constants";
-import exp from "constants";
 
 const tags = ["Student"];
 
@@ -148,7 +147,7 @@ export const getApplicantRegisteredCourses = createRoute({
   tags,
   middleware: [isAuthenticated, requireRole("student")] as const,
   request: {
-    query: applicantRegisteredCoursesRequestSchemaForStudend,
+    query: applicantRegisteredCoursesRequestSchemaForStudent,
   },
   responses: {
     [HttpStatusCodes.OK]: jsonContent(
@@ -166,7 +165,8 @@ export const getApplicantRegisteredCourses = createRoute({
   },
 });
 
-export type GetApplicantRegisteredCourses = typeof getApplicantRegisteredCourses;
+export type GetApplicantRegisteredCourses =
+  typeof getApplicantRegisteredCourses;
 
 export type GetCurrentAcademicYears = typeof getCurrentAcademicYears;
 

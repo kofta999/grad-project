@@ -21,11 +21,9 @@ import {
   students,
   courseResults,
 } from "@/db/schema";
-import { eq, sql, and} from "drizzle-orm";
-import {detailedCourseRegistrationsViewForStudent as dcv } from "@/db/schema";
+import { eq, sql, and } from "drizzle-orm";
+import { detailedCourseRegistrationsView as dcv } from "@/db/schema";
 import { HTTPException } from "hono/http-exception";
-
-
 
 export const getCurrentAcademicYears: AppRouteHandler<
   GetCurrentAcademicYearsRoute
@@ -234,7 +232,9 @@ export const editStudentInfo: AppRouteHandler<EditStudentInfoRoute> = async (
   );
 };
 
-export const getApplicantRegisteredCourses: AppRouteHandler<GetApplicantRegisteredCourses> = async (c) => {
+export const getApplicantRegisteredCourses: AppRouteHandler<
+  GetApplicantRegisteredCourses
+> = async (c) => {
   const { academicYearId, semester } = c.req.valid("query");
   const studentId = c.var.session.get("id");
 
@@ -250,7 +250,10 @@ export const getApplicantRegisteredCourses: AppRouteHandler<GetApplicantRegister
   });
 
   if (!application) {
-    return c.json({ message: "Application(Student) not found" }, HttpStatusCodes.NOT_FOUND);
+    return c.json(
+      { message: "Application(Student) not found" },
+      HttpStatusCodes.NOT_FOUND,
+    );
   }
 
   const courses = await db
@@ -260,15 +263,19 @@ export const getApplicantRegisteredCourses: AppRouteHandler<GetApplicantRegister
       title: dcv.title,
       prerequisite: dcv.prerequisite,
       totalHours: dcv.totalHours,
-      grade: dcv.grade,
+      grade: courseResults.grade,
     })
     .from(dcv)
+    .leftJoin(
+      courseResults,
+      eq(dcv.courseRegistrationId, courseResults.courseRegistrationId),
+    )
     .where(
       and(
         eq(dcv.academicYearId, academicYearId),
         eq(dcv.semester, semester),
-        eq(dcv.applicationId, application.applicationId)
-      )
+        eq(dcv.applicationId, application.applicationId),
+      ),
     );
 
   return c.json(courses, HttpStatusCodes.OK);
