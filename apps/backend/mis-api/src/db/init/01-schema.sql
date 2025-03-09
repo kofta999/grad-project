@@ -254,7 +254,8 @@ SELECT
 	c.total_hours,
 	c_r.academic_year_id,
 	c_r.semester,
-	c_r.application_id
+	c_r.application_id,
+	c_r.course_registration_id
 FROM
 	course_registrations c_r
 	JOIN department_courses d_c ON d_c.course_id = c_r.course_id
