@@ -2,68 +2,37 @@
 
 import { useState, useEffect } from "react";
 import { Filter, ChevronRight, ChevronLeft } from "lucide-react";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
-import { hcWithType } from "@repo/mis-api";
+import { apiClient } from "@/lib/client";
+import { InferResponseType } from "@repo/mis-api";
 
-const client = hcWithType("http://127.0.0.1:3000");
-
-interface StudentApplication {
-  id: string;
-  name: string;
-  academicDegree: string;
-  academicProgram: string;
-  status: "pending" | "accepted" | "rejected";
-}
+type StudentApplications = InferResponseType<
+  typeof apiClient.admin.applications.$get
+>;
 
 export default function StudentApplications() {
-  const [applications, setApplications] = useState<StudentApplication[]>([]);
+  const [applications, setApplications] = useState<StudentApplications>([]);
   const [selectedRows, setSelectedRows] = useState<Record<string, boolean>>({});
+  const DEGREE_MAP: Record<StudentApplications[0]["academicDegree"], string> = {
+    diploma: "دبلوم",
+    master: "ماجستير",
+    phd: "دكتوراه",
+  };
 
   // Fetch student applications from the API
   useEffect(() => {
     const fetchApplications = async () => {
       try {
-        const res = await client.applications.$post({
-          json: {
-            qualification: {
-              type: "example-type",
-              date: "2023-01-01",
-              faculty: "example-faculty",
-              country: "example-country",
-              university: "example-university",
-              qualification: "example-qualification",
-              specialization: "example-specialization",
-              year: "2023",
-              creditHours: true,
-              grade: "A",
-              gpa: "3.8",
-            },
-            permanentAddress: {
-              fullAddress: "example-full-address",
-              country: "example-country",
-              city: "example-city",
-            },
-            currentAddress: {
-              fullAddress: "example-full-address",
-              country: "example-country",
-              city: "example-city",
-            },
-            registration: {
-              academicYearId: 1,
-              faculty: "example-faculty",
-              academicDegree: "example-degree",
-              academicProgram: "example-program",
-            },
-            emergencyContact: {
-              name: "example-name",
-              phoneNumber: "1234567890",
-              email: "example@example.com",
-              address: "example-address",
-            },
-          },
-        });
+        const res = await apiClient.admin.applications.$get();
 
         if (!res.ok) {
           throw new Error(`HTTP error! Status: ${res.status}`);
@@ -71,16 +40,7 @@ export default function StudentApplications() {
 
         const data = await res.json();
 
-        // Map the API response to the StudentApplication interface
-        const mappedApplications: StudentApplication[] = data.map((item: any) => ({
-          id: item.id, // Assuming the API returns an ID
-          name: item.emergencyContact?.name || "Unknown", // Use emergency contact name as the student name
-          academicDegree: item.registration.academicDegree,
-          academicProgram: item.registration.academicProgram,
-          status: "pending", // Default status (you can update this based on API data)
-        }));
-
-        setApplications(mappedApplications);
+        setApplications(data);
       } catch (err) {
         console.error("Failed to fetch applications:", err);
       }
@@ -95,13 +55,13 @@ export default function StudentApplications() {
     } else {
       const newSelected: Record<string, boolean> = {};
       applications.forEach((app) => {
-        newSelected[app.id] = true;
+        newSelected[app.applicationId] = true;
       });
       setSelectedRows(newSelected);
     }
   };
 
-  const toggleSelectRow = (id: string) => {
+  const toggleSelectRow = (id: number) => {
     setSelectedRows((prev) => ({
       ...prev,
       [id]: !prev[id],
@@ -115,71 +75,76 @@ export default function StudentApplications() {
           <Filter className="h-5 w-5" />
           <span className="sr-only">Filter</span>
         </Button>
-    
 
         <div className="flex-1 flex justify-center">
           <h1 className="text-xl font-semibold">تقديمات الطلاب</h1>
         </div>
-    
 
         <div className="w-10"></div>
       </div>
-
 
       <div className="overflow-x-auto">
         <Table dir="rtl">
           <TableHeader>
             <TableRow className="border-b">
-              <TableHead className="text-center w-12">
+              {/* <TableHead className="text-center w-12">
                 <Checkbox
-                  checked={Object.keys(selectedRows).length === applications.length && applications.length > 0}
+                  checked={
+                    Object.keys(selectedRows).length === applications.length &&
+                    applications.length > 0
+                  }
                   onCheckedChange={toggleSelectAll}
                   aria-label="Select all"
                 />
-              </TableHead>
+              </TableHead> */}
               <TableHead className="text-right">اسم الطالب</TableHead>
               <TableHead className="text-right">الدرجة العلمية</TableHead>
               <TableHead className="text-right">البرنامج الأكاديمي</TableHead>
-              <TableHead className="text-right">قبول الطالب</TableHead>
+              <TableHead className="text-center">قبول الطالب</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {applications.map((application) => (
-              <TableRow key={application.id} className="border-b h-12">
-                <TableCell className="p-2 text-center">
-                  {application.name && (
+              <TableRow
+                key={application.applicationId}
+                className="border-b h-12"
+              >
+                {/* <TableCell className="p-2 text-center">
+                  {application.studentName && (
                     <Checkbox
-                      checked={!!selectedRows[application.id]}
-                      onCheckedChange={() => toggleSelectRow(application.id)}
-                      aria-label={`Select ${application.name}`}
+                      checked={!!selectedRows[application.applicationId]}
+                      onCheckedChange={() =>
+                        toggleSelectRow(application.applicationId)
+                      }
+                      aria-label={`Select ${application.studentName}`}
                     />
                   )}
-                </TableCell>
-                <TableCell className="p-2">
-                  {application.name ? (
-                    <div className="font-medium">{application.name}</div>
+                </TableCell> */}
+                <TableCell>
+                  {application.studentName ? (
+                    <div className="font-medium">{application.studentName}</div>
                   ) : (
                     <div className="h-4 w-32 bg-gray-200 rounded animate-pulse"></div>
                   )}
                 </TableCell>
-                <TableCell className="p-2">
+                <TableCell>
                   {application.academicDegree ? (
-                    application.academicDegree
+                    DEGREE_MAP[application.academicDegree]
                   ) : (
                     <div className="h-4 w-24 bg-gray-200 rounded animate-pulse"></div>
                   )}
                 </TableCell>
-                <TableCell className="p-2">
-                  {application.academicProgram ? (
-                    application.academicProgram
+                <TableCell>
+                  {application.department ? (
+                    application.department
                   ) : (
                     <div className="h-4 w-28 bg-gray-200 rounded animate-pulse"></div>
                   )}
                 </TableCell>
-                <TableCell className="p-2">
-                  {application.name ? (
+                <TableCell>
+                  {application.studentName ? (
                     <div className="bg-gray-100 py-1 px-2 text-sm rounded text-center">
-                      {application.status === "accepted" ? "مقبول" : "قيد المراجعة"}
+                      {application.isAdminAccepted ? "مقبول" : "قيد المراجعة"}
                     </div>
                   ) : (
                     <div className="h-4 w-20 bg-gray-200 rounded animate-pulse"></div>
