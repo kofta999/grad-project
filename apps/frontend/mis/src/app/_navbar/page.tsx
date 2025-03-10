@@ -26,6 +26,14 @@ import { useRouter } from "next/navigation";
 import { apiClient } from "@/lib/client";
 import toast, { Toaster } from "react-hot-toast";
 
+export type SideNavItem = {
+  title: string;
+  path: string;
+  icon?: JSX.Element;
+  submenu?: boolean;
+  subMenuItems?: SideNavItem[];
+};
+
 const SIDENAV_ITEMS = [
   { title: "بيانات الطالب", path: "/", icon: <LayoutDashboard /> },
   { title: "تقدم الطالب", path: "/progress", icon: <ChartLine /> },

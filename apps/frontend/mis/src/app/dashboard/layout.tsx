@@ -1,5 +1,5 @@
-import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
+import { cookies, headers } from "next/headers";
+import { notFound, redirect } from "next/navigation";
 
 export default function Layout({
   student,
@@ -13,17 +13,29 @@ export default function Layout({
   const roleCookie = cookieStore.get("userRole");
   const sessionCookie = cookieStore.get("sessionId");
 
-  // Check for both cookies to ensure full authentication
+  // Get the current path
+  const pathname = headers().get("x-pathname") || "";
+  const isBaseRoute = pathname === "/dashboard";
+
   if (!roleCookie || !sessionCookie) {
-    redirect("/login");
+    // Only redirect to login from the base dashboard route
+    if (isBaseRoute) {
+      redirect("/login");
+    } else {
+      // For all other routes, return 404 to avoid revealing route existence
+      notFound();
+    }
   }
 
-  // Validate role is one we expect
+  // Validate role
   const role = roleCookie.value;
-  console.log(role);
   if (role !== "admin" && role !== "student") {
-    // Handle invalid role - could log this as potential tampering
-    redirect("/login");
+    // Same security pattern for invalid roles
+    if (isBaseRoute) {
+      redirect("/login");
+    } else {
+      notFound();
+    }
   }
 
   return role === "admin" ? admin : student;
