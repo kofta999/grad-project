@@ -2,18 +2,18 @@
 
 import { useUserContext } from "@/context/UserContext";
 import { notFound } from "next/navigation";
-import SideNav from "@/app/_navbar/page";
 
-export default function ApplicationsLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  const { loggedInUser } = useUserContext();
+export default function Layout({ children }: { children: React.ReactNode }) {
+  const { isLoading, loggedInUser } = useUserContext();
 
-  if (!loggedInUser || loggedInUser.role !== "admin") {
+  if (!isLoading && (!loggedInUser || loggedInUser.role !== "admin")) {
     notFound();
   }
 
+  if (isLoading) {
+    return;
+  }
+
+  console.log(loggedInUser);
   return children;
 }

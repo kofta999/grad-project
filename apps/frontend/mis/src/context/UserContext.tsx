@@ -9,6 +9,7 @@ type UserType = {
 export type UserContextType = {
   loggedInUser: UserType | null;
   setLoggedInUser: (user: UserType | null) => void;
+  isLoading: boolean;
 };
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -18,19 +19,24 @@ export const UserContextProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const [loggedInUser, setLoggedInUser] = useState<UserType | null>(() => {
-    // This only runs on the client, so it's safe to access localStorage here
-    const maybeUser = localStorage.getItem("loggedInUser");
-    if (maybeUser) {
-      try {
-        return JSON.parse(maybeUser);
-      } catch (error) {
-        console.error("Failed to parse user from localStorage:", error);
-        return null;
+  const [loggedInUser, setLoggedInUser] = useState<UserType | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Safely check for window to avoid SSR issues
+    if (typeof window !== "undefined") {
+      const storedUser = localStorage.getItem("loggedInUser");
+      if (storedUser) {
+        try {
+          setLoggedInUser(JSON.parse(storedUser));
+        } catch (error) {
+          console.error("Failed to parse stored user:", error);
+          localStorage.removeItem("loggedInUser");
+        }
       }
+      setIsLoading(false);
     }
-    return null;
-  });
+  }, []);
 
   useEffect(() => {
     if (loggedInUser) {
@@ -41,7 +47,7 @@ export const UserContextProvider = ({
   }, [loggedInUser]);
 
   return (
-    <UserContext.Provider value={{ loggedInUser, setLoggedInUser }}>
+    <UserContext.Provider value={{ loggedInUser, setLoggedInUser, isLoading }}>
       {children}
     </UserContext.Provider>
   );
