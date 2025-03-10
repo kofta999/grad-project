@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { InferRequestType } from "@repo/mis-api";
+import { InferRequestType, InferResponseType } from "@repo/mis-api";
 import { apiClient } from "@/lib/client";
 import Step1 from "./_components/step1";
 import Step2 from "./_components/step2";
@@ -9,11 +9,25 @@ import { useApplicationIdContext } from "./application-id-context";
 import toast, { Toaster } from "react-hot-toast";
 
 export type FormType = InferRequestType<
-  typeof apiClient.applications.$post
+  typeof apiClient.student.applications.$post
 >["json"];
 
+export type InitialFormDataType = {
+  currentAcademicYears: InferResponseType<
+    typeof apiClient.student.applications.currentAcademicYears.$get
+  >;
+  availableDepartments: InferResponseType<
+    typeof apiClient.student.applications.availableDepartments.$get
+  >;
+};
+
 export default function ApplicationForm1() {
-  const { applicationId, setApplicationId } = useApplicationIdContext();
+  const { setApplicationId } = useApplicationIdContext();
+  const [initialData, setInitialData] = useState<InitialFormDataType>({
+    currentAcademicYears: [],
+    availableDepartments: [],
+  });
+
   // State for form data
   const [formData, setFormData] = useState<FormType>({
     permanentAddress: {
@@ -46,10 +60,10 @@ export default function ApplicationForm1() {
       gpa: "",
     },
     registration: {
-      academicYear: "",
+      academicYearId: 0,
       faculty: "",
-      academicDegree: "",
-      academicProgram: "",
+      academicDegree: "diploma",
+      departmentId: 0,
     },
   });
   const [step, setStep] = useState(1);
@@ -68,7 +82,7 @@ export default function ApplicationForm1() {
       console.log("submitting");
 
       try {
-        const res = await apiClient.applications.$post({
+        const res = await apiClient.student.applications.$post({
           json: formData,
         });
 
@@ -94,6 +108,36 @@ export default function ApplicationForm1() {
     }
   }, [step]);
 
+  useEffect(() => {
+    const getAcademicYears = async () => {
+      const res =
+        await apiClient.student.applications.currentAcademicYears.$get();
+
+      const data = await res.json();
+
+      setInitialData((prev) => ({ ...prev, currentAcademicYears: data }));
+    };
+
+    getAcademicYears();
+  }, []);
+
+  useEffect(() => {
+    const getAvailableDepartments = async (
+      type: FormType["registration"]["academicDegree"],
+    ) => {
+      const res =
+        await apiClient.student.applications.availableDepartments.$get({
+          query: { type },
+        });
+
+      const data = await res.json();
+
+      setInitialData((prev) => ({ ...prev, availableDepartments: data }));
+    };
+
+    getAvailableDepartments(formData.registration.academicDegree);
+  }, [formData.registration.academicDegree]);
+
   return (
     <>
       {step === 1 && (
@@ -110,6 +154,7 @@ export default function ApplicationForm1() {
           // onSubmit={handleStepSubmit}
           goNextStep={() => setStep(3)}
           goPrevStep={() => setStep(1)}
+          initialData={initialData}
           formData={formData}
           setFormData={setFormData}
         />
