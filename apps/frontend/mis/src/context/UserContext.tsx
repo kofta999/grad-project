@@ -1,8 +1,15 @@
-import { createContext, useContext, useState } from "react";
+import { apiClient } from "@/lib/client";
+import { InferResponseType } from "@repo/mis-api";
+import { createContext, useContext, useEffect, useState } from "react";
+
+type UserType = {
+  name: string;
+  role: "student" | "admin";
+};
 
 export type UserContextType = {
-  loggedInUser: any;
-  setLoggedInUser: (user: any) => void;
+  loggedInUser: UserType | null;
+  setLoggedInUser: (user: UserType | null) => void;
 };
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -12,7 +19,25 @@ export const UserContextProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const [loggedInUser, setLoggedInUser] = useState(null);
+  const maybeUser = localStorage.getItem("loggedInUser");
+  let initialUser = null;
+  try {
+    initialUser = maybeUser ? JSON.parse(maybeUser) : null;
+  } catch (error) {
+    console.error(error);
+  }
+
+  const [loggedInUser, setLoggedInUser] = useState<UserType | null>(
+    initialUser,
+  );
+
+  useEffect(() => {
+    if (loggedInUser) {
+      localStorage.setItem("loggedInUser", JSON.stringify(loggedInUser));
+    } else {
+      localStorage.removeItem("loggedInUser");
+    }
+  }, [loggedInUser]);
 
   return (
     <UserContext.Provider value={{ loggedInUser, setLoggedInUser }}>
