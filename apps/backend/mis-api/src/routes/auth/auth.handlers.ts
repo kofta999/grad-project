@@ -84,6 +84,7 @@ export const login: AppRouteHandler<LoginRoute> = async (c) => {
 
   c.var.session.set("id", userId!);
   c.var.session.set("role", role);
+  setCookie(c, "userRole", role);
 
   return c.json({ name: user.fullNameAr, role }, HttpStatusCodes.OK);
 };
@@ -91,6 +92,7 @@ export const login: AppRouteHandler<LoginRoute> = async (c) => {
 export const logout: AppRouteHandler<LogoutRoute> = async (c) => {
   c.var.session.deleteSession();
   deleteCookie(c, "sessionId");
+  deleteCookie(c, "userRole");
   return c.json({}, HttpStatusCodes.OK);
 };
 
