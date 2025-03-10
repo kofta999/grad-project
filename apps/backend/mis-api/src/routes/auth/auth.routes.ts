@@ -3,7 +3,7 @@ import { createRoute, z } from "@hono/zod-openapi";
 import { jsonContent, jsonContentRequired } from "stoker/openapi/helpers";
 import * as HttpStatusCodes from "stoker/http-status-codes";
 import { createErrorSchema } from "stoker/openapi/schemas";
-import { unauthorizedSchema } from "@/lib/constants";
+import { ROLES, unauthorizedSchema } from "@/lib/constants";
 import { isAuthenticated } from "@/middlewares/isAuthenticated";
 import { uploadFile } from "@/middlewares/uploadFile";
 
@@ -45,7 +45,10 @@ export const login = createRoute({
     body: jsonContentRequired(loginSchema, "The login credentials"),
   },
   responses: {
-    [HttpStatusCodes.OK]: jsonContent(z.object({}), "Successful login"),
+    [HttpStatusCodes.OK]: jsonContent(
+      z.object({ name: z.string(), role: z.enum(ROLES) }),
+      "Successful login",
+    ),
     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
       createErrorSchema(loginSchema),
       "The validation error(s)",
