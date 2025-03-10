@@ -14,6 +14,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { apiClient } from "@/lib/client";
 import { InferResponseType } from "@repo/mis-api";
+import toast from "react-hot-toast";
 
 type StudentApplications = InferResponseType<
   typeof apiClient.admin.applications.$get
@@ -43,9 +44,6 @@ export default function StudentApplications() {
         setApplications(data);
       } catch (err) {
         console.error("Failed to fetch applications:", err);
-        // Fallback to dummy data if API fails
-        setApplications(dummyApplications);
-
       }
     };
 
@@ -73,7 +71,9 @@ export default function StudentApplications() {
 
   // Handle accepting selected applications
   const handleAcceptSelected = () => {
-    const selectedIds = Object.keys(selectedRows).filter((id) => selectedRows[id]);
+    const selectedIds = Object.keys(selectedRows).filter(
+      (id) => selectedRows[id],
+    );
 
     if (selectedIds.length === 0) {
       toast.error("لم يتم اختيار أي طلبات.");
@@ -82,7 +82,12 @@ export default function StudentApplications() {
 
     // For now, just log the selected IDs
     console.log("Selected applications to accept:", selectedIds);
-    toast.success(`تم اختيار ${selectedIds.length} طلبات. سيتم إضافة المنطق لاحقًا.`);
+    // apiClient.admin.applications.accept.$post({ json: { applicationId: 0 } });
+    // Promise array -> evaluate at same time
+    // Promise.all()
+    toast.success(
+      `تم اختيار ${selectedIds.length} طلبات. سيتم إضافة المنطق لاحقًا.`,
+    );
   };
 
   return (
@@ -116,7 +121,7 @@ export default function StudentApplications() {
         <Table dir="rtl">
           <TableHeader>
             <TableRow className="border-b">
-              {/* <TableHead className="text-center w-12">
+              <TableHead className="text-center w-12">
                 <Checkbox
                   checked={
                     Object.keys(selectedRows).length === applications.length &&
@@ -125,7 +130,7 @@ export default function StudentApplications() {
                   onCheckedChange={toggleSelectAll}
                   aria-label="Select all"
                 />
-              </TableHead> */}
+              </TableHead>
               <TableHead className="text-right">اسم الطالب</TableHead>
               <TableHead className="text-right">الدرجة العلمية</TableHead>
               <TableHead className="text-right">البرنامج الأكاديمي</TableHead>
@@ -138,7 +143,7 @@ export default function StudentApplications() {
                 key={application.applicationId}
                 className="border-b h-12"
               >
-                {/* <TableCell className="p-2 text-center">
+                <TableCell className="p-2 text-center">
                   {application.studentName && (
                     <Checkbox
                       checked={!!selectedRows[application.applicationId]}
@@ -148,7 +153,7 @@ export default function StudentApplications() {
                       aria-label={`Select ${application.studentName}`}
                     />
                   )}
-                </TableCell> */}
+                </TableCell>
                 <TableCell>
                   {application.studentName ? (
                     <div className="font-medium">{application.studentName}</div>
