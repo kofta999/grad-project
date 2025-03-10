@@ -1,5 +1,4 @@
-import { apiClient } from "@/lib/client";
-import { InferResponseType } from "@repo/mis-api";
+"use client";
 import { createContext, useContext, useEffect, useState } from "react";
 
 type UserType = {
@@ -19,17 +18,19 @@ export const UserContextProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const maybeUser = localStorage.getItem("loggedInUser");
-  let initialUser = null;
-  try {
-    initialUser = maybeUser ? JSON.parse(maybeUser) : null;
-  } catch (error) {
-    console.error(error);
-  }
-
-  const [loggedInUser, setLoggedInUser] = useState<UserType | null>(
-    initialUser,
-  );
+  const [loggedInUser, setLoggedInUser] = useState<UserType | null>(() => {
+    // This only runs on the client, so it's safe to access localStorage here
+    const maybeUser = localStorage.getItem("loggedInUser");
+    if (maybeUser) {
+      try {
+        return JSON.parse(maybeUser);
+      } catch (error) {
+        console.error("Failed to parse user from localStorage:", error);
+        return null;
+      }
+    }
+    return null;
+  });
 
   useEffect(() => {
     if (loggedInUser) {
