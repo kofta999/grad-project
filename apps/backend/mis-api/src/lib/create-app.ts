@@ -17,7 +17,7 @@ export default function createApp() {
   // TODO: Decide on using / not using a memory store
   const store = new MemoryStore();
 
-  app.use(cors({ origin: "*", credentials: true }));
+  app.use(cors({ origin: "http://localhost:3002", credentials: true }));
 
   app.use(
     sessionMiddleware({
@@ -29,7 +29,7 @@ export default function createApp() {
         secure: env.NODE_ENV !== "development", // Ensure Secure is set in production
       },
       sessionCookieName: "sessionId",
-    }),
+    })
   );
   app.use(serveEmojiFavicon("🔥"));
   app.use(logger());

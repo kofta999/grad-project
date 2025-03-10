@@ -25,6 +25,11 @@
     "packages/*"
   ],
   "dependencies": {
+    "@types/js-cookie": "^3.0.6",
+    "js-cookie": "^3.0.5",
+    "next-client-cookies": "^2.0.1",
+    "react-cookie": "^7.2.2",
+    "universal-cookie": "^7.2.2",
     "zod": "^3.24.2"
   },
   "module": "index.ts",

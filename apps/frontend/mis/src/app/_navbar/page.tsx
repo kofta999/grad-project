@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import {
   LayoutDashboard,
   ChartLine,
@@ -21,6 +21,10 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useUserContext } from "@/context/UserContext";
+import { useRouter } from "next/navigation";
+import { apiClient } from "@/lib/client";
+import toast, { Toaster } from "react-hot-toast";
 
 const SIDENAV_ITEMS = [
   { title: "بيانات الطالب", path: "/", icon: <LayoutDashboard /> },
@@ -40,11 +44,11 @@ const SIDENAV_ITEMS = [
     title: "الرسالة",
     path: "/thesis",
     icon: <File />,
-
   },
-  { title: "الاعدادات", 
-    path: "/settings", 
-    icon: <Settings /> ,
+  {
+    title: "الاعدادات",
+    path: "/settings",
+    icon: <Settings />,
     submenu: true,
     subMenuItems: [
       { title: "Account", path: "/settings/account" },
@@ -54,9 +58,22 @@ const SIDENAV_ITEMS = [
 ];
 
 export default function SideNav() {
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
+  const { loggedInUser, setLoggedInUser } = useUserContext();
 
-  const MenuItem = ({ item }) => {
+  const handleLogout = async () => {
+    try {
+      await apiClient.auth.logout.$post();
+      setLoggedInUser(null);
+      toast.success("تم تسجيل الخروج بنجاح");
+      router.push("/login");
+    } catch (err) {
+      toast.error("فشل تسجيل الخروج حاول مرة أخرى");
+    }
+  };
+
+  const MenuItem = ({ item }: { item: any }) => {
     const pathname = usePathname();
     const [subMenuOpen, setSubMenuOpen] = useState(false);
 
@@ -83,7 +100,7 @@ export default function SideNav() {
 
             {subMenuOpen && (
               <div className="mr-12 flex flex-col">
-                {item.subMenuItems?.map((subItem, idx) => (
+                {item.subMenuItems?.map((subItem: any, idx: number) => (
                   <Link
                     key={idx}
                     href={subItem.path}
@@ -120,81 +137,89 @@ export default function SideNav() {
 
   return (
     <>
-      {/* Hamburger Button */}
-      <button
-        className="xl:hidden fixed top-6 right-4 bg-blue-600 text-white p-2 rounded-full z-50"
-        onClick={() => setIsOpen(true)}
-      >
-        <Menu />
-      </button>
-
-      {/* Sidebar */}
-      <div
-        className={`fixed top-0 right-0 h-screen overflow-y-auto bg-white z-50 shadow-lg p-4 flex flex-col justify-between w-[320px] transition-transform duration-300 
-        ${isOpen ? "translate-x-0 z-50" : "translate-x-full"} xl:translate-x-0 md:p-6`}
-      >
-        {/* Close Button (Only Visible on Small Screens) */}
-        <button
-          className="xl:hidden absolute top-4 left-4 text-gray-600"
-          onClick={() => setIsOpen(false)}
-        >
-          <X size={24} />
-        </button>
-
-        {/* Logo */}
-        <div className="w-full p-5">
-          <Link
-            href="/"
-            className="block"
-            onClick={() => setIsOpen(false)}
+      {loggedInUser && (
+        <>
+          <button
+            className="xl:hidden fixed top-6 right-4 bg-blue-600 text-white p-2 rounded-full z-50"
+            onClick={() => setIsOpen(true)}
           >
-            <Image src="/image.jpg" alt="logo" width={200} height={100} />
-          </Link>
+            <Menu />
+          </button>
 
-          {/* Navigation Items */}
-          {SIDENAV_ITEMS.map((item: any, idx: number) => (
-            <MenuItem key={idx} item={item} />
-          ))}
-        </div>
+          {/* Sidebar */}
+          <div
+            className={`fixed top-0 right-0 h-screen overflow-y-auto bg-white z-50 shadow-lg p-4 flex flex-col justify-between w-[320px] transition-transform duration-300
+        ${isOpen ? "translate-x-0 z-50" : "translate-x-full"} xl:translate-x-0 md:p-6`}
+          >
+            {/* Close Button (Only Visible on Small Screens) */}
+            <button
+              className="xl:hidden absolute top-4 left-4 text-gray-600"
+              onClick={() => setIsOpen(false)}
+            >
+              <X size={24} />
+            </button>
 
-        {/* Footer Section */}
-        <div className="footer">
-          <div className="box bg-blue-600 text-white p-3 rounded-2xl">
-            <div className="welcome flex items-center justify-between">
-              <h1 className="font-bold text-xl">مرحبا</h1>
-              <Star />
+            {/* Logo */}
+            <div className="w-full p-5">
+              <Link href="/" className="block" onClick={() => setIsOpen(false)}>
+                <Image src="/image.jpg" alt="logo" width={200} height={100} />
+              </Link>
+
+              {/* Navigation Items */}
+              {SIDENAV_ITEMS.map((item: any, idx: number) => (
+                <MenuItem key={idx} item={item} />
+              ))}
             </div>
-            <p className="mt-3">هذا الحساب خاص بوليد حسن، نتمنى لك يوم مشرق.</p>
-          </div>
-          <div className="user flex mt-3 gap-2 items-center justify-between">
-            <div className="flex gap-5">
-              <img src="/avatar.jpg" width={40} height={40} alt="avatar" />
-              <div className="info">
-                <h2 className="h2">وليد حسن</h2>
-                <p className="text-sm text-[#8C8C8C]">Waleed44@scu.edu.org</p>
+
+            {/* Footer Section */}
+            <div className="footer">
+              <div className="box bg-blue-600 text-white p-3 rounded-2xl">
+                <div className="welcome flex items-center justify-between">
+                  <h1 className="font-bold text-xl">مرحبا</h1>
+                  <Star />
+                </div>
+                <p className="mt-3">
+                  هذا الحساب خاص ب{loggedInUser.name}، نتمنى لك يوم مشرق.
+                </p>
+              </div>
+              <div className="user flex mt-3 gap-2 items-center justify-between">
+                <div className="flex gap-5">
+                  <img src="/avatar.jpg" width={40} height={40} alt="avatar" />
+                  <div className="info">
+                    <h2 className="h2">{loggedInUser.name}</h2>
+                    {/* TODO: Is it a good idea to show emails? */}
+                    {/* <p className="text-sm text-[#8C8C8C]">
+                      Waleed44@scu.edu.org
+                    </p> */}
+                  </div>
+                </div>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <div className="cursor-pointer">
+                      <LogOut />
+                    </div>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-3 cursor-pointer">
+                    <button onClick={() => handleLogout()} className="logout">
+                      Logout
+                    </button>
+                  </PopoverContent>
+                </Popover>
               </div>
             </div>
-            <Popover>
-              <PopoverTrigger asChild>
-                <div className="cursor-pointer">
-                  <LogOut />
-                </div>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-3 cursor-pointer">
-                <div className="logout">Logout</div>
-              </PopoverContent>
-            </Popover>
           </div>
-        </div>
-      </div>
 
-      {/* Overlay (Closes Sidebar on Click) */}
-      {isOpen && (
-        <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-40 xl:hidden"
-          onClick={() => setIsOpen(false)}
-        ></div>
+          {/* Overlay (Closes Sidebar on Click) */}
+          {isOpen && (
+            <div
+              className="fixed inset-0 bg-black bg-opacity-50 z-40 xl:hidden"
+              onClick={() => setIsOpen(false)}
+            ></div>
+          )}
+        </>
       )}
+      {/* Hamburger Button */}
+      <Toaster />
     </>
   );
 }
