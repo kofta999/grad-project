@@ -17,7 +17,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { MapPin, Phone,User, Mail } from "lucide-react";
-import { hcWithType } from "@repo/mis-api";
 import { Container, ContainerTitle } from "@/components/ui/container";
 import Link from "next/link";
 import { FormType } from "../page";

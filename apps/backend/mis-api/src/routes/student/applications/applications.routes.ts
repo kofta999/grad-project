@@ -4,6 +4,8 @@ import {
   studentApplicationDetailsSchema,
   editStudentInfoSchema,
   currentAcademicYearsSchema,
+  applicantRegisteredCoursesRequestSchemaForStudent,
+  applicantRegisteredCoursesResponseSchemaForStudent,
 } from "@/db/validators";
 import { isAuthenticated } from "@/middlewares/isAuthenticated";
 import { requireRole } from "@/middlewares/requireRole";
@@ -16,7 +18,7 @@ import {
 } from "stoker/openapi/schemas";
 import { notFoundSchema } from "@/lib/constants";
 
-const tags = ["Applications"];
+const tags = ["Student"];
 
 export const getCurrentAcademicYears = createRoute({
   path: "/currentAcademicYears",
@@ -27,6 +29,25 @@ export const getCurrentAcademicYears = createRoute({
     [HttpStatusCodes.OK]: jsonContent(
       currentAcademicYearsSchema,
       "An array of available academic years",
+    ),
+  },
+});
+
+export const getAvailableDepartments = createRoute({
+  path: "/availableDepartments",
+  method: "get",
+  request: {
+    query: z.object({
+      // TODO: Abstract this enum across the app
+      type: z.enum(["diploma", "master", "phd"]),
+    }),
+  },
+  middleware: [isAuthenticated, requireRole("student")],
+  tags,
+  responses: {
+    [HttpStatusCodes.OK]: jsonContent(
+      z.array(z.object({ departmentId: z.number(), title: z.string() })),
+      "An array of available departments for this type",
     ),
   },
 });
@@ -71,38 +92,6 @@ export const saveApplicationAttachments = createRoute({
   },
 });
 
-export const editStudentInfo = createRoute({
-  path: "/edit-student-info",
-  method: "put",
-  middleware: [isAuthenticated, requireRole("student")],
-  tags,
-  request: {
-    body: jsonContentRequired(
-      editStudentInfoSchema,
-      "Updated student information",
-    ),
-  },
-  responses: {
-    [HttpStatusCodes.OK]: jsonContent(
-      createMessageObjectSchema("Student info updated successfully"),
-      "Success response",
-    ),
-    [HttpStatusCodes.NOT_FOUND]: jsonContent(
-      createMessageObjectSchema("Student not found"),
-      "Student not found",
-    ),
-    [HttpStatusCodes.UNAUTHORIZED]: jsonContent(
-      createMessageObjectSchema("Unauthorized"),
-      "Unauthorized",
-    ),
-    //I don't know if we will use this or no, but i noticed that is common in the nodejs community websites :D
-    [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
-      createErrorSchema(editStudentInfoSchema),
-      "Validation error",
-    ),
-  },
-});
-
 export const getApplication = createRoute({
   path: "/",
   method: "get",
@@ -122,10 +111,10 @@ export const getApplication = createRoute({
 
 export type GetCurrentAcademicYears = typeof getCurrentAcademicYears;
 
+export type GetAvailableDepartmentsRoute = typeof getAvailableDepartments;
+
 export type CreateApplicationRoute = typeof createApplication;
 
 export type SaveApplicationAttachmentsRoute = typeof saveApplicationAttachments;
-
-export type EditStudentInfoRoute = typeof editStudentInfo;
 
 export type GetApplicationRoute = typeof getApplication;
