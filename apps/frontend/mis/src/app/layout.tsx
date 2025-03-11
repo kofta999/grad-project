@@ -1,7 +1,11 @@
+"use client"
 import "./styles.css";
 import SideNav from "./_navbar/page";
 import { Cairo } from "next/font/google";
 import { cn } from "@/lib/utils";
+import { useRouter, usePathname } from 'next/navigation';
+
+
 
 const cairo = Cairo({
   subsets: ["arabic", "latin"],
@@ -12,6 +16,17 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }): JSX.Element {
+  const pathname = usePathname();  
+  const router = useRouter();
+  if (pathname === '/login' || pathname === '/register') {
+    return (
+        <html lang="ar" dir="rtl">
+          <body>
+            <main>{children}</main>
+          </body>
+        </html>
+    );
+  }
   return (
     <html lang="ar" dir="rtl">
       <body
