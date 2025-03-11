@@ -13,7 +13,7 @@ import { InferRequestType } from "@repo/mis-api";
 import { useApplicationIdContext } from "../application-id-context";
 
 type FormData = InferRequestType<
-  typeof apiClient.applications.attachments.$post
+  typeof apiClient.student.applications.attachments.$post
 >["json"];
 
 export default function ApplicationAttachmentsForm() {
@@ -31,7 +31,7 @@ export default function ApplicationAttachmentsForm() {
 
   const handleSubmit = async () => {
     try {
-      const res = await apiClient.applications.attachments.$post({
+      const res = await apiClient.student.applications.attachments.$post({
         json: formData,
       });
 
