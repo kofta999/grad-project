@@ -1,4 +1,4 @@
-import { pgTable, unique, serial, text, boolean, date, timestamp, index, foreignKey, integer, primaryKey, pgView, bigint, pgEnum } from "drizzle-orm/pg-core"
+import { pgTable, unique, serial, text, boolean, date, timestamp, index, foreignKey, integer, numeric, primaryKey, pgView, pgEnum, bigint } from "drizzle-orm/pg-core"
 import { sql } from "drizzle-orm"
 
 export const addressType = pgEnum("address_type", ['permanent', 'current'])
@@ -166,7 +166,7 @@ export const academicQualifications = pgTable("academic_qualifications", {
 	date: date().notNull(),
 	creditHours: boolean("credit_hours").notNull(),
 	grade: text().notNull(),
-	gpa: text().notNull(),
+	gpa: numeric().notNull(),
 }, (table) => {
 	return {
 		applicationIdIdx: index("academic_qualifications_application_id_idx").using("btree", table.applicationId.asc().nullsLast()),

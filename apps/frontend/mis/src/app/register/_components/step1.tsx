@@ -36,7 +36,6 @@ interface Step1Props {
 }
 
 export default function Step1({ formik }: Step1Props) {
-  // Handle form submission
 
   return (
     <Container>
