@@ -134,7 +134,7 @@ CREATE TABLE "academic_qualifications" (
 	"date" date NOT NULL,
 	"credit_hours" BOOLEAN NOT NULL,
 	"grade" TEXT NOT NULL,
-	"gpa" TEXT NOT NULL,
+	"gpa" REAL NOT NULL,
 	FOREIGN key ("application_id") REFERENCES "applications" ("application_id")
 );
 
