@@ -1,6 +1,5 @@
 "use client";
-
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Filter, ChevronRight, ChevronLeft } from "lucide-react";
 import {
   Table,
@@ -15,38 +14,22 @@ import { apiClient } from "@/lib/client";
 import { InferResponseType } from "@repo/mis-api";
 import toast from "react-hot-toast";
 
-type StudentApplications = InferResponseType<
+type ApplicationsList = InferResponseType<
   typeof apiClient.admin.applications.$get
 >;
 
-export default function StudentApplications() {
-  const [applications, setApplications] = useState<StudentApplications>([]);
-  const DEGREE_MAP: Record<StudentApplications[0]["academicDegree"], string> = {
+export default function ApplicationsList({
+  applicationsList,
+}: {
+  applicationsList: ApplicationsList;
+}) {
+  const [applications, setApplications] = useState(applicationsList);
+
+  const DEGREE_MAP: Record<ApplicationsList[0]["academicDegree"], string> = {
     diploma: "دبلوم",
     master: "ماجستير",
     phd: "دكتوراه",
   };
-
-  // Fetch student applications from the API
-  useEffect(() => {
-    const fetchApplications = async () => {
-      try {
-        const res = await apiClient.admin.applications.$get();
-
-        if (!res.ok) {
-          throw new Error(`HTTP error! Status: ${res.status}`);
-        }
-
-        const data = await res.json();
-
-        setApplications(data);
-      } catch (err) {
-        console.error("Failed to fetch applications:", err);
-      }
-    };
-
-    fetchApplications();
-  }, []);
 
   // Handle accepting an application
   const handleAcceptApplication = async (applicationId: number) => {
@@ -141,7 +124,9 @@ export default function StudentApplications() {
                 </TableCell>
                 <TableCell className="text-center">
                   <Button
-                    onClick={() => handleAcceptApplication(application.applicationId)}
+                    onClick={() =>
+                      handleAcceptApplication(application.applicationId)
+                    }
                     className="bg-green-700 hover:bg-green-600 text-white"
                   >
                     قبول

@@ -13,6 +13,8 @@ import toast, { Toaster } from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { useUserContext } from "@/context/UserContext";
 import { Loader } from "@/components/ui/loader";
+import { cookies } from "next/headers";
+import { revalidatePath } from "next/cache";
 
 type FormState = InferRequestType<typeof apiClient.auth.login.$post>["json"];
 
@@ -46,7 +48,13 @@ export default function LoginForm() {
       setLoggedInUser(result);
       setLoading(false);
 
-      router.push("/");
+      router.push("/dashboard");
+      // Took me 1h to figure out this
+      // If I didn't use this, and logged out as a student then logged in as an admin or vice versa
+      // Next cache will still use the old page (more like the old cookies that render the student page)
+      // So using this (exactly after pushing) will invalidate the cache and use latest cookies
+      // I hate this framework...
+      router.refresh()
       toast.success("تم الدخول بنجاح");
     } catch (err) {
       console.error("Login error:", err);

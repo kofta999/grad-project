@@ -1,5 +1,5 @@
 "use client";
-import { useContext, useState } from "react";
+import { useState } from "react";
 import {
   LayoutDashboard,
   ChartLine,
@@ -25,6 +25,14 @@ import { useUserContext } from "@/context/UserContext";
 import { useRouter } from "next/navigation";
 import { apiClient } from "@/lib/client";
 import toast, { Toaster } from "react-hot-toast";
+
+export type SideNavItem = {
+  title: string;
+  path: string;
+  icon?: JSX.Element;
+  submenu?: boolean;
+  subMenuItems?: SideNavItem[];
+};
 
 const SIDENAV_ITEMS = [
   { title: "بيانات الطالب", path: "/", icon: <LayoutDashboard /> },
@@ -60,14 +68,19 @@ const SIDENAV_ITEMS = [
 export default function SideNav() {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
-  const { loggedInUser, setLoggedInUser } = useUserContext();
+  const { loggedInUser, setLoggedInUser, isLoading } = useUserContext();
 
   const handleLogout = async () => {
     try {
+      // First, navigate away from protected routes
+      router.push("/login");
+
+      // Then perform logout API call
       await apiClient.auth.logout.$post();
+
+      // Finally update state
       setLoggedInUser(null);
       toast.success("تم تسجيل الخروج بنجاح");
-      router.push("/login");
     } catch (err) {
       toast.error("فشل تسجيل الخروج حاول مرة أخرى");
     }
@@ -137,7 +150,7 @@ export default function SideNav() {
 
   return (
     <>
-      {loggedInUser && (
+      {loggedInUser && !isLoading && (
         <>
           <button
             className="xl:hidden fixed top-6 right-4 bg-blue-600 text-white p-2 rounded-full z-50"

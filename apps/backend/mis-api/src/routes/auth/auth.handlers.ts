@@ -10,6 +10,7 @@ import * as HttpStatusPhrases from "stoker/http-status-phrases";
 import db from "@/db";
 import { students } from "@/db/schema";
 import bcrypt from "bcryptjs";
+import { deleteCookie, setCookie } from "hono/cookie";
 
 export const register: AppRouteHandler<RegisterStage1Route> = async (c) => {
   let { confirmPassword, ...studentData } = c.req.valid("json");
@@ -83,13 +84,15 @@ export const login: AppRouteHandler<LoginRoute> = async (c) => {
 
   c.var.session.set("id", userId!);
   c.var.session.set("role", role);
+  setCookie(c, "userRole", role);
 
   return c.json({ name: user.fullNameAr, role }, HttpStatusCodes.OK);
 };
 
 export const logout: AppRouteHandler<LogoutRoute> = async (c) => {
   c.var.session.deleteSession();
-
+  deleteCookie(c, "sessionId");
+  deleteCookie(c, "userRole");
   return c.json({}, HttpStatusCodes.OK);
 };
 

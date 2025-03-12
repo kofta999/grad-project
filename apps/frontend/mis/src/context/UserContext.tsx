@@ -1,5 +1,4 @@
-import { apiClient } from "@/lib/client";
-import { InferResponseType } from "@repo/mis-api";
+"use client";
 import { createContext, useContext, useEffect, useState } from "react";
 
 type UserType = {
@@ -10,6 +9,7 @@ type UserType = {
 export type UserContextType = {
   loggedInUser: UserType | null;
   setLoggedInUser: (user: UserType | null) => void;
+  isLoading: boolean;
 };
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -19,17 +19,24 @@ export const UserContextProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const maybeUser = localStorage.getItem("loggedInUser");
-  let initialUser = null;
-  try {
-    initialUser = maybeUser ? JSON.parse(maybeUser) : null;
-  } catch (error) {
-    console.error(error);
-  }
+  const [loggedInUser, setLoggedInUser] = useState<UserType | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const [loggedInUser, setLoggedInUser] = useState<UserType | null>(
-    initialUser,
-  );
+  useEffect(() => {
+    // Safely check for window to avoid SSR issues
+    if (typeof window !== "undefined") {
+      const storedUser = localStorage.getItem("loggedInUser");
+      if (storedUser) {
+        try {
+          setLoggedInUser(JSON.parse(storedUser));
+        } catch (error) {
+          console.error("Failed to parse stored user:", error);
+          localStorage.removeItem("loggedInUser");
+        }
+      }
+      setIsLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
     if (loggedInUser) {
@@ -40,7 +47,7 @@ export const UserContextProvider = ({
   }, [loggedInUser]);
 
   return (
-    <UserContext.Provider value={{ loggedInUser, setLoggedInUser }}>
+    <UserContext.Provider value={{ loggedInUser, setLoggedInUser, isLoading }}>
       {children}
     </UserContext.Provider>
   );

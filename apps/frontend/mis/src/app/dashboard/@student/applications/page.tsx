@@ -11,7 +11,7 @@ import * as Yup from "yup";
 import { useFormik } from "formik";
 import Step3 from "./_components/step3";
 import { useRouter } from "next/navigation";
-import { useApplicationIdContext } from "../../context/application-id-context";
+import { useApplicationIdContext } from "@/context/application-id-context";
 
 export type FormType = InferRequestType<
   typeof apiClient.student.applications.$post
