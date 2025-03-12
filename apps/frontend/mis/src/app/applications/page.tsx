@@ -1,6 +1,7 @@
 "use client";
-import { useState } from "react";
-import { InferRequestType } from "@repo/mis-api";
+
+import { useEffect, useState } from "react";
+import { InferRequestType, InferResponseType } from "@repo/mis-api";
 import { apiClient } from "@/lib/client";
 import Step1 from "./_components/step1";
 import Step2 from "./_components/step2";
@@ -13,8 +14,17 @@ import { useRouter } from "next/navigation";
 import { useApplicationIdContext } from "../../context/application-id-context";
 
 export type FormType = InferRequestType<
-  typeof apiClient.applications.$post
+  typeof apiClient.student.applications.$post
 >["json"];
+
+export type InitialFormDataType = {
+  currentAcademicYears: InferResponseType<
+    typeof apiClient.student.applications.currentAcademicYears.$get
+  >;
+  availableDepartments: InferResponseType<
+    typeof apiClient.student.applications.availableDepartments.$get
+  >;
+};
 
 export type FormStep1Type = Yup.InferType<typeof step1Schema>;
 export type FormStep2Type = Yup.InferType<typeof step2Schema>;
@@ -87,6 +97,10 @@ export default function ApplicationForm() {
   const router = useRouter();
   const [step, setStep] = useState(1);
   const { applicationId, setApplicationId } = useApplicationIdContext();
+  const [initialData, setInitialData] = useState<InitialFormDataType>({
+    currentAcademicYears: [],
+    availableDepartments: [],
+  });
 
   const handleStep1Submit = async () => {
     try {
@@ -226,14 +240,84 @@ export default function ApplicationForm() {
     onSubmit: handleStep3Submit,
   });
 
+  useEffect(() => {
+    const getAcademicYears = async () => {
+      const res =
+        await apiClient.student.applications.currentAcademicYears.$get();
+
+      const data = await res.json();
+
+      setInitialData((prev) => ({ ...prev, currentAcademicYears: data }));
+    };
+
+    getAcademicYears();
+  }, []);
+
+  useEffect(() => {
+    const getAvailableDepartments = async (
+      type: FormType["registration"]["academicDegree"],
+    ) => {
+      const res =
+        await apiClient.student.applications.availableDepartments.$get({
+          query: { type },
+        });
+
+      const data = await res.json();
+
+      setInitialData((prev) => ({ ...prev, availableDepartments: data }));
+    };
+
+    getAvailableDepartments(formikStep2.values.registration.academicDegree);
+  }, [formikStep2.values.registration.academicDegree]);
+
+  // const handleStepSubmit = (data: Partial<FormType>) => {
+  //   setFormData((old) => ({ ...old, ...data }));
+  // };
+
+  // useEffect(() => {
+  //   const submit = async () => {
+  //     // Try to submit
+  //     console.log("submitting");
+
+  //     try {
+  //       const res = await apiClient.student.applications.$post({
+  //         json: formData,
+  //       });
+
+  //       if (!res.ok) {
+  //         throw new Error(`HTTP error! Status: ${res.status}`);
+  //       }
+
+  //       const result = await res.json();
+  //       setApplicationId(result.applicationId);
+  //       console.log("Registration successful:", result);
+  //       toast.success("تم التسجيل بنجاح!");
+  //     } catch (err) {
+  //       console.error("Registration failed:", err);
+  //       toast.error("فشل التسجيل. الرجاء المحاولة مرة أخرى.");
+  //     }
+  //   };
+
+  //   if (step === 3) {
+  //     submit();
+  //     setStep(2);
+  //   } else {
+  //     window.scrollTo(0, 0);
+  //   }
+  // }, [step]);
+
   return (
     <>
       <Progress value={((step - 1) / 3) * 100} className="sticky top-0 z-40" />
 
-      {/* {step === 1 && <Step1 formik={formikStep1} />} */}
+      {step === 1 && <Step1 formik={formikStep1} />}
 
-      {step === 1 && (
-        <Step2 goPrevStep={() => setStep(1)} formik={formikStep2} />
+      {step === 2 && (
+        <Step2
+          goPrevStep={() => setStep(1)}
+          formik={formikStep2}
+          initialData={initialData}
+        />
       )}
 
       {step === 3 && (

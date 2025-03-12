@@ -42,15 +42,19 @@ const SIDENAV_ITEMS = [
   { title: "المصروفات", path: "/messages", icon: <Wallet /> },
   {
     title: "الرسالة",
-    path: "/messsages",
+    path: "/thesis",
     icon: <File />,
+  },
+  {
+    title: "الاعدادات",
+    path: "/settings",
+    icon: <Settings />,
     submenu: true,
     subMenuItems: [
       { title: "Account", path: "/settings/account" },
       { title: "Privacy", path: "/settings/privacy" },
     ],
   },
-  { title: "الاعدادات", path: "/settings", icon: <Settings /> },
 ];
 
 export default function SideNav() {
@@ -144,7 +148,7 @@ export default function SideNav() {
 
           {/* Sidebar */}
           <div
-            className={`fixed top-0 right-0 h-screen overflow-y-auto bg-white z-50 shadow-lg p-4 flex flex-col justify-between w-[320px] transition-transform duration-300 
+            className={`fixed top-0 right-0 h-screen overflow-y-auto bg-white z-50 shadow-lg p-4 flex flex-col justify-between w-[320px] transition-transform duration-300
         ${isOpen ? "translate-x-0 z-50" : "translate-x-full"} xl:translate-x-0 md:p-6`}
           >
             {/* Close Button (Only Visible on Small Screens) */}
@@ -175,17 +179,18 @@ export default function SideNav() {
                   <Star />
                 </div>
                 <p className="mt-3">
-                  هذا الحساب خاص بوليد حسن، نتمنى لك يوم مشرق.
+                  هذا الحساب خاص ب{loggedInUser.name}، نتمنى لك يوم مشرق.
                 </p>
               </div>
               <div className="user flex mt-3 gap-2 items-center justify-between">
                 <div className="flex gap-5">
                   <img src="/avatar.jpg" width={40} height={40} alt="avatar" />
                   <div className="info">
-                    <h2 className="h2">وليد حسن</h2>
-                    <p className="text-sm text-[#8C8C8C]">
+                    <h2 className="h2">{loggedInUser.name}</h2>
+                    {/* TODO: Is it a good idea to show emails? */}
+                    {/* <p className="text-sm text-[#8C8C8C]">
                       Waleed44@scu.edu.org
-                    </p>
+                    </p> */}
                   </div>
                 </div>
                 <Popover>

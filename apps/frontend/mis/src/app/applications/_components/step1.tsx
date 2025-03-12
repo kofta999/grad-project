@@ -15,7 +15,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { MapPin, Phone, User, Mail } from "lucide-react";
+import { MapPin, Phone,User, Mail } from "lucide-react";
 import { Container, ContainerTitle } from "@/components/ui/container";
 import { FormStep1Type } from "../page";
 import { FormikProps } from "formik";

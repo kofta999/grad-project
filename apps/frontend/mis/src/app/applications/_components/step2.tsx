@@ -19,15 +19,16 @@ import {
 import { CalendarIcon } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
-import { FormStep2Type } from "../page";
+import { FormStep2Type, InitialFormDataType } from "../page";
 import { FormikProps } from "formik";
 
 interface Step2Props {
   goPrevStep: () => void;
+  initialData: InitialFormDataType;
   formik: FormikProps<FormStep2Type>;
 }
 
-export default function Step2({ goPrevStep, formik }: Step2Props) {
+export default function Step2({ goPrevStep, formik, initialData }: Step2Props) {
   return (
     <Container>
       <ContainerTitle>تابع بيانات التسجيل</ContainerTitle>
@@ -154,7 +155,7 @@ export default function Step2({ goPrevStep, formik }: Step2Props) {
                 </Label>
                 <Select
                   value={formik.values.qualification.qualification}
-                  onValueChange={(value: any) =>
+                  onValueChange={(value: string) =>
                     formik.setFieldValue("qualification.qualification", value)
                   }
                 >
@@ -377,24 +378,38 @@ export default function Step2({ goPrevStep, formik }: Step2Props) {
                   العام الأكاديمي للتسجيل<span className="text-red-500">*</span>
                 </Label>
                 <Select
-                  value={formik.values.registration.academicYear}
-                  onValueChange={(value: any) =>
-                    formik.setFieldValue("registration.academicYear", value)
+                  value={
+                    formik.values.registration.academicYearId === 0
+                      ? undefined
+                      : formik.values.registration.academicYearId.toString()
+                  }
+                  onValueChange={(value: string) =>
+                    formik.setFieldValue(
+                      "registration.academicYearId",
+                      parseInt(value),
+                    )
                   }
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="اختر العام الأكاديمي" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="region1">المنطقة 1</SelectItem>
-                    <SelectItem value="region2">المنطقة 2</SelectItem>
-                    <SelectItem value="region3">المنطقة 3</SelectItem>
+                    {initialData.currentAcademicYears.map(
+                      ({ academicYearId, year }) => (
+                        <SelectItem
+                          key={academicYearId}
+                          value={academicYearId.toString()}
+                        >
+                          {year}
+                        </SelectItem>
+                      ),
+                    )}
                   </SelectContent>
                 </Select>
-                {formik.touched.registration?.academicYear &&
-                  formik.errors.registration?.academicYear && (
+                {formik.touched.registration?.academicYearId &&
+                  formik.errors.registration?.academicYearId && (
                     <p className="text-red-500 text-sm">
-                      {formik.errors.registration.academicYear}
+                      {formik.errors.registration.academicYearId}
                     </p>
                   )}
               </div>
@@ -440,9 +455,9 @@ export default function Step2({ goPrevStep, formik }: Step2Props) {
                     <SelectValue placeholder="اختر الدرجة العلمية" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="region1">المنطقة 1</SelectItem>
-                    <SelectItem value="region2">المنطقة 2</SelectItem>
-                    <SelectItem value="region3">المنطقة 3</SelectItem>
+                    <SelectItem value="diploma">دبلوم</SelectItem>
+                    <SelectItem value="master">ماجيستير</SelectItem>
+                    <SelectItem value="phd">دكتوراه</SelectItem>
                   </SelectContent>
                 </Select>
                 {formik.touched.registration?.academicDegree &&
@@ -459,24 +474,38 @@ export default function Step2({ goPrevStep, formik }: Step2Props) {
                   البرامج / التخصص<span className="text-red-500">*</span>
                 </Label>
                 <Select
-                  value={formik.values.registration.academicProgram}
-                  onValueChange={(value: any) =>
-                    formik.setFieldValue("registration.academicProgram", value)
+                  value={
+                    formik.values.registration.departmentId === 0
+                      ? undefined
+                      : formik.values.registration.departmentId.toString()
+                  }
+                  onValueChange={(value: string) =>
+                    formik.setFieldValue(
+                      "registration.departmentId",
+                      parseInt(value),
+                    )
                   }
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="اختر البرنامج / التخصص" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="region1">المنطقة 1</SelectItem>
-                    <SelectItem value="region2">المنطقة 2</SelectItem>
-                    <SelectItem value="region3">المنطقة 3</SelectItem>
+                    {initialData.availableDepartments.map(
+                      ({ title, departmentId }) => (
+                        <SelectItem
+                          key={departmentId}
+                          value={departmentId.toString()}
+                        >
+                          {title}
+                        </SelectItem>
+                      ),
+                    )}
                   </SelectContent>
                 </Select>
-                {formik.touched.registration?.academicProgram &&
-                  formik.errors.registration?.academicProgram && (
+                {formik.touched.registration?.departmentId &&
+                  formik.errors.registration?.departmentId && (
                     <p className="text-red-500 text-sm">
-                      {formik.errors.registration.academicProgram}
+                      {formik.errors.registration.departmentId}
                     </p>
                   )}
               </div>

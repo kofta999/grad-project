@@ -191,6 +191,7 @@ export const applicantRegisteredCoursesResponseSchema = z.array(
     academicYearId: true,
     applicationId: true,
     semester: true,
+    courseRegistrationId: true,
   }),
 );
 
@@ -199,3 +200,21 @@ export const registerCourseSchema = z.object({
   courseId: z.number().int().positive(),
   semester: z.enum(["first", "second", "third"]),
 });
+
+export const applicantRegisteredCoursesRequestSchemaForStudent = z.object({
+  semester: z.enum(["first", "second", "third"]),
+  academicYearId: z.coerce.number(),
+});
+
+export const applicantRegisteredCoursesResponseSchemaForStudent = z.array(
+  createSelectSchema(detailedCourseRegistrationsView)
+    .omit({
+      academicYearId: true,
+      applicationId: true,
+      semester: true,
+      courseRegistrationId: true,
+    })
+    .extend({
+      grade: z.number().nullable(),
+    }),
+);
