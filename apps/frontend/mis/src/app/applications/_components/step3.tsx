@@ -1,6 +1,3 @@
-"use client";
-
-import React, { useState } from "react";
 import { Container, ContainerTitle } from "@/components/ui/container";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -8,84 +5,64 @@ import { Input } from "@/components/ui/input";
 import { Upload, File, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { FormikProps } from "formik";
+import { FormStep3Type } from "../page";
 import { apiClient } from "@/lib/client";
-import { InferRequestType } from "@repo/mis-api";
-import { useApplicationIdContext } from "../application-id-context";
 
-type FormData = InferRequestType<
-  typeof apiClient.student.applications.attachments.$post
->["json"];
+interface Step3Props {
+  goPrevStep: () => void;
+  formik: FormikProps<FormStep3Type>;
+}
 
-export default function ApplicationAttachmentsForm() {
-  const { applicationId } = useApplicationIdContext();
-  const [attachmentType, setAttachmentType] = useState("");
-
-  if (!applicationId) {
-    throw new Error("FIXME");
-  }
-
-  const [formData, setFormData] = useState<FormData>({
-    applicationId,
-    attachments: [],
-  });
-
-  const handleSubmit = async () => {
-    try {
-      const res = await apiClient.student.applications.attachments.$post({
-        json: formData,
-      });
-
-      if (!res.ok) {
-        throw new Error("حدث خطأ في إرسال المرفقات");
-      }
-    } catch (error) {
-      console.error(error);
-      // @ts-ignore
-      alert(error.message);
-    }
-  };
+export default function Step3({ goPrevStep, formik }: Step3Props) {
+  const { values, setFieldValue } = formik;
 
   const handleAttachmentUpload = async (
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const file = event.target.files?.[0];
     if (file) {
+      setFieldValue("attachmentFile", file);
       const res = await apiClient.auth.upload.$post({ form: { file } });
 
       if (res.ok) {
         const { uploadUrl } = await res.json();
-        setFormData((prev) => ({
-          ...prev,
-          attachments: [
-            ...prev.attachments,
-            { type: attachmentType, attachmentUrl: uploadUrl },
-          ],
-        }));
+        setFieldValue("attachments", [
+          ...values.attachments,
+          { type: values.attachmentType, attachmentUrl: uploadUrl },
+        ]);
       }
     }
+  };
+
+  const handleRemoveAttachment = (index: number) => {
+    const updatedAttachments = values.attachments.filter((_, i) => i !== index);
+    setFieldValue("attachments", updatedAttachments);
   };
 
   return (
     <Container>
       <ContainerTitle>إرسال مرفقات التسجيل</ContainerTitle>
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          handleSubmit();
-        }}
-      >
+      <form onSubmit={formik.handleSubmit}>
         <Card>
           <CardContent>
             <CardHeader>رفع المستندات المطلوبة</CardHeader>
             <div className="space-y-2">
               <Label>
-                نوع الهوية
-                <span className="text-red-500">*</span>
+                نوع الهوية<span className="text-red-500">*</span>
               </Label>
               <Input
-                value={attachmentType}
-                onChange={(e) => setAttachmentType(e.target.value)}
+                name="attachmentType"
+                value={formik.values.attachmentType}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
               />
+              {formik.touched.attachmentType &&
+                formik.errors.attachmentType && (
+                  <p className="text-red-500 text-sm">
+                    {formik.errors.attachmentType}
+                  </p>
+                )}
             </div>
 
             <div className="bg-[#dcdcdc] p-6 mt-6 rounded-sm">
@@ -97,21 +74,29 @@ export default function ApplicationAttachmentsForm() {
                   </div>
                   <Input
                     type="file"
-                    accept=""
+                    name="attachmentFile"
                     className="hidden"
-                    disabled={attachmentType === ""}
+                    disabled={!formik.values.attachmentType}
                     onChange={handleAttachmentUpload}
+                    onBlur={formik.handleBlur}
                   />
                 </Label>
-                <p className="text-sm text-red-500 text-center mt-2">
+                {formik.touched.attachmentFile &&
+                  formik.errors.attachmentFile && (
+                    <p className="text-sm text-red-500 text-center mt-2">
+                      <>{formik.errors.attachmentFile}</>
+                    </p>
+                  )}
+                <p className="text-sm text-gray-500 text-center mt-2">
                   * يجب أن لا يزيد الملف عن 2 ميجا بايت
                 </p>
               </div>
             </div>
 
+            {/* Attachments List */}
             <Card>
               <div className="space-y-2 border-b">
-                {formData.attachments.map((attachment) => (
+                {formik.values.attachments.map((attachment, index) => (
                   <div
                     className="file flex justify-between items-center p-4"
                     key={attachment.attachmentUrl}
@@ -121,7 +106,7 @@ export default function ApplicationAttachmentsForm() {
                     <p>{attachment.type}</p>
                     <Trash2
                       className="text-red-500 cursor-pointer"
-                      onClick={() => alert("TODO")}
+                      onClick={() => handleRemoveAttachment(index)}
                     />
                   </div>
                 ))}
@@ -130,10 +115,15 @@ export default function ApplicationAttachmentsForm() {
           </CardContent>
         </Card>
 
+        {/* Submit Buttons */}
         <div className="flex justify-center gap-4">
-          <Link href="/applications">
-            <Button variant="outline">السابق</Button>
-          </Link>
+          <Button
+            variant="outline"
+            className="border-[#BABABA]"
+            onClick={goPrevStep}
+          >
+            السابق
+          </Button>
           <Button
             className="bg-gray-600 hover:bg-gray-700 text-white"
             type="submit"

@@ -46,6 +46,7 @@ export const login: AppRouteHandler<LoginRoute> = async (c) => {
       },
       columns: {
         studentId: true,
+        fullNameAr: true,
         hashedPassword: true,
       },
     });
@@ -58,6 +59,7 @@ export const login: AppRouteHandler<LoginRoute> = async (c) => {
       },
       columns: {
         adminId: true,
+        fullNameAr: true,
         hashedPassword: true,
       },
     });
@@ -82,7 +84,7 @@ export const login: AppRouteHandler<LoginRoute> = async (c) => {
   c.var.session.set("id", userId!);
   c.var.session.set("role", role);
 
-  return c.json({}, HttpStatusCodes.OK);
+  return c.json({ name: user.fullNameAr, role }, HttpStatusCodes.OK);
 };
 
 export const logout: AppRouteHandler<LogoutRoute> = async (c) => {

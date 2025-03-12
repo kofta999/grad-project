@@ -34,17 +34,22 @@ export const ApplicationIdProvider = ({
 }) => {
   const [applicationId, setApplicationId] = useState<number | null>(() => {
     // Initialize state from localStorage
-    const storedId = localStorage.getItem("applicationId");
-    return storedId ? JSON.parse(storedId) : null;
+    if (typeof window !== "undefined") {
+      const storedId = localStorage.getItem("applicationId");
+      return storedId ? JSON.parse(storedId) : null;
+    }
+    return null;
   });
 
   useEffect(() => {
     // Update localStorage whenever applicationId changes
+    if (typeof window !== "undefined") {
     if (applicationId !== null) {
       localStorage.setItem("applicationId", JSON.stringify(applicationId));
     } else {
       localStorage.removeItem("applicationId");
     }
+  }
   }, [applicationId]);
 
   return (
