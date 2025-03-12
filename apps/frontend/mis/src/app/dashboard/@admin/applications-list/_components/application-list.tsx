@@ -1,3 +1,4 @@
+"use client";
 import { useState } from "react";
 import { Filter, ChevronRight, ChevronLeft } from "lucide-react";
 import {
@@ -12,46 +13,44 @@ import { Button } from "@/components/ui/button";
 import { apiClient } from "@/lib/client";
 import { InferResponseType } from "@repo/mis-api";
 import toast from "react-hot-toast";
-import { acceptApplication } from "./actions";
 
-type ApplicationsListProps = InferResponseType<
+type ApplicationsList = InferResponseType<
   typeof apiClient.admin.applications.$get
 >;
 
 export default function ApplicationsList({
   applicationsList,
 }: {
-  applicationsList: ApplicationsListProps;
+  applicationsList: ApplicationsList;
 }) {
-  const DEGREE_MAP: Record<ApplicationsListProps[0]["academicDegree"], string> =
-    {
-      diploma: "دبلوم",
-      master: "ماجستير",
-      phd: "دكتوراه",
-    };
+  const [applications, setApplications] = useState(applicationsList);
+
+  const DEGREE_MAP: Record<ApplicationsList[0]["academicDegree"], string> = {
+    diploma: "دبلوم",
+    master: "ماجستير",
+    phd: "دكتوراه",
+  };
 
   // Handle accepting an application
   const handleAcceptApplication = async (applicationId: number) => {
     try {
-      // // Send the applicationId to the API
-      // const res = await apiClient.admin.applications.accept.$post({
-      //   json: { applicationId },
-      // });
+      // Send the applicationId to the API
+      const res = await apiClient.admin.applications.accept.$post({
+        json: { applicationId },
+      });
 
-      // if (!res.ok) {
-      //   throw new Error(`HTTP error! Status: ${res.status}`);
-      // }
-      
-      acceptApplication(applicationId)
+      if (!res.ok) {
+        throw new Error(`HTTP error! Status: ${res.status}`);
+      }
 
-      // // Update the application status in the UI
-      // setApplications((prevApplications) =>
-      //   prevApplications.map((app) =>
-      //     app.applicationId === applicationId
-      //       ? { ...app, isAdminAccepted: true }
-      //       : app,
-      //   ),
-      // );
+      // Update the application status in the UI
+      setApplications((prevApplications) =>
+        prevApplications.map((app) =>
+          app.applicationId === applicationId
+            ? { ...app, isAdminAccepted: true }
+            : app,
+        ),
+      );
 
       // Show success message
       toast.success(`تم قبول طلب الطالب ذو الرقم ${applicationId}.`);
@@ -88,7 +87,7 @@ export default function ApplicationsList({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {applicationsList.map((application) => (
+            {applications.map((application) => (
               <TableRow
                 key={application.applicationId}
                 className="border-b h-12"
@@ -125,7 +124,9 @@ export default function ApplicationsList({
                 </TableCell>
                 <TableCell className="text-center">
                   <Button
-                    onClick={() => handleAcceptApplication(application.applicationId)}
+                    onClick={() =>
+                      handleAcceptApplication(application.applicationId)
+                    }
                     className="bg-green-700 hover:bg-green-600 text-white"
                   >
                     قبول
