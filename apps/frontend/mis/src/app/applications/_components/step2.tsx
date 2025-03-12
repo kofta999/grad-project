@@ -354,7 +354,11 @@ export default function Step2({ goPrevStep, formik, initialData }: Step2Props) {
                 <Input
                   name="qualification.gpa"
                   value={formik.values.qualification.gpa}
-                  onChange={formik.handleChange}
+                  onChange={(e: any) => {
+                    const value =
+                      e.target.value === "" ? 0 : parseFloat(e.target.value);
+                    formik.setFieldValue("qualification.gpa", value);
+                  }}
                 />
                 {formik.touched.qualification?.gpa &&
                   formik.errors.qualification?.gpa && (
@@ -427,9 +431,9 @@ export default function Step2({ goPrevStep, formik, initialData }: Step2Props) {
                     <SelectValue placeholder="اختر الكلية" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="region1">المنطقة 1</SelectItem>
-                    <SelectItem value="region2">المنطقة 2</SelectItem>
-                    <SelectItem value="region3">المنطقة 3</SelectItem>
+                    <SelectItem value="facultyOfEngineering">
+                      كلية الهندسة
+                    </SelectItem>
                   </SelectContent>
                 </Select>
                 {formik.touched.registration?.faculty &&

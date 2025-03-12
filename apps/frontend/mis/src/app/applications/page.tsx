@@ -42,13 +42,14 @@ const step1Schema = Yup.object().shape({
     fullAddress: Yup.string().required("العنوان الكامل مطلوب"),
   }),
   emergencyContact: Yup.object().shape({
-    name: Yup.string(),
-    phoneNumber: Yup.string().matches(
-      /^\d+$/,
-      "يجب أن يحتوي رقم الهاتف على أرقام فقط",
-    ),
-    email: Yup.string().email("البريد الإلكتروني غير صالح"),
-    address: Yup.string(),
+    name: Yup.string().required("الاسم مطلوب"),
+    phoneNumber: Yup.string()
+      .matches(/^\d+$/, "يجب أن يحتوي رقم الهاتف على أرقام فقط")
+      .required("رقم الهاتف مطلوب"),
+    email: Yup.string()
+      .email("البريد الإلكتروني غير صالح")
+      .required("البريد الإلكتروني مطلوب"),
+    address: Yup.string().required("العنوان مطلوب"),
   }),
 });
 
@@ -70,10 +71,12 @@ const step2Schema = Yup.object().shape({
       .required("المعدل التراكمي مطلوب"),
   }),
   registration: Yup.object().shape({
-    academicYear: Yup.string().required("السنة الدراسية مطلوبة"),
+    academicYearId: Yup.number().required("السنة الدراسية مطلوبة").min(1),
     faculty: Yup.string().required("الكلية مطلوبة"),
-    academicDegree: Yup.string().required("الدرجة الأكاديمية مطلوبة"),
-    academicProgram: Yup.string().required("البرنامج الأكاديمي مطلوب"),
+    academicDegree: Yup.string()
+      .oneOf(["diploma", "master", "phd"])
+      .required("الدرجة الأكاديمية مطلوبة"),
+    departmentId: Yup.number().min(1).required("البرنامج الأكاديمي مطلوب"),
   }),
 });
 
@@ -108,6 +111,7 @@ export default function ApplicationForm() {
       if (Object.keys(formikStep1.errors).length === 0) {
         toast.success("تم التسجيل النموذج الاول بنجاح!");
         setStep(2);
+        window.scrollTo(0, 0);
       } else {
         toast.error("الرجاء تصحيح الأخطاء قبل المتابعة.");
       }
@@ -120,7 +124,7 @@ export default function ApplicationForm() {
     try {
       await formikStep2.validateForm();
       if (Object.keys(formikStep2.errors).length === 0) {
-        const response = await apiClient.applications.$post({
+        const response = await apiClient.student.applications.$post({
           json: {
             ...values,
             ...formikStep1.values,
@@ -132,16 +136,20 @@ export default function ApplicationForm() {
             },
           },
         });
-        const result = await response.json();
         if (!response.ok) {
+          const result = await response.json();
           console.log(result);
+          // @ts-ignore Otherwise I need to explicitly set the type
           throw new Error(result.error);
-        }
+        } else {
+          const result: { applicationId: number } = await response.json();
 
-        setApplicationId(result.applicationId);
+          setApplicationId(result.applicationId);
+        }
 
         toast.success("تم التسجيل النموذج الثاني بنجاح!");
         setStep(3);
+        window.scrollTo(0, 0);
       } else {
         toast.error("الرجاء تصحيح الأخطاء قبل المتابعة.");
       }
@@ -158,16 +166,18 @@ export default function ApplicationForm() {
           throw new Error("Application id not found");
         }
 
-        const response = await apiClient.applications.attachments.$post({
-          json: {
-            applicationId,
-            attachments: values.attachments,
+        const response = await apiClient.student.applications.attachments.$post(
+          {
+            json: {
+              applicationId,
+              attachments: values.attachments,
+            },
           },
-        });
+        );
         const result = await response.json();
 
         if (!response.ok) {
-          console.log(result);
+          // @ts-ignore Otherwise I need to explicitly set the type
           throw new Error(result.error);
         }
 
@@ -220,10 +230,10 @@ export default function ApplicationForm() {
         gpa: 0,
       },
       registration: {
-        academicYear: "",
+        academicYearId: 0,
         faculty: "",
-        academicDegree: "",
-        academicProgram: "",
+        academicDegree: "diploma",
+        departmentId: 0,
       },
     },
     validationSchema: step2Schema,
@@ -233,6 +243,7 @@ export default function ApplicationForm() {
   let formikStep3 = useFormik<FormStep3Type>({
     initialValues: {
       attachmentType: "",
+      // @ts-ignore idk
       attachmentFile: null as File | null,
       attachments: [] as { type: string; attachmentUrl: string }[],
     },
@@ -246,6 +257,7 @@ export default function ApplicationForm() {
         await apiClient.student.applications.currentAcademicYears.$get();
 
       const data = await res.json();
+      console.log(data);
 
       setInitialData((prev) => ({ ...prev, currentAcademicYears: data }));
     };
@@ -263,6 +275,7 @@ export default function ApplicationForm() {
         });
 
       const data = await res.json();
+      console.log(data);
 
       setInitialData((prev) => ({ ...prev, availableDepartments: data }));
     };
