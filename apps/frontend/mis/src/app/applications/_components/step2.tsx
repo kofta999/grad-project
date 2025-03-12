@@ -28,7 +28,6 @@ interface Step2Props {
 }
 
 export default function Step2({ goPrevStep, formik }: Step2Props) {
-
   return (
     <Container>
       <ContainerTitle>تابع بيانات التسجيل</ContainerTitle>
@@ -243,11 +242,14 @@ export default function Step2({ goPrevStep, formik }: Step2Props) {
                       variant={"outline"}
                       className={cn(
                         "w-full justify-start text-right font-normal",
-                        !formik.values.qualification.date && "text-muted-foreground"
+                        !formik.values.qualification.date &&
+                          "text-muted-foreground",
                       )}
                     >
                       {formik.values.qualification.date ? (
-                        new Date(formik.values.qualification.date).toLocaleDateString()
+                        new Date(
+                          formik.values.qualification.date,
+                        ).toLocaleDateString()
                       ) : (
                         <span>اختر التاريخ</span>
                       )}
@@ -265,7 +267,7 @@ export default function Step2({ goPrevStep, formik }: Step2Props) {
                       onSelect={(date) =>
                         formik.setFieldValue(
                           "qualification.date",
-                          date ? date.toLocaleDateString("en-US") : ""
+                          date ? date.toLocaleDateString("en-US") : "",
                         )
                       }
                       initialFocus
@@ -284,18 +286,24 @@ export default function Step2({ goPrevStep, formik }: Step2Props) {
               <div className="space-y-2">
                 <Label>نوع الدراسة</Label>
                 <Select
-                  value={formik.values.qualification.creditHours}
-                  onValueChange={(value: any) =>
-                    formik.setFieldValue("qualification.creditHours", value)
+                  value={
+                    formik.values.qualification.creditHours
+                      ? "creditHours"
+                      : "classic"
+                  }
+                  onValueChange={(value: string) =>
+                    formik.setFieldValue(
+                      "qualification.creditHours",
+                      value === "creditHours",
+                    )
                   }
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="اختر نوع الدراسة" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="region1">المنطقة 1</SelectItem>
-                    <SelectItem value="region2">المنطقة 2</SelectItem>
-                    <SelectItem value="region3">المنطقة 3</SelectItem>
+                    <SelectItem value="creditHours">ساعات معتمدة</SelectItem>
+                    <SelectItem value="classic">تقليدي</SelectItem>
                   </SelectContent>
                 </Select>
                 {formik.touched.qualification?.creditHours &&
@@ -311,7 +319,7 @@ export default function Step2({ goPrevStep, formik }: Step2Props) {
                 <Label>التقدير</Label>
                 <Select
                   value={formik.values.qualification.grade}
-                  onValueChange={(value: any) =>
+                  onValueChange={(value: string) =>
                     formik.setFieldValue("qualification.grade", value)
                   }
                 >
@@ -319,9 +327,16 @@ export default function Step2({ goPrevStep, formik }: Step2Props) {
                     <SelectValue placeholder="اختر التقدير" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="region1">المنطقة 1</SelectItem>
-                    <SelectItem value="region2">المنطقة 2</SelectItem>
-                    <SelectItem value="region3">المنطقة 3</SelectItem>
+                    <SelectItem value="aPlus">A+</SelectItem>
+                    <SelectItem value="a">A</SelectItem>
+                    <SelectItem value="aMinus">A-</SelectItem>
+                    <SelectItem value="bPlus">B+</SelectItem>
+                    <SelectItem value="b">B</SelectItem>
+                    <SelectItem value="bMinus">B-</SelectItem>
+                    <SelectItem value="cPlus">C+</SelectItem>
+                    <SelectItem value="c">C</SelectItem>
+                    <SelectItem value="cMinus">C-</SelectItem>
+                    <SelectItem value="d">D</SelectItem>
                   </SelectContent>
                 </Select>
                 {formik.touched.qualification?.grade &&

@@ -10,7 +10,7 @@ import * as Yup from "yup";
 import { useFormik } from "formik";
 import Step3 from "./_components/step3";
 import { useRouter } from "next/navigation";
-import { useApplicationIdContext } from "../../context/application-id-context"
+import { useApplicationIdContext } from "../../context/application-id-context";
 
 export type FormType = InferRequestType<
   typeof apiClient.applications.$post
@@ -32,12 +32,13 @@ const step1Schema = Yup.object().shape({
     fullAddress: Yup.string().required("العنوان الكامل مطلوب"),
   }),
   emergencyContact: Yup.object().shape({
-    name: Yup.string().required("الاسم مطلوب"),
-    phoneNumber: Yup.string()
-      .matches(/^\d+$/, "يجب أن يحتوي رقم الهاتف على أرقام فقط")
-      .required("رقم الهاتف مطلوب"),
-    email: Yup.string().email("البريد الإلكتروني غير صالح").required("البريد الإلكتروني مطلوب"),
-    address: Yup.string().required("العنوان مطلوب"),
+    name: Yup.string(),
+    phoneNumber: Yup.string().matches(
+      /^\d+$/,
+      "يجب أن يحتوي رقم الهاتف على أرقام فقط",
+    ),
+    email: Yup.string().email("البريد الإلكتروني غير صالح"),
+    address: Yup.string(),
   }),
 });
 
@@ -51,7 +52,7 @@ const step2Schema = Yup.object().shape({
     specialization: Yup.string().required("التخصص مطلوب"),
     year: Yup.string().required("العام مطلوب"),
     date: Yup.date().required("التاريخ مطلوب"),
-    creditHours: Yup.string().required("عدد الساعات المعتمدة مطلوب"),
+    creditHours: Yup.boolean().required("عدد الساعات المعتمدة مطلوب"),
     grade: Yup.string().required("التقدير مطلوب"),
     gpa: Yup.number()
       .min(0, "يجب ألا يقل المعدل التراكمي عن 0")
@@ -74,13 +75,18 @@ const step3Schema = Yup.object().shape({
       if (!value) return false;
       return (value as File).size <= 2 * 1024 * 1024;
     }),
-})
-
+  attachments: Yup.array(
+    Yup.object({
+      type: Yup.string().required(),
+      attachmentUrl: Yup.string().required(),
+    }),
+  ).required(),
+});
 
 export default function ApplicationForm() {
   const router = useRouter();
   const [step, setStep] = useState(1);
-  const { applicationId } = useApplicationIdContext();
+  const { applicationId, setApplicationId } = useApplicationIdContext();
 
   const handleStep1Submit = async () => {
     try {
@@ -104,13 +110,22 @@ export default function ApplicationForm() {
           json: {
             ...values,
             ...formikStep1.values,
+            qualification: {
+              ...values.qualification,
+              date: formikStep2.values.qualification.date.toLocaleDateString(
+                "en-US",
+              ),
+            },
           },
         });
         const result = await response.json();
-        if (!result.ok) {
+        if (!response.ok) {
           console.log(result);
           throw new Error(result.error);
         }
+
+        setApplicationId(result.applicationId);
+
         toast.success("تم التسجيل النموذج الثاني بنجاح!");
         setStep(3);
       } else {
@@ -125,6 +140,10 @@ export default function ApplicationForm() {
     try {
       await formikStep3.validateForm();
       if (Object.keys(formikStep3.errors).length === 0) {
+        if (!applicationId) {
+          throw new Error("Application id not found");
+        }
+
         const response = await apiClient.applications.attachments.$post({
           json: {
             applicationId,
@@ -133,7 +152,7 @@ export default function ApplicationForm() {
         });
         const result = await response.json();
 
-        if (!result.ok) {
+        if (!response.ok) {
           console.log(result);
           throw new Error(result.error);
         }
@@ -147,7 +166,6 @@ export default function ApplicationForm() {
       toast.error("حدث خطأ غير متوقع. الرجاء المحاولة مرة أخرى.");
     }
   };
-
 
   let formikStep1 = useFormik<FormStep1Type>({
     initialValues: {
@@ -183,7 +201,7 @@ export default function ApplicationForm() {
         specialization: "",
         year: "",
         date: new Date(),
-        creditHours: "",
+        creditHours: false,
         grade: "",
         gpa: 0,
       },
@@ -212,11 +230,15 @@ export default function ApplicationForm() {
     <>
       <Progress value={((step - 1) / 3) * 100} className="sticky top-0 z-40" />
 
-      {step === 1 && <Step1 formik={formikStep1} />}
+      {/* {step === 1 && <Step1 formik={formikStep1} />} */}
 
-      {step === 2 && <Step2 goPrevStep={() => setStep(1)} formik={formikStep2} />}
+      {step === 1 && (
+        <Step2 goPrevStep={() => setStep(1)} formik={formikStep2} />
+      )}
 
-      {step === 3 && <Step3 goPrevStep={() => setStep(2)} formik={formikStep3} />}
+      {step === 3 && (
+        <Step3 goPrevStep={() => setStep(2)} formik={formikStep3} />
+      )}
 
       <Toaster />
     </>

@@ -1,4 +1,3 @@
-"use client";
 import { Container, ContainerTitle } from "@/components/ui/container";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -8,6 +7,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { FormikProps } from "formik";
 import { FormStep3Type } from "../page";
+import { apiClient } from "@/lib/client";
 
 interface Step3Props {
   goPrevStep: () => void;
@@ -17,17 +17,21 @@ interface Step3Props {
 export default function Step3({ goPrevStep, formik }: Step3Props) {
   const { values, setFieldValue } = formik;
 
-  const handleAttachmentUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleAttachmentUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
     const file = event.target.files?.[0];
     if (file) {
       setFieldValue("attachmentFile", file);
+      const res = await apiClient.auth.upload.$post({ form: { file } });
 
-      // Simulate file upload (replace with actual API call)
-      const uploadUrl = URL.createObjectURL(file); // Replace with actual upload logic
-      setFieldValue("attachments", [
-        ...values.attachments,
-        { type: values.attachmentType, attachmentUrl: uploadUrl },
-      ]);
+      if (res.ok) {
+        const { uploadUrl } = await res.json();
+        setFieldValue("attachments", [
+          ...values.attachments,
+          { type: values.attachmentType, attachmentUrl: uploadUrl },
+        ]);
+      }
     }
   };
 
@@ -53,11 +57,12 @@ export default function Step3({ goPrevStep, formik }: Step3Props) {
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
               />
-              {formik.touched.attachmentType && formik.errors.attachmentType && (
-                <p className="text-red-500 text-sm">
-                  {formik.errors.attachmentType}
-                </p>
-              )}
+              {formik.touched.attachmentType &&
+                formik.errors.attachmentType && (
+                  <p className="text-red-500 text-sm">
+                    {formik.errors.attachmentType}
+                  </p>
+                )}
             </div>
 
             <div className="bg-[#dcdcdc] p-6 mt-6 rounded-sm">
@@ -76,11 +81,12 @@ export default function Step3({ goPrevStep, formik }: Step3Props) {
                     onBlur={formik.handleBlur}
                   />
                 </Label>
-                {formik.touched.attachmentFile && formik.errors.attachmentFile && (
-                  <p className="text-sm text-red-500 text-center mt-2">
-                    {formik.errors.attachmentFile}
-                  </p>
-                )}
+                {formik.touched.attachmentFile &&
+                  formik.errors.attachmentFile && (
+                    <p className="text-sm text-red-500 text-center mt-2">
+                      <>{formik.errors.attachmentFile}</>
+                    </p>
+                  )}
                 <p className="text-sm text-gray-500 text-center mt-2">
                   * يجب أن لا يزيد الملف عن 2 ميجا بايت
                 </p>
@@ -111,7 +117,13 @@ export default function Step3({ goPrevStep, formik }: Step3Props) {
 
         {/* Submit Buttons */}
         <div className="flex justify-center gap-4">
-          <Button variant="outline" className="border-[#BABABA]" onClick={goPrevStep}>السابق</Button>
+          <Button
+            variant="outline"
+            className="border-[#BABABA]"
+            onClick={goPrevStep}
+          >
+            السابق
+          </Button>
           <Button
             className="bg-gray-600 hover:bg-gray-700 text-white"
             type="submit"
