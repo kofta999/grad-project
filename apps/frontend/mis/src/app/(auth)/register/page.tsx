@@ -1,6 +1,5 @@
 "use client";
-
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Step1 from "./_components/step1";
 import Step2 from "./_components/step2";
 import { InferRequestType } from "@repo/mis-api";
@@ -8,7 +7,7 @@ import { Progress } from "@/components/ui/progress";
 import { apiClient } from "@/lib/client";
 import toast, { Toaster } from "react-hot-toast";
 import * as Yup from "yup";
-import { useFormik, FormikProps } from "formik";
+import { useFormik } from "formik";
 
 export type FormType = InferRequestType<
   typeof apiClient.auth.register.$post
@@ -25,7 +24,9 @@ const step1Schema = Yup.object().shape({
   dob: Yup.date()
     .typeError("تاريخ الميلاد غير صالح")
     .required("تاريخ الميلاد مطلوب"),
-  email: Yup.string().email("البريد الإلكتروني غير صالح").required("البريد الإلكتروني غير صالح"),
+  email: Yup.string()
+    .email("البريد الإلكتروني غير صالح")
+    .required("البريد الإلكتروني غير صالح"),
   fax: Yup.string().optional(),
   phoneNoMain: Yup.string().required("رقم الهاتف الرئيسي مطلوب"),
   phoneNoSec: Yup.string().optional(),
@@ -74,7 +75,7 @@ export default function RegistrationForm() {
     try {
       await formikStep1.validateForm();
       if (Object.keys(formikStep1.errors).length === 0) {
-        // toast.success("تم التسجيل بنجاح!");
+        toast.success("تم التسجيل بنجاح!");
         setStep(2);
       } else {
         toast.error("الرجاء تصحيح الأخطاء قبل المتابعة.");
@@ -86,23 +87,24 @@ export default function RegistrationForm() {
 
   const handleStep2Submit = async (values: FormStep2Type) => {
     try {
-      const res = await apiClient.auth.register.$post({
-        json: {
-          ...values,
-          ...formikStep1.values,
-          dob: formikStep1.values.dob.toLocaleDateString("en-US"),
-          idIssuanceDate:
-            formikStep2.values.idIssuanceDate.toLocaleDateString("en-US"),
-        },
-      });
+      await formikStep2.validateForm();
+      if (Object.keys(formikStep2.errors).length === 0) {
+        const res = await apiClient.auth.register.$post({
+          json: {
+            ...values,
+            ...formikStep1.values,
+            dob: formikStep1.values.dob.toLocaleDateString("en-US"),
+            idIssuanceDate:
+              formikStep2.values.idIssuanceDate.toLocaleDateString("en-US"),
+          },
+        });
 
-      if (!res.ok) {
-        throw new Error(`HTTP error! Status: ${res.status}`);
+        const result = await res.json();
+        console.log("Registration successful:", result);
+        toast.success("تم التسجيل بنجاح!");
+      } else {
+        toast.error("الرجاء تصحيح الأخطاء قبل المتابعة.");
       }
-
-      const result = await res.json();
-      console.log("Registration successful:", result);
-      toast.success("تم التسجيل بنجاح!");
     } catch (err) {
       console.error("Registration failed:", err);
       toast.error("فشل التسجيل. الرجاء المحاولة مرة أخرى.");

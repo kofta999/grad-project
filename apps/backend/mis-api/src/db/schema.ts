@@ -13,6 +13,7 @@ import {
   pgView,
   bigint,
   pgEnum,
+  real,
 } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
 
@@ -246,7 +247,7 @@ export const academicQualifications = pgTable(
     date: date().notNull(),
     creditHours: boolean("credit_hours").notNull(),
     grade: text().notNull(),
-    gpa: text().notNull(),
+    gpa: real().notNull(),
   },
   (table) => {
     return {

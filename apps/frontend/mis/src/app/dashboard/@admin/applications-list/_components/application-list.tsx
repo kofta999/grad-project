@@ -8,10 +8,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-// import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { apiClient } from "@/lib/client";
 import { InferResponseType } from "@repo/mis-api";
+import toast from "react-hot-toast";
+import { acceptApplication } from "./actions";
 
 type ApplicationsListProps = InferResponseType<
   typeof apiClient.admin.applications.$get
@@ -22,7 +23,6 @@ export default function ApplicationsList({
 }: {
   applicationsList: ApplicationsListProps;
 }) {
-  // const [selectedRows, setSelectedRows] = useState<Record<string, boolean>>({});
   const DEGREE_MAP: Record<ApplicationsListProps[0]["academicDegree"], string> =
     {
       diploma: "دبلوم",
@@ -30,24 +30,36 @@ export default function ApplicationsList({
       phd: "دكتوراه",
     };
 
-  // const toggleSelectAll = () => {
-  //   if (Object.keys(selectedRows).length === applicationsList.length) {
-  //     setSelectedRows({});
-  //   } else {
-  //     const newSelected: Record<string, boolean> = {};
-  //     applicationsList.forEach((app) => {
-  //       newSelected[app.applicationId] = true;
-  //     });
-  //     setSelectedRows(newSelected);
-  //   }
-  // };
+  // Handle accepting an application
+  const handleAcceptApplication = async (applicationId: number) => {
+    try {
+      // // Send the applicationId to the API
+      // const res = await apiClient.admin.applications.accept.$post({
+      //   json: { applicationId },
+      // });
 
-  // const toggleSelectRow = (id: number) => {
-  //   setSelectedRows((prev) => ({
-  //     ...prev,
-  //     [id]: !prev[id],
-  //   }));
-  // };
+      // if (!res.ok) {
+      //   throw new Error(`HTTP error! Status: ${res.status}`);
+      // }
+      
+      acceptApplication(applicationId)
+
+      // // Update the application status in the UI
+      // setApplications((prevApplications) =>
+      //   prevApplications.map((app) =>
+      //     app.applicationId === applicationId
+      //       ? { ...app, isAdminAccepted: true }
+      //       : app,
+      //   ),
+      // );
+
+      // Show success message
+      toast.success(`تم قبول طلب الطالب ذو الرقم ${applicationId}.`);
+    } catch (err) {
+      console.error("Failed to accept application:", err);
+      toast.error("فشل في قبول الطلب. الرجاء المحاولة مرة أخرى.");
+    }
+  };
 
   return (
     <div className="w-full max-w-6xl mx-auto p-4 bg-white">
@@ -68,20 +80,11 @@ export default function ApplicationsList({
         <Table dir="rtl">
           <TableHeader>
             <TableRow className="border-b">
-              {/* <TableHead className="text-center w-12">
-                <Checkbox
-                  checked={
-                    Object.keys(selectedRows).length === applicationsList.length &&
-                    applicationsList.length > 0
-                  }
-                  onCheckedChange={toggleSelectAll}
-                  aria-label="Select all"
-                />
-              </TableHead> */}
               <TableHead className="text-right">اسم الطالب</TableHead>
               <TableHead className="text-right">الدرجة العلمية</TableHead>
               <TableHead className="text-right">البرنامج الأكاديمي</TableHead>
               <TableHead className="text-center">قبول الطالب</TableHead>
+              <TableHead className="text-center">إجراءات</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -90,17 +93,6 @@ export default function ApplicationsList({
                 key={application.applicationId}
                 className="border-b h-12"
               >
-                {/* <TableCell className="p-2 text-center">
-                  {application.studentName && (
-                    <Checkbox
-                      checked={!!selectedRows[application.applicationId]}
-                      onCheckedChange={() =>
-                        toggleSelectRow(application.applicationId)
-                      }
-                      aria-label={`Select ${application.studentName}`}
-                    />
-                  )}
-                </TableCell> */}
                 <TableCell>
                   {application.studentName ? (
                     <div className="font-medium">{application.studentName}</div>
@@ -131,6 +123,14 @@ export default function ApplicationsList({
                     <div className="h-4 w-20 bg-gray-200 rounded animate-pulse"></div>
                   )}
                 </TableCell>
+                <TableCell className="text-center">
+                  <Button
+                    onClick={() => handleAcceptApplication(application.applicationId)}
+                    className="bg-green-700 hover:bg-green-600 text-white"
+                  >
+                    قبول
+                  </Button>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
@@ -140,7 +140,7 @@ export default function ApplicationsList({
       <div className="mt-4 flex justify-end">
         <Button variant="outline" size="sm">
           <ChevronLeft className="h-4 w-4 mr-1" />
-          الصفحة السابقة
+          الصفحة التالية
         </Button>
       </div>
     </div>
