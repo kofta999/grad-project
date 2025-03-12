@@ -16,7 +16,10 @@ type RootLayoutProps = {
 
 export default function RootLayout({ children }: RootLayoutProps): JSX.Element {
   const pathname = usePathname();
-  const isAuthPage = pathname === "/login" || pathname === "/register";
+  const isAuthPage =
+    pathname === "/login" ||
+    pathname === "/register" ||
+    pathname === "/applications";
 
   return (
     <html lang="ar" dir="rtl">

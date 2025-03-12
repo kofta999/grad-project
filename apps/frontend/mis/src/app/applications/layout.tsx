@@ -1,4 +1,4 @@
-import { ApplicationIdProvider } from "./application-id-context";
+import { ApplicationIdProvider } from "../../context/application-id-context";
 
 export default function ApplicationsLayout({
   children,
