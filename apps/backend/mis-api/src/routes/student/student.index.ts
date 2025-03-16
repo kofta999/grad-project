@@ -10,6 +10,10 @@ const router = createRouter()
     routes.getApplicantRegisteredCourses,
     handlers.getApplicantRegisteredCourses,
   )
+  .openapi(
+    routes.getRegisteredAcademicYears,
+    handlers.getRegisteredAcademicYears,
+  )
   .route("/applications", applicationsRouter)
   .route("/thesis", thesisRouter);
 
