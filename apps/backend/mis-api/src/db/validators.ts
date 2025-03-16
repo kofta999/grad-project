@@ -218,3 +218,11 @@ export const applicantRegisteredCoursesResponseSchemaForStudent = z.array(
       grade: z.number().nullable(),
     }),
 );
+
+export const getStudentSchema = createSelectSchema(students).omit({
+  hashedPassword: true,
+  secQuestion: true,
+  secAnswer: true,
+  createdAt: true,
+  updatedAt: true,
+});

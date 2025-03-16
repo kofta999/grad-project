@@ -12,6 +12,7 @@ import {
   EditStudentInfoRoute,
   GetApplicantRegisteredCourses,
   GetRegisteredAcademicYearsRoute,
+  GetStudentDetailsRoute,
 } from "./student.routes";
 import * as HttpStatusCodes from "stoker/http-status-codes";
 
@@ -141,4 +142,31 @@ export const getRegisteredAcademicYears: AppRouteHandler<
     })),
     HttpStatusCodes.OK,
   );
+};
+
+export const getStudentDetails: AppRouteHandler<
+  GetStudentDetailsRoute
+> = async (c) => {
+  const studentId = c.var.session.get("id");
+
+  if (!studentId) {
+    return c.json({ message: "Unauthorized" }, HttpStatusCodes.UNAUTHORIZED);
+  }
+
+  const student = await db.query.students.findFirst({
+    where: (f, { eq }) => eq(f.studentId, studentId),
+    columns: {
+      hashedPassword: false,
+      secQuestion: false,
+      secAnswer: false,
+      createdAt: false,
+      updatedAt: false,
+    },
+  });
+
+  if (!student) {
+    return c.json({ message: "Student not found" }, HttpStatusCodes.NOT_FOUND);
+  }
+
+  return c.json(student, HttpStatusCodes.OK);
 };

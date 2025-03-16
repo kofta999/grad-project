@@ -14,6 +14,7 @@ const router = createRouter()
     routes.getRegisteredAcademicYears,
     handlers.getRegisteredAcademicYears,
   )
+  .openapi(routes.getStudentDetails, handlers.getStudentDetails)
   .route("/applications", applicationsRouter)
   .route("/thesis", thesisRouter);
 
