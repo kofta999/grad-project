@@ -155,13 +155,15 @@ const applicationDetailsSchema = z.object({
 });
 
 export const adminApplicationDetailsSchema = z.object({
-  student: createSelectSchema(students).omit({
-    hashedPassword: true,
-    secAnswer: true,
-    secQuestion: true,
-    updatedAt: true,
-  }),
-  application: applicationDetailsSchema,
+  student: createSelectSchema(students)
+    .omit({
+      hashedPassword: true,
+      secAnswer: true,
+      secQuestion: true,
+      updatedAt: true,
+    })
+    .optional(),
+  application: applicationDetailsSchema.optional(),
 });
 
 export const studentApplicationDetailsSchema = z.object({
