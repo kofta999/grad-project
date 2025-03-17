@@ -1,4 +1,4 @@
-import { pgTable, unique, serial, text, boolean, date, timestamp, index, foreignKey, integer, numeric, primaryKey, pgView, pgEnum, bigint } from "drizzle-orm/pg-core"
+import { pgTable, unique, serial, text, boolean, date, timestamp, index, foreignKey, integer, real, primaryKey, pgView, bigint, pgEnum } from "drizzle-orm/pg-core"
 import { sql } from "drizzle-orm"
 
 export const addressType = pgEnum("address_type", ['permanent', 'current'])
@@ -33,26 +33,22 @@ export const students = pgTable("students", {
 	dob: date().notNull(),
 	createdAt: timestamp("created_at", { mode: 'string' }).default(sql`CURRENT_TIMESTAMP`).notNull(),
 	updatedAt: timestamp("updated_at", { mode: 'string' }).default(sql`CURRENT_TIMESTAMP`).notNull(),
-}, (table) => {
-	return {
-		studentsEmailKey: unique("students_email_key").on(table.email),
-	}
-});
+}, (table) => [
+	unique("students_email_key").on(table.email),
+]);
 
 export const applications = pgTable("applications", {
 	applicationId: serial("application_id").primaryKey().notNull(),
 	studentId: integer("student_id").notNull(),
 	isAdminAccepted: boolean("is_admin_accepted").default(false).notNull(),
-}, (table) => {
-	return {
-		studentIdIdx: index("applications_student_id_idx").using("btree", table.studentId.asc().nullsLast()),
-		applicationsStudentIdFkey: foreignKey({
+}, (table) => [
+	index("applications_student_id_idx").using("btree", table.studentId.asc().nullsLast().op("int4_ops")),
+	foreignKey({
 			columns: [table.studentId],
 			foreignColumns: [students.studentId],
 			name: "applications_student_id_fkey"
 		}),
-	}
-});
+]);
 
 export const registerations = pgTable("registerations", {
 	registerationId: serial("registeration_id").primaryKey().notNull(),
@@ -61,29 +57,27 @@ export const registerations = pgTable("registerations", {
 	faculty: text().notNull(),
 	academicDegree: departmentType("academic_degree").notNull(),
 	departmentId: integer("department_id").notNull(),
-}, (table) => {
-	return {
-		idxRegisterationsAcademicYearId: index("idx_registerations_academic_year_id").using("btree", table.academicYearId.asc().nullsLast()),
-		idxRegisterationsApplicationId: index("idx_registerations_application_id").using("btree", table.applicationId.asc().nullsLast()),
-		idxRegisterationsDepartmentId: index("idx_registerations_department_id").using("btree", table.departmentId.asc().nullsLast()),
-		registerationsApplicationIdFkey: foreignKey({
+}, (table) => [
+	index("idx_registerations_academic_year_id").using("btree", table.academicYearId.asc().nullsLast().op("int4_ops")),
+	index("idx_registerations_application_id").using("btree", table.applicationId.asc().nullsLast().op("int4_ops")),
+	index("idx_registerations_department_id").using("btree", table.departmentId.asc().nullsLast().op("int4_ops")),
+	foreignKey({
 			columns: [table.applicationId],
 			foreignColumns: [applications.applicationId],
 			name: "registerations_application_id_fkey"
 		}),
-		registerationsAcademicYearIdFkey: foreignKey({
+	foreignKey({
 			columns: [table.academicYearId],
 			foreignColumns: [academicYears.academicYearId],
 			name: "registerations_academic_year_id_fkey"
 		}),
-		registerationsDepartmentIdFkey: foreignKey({
+	foreignKey({
 			columns: [table.departmentId],
 			foreignColumns: [departments.departmentId],
 			name: "registerations_department_id_fkey"
 		}),
-		registerationsApplicationIdKey: unique("registerations_application_id_key").on(table.applicationId),
-	}
-});
+	unique("registerations_application_id_key").on(table.applicationId),
+]);
 
 export const academicYears = pgTable("academic_years", {
 	academicYearId: serial("academic_year_id").primaryKey().notNull(),
@@ -106,16 +100,14 @@ export const attachments = pgTable("attachments", {
 	applicationId: integer("application_id").notNull(),
 	type: text().notNull(),
 	attachmentUrl: text("attachment_url").notNull(),
-}, (table) => {
-	return {
-		idxAttachmentsApplicationId: index("idx_attachments_application_id").using("btree", table.applicationId.asc().nullsLast()),
-		attachmentsApplicationIdFkey: foreignKey({
+}, (table) => [
+	index("idx_attachments_application_id").using("btree", table.applicationId.asc().nullsLast().op("int4_ops")),
+	foreignKey({
 			columns: [table.applicationId],
 			foreignColumns: [applications.applicationId],
 			name: "attachments_application_id_fkey"
 		}),
-	}
-});
+]);
 
 export const addresses = pgTable("addresses", {
 	addressId: serial("address_id").primaryKey().notNull(),
@@ -124,16 +116,14 @@ export const addresses = pgTable("addresses", {
 	country: text().notNull(),
 	city: text().notNull(),
 	type: addressType().notNull(),
-}, (table) => {
-	return {
-		idxAddressesApplicationId: index("idx_addresses_application_id").using("btree", table.applicationId.asc().nullsLast()),
-		addressesApplicationIdFkey: foreignKey({
+}, (table) => [
+	index("idx_addresses_application_id").using("btree", table.applicationId.asc().nullsLast().op("int4_ops")),
+	foreignKey({
 			columns: [table.applicationId],
 			foreignColumns: [applications.applicationId],
 			name: "addresses_application_id_fkey"
 		}),
-	}
-});
+]);
 
 export const emergencyContacts = pgTable("emergency_contacts", {
 	contactId: serial("contact_id").primaryKey().notNull(),
@@ -142,16 +132,14 @@ export const emergencyContacts = pgTable("emergency_contacts", {
 	address: text(),
 	phoneNumber: text("phone_number").notNull(),
 	email: text(),
-}, (table) => {
-	return {
-		emergencyContactsApplicationIdFkey: foreignKey({
+}, (table) => [
+	foreignKey({
 			columns: [table.applicationId],
 			foreignColumns: [applications.applicationId],
 			name: "emergency_contacts_application_id_fkey"
 		}),
-		emergencyContactsApplicationIdKey: unique("emergency_contacts_application_id_key").on(table.applicationId),
-	}
-});
+	unique("emergency_contacts_application_id_key").on(table.applicationId),
+]);
 
 export const academicQualifications = pgTable("academic_qualifications", {
 	qualificationId: serial("qualification_id").primaryKey().notNull(),
@@ -166,18 +154,16 @@ export const academicQualifications = pgTable("academic_qualifications", {
 	date: date().notNull(),
 	creditHours: boolean("credit_hours").notNull(),
 	grade: text().notNull(),
-	gpa: numeric().notNull(),
-}, (table) => {
-	return {
-		applicationIdIdx: index("academic_qualifications_application_id_idx").using("btree", table.applicationId.asc().nullsLast()),
-		academicQualificationsApplicationIdFkey: foreignKey({
+	gpa: real().notNull(),
+}, (table) => [
+	index("academic_qualifications_application_id_idx").using("btree", table.applicationId.asc().nullsLast().op("int4_ops")),
+	foreignKey({
 			columns: [table.applicationId],
 			foreignColumns: [applications.applicationId],
 			name: "academic_qualifications_application_id_fkey"
 		}),
-		academicQualificationsApplicationIdKey: unique("academic_qualifications_application_id_key").on(table.applicationId),
-	}
-});
+	unique("academic_qualifications_application_id_key").on(table.applicationId),
+]);
 
 export const admins = pgTable("admins", {
 	adminId: serial("admin_id").primaryKey().notNull(),
@@ -187,11 +173,9 @@ export const admins = pgTable("admins", {
 	hashedPassword: text("hashed_password").notNull(),
 	createdAt: timestamp("created_at", { mode: 'string' }).default(sql`CURRENT_TIMESTAMP`).notNull(),
 	updatedAt: timestamp("updated_at", { mode: 'string' }).default(sql`CURRENT_TIMESTAMP`).notNull(),
-}, (table) => {
-	return {
-		adminsEmailKey: unique("admins_email_key").on(table.email),
-	}
-});
+}, (table) => [
+	unique("admins_email_key").on(table.email),
+]);
 
 export const courses = pgTable("courses", {
 	courseId: serial("course_id").primaryKey().notNull(),
@@ -199,12 +183,10 @@ export const courses = pgTable("courses", {
 	title: text().notNull(),
 	prerequisite: integer(),
 	totalHours: integer("total_hours"),
-}, (table) => {
-	return {
-		idxCoursesPrerequisite: index("idx_courses_prerequisite").using("btree", table.prerequisite.asc().nullsLast()),
-		coursesCodeKey: unique("courses_code_key").on(table.code),
-	}
-});
+}, (table) => [
+	index("idx_courses_prerequisite").using("btree", table.prerequisite.asc().nullsLast().op("int4_ops")),
+	unique("courses_code_key").on(table.code),
+]);
 
 export const courseRegistrations = pgTable("course_registrations", {
 	courseRegistrationId: serial("course_registration_id").primaryKey().notNull(),
@@ -212,65 +194,59 @@ export const courseRegistrations = pgTable("course_registrations", {
 	applicationId: integer("application_id").notNull(),
 	semester: semesterType().notNull(),
 	academicYearId: integer("academic_year_id").notNull(),
-}, (table) => {
-	return {
-		idxCourseRegistrationsAcademicYearId: index("idx_course_registrations_academic_year_id").using("btree", table.academicYearId.asc().nullsLast()),
-		idxCourseRegistrationsAppSemester: index("idx_course_registrations_app_semester").using("btree", table.applicationId.asc().nullsLast(), table.semester.asc().nullsLast()),
-		idxCourseRegistrationsApplicationId: index("idx_course_registrations_application_id").using("btree", table.applicationId.asc().nullsLast()),
-		idxCourseRegistrationsCourseId: index("idx_course_registrations_course_id").using("btree", table.courseId.asc().nullsLast()),
-		courseRegistrationsCourseIdFkey: foreignKey({
+}, (table) => [
+	index("idx_course_registrations_academic_year_id").using("btree", table.academicYearId.asc().nullsLast().op("int4_ops")),
+	index("idx_course_registrations_app_semester").using("btree", table.applicationId.asc().nullsLast().op("int4_ops"), table.semester.asc().nullsLast().op("int4_ops")),
+	index("idx_course_registrations_application_id").using("btree", table.applicationId.asc().nullsLast().op("int4_ops")),
+	index("idx_course_registrations_course_id").using("btree", table.courseId.asc().nullsLast().op("int4_ops")),
+	foreignKey({
 			columns: [table.courseId],
 			foreignColumns: [courses.courseId],
 			name: "course_registrations_course_id_fkey"
 		}),
-		courseRegistrationsApplicationIdFkey: foreignKey({
+	foreignKey({
 			columns: [table.applicationId],
 			foreignColumns: [applications.applicationId],
 			name: "course_registrations_application_id_fkey"
 		}),
-		courseRegistrationsAcademicYearIdFkey: foreignKey({
+	foreignKey({
 			columns: [table.academicYearId],
 			foreignColumns: [academicYears.academicYearId],
 			name: "course_registrations_academic_year_id_fkey"
 		}),
-	}
-});
+]);
 
 export const courseResults = pgTable("course_results", {
 	resultId: serial("result_id").primaryKey().notNull(),
 	courseRegistrationId: integer("course_registration_id").notNull(),
 	grade: integer().notNull(),
-}, (table) => {
-	return {
-		idxCourseResultsCourseRegistrationId: index("idx_course_results_course_registration_id").using("btree", table.courseRegistrationId.asc().nullsLast()),
-		idxCourseResultsGrade: index("idx_course_results_grade").using("btree", table.grade.asc().nullsLast()),
-		courseResultsCourseRegistrationIdFkey: foreignKey({
+}, (table) => [
+	index("idx_course_results_course_registration_id").using("btree", table.courseRegistrationId.asc().nullsLast().op("int4_ops")),
+	index("idx_course_results_grade").using("btree", table.grade.asc().nullsLast().op("int4_ops")),
+	foreignKey({
 			columns: [table.courseRegistrationId],
 			foreignColumns: [courseRegistrations.courseRegistrationId],
 			name: "course_results_course_registration_id_fkey"
 		}),
-	}
-});
+]);
 
 export const departmentCourses = pgTable("department_courses", {
 	courseId: integer("course_id").notNull(),
 	departmentId: integer("department_id").notNull(),
 	isCompulsory: boolean("is_compulsory").notNull(),
-}, (table) => {
-	return {
-		departmentCoursesCourseIdFkey: foreignKey({
+}, (table) => [
+	foreignKey({
 			columns: [table.courseId],
 			foreignColumns: [courses.courseId],
 			name: "department_courses_course_id_fkey"
 		}),
-		departmentCoursesDepartmentIdFkey: foreignKey({
+	foreignKey({
 			columns: [table.departmentId],
 			foreignColumns: [departments.departmentId],
 			name: "department_courses_department_id_fkey"
 		}),
-		departmentCoursesPkey: primaryKey({ columns: [table.courseId, table.departmentId], name: "department_courses_pkey"}),
-	}
-});
+	primaryKey({ columns: [table.courseId, table.departmentId], name: "department_courses_pkey"}),
+]);
 export const adminApplicationsList = pgView("admin_applications_list", {	applicationId: integer("application_id"),
 	studentName: text("student_name"),
 	academicDegree: departmentType("academic_degree"),

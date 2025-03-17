@@ -1,11 +1,18 @@
 import db from "@/db";
-import { courseResults, students } from "@/db/schema";
+import {
+  academicYears,
+  courseRegistrations,
+  courseResults,
+  students,
+} from "@/db/schema";
 import { AppRouteHandler } from "@/lib/types";
 import { detailedCourseRegistrationsView as dcv } from "@/db/schema";
 import { eq, and } from "drizzle-orm";
 import {
   EditStudentInfoRoute,
   GetApplicantRegisteredCourses,
+  GetRegisteredAcademicYearsRoute,
+  GetStudentDetailsRoute,
 } from "./student.routes";
 import * as HttpStatusCodes from "stoker/http-status-codes";
 
@@ -89,4 +96,77 @@ export const editStudentInfo: AppRouteHandler<EditStudentInfoRoute> = async (
     { message: "Student info updated successfully" },
     HttpStatusCodes.OK,
   );
+};
+
+export const getRegisteredAcademicYears: AppRouteHandler<
+  GetRegisteredAcademicYearsRoute
+> = async (c) => {
+  const studentId = c.var.session.get("id");
+
+  if (!studentId) {
+    return c.json({ message: "Unauthorized" }, HttpStatusCodes.UNAUTHORIZED);
+  }
+
+  const application = await db.query.applications.findFirst({
+    where(f, { eq }) {
+      return eq(f.studentId, studentId);
+    },
+    columns: { applicationId: true },
+  });
+
+  if (!application) {
+    return c.json(
+      { message: "Application(Student) not found" },
+      HttpStatusCodes.NOT_FOUND,
+    );
+  }
+
+  const years = await db
+    .select({
+      academicYear: academicYears,
+    })
+    .from(academicYears)
+    .innerJoin(
+      courseRegistrations,
+      and(
+        eq(courseRegistrations.academicYearId, academicYears.academicYearId),
+        eq(courseRegistrations.applicationId, application.applicationId),
+      ),
+    )
+    .groupBy(academicYears.academicYearId);
+
+  return c.json(
+    years.map(({ academicYear: year }) => ({
+      academicYearId: year.academicYearId,
+      year: `${new Date(year.startDate).getFullYear()}-${new Date(year.endDate).getFullYear()}`,
+    })),
+    HttpStatusCodes.OK,
+  );
+};
+
+export const getStudentDetails: AppRouteHandler<
+  GetStudentDetailsRoute
+> = async (c) => {
+  const studentId = c.var.session.get("id");
+
+  if (!studentId) {
+    return c.json({ message: "Unauthorized" }, HttpStatusCodes.UNAUTHORIZED);
+  }
+
+  const student = await db.query.students.findFirst({
+    where: (f, { eq }) => eq(f.studentId, studentId),
+    columns: {
+      hashedPassword: false,
+      secQuestion: false,
+      secAnswer: false,
+      createdAt: false,
+      updatedAt: false,
+    },
+  });
+
+  if (!student) {
+    return c.json({ message: "Student not found" }, HttpStatusCodes.NOT_FOUND);
+  }
+
+  return c.json(student, HttpStatusCodes.OK);
 };
