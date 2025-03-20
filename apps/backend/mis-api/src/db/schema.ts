@@ -14,6 +14,7 @@ import {
   bigint,
   pgEnum,
   real,
+  varchar,
 } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
 
@@ -40,6 +41,31 @@ export const semesterType = pgEnum("semester_type", [
   "second",
   "third",
 ]);
+
+export const countries = pgTable("countries", {
+  countryId: serial("country_id").primaryKey().notNull(),
+  nameAr: varchar("name_ar", { length: 255 }).notNull(),
+  nameEn: varchar("name_en", { length: 255 }).notNull(),
+  code: varchar({ length: 10 }).notNull(),
+});
+
+export const cities = pgTable(
+  "cities",
+  {
+    cityId: serial("city_id").primaryKey().notNull(),
+    nameEn: varchar("name_en", { length: 255 }).notNull(),
+    nameAr: varchar("name_ar", { length: 255 }).notNull(),
+    code: varchar({ length: 10 }).notNull(),
+    countryId: integer("country_id").notNull(),
+  },
+  (table) => [
+    foreignKey({
+      columns: [table.countryId],
+      foreignColumns: [countries.countryId],
+      name: "cities_country_id_fkey",
+    }),
+  ],
+);
 
 export const students = pgTable(
   "students",
@@ -189,23 +215,31 @@ export const addresses = pgTable(
     addressId: serial("address_id").primaryKey().notNull(),
     applicationId: integer("application_id").notNull(),
     fullAddress: text("full_address").notNull(),
-    country: text().notNull(),
-    city: text().notNull(),
+    countryId: integer("country_id").notNull(),
+    cityId: integer("city_id").notNull(),
     type: addressType().notNull(),
   },
-  (table) => {
-    return {
-      idxAddressesApplicationId: index("idx_addresses_application_id").using(
-        "btree",
-        table.applicationId.asc().nullsLast(),
-      ),
-      addressesApplicationIdFkey: foreignKey({
-        columns: [table.applicationId],
-        foreignColumns: [applications.applicationId],
-        name: "addresses_application_id_fkey",
-      }),
-    };
-  },
+  (table) => [
+    index("idx_addresses_application_id").using(
+      "btree",
+      table.applicationId.asc().nullsLast().op("int4_ops"),
+    ),
+    foreignKey({
+      columns: [table.applicationId],
+      foreignColumns: [applications.applicationId],
+      name: "addresses_application_id_fkey",
+    }),
+    foreignKey({
+      columns: [table.countryId],
+      foreignColumns: [countries.countryId],
+      name: "addresses_country_id_fkey",
+    }),
+    foreignKey({
+      columns: [table.cityId],
+      foreignColumns: [cities.cityId],
+      name: "addresses_city_id_fkey",
+    }),
+  ],
 );
 
 export const emergencyContacts = pgTable(

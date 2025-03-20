@@ -1,4 +1,4 @@
-import { pgTable, unique, serial, text, boolean, date, timestamp, index, foreignKey, integer, real, primaryKey, pgView, bigint, pgEnum } from "drizzle-orm/pg-core"
+import { pgTable, serial, varchar, foreignKey, integer, date, unique, text, boolean, timestamp, index, real, primaryKey, pgView, bigint, pgEnum } from "drizzle-orm/pg-core"
 import { sql } from "drizzle-orm"
 
 export const addressType = pgEnum("address_type", ['permanent', 'current'])
@@ -7,6 +7,33 @@ export const identificationType = pgEnum("identification_type", ['national_id', 
 export const martialStatus = pgEnum("martial_status", ['single', 'married', 'married_with_dependents', 'divorced', 'widow', 'other'])
 export const semesterType = pgEnum("semester_type", ['first', 'second', 'third'])
 
+
+export const countries = pgTable("countries", {
+	countryId: serial("country_id").primaryKey().notNull(),
+	nameAr: varchar("name_ar", { length: 255 }),
+	nameEn: varchar("name_en", { length: 255 }),
+	code: varchar({ length: 10 }).notNull(),
+});
+
+export const cities = pgTable("cities", {
+	cityId: serial("city_id").primaryKey().notNull(),
+	nameEn: varchar("name_en", { length: 255 }).notNull(),
+	nameAr: varchar("name_ar", { length: 255 }),
+	code: varchar({ length: 10 }).notNull(),
+	countryId: integer("country_id").notNull(),
+}, (table) => [
+	foreignKey({
+			columns: [table.countryId],
+			foreignColumns: [countries.countryId],
+			name: "cities_country_id_fkey"
+		}),
+]);
+
+export const academicYears = pgTable("academic_years", {
+	academicYearId: serial("academic_year_id").primaryKey().notNull(),
+	startDate: date("start_date").notNull(),
+	endDate: date("end_date").notNull(),
+});
 
 export const students = pgTable("students", {
 	studentId: serial("student_id").primaryKey().notNull(),
@@ -36,6 +63,16 @@ export const students = pgTable("students", {
 }, (table) => [
 	unique("students_email_key").on(table.email),
 ]);
+
+export const departments = pgTable("departments", {
+	departmentId: serial("department_id").primaryKey().notNull(),
+	code: text().notNull(),
+	title: text().notNull(),
+	type: departmentType().notNull(),
+	coursesHours: integer("courses_hours").notNull(),
+	compulsoryHours: integer("compulsory_hours").notNull(),
+	thesisHours: integer("thesis_hours").notNull(),
+});
 
 export const applications = pgTable("applications", {
 	applicationId: serial("application_id").primaryKey().notNull(),
@@ -79,22 +116,6 @@ export const registerations = pgTable("registerations", {
 	unique("registerations_application_id_key").on(table.applicationId),
 ]);
 
-export const academicYears = pgTable("academic_years", {
-	academicYearId: serial("academic_year_id").primaryKey().notNull(),
-	startDate: date("start_date").notNull(),
-	endDate: date("end_date").notNull(),
-});
-
-export const departments = pgTable("departments", {
-	departmentId: serial("department_id").primaryKey().notNull(),
-	code: text().notNull(),
-	title: text().notNull(),
-	type: departmentType().notNull(),
-	coursesHours: integer("courses_hours").notNull(),
-	compulsoryHours: integer("compulsory_hours").notNull(),
-	thesisHours: integer("thesis_hours").notNull(),
-});
-
 export const attachments = pgTable("attachments", {
 	attachmentId: serial("attachment_id").primaryKey().notNull(),
 	applicationId: integer("application_id").notNull(),
@@ -113,8 +134,8 @@ export const addresses = pgTable("addresses", {
 	addressId: serial("address_id").primaryKey().notNull(),
 	applicationId: integer("application_id").notNull(),
 	fullAddress: text("full_address").notNull(),
-	country: text().notNull(),
-	city: text().notNull(),
+	countryId: integer("country_id").notNull(),
+	cityId: integer("city_id").notNull(),
 	type: addressType().notNull(),
 }, (table) => [
 	index("idx_addresses_application_id").using("btree", table.applicationId.asc().nullsLast().op("int4_ops")),
@@ -122,6 +143,16 @@ export const addresses = pgTable("addresses", {
 			columns: [table.applicationId],
 			foreignColumns: [applications.applicationId],
 			name: "addresses_application_id_fkey"
+		}),
+	foreignKey({
+			columns: [table.countryId],
+			foreignColumns: [countries.countryId],
+			name: "addresses_country_id_fkey"
+		}),
+	foreignKey({
+			columns: [table.cityId],
+			foreignColumns: [cities.cityId],
+			name: "addresses_city_id_fkey"
 		}),
 ]);
 

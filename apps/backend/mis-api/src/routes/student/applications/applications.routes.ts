@@ -11,7 +11,7 @@ import { requireRole } from "@/middlewares/requireRole";
 import { createRoute, z } from "@hono/zod-openapi";
 import { jsonContent, jsonContentRequired } from "stoker/openapi/helpers";
 import * as HttpStatusCodes from "stoker/http-status-codes";
-import { createErrorSchema } from "stoker/openapi/schemas";
+import { createErrorSchema, IdParamsSchema } from "stoker/openapi/schemas";
 import { notFoundSchema } from "@/lib/constants";
 
 const tags = ["Student"];
@@ -44,6 +44,35 @@ export const getAvailableDepartments = createRoute({
     [HttpStatusCodes.OK]: jsonContent(
       z.array(z.object({ departmentId: z.number(), title: z.string() })),
       "An array of available departments for this type",
+    ),
+  },
+});
+
+export const getCountryList = createRoute({
+  path: "/countryList",
+  method: "get",
+  middleware: [isAuthenticated, requireRole("student")],
+  tags,
+  responses: {
+    [HttpStatusCodes.OK]: jsonContent(
+      z.array(z.object({ countryId: z.number(), nameAr: z.string() })),
+      "An array of available countries",
+    ),
+  },
+});
+
+export const getCitiesForCountry = createRoute({
+  path: "/countryList/{id}",
+  method: "get",
+  request: {
+    params: IdParamsSchema,
+  },
+  middleware: [isAuthenticated, requireRole("student")],
+  tags,
+  responses: {
+    [HttpStatusCodes.OK]: jsonContent(
+      z.array(z.object({ cityId: z.number(), nameAr: z.string() })),
+      "An array of available cities for a country",
     ),
   },
 });
@@ -114,3 +143,7 @@ export type CreateApplicationRoute = typeof createApplication;
 export type SaveApplicationAttachmentsRoute = typeof saveApplicationAttachments;
 
 export type GetApplicationRoute = typeof getApplication;
+
+export type GetCountryListRoute = typeof getCountryList;
+
+export type GetCitiesForCountryRoute = typeof getCitiesForCountry;
