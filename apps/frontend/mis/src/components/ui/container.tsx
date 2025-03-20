@@ -7,7 +7,7 @@ export const Container = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn("max-w-3xl mx-auto p-6", className)}
+    className={cn("max-w-4xl mx-auto p-6", className)}
     {...props}
   />
 ));
