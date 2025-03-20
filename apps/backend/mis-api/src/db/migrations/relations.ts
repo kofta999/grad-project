@@ -1,18 +1,5 @@
 import { relations } from "drizzle-orm/relations";
-import { countries, cities, students, applications, registerations, academicYears, departments, attachments, addresses, emergencyContacts, academicQualifications, courses, courseRegistrations, courseResults, theses, departmentCourses } from "./schema";
-
-export const citiesRelations = relations(cities, ({one, many}) => ({
-	country: one(countries, {
-		fields: [cities.countryId],
-		references: [countries.countryId]
-	}),
-	addresses: many(addresses),
-}));
-
-export const countriesRelations = relations(countries, ({many}) => ({
-	cities: many(cities),
-	addresses: many(addresses),
-}));
+import { students, applications, registerations, academicYears, departments, attachments, addresses, emergencyContacts, academicQualifications, courses, courseRegistrations, courseResults, theses, departmentCourses } from "./schema";
 
 export const applicationsRelations = relations(applications, ({one, many}) => ({
 	student: one(students, {
@@ -69,14 +56,6 @@ export const addressesRelations = relations(addresses, ({one}) => ({
 	application: one(applications, {
 		fields: [addresses.applicationId],
 		references: [applications.applicationId]
-	}),
-	country: one(countries, {
-		fields: [addresses.countryId],
-		references: [countries.countryId]
-	}),
-	city: one(cities, {
-		fields: [addresses.cityId],
-		references: [cities.cityId]
 	}),
 }));
 
