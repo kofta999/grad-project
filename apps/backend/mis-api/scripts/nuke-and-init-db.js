@@ -10,30 +10,30 @@ function runCommand(command) {
 }
 
 // Function to terminate all connections to the database
-// function terminateConnections() {
-//   console.log("Terminating all connections to the database...");
+function terminateConnections() {
+  console.log("Terminating all connections to the database...");
 
-//   const terminateConnectionsCommand = `
-//     SELECT pg_terminate_backend(pid)
-//     FROM pg_stat_activity
-//     WHERE datname = 'mis_db' AND leader_pid IS NULL;
-//   `;
+  const terminateConnectionsCommand = `
+    SELECT pg_terminate_backend(pid)
+    FROM pg_stat_activity
+    WHERE datname = 'mis_db' AND leader_pid IS NULL;
+  `;
 
-//   runCommand(
-//     `docker exec -i mis_postgres psql -U mis_user -d postgres -c "${terminateConnectionsCommand}"`,
-//   );
-// }
+  runCommand(
+    `docker exec -i mis_postgres psql -U mis_user -d postgres -c "${terminateConnectionsCommand}"`,
+  );
+}
 
 // Function to nuke and reinitialize the database
 function nukeAndInitDB() {
   console.log("Nuking and reinitializing the database...");
 
   // Terminate all connections to the database
-  // terminateConnections();
+  terminateConnections();
 
   // Drop the existing database
   runCommand(
-    'docker exec -i mis_postgres psql -U mis_user -d postgres -c "DROP DATABASE IF EXISTS mis_db WITH (FORCE);"',
+    'docker exec -i mis_postgres psql -U mis_user -d postgres -c "DROP DATABASE IF EXISTS mis_db;"',
   );
 
   // Recreate the database

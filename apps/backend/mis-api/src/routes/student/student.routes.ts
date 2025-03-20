@@ -11,9 +11,7 @@ import {
 import {
   applicantRegisteredCoursesRequestSchemaForStudent,
   applicantRegisteredCoursesResponseSchemaForStudent,
-  currentAcademicYearsSchema,
   editStudentInfoSchema,
-  getStudentSchema as studentDetailsSchema,
 } from "@/db/validators";
 
 const tags = ["Student"];
@@ -74,50 +72,7 @@ export const editStudentInfo = createRoute({
   },
 });
 
-export const getRegisteredAcademicYears = createRoute({
-  path: "/courses/registeredAcademicYears",
-  method: "get",
-  middleware: [isAuthenticated, requireRole("student")],
-  tags,
-  responses: {
-    [HttpStatusCodes.OK]: jsonContent(
-      currentAcademicYearsSchema,
-      "An array of available academic years",
-    ),
-    [HttpStatusCodes.NOT_FOUND]: jsonContent(
-      createMessageObjectSchema("Application not found"),
-      "Application not found",
-    ),
-    [HttpStatusCodes.UNAUTHORIZED]: jsonContent(
-      createMessageObjectSchema("Unauthorized"),
-      "Unauthorized",
-    ),
-  },
-});
-
-export const getStudentDetails = createRoute({
-  path: "/",
-  method: "get",
-  middleware: [isAuthenticated, requireRole("student")],
-  tags,
-  responses: {
-    [HttpStatusCodes.OK]: jsonContent(studentDetailsSchema, "Student details"),
-    [HttpStatusCodes.NOT_FOUND]: jsonContent(
-      createMessageObjectSchema("Student not found"),
-      "Student not found",
-    ),
-    [HttpStatusCodes.UNAUTHORIZED]: jsonContent(
-      createMessageObjectSchema("Unauthorized"),
-      "Unauthorized",
-    ),
-  },
-});
-
 export type GetApplicantRegisteredCourses =
   typeof getApplicantRegisteredCourses;
 
 export type EditStudentInfoRoute = typeof editStudentInfo;
-
-export type GetRegisteredAcademicYearsRoute = typeof getRegisteredAcademicYears;
-
-export type GetStudentDetailsRoute = typeof getStudentDetails;

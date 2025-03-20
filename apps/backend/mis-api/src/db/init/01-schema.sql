@@ -202,15 +202,6 @@ CREATE TABLE course_results (
 	FOREIGN key (course_registration_id) REFERENCES course_registrations (course_registration_id)
 );
 
-CREATE TABLE theses (
-	thesis_id serial PRIMARY KEY,
-	application_id INT NOT NULL UNIQUE,
-	attachment_id INT NOT NULL,
-	title TEXT NOT NULL,
-	FOREIGN key (application_id) REFERENCES applications (application_id),
-	FOREIGN key (attachment_id) REFERENCES attachments (attachment_id)
-);
-
 -- Create views
 CREATE VIEW admin_applications_list AS
 SELECT
@@ -250,10 +241,9 @@ WHERE
 	a.is_admin_accepted = TRUE
 	AND c_res.grade >= 50
 GROUP BY
-	a.application_id,
-	r.department_id;
+	a.application_id, r.department_id;
 
--- WHERE it using
+-- WHERE it using 
 -- c_r.academic_year_id, c_r.semester, c_r.application_id
 CREATE OR REPLACE VIEW detailed_course_registrations_view AS
 SELECT
@@ -306,7 +296,7 @@ WHERE
 -- WHERE
 -- 	c_r.academic_year_id = get_current_academic_year ()
 -- 	AND d_c.department_id = r.department_id;
---
+-- 
 CREATE
 OR REPLACE function available_courses_for_application (p_application_id INT) returns setof courses AS $$
 BEGIN
@@ -342,8 +332,10 @@ BEGIN
 END;
 $$ language plpgsql;
 
-CREATE
-OR REPLACE function is_thesis_available (p_application_id INT) returns BOOLEAN language plpgsql AS $$
+CREATE OR REPLACE FUNCTION is_thesis_available (p_application_id INT)
+RETURNS BOOLEAN
+LANGUAGE plpgsql
+AS $$
 DECLARE
     v_department_id INT;
     v_required_hours INT;
@@ -353,7 +345,7 @@ DECLARE
 BEGIN
     -- First check if this is an accepted application
     IF NOT EXISTS (
-        SELECT 1 FROM accepted_applications
+        SELECT 1 FROM accepted_applications 
         WHERE application_id = p_application_id
     ) THEN
 	    RAISE EXCEPTION 'Application ID % is not found or not accepted', p_application_id;
@@ -363,8 +355,8 @@ BEGIN
     SELECT
         department_id,
         total_completed_hours,
-        completed_compulsory_hours
-    INTO
+        completed_compulsory_hours 
+    INTO 
         v_department_id,
         v_completed_hours,
         v_completed_compulsory_hours
@@ -372,16 +364,16 @@ BEGIN
         accepted_applications a
     WHERE
         a.application_id = p_application_id;
-
+    
     -- Get department requirements
     SELECT
         courses_hours,
         compulsory_hours
-    INTO
+    INTO 
         v_required_hours,
         v_required_compulsory_hours
     FROM
-        departments
+        departments 
     WHERE
         department_id = v_department_id;
 
@@ -390,10 +382,10 @@ BEGIN
         RAISE EXCEPTION 'Completed compulsory hours (%) is less than required compulsory hours (%) for thesis submission',
             v_completed_compulsory_hours, v_required_compulsory_hours;
     END IF;
-
+    
     -- Check total hours requirement
     IF COALESCE(v_completed_hours, 0) < v_required_hours THEN
-        RAISE EXCEPTION 'Completed hours (%) is less than required hours (%) for thesis submission',
+        RAISE EXCEPTION 'Completed hours (%) is less than required hours (%) for thesis submission', 
             v_completed_hours, v_required_hours;
     END IF;
 
@@ -423,7 +415,7 @@ BEGIN
 	) THEN
 		RAISE EXCEPTION 'Application is not yet accepted';
 	END IF;
-
+	
     -- Check if the course is already registered
     IF EXISTS (
         SELECT 1
@@ -469,13 +461,13 @@ BEGIN
     IF (COALESCE(v_total_hours, 0) + v_course_hours) > v_max_hours THEN
         RAISE EXCEPTION 'Total hours exceed the maximum allowed hours for this semester';
     END IF;
-
-
+    
+    
     -- Check if the course is available for applicant's department
     SELECT department_id INTO v_department_id
     FROM registerations
     WHERE application_id = p_application_id;
-
+    
     IF NOT EXISTS (
         SELECT 1
         FROM department_courses
@@ -484,7 +476,7 @@ BEGIN
     ) THEN
         RAISE EXCEPTION 'This course is not available for this academic program';
     END IF;
-
+    
     -- Check if passed before or not
 	IF EXISTS (
 	   SELECT 1
@@ -497,7 +489,7 @@ BEGIN
 	) THEN
 	   RAISE WARNING 'Course is already passed before';
 	END IF;
-
+	
 	-- Check if the course is registered before or not
 	IF EXISTS (
 	   SELECT 1
@@ -523,43 +515,40 @@ CREATE INDEX "applications_student_id_idx" ON "applications" ("student_id");
 CREATE INDEX "academic_qualifications_application_id_idx" ON "academic_qualifications" ("application_id");
 
 -- For registerations table
-CREATE INDEX idx_registerations_application_id ON registerations (application_id);
-
-CREATE INDEX idx_registerations_academic_year_id ON registerations (academic_year_id);
-
-CREATE INDEX idx_registerations_department_id ON registerations (department_id);
+CREATE INDEX idx_registerations_application_id ON registerations(application_id);
+CREATE INDEX idx_registerations_academic_year_id ON registerations(academic_year_id);
+CREATE INDEX idx_registerations_department_id ON registerations(department_id);
 
 -- For attachments table
-CREATE INDEX idx_attachments_application_id ON attachments (application_id);
+CREATE INDEX idx_attachments_application_id ON attachments(application_id);
 
 -- For addresses table
-CREATE INDEX idx_addresses_application_id ON addresses (application_id);
+CREATE INDEX idx_addresses_application_id ON addresses(application_id);
 
 -- For emergency_contacts table
 -- (application_id already has UNIQUE constraint which creates an index)
+
 -- For academic_qualifications table
 -- (application_id already has UNIQUE constraint which creates an index)
+
 -- For department_courses table
 -- (Both columns are part of the PRIMARY KEY, which creates an index)
+
 -- For course_registrations table
-CREATE INDEX idx_course_registrations_course_id ON course_registrations (course_id);
-
-CREATE INDEX idx_course_registrations_application_id ON course_registrations (application_id);
-
-CREATE INDEX idx_course_registrations_academic_year_id ON course_registrations (academic_year_id);
-
+CREATE INDEX idx_course_registrations_course_id ON course_registrations(course_id);
+CREATE INDEX idx_course_registrations_application_id ON course_registrations(application_id);
+CREATE INDEX idx_course_registrations_academic_year_id ON course_registrations(academic_year_id);
 -- Composite index for queries filtering by both semester and application_id
-CREATE INDEX idx_course_registrations_app_semester ON course_registrations (application_id, semester);
+CREATE INDEX idx_course_registrations_app_semester ON course_registrations(application_id, semester);
 
 -- For course_results table
-CREATE INDEX idx_course_results_course_registration_id ON course_results (course_registration_id);
-
+CREATE INDEX idx_course_results_course_registration_id ON course_results(course_registration_id);
 -- Index to help with queries that check for passing grades
-CREATE INDEX idx_course_results_grade ON course_results (grade);
+CREATE INDEX idx_course_results_grade ON course_results(grade);
 
 -- For courses table
 -- (prerequisite field is queried in the register_course procedure)
-CREATE INDEX idx_courses_prerequisite ON courses (prerequisite);
+CREATE INDEX idx_courses_prerequisite ON courses(prerequisite);
 
 -- Set table and column comments for Arabic support
 comment ON TABLE "students" IS 'جدول الطلاب';
@@ -590,7 +579,7 @@ comment ON COLUMN "departments"."compulsory_hours" IS 'Is the hours that must be
 
 comment ON COLUMN "departments"."thesis_hours" IS 'Is the hours that doing thesis gives you';
 
--- Triggers
+-- Create a trigger for updated_at timestamps
 CREATE
 OR REPLACE function update_updated_at_column () returns trigger AS $$
 BEGIN
@@ -606,15 +595,3 @@ EXECUTE function update_updated_at_column ();
 CREATE TRIGGER update_students_updated_at before
 UPDATE ON "admins" FOR each ROW
 EXECUTE function update_updated_at_column ();
-
-CREATE
-OR REPLACE function thesis_availability_trigger () returns trigger language plpgsql AS $$
-BEGIN
-    PERFORM is_thesis_available(NEW.application_id);
-
-    RETURN NEW;
-END;
-$$;
-
-CREATE TRIGGER check_thesis_availability before insert ON theses FOR each ROW
-EXECUTE function thesis_availability_trigger ();

@@ -93,7 +93,7 @@ export default function LoginForm() {
                 alt="Faculty of Engineering Logo"
                 width={120}
                 height={120}
-              // className="w-auto h-auto"
+                // className="w-auto h-auto"
               />
               <h1 className="text-2xl font-bold text-gray-900 text-center">
                 مرحبا بك

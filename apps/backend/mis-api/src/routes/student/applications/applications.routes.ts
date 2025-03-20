@@ -2,6 +2,7 @@ import {
   attachmentsSchema,
   applicationSchema,
   studentApplicationDetailsSchema,
+  editStudentInfoSchema,
   currentAcademicYearsSchema,
   applicantRegisteredCoursesRequestSchemaForStudent,
   applicantRegisteredCoursesResponseSchemaForStudent,
@@ -11,7 +12,10 @@ import { requireRole } from "@/middlewares/requireRole";
 import { createRoute, z } from "@hono/zod-openapi";
 import { jsonContent, jsonContentRequired } from "stoker/openapi/helpers";
 import * as HttpStatusCodes from "stoker/http-status-codes";
-import { createErrorSchema } from "stoker/openapi/schemas";
+import {
+  createErrorSchema,
+  createMessageObjectSchema,
+} from "stoker/openapi/schemas";
 import { notFoundSchema } from "@/lib/constants";
 
 const tags = ["Student"];
