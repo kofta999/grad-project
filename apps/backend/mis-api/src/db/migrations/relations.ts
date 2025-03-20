@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm/relations";
-import { students, applications, registerations, academicYears, departments, attachments, addresses, emergencyContacts, academicQualifications, courses, courseRegistrations, courseResults, departmentCourses } from "./schema";
+import { students, applications, registerations, academicYears, departments, attachments, addresses, emergencyContacts, academicQualifications, courses, courseRegistrations, courseResults, theses, departmentCourses } from "./schema";
 
 export const applicationsRelations = relations(applications, ({one, many}) => ({
 	student: one(students, {
@@ -12,6 +12,7 @@ export const applicationsRelations = relations(applications, ({one, many}) => ({
 	emergencyContacts: many(emergencyContacts),
 	academicQualifications: many(academicQualifications),
 	courseRegistrations: many(courseRegistrations),
+	theses: many(theses),
 }));
 
 export const studentsRelations = relations(students, ({many}) => ({
@@ -43,11 +44,12 @@ export const departmentsRelations = relations(departments, ({many}) => ({
 	departmentCourses: many(departmentCourses),
 }));
 
-export const attachmentsRelations = relations(attachments, ({one}) => ({
+export const attachmentsRelations = relations(attachments, ({one, many}) => ({
 	application: one(applications, {
 		fields: [attachments.applicationId],
 		references: [applications.applicationId]
 	}),
+	theses: many(theses),
 }));
 
 export const addressesRelations = relations(addresses, ({one}) => ({
@@ -96,6 +98,17 @@ export const courseResultsRelations = relations(courseResults, ({one}) => ({
 	courseRegistration: one(courseRegistrations, {
 		fields: [courseResults.courseRegistrationId],
 		references: [courseRegistrations.courseRegistrationId]
+	}),
+}));
+
+export const thesesRelations = relations(theses, ({one}) => ({
+	application: one(applications, {
+		fields: [theses.applicationId],
+		references: [applications.applicationId]
+	}),
+	attachment: one(attachments, {
+		fields: [theses.attachmentId],
+		references: [attachments.attachmentId]
 	}),
 }));
 
