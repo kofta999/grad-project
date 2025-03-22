@@ -82,7 +82,12 @@ export const registerCourse = createRoute({
     [HttpStatusCodes.CREATED]: {
       description: "Course registered successfully",
       content: {
-        "application/json": { schema: z.object({ message: z.string() }) },
+        "application/json": {
+          schema: z.object({
+            message: z.string(),
+            courseRegistrationId: z.number(),
+          }),
+        },
       },
     },
     [HttpStatusCodes.BAD_REQUEST]: {

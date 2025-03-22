@@ -6,7 +6,11 @@ import {
   RegisterCourseRoute,
 } from "./courses.routes";
 import db from "@/db";
-import { courses, detailedCourseRegistrationsView as dcv } from "@/db/schema";
+import {
+  courseRegistrations,
+  courses,
+  detailedCourseRegistrationsView as dcv,
+} from "@/db/schema";
 import { and, eq } from "drizzle-orm";
 import { sql } from "drizzle-orm";
 
@@ -52,11 +56,22 @@ export const registerCourse: AppRouteHandler<RegisterCourseRoute> = async (
 ) => {
   const { applicationId, courseId, semester } = c.req.valid("json");
   try {
-    await db.execute(
-      sql`CALL register_course(${applicationId}, ${courseId}, ${semester})`,
-    );
+    const registeredCourse = await db
+      .insert(courseRegistrations)
+      .values({
+        courseId,
+        applicationId,
+        semester,
+        // The trigger will add it manually
+        academicYearId: 0,
+      })
+      .returning();
+
     return c.json(
-      { message: "Course registered successfully" },
+      {
+        message: "Course registered successfully",
+        courseRegistrationId: registeredCourse[0].courseRegistrationId,
+      },
       HttpStatusCodes.CREATED,
     );
   } catch (error) {
