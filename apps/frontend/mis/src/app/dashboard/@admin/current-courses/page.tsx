@@ -76,13 +76,14 @@ export default function currentCourses() {
     }
 
     try {
-      const res = await apiClient.admin.applications[id].$get();
+      const res = await apiClient.admin.applications[":id"].$get({param: { id: id.toString() }, query: {}});
       if (res.status === 200) {
         const data = await res.json();
 
-        setStudent(data.student);
-        setApplication(data.application);
-        setAcademicYear(data.application?.registration?.academicYearId);
+        // Data WILL be there
+        setStudent(data.student!);
+        setApplication(data.application!);
+        setAcademicYear(data.application?.registration?.academicYearId!);
       } else {
         toast.error("مستخدم غير موجود");
 
