@@ -221,7 +221,7 @@ export const applicantRegisteredCoursesResponseSchemaForStudent = z.array(
       courseRegistrationId: true,
     })
     .extend({
-      grade: z.number().nullable(),
+      grade: z.string().nullable(),
     }),
 );
 
