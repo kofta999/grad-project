@@ -155,13 +155,15 @@ const applicationDetailsSchema = z.object({
 });
 
 export const adminApplicationDetailsSchema = z.object({
-  student: createSelectSchema(students).omit({
-    hashedPassword: true,
-    secAnswer: true,
-    secQuestion: true,
-    updatedAt: true,
-  }),
-  application: applicationDetailsSchema,
+  student: createSelectSchema(students)
+    .omit({
+      hashedPassword: true,
+      secAnswer: true,
+      secQuestion: true,
+      updatedAt: true,
+    })
+    .optional(),
+  application: applicationDetailsSchema.optional(),
 });
 
 export const studentApplicationDetailsSchema = z.object({
@@ -218,3 +220,16 @@ export const applicantRegisteredCoursesResponseSchemaForStudent = z.array(
       grade: z.number().nullable(),
     }),
 );
+
+export const getStudentSchema = createSelectSchema(students).omit({
+  hashedPassword: true,
+  secQuestion: true,
+  secAnswer: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const submitThesisSchema = z.object({
+  title: z.string().min(1),
+  attachmentUrl: z.string().url(),
+});

@@ -35,7 +35,7 @@ export type SideNavItem = {
 };
 
 const SIDENAV_ITEMS = [
-  { title: "بيانات الطالب", path: "/", icon: <LayoutDashboard /> },
+  { title: "بيانات الطالب", path: "/dashboard", icon: <LayoutDashboard /> },
   { title: "تقدم الطالب", path: "/progress", icon: <ChartLine /> },
   {
     title: "المرحلة التمهيدية",
@@ -43,14 +43,14 @@ const SIDENAV_ITEMS = [
     icon: <ShieldBan />,
     submenu: true,
     subMenuItems: [
-      { title: "التسجيل", path: "/log" },
-      { title: "المقررات الحالية", path: "/register/step2" },
+      { title: "التسجيل", path: "/dashboard/log-courses" },
+      { title: "المقررات الحالية", path: "/dashboard/current-courses" },
     ],
   },
   { title: "المصروفات", path: "/messages", icon: <Wallet /> },
   {
     title: "الرسالة",
-    path: "/thesis",
+    path: "/dashboard/thesis",
     icon: <File />,
   },
   {
@@ -59,7 +59,7 @@ const SIDENAV_ITEMS = [
     icon: <Settings />,
     submenu: true,
     subMenuItems: [
-      { title: "Account", path: "/settings/account" },
+      { title: "Account", path: "/dashboard/settings" },
       { title: "Privacy", path: "/settings/privacy" },
     ],
   },
@@ -96,11 +96,10 @@ export default function SideNav() {
           <>
             <button
               onClick={() => setSubMenuOpen(!subMenuOpen)}
-              className={`flex items-center p-2 rounded-sm w-full justify-between ${
-                pathname.includes(item.path)
-                  ? "bg-blue-600 text-white hover:bg-blue-700"
-                  : ""
-              }`}
+              className={`flex items-center p-2 rounded-sm w-full justify-between ${pathname.includes(item.path)
+                ? "bg-blue-600 text-white hover:bg-blue-700"
+                : ""
+                }`}
             >
               <div className="flex gap-3 items-center">
                 {item.icon}
@@ -118,11 +117,10 @@ export default function SideNav() {
                     key={idx}
                     href={subItem.path}
                     onClick={() => setIsOpen(false)}
-                    className={`mt-3 block p-2 rounded-sm ${
-                      pathname.includes(subItem.path)
-                        ? "bg-blue-600 text-white hover:bg-blue-700"
-                        : ""
-                    }`}
+                    className={`mt-3 block p-2 rounded-sm ${pathname.includes(subItem.path)
+                      ? "bg-blue-600 text-white hover:bg-blue-700"
+                      : ""
+                      }`}
                   >
                     <span>{subItem.title}</span>
                   </Link>
@@ -134,11 +132,10 @@ export default function SideNav() {
           <Link
             href={item.path}
             onClick={() => setIsOpen(false)}
-            className={`flex gap-3 p-2 items-center rounded-sm ${
-              pathname === item.path
-                ? "bg-blue-600 text-white hover:bg-blue-700"
-                : ""
-            }`}
+            className={`flex gap-3 p-2 items-center rounded-sm ${pathname === item.path
+              ? "bg-blue-600 text-white hover:bg-blue-700"
+              : ""
+              }`}
           >
             {item.icon}
             <span className="text-md flex">{item.title}</span>
@@ -162,7 +159,7 @@ export default function SideNav() {
           {/* Sidebar */}
           <div
             className={`fixed top-0 right-0 h-screen overflow-y-auto bg-white z-50 shadow-lg p-4 flex flex-col justify-between w-[320px] transition-transform duration-300
-        ${isOpen ? "translate-x-0 z-50" : "translate-x-full"} xl:translate-x-0 md:p-6`}
+            ${isOpen ? "translate-x-0 z-50" : "translate-x-full"} xl:translate-x-0 md:p-6`}
           >
             {/* Close Button (Only Visible on Small Screens) */}
             <button

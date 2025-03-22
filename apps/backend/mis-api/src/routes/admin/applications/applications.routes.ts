@@ -63,6 +63,9 @@ export const getApplicationDetails = createRoute({
   method: "get",
   request: {
     params: IdParamsSchema,
+    query: z.object({
+      fetch: z.enum(["student", "application", "all"]).default("all"),
+    }),
   },
   tags,
   middleware: [isAuthenticated, requireRole("admin")] as const,

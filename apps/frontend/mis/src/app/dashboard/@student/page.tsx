@@ -1,3 +1,5 @@
+import { Container } from "@/components/ui/container";
+
 export default async function Page() {
-  return <div>Welcome to student dashboard</div>;
+  return <Container>Welcome to student dashboard</Container>;
 }

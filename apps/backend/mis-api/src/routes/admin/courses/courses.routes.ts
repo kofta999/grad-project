@@ -32,7 +32,7 @@ export const getApplicantRegisteredCourses = createRoute({
   },
 });
 
-export const getAvailableCourses = createRoute({
+export const getAvailableCoursesForApplication = createRoute({
   path: "/available/{applicationId}",
   method: "get",
   middleware: [isAuthenticated, requireRole("admin")],
@@ -66,7 +66,7 @@ export const getAvailableCourses = createRoute({
   },
 });
 
-export const registerCourseRoute = createRoute({
+export const registerCourse = createRoute({
   path: "/register",
   method: "post",
   tags,
@@ -94,9 +94,9 @@ export const registerCourseRoute = createRoute({
   },
 });
 
-export type RegisterCourseRoute = typeof registerCourseRoute;
+export type RegisterCourseRoute = typeof registerCourse;
 
-export type GetAvailableCoursesRoute = typeof getAvailableCourses;
+export type GetAvailableCoursesRoute = typeof getAvailableCoursesForApplication;
 
 export type GetApplicantRegisteredCoursesRoute =
   typeof getApplicantRegisteredCourses;
