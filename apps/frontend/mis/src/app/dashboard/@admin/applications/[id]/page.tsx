@@ -22,83 +22,17 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Image from "next/image";
 import { apiClient } from "@/lib/client";
-interface Student {
-  studentId: number | null;
-  fullNameAr: string;
-  fullNameEn: string;
-  gender: boolean;
-  email: string;
-  nationality: string;
-  imageUrl: string;
-  phoneNoMain: string;
-  phoneNoSec: string | null;
-  fax: string | null;
-  idType: string;
-  idIssuanceDate: string;
-  idNumber: string;
-  idAuthority: string;
-  martialStatus: string;
-  isWorking: boolean;
-  jobType: string | null;
-  militaryStatus: string;
-  dob: string;
-  createdAt: string;
-}
+import { InferResponseType } from "@repo/mis-api";
 
-interface Address {
-  addressId: number;
-  fullAddress: string;
-  country: string;
-  city: string;
-  type: "permanent" | "current";
-}
+type Student = InferResponseType<
+  (typeof apiClient.admin.applications)[":id"]["$get"],
+  200
+>["student"];
 
-interface AcademicQualification {
-  qualificationId: number;
-  country: string;
-  university: string;
-  faculty: string;
-  type: string;
-  qualification: string;
-  specialization: string;
-  year: string;
-  date: string;
-  creditHours: boolean;
-  grade: string;
-  gpa: number;
-}
-
-interface EmergencyContact {
-  contactId: number;
-  name: string;
-  address: string | null;
-  phoneNumber: string;
-  email: string | null;
-}
-
-interface Registration {
-  registerationId: number;
-  academicYearId: number;
-  faculty: string;
-  academicDegree: string;
-  departmentId: number;
-}
-
-interface Attachment {
-  attachmentId: number;
-  type: string;
-  attachmentUrl: string;
-}
-
-interface Application {
-  applicationId: number;
-  isAccepted: boolean;
-  addresses: Address[];
-  academicQualification: AcademicQualification;
-  emergencyContact: EmergencyContact;
-  registration: Registration;
-  attachments: Attachment[];
-}
+type Application = InferResponseType<
+  (typeof apiClient.admin.applications)[":id"]["$get"],
+  200
+>["application"];
 
 interface ApiResponse {
   student: Student;
@@ -113,27 +47,19 @@ export default function AdminPage() {
   const params = useParams();
   const { id } = params as { id: string | undefined };
 
-  // const apiClient = {
-  //   admin: {
-  //     applications: {
-  //       $get: async (id: string) => {
-  //         const response = await fetch(`http://localhost:3000/admin/applications/${id}`);
-  //         if (!response.ok) {
-  //           throw new Error(`فشل في الاتصال بالخادم. حالة الخطأ: ${response.status}`);
-  //         }
-  //         return response;
-  //       }
-  //     }
-  //   }
-  // };
-
   const fetchData = async (id: string): Promise<ApiResponse> => {
     try {
       const response = await apiClient.admin.applications[":id"].$get({
         param: { id },
+        query: {},
       });
-      const data: ApiResponse = await response.json();
-      return data;
+      if (response.status === 200) {
+        // I'm sure it'll return both student and application
+        const data = (await response.json()) as ApiResponse;
+        return data;
+      } else {
+        throw new Error("التقديم غير موجود");
+      }
     } catch (error) {
       if (error instanceof Error) {
         console.error("حدث خطأ أثناء جلب البيانات:", error.message);
