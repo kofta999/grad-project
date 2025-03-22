@@ -99,9 +99,32 @@ export const registerCourse = createRoute({
   },
 });
 
+export const deleteCourse = createRoute({
+  path: "/{id}",
+  method: "delete",
+  tags,
+  request: {
+    params: IdParamsSchema,
+  },
+  middleware: [isAuthenticated, requireRole("admin")],
+  responses: {
+    [HttpStatusCodes.NO_CONTENT]: {
+      description: "Course deleted successfully",
+    },
+    [HttpStatusCodes.BAD_REQUEST]: {
+      description: "Error deleting course",
+      content: {
+        "application/json": { schema: z.object({ error: z.string() }) },
+      },
+    },
+  },
+});
+
 export type RegisterCourseRoute = typeof registerCourse;
 
 export type GetAvailableCoursesRoute = typeof getAvailableCoursesForApplication;
 
 export type GetApplicantRegisteredCoursesRoute =
   typeof getApplicantRegisteredCourses;
+
+export type DeleteCourseRoute = typeof deleteCourse;
