@@ -94,10 +94,10 @@ export default function StudentInfo() {
     <div className="min-h-screen bg-gray-50 p-6" dir='rtl'>
       <div className="max-w-4xl mx-auto p-8">
         <div className='relative flex justify-center items-center'>
-          <h1 className="text-3xl font-bold text-center text-blue-500 mb-5">بيانات التقديم</h1>
-          <div className="rounded-md border border-gray-400 px-6 py-0.5 absolute top-0 left-0">
+          <h1 className="text-3xl font-bold text-center text-blue-600 mb-5">بيانات التقديم</h1>
+          {/* <div className="rounded-md border border-gray-400 px-6 py-0.5 absolute top-0 left-0">
             <a className="text-gray-800" href="">قدم طلبك الان</a>
-          </div>
+          </div> */}
         </div>
 
         {/* نظرة عامة */}
