@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { apiClient } from "@/lib/client";
 import { InferResponseType } from "@repo/mis-api";
 import toast from "react-hot-toast";
+import Link from "next/link";
 
 type ApplicationsList = InferResponseType<
   typeof apiClient.admin.applications.$get
@@ -83,7 +84,6 @@ export default function ApplicationsList({
               <TableHead className="text-right">الدرجة العلمية</TableHead>
               <TableHead className="text-right">البرنامج الأكاديمي</TableHead>
               <TableHead className="text-center">قبول الطالب</TableHead>
-              <TableHead className="text-center">إجراءات</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -93,11 +93,17 @@ export default function ApplicationsList({
                 className="border-b h-12"
               >
                 <TableCell>
-                  {application.studentName ? (
-                    <div className="font-medium">{application.studentName}</div>
-                  ) : (
-                    <div className="h-4 w-32 bg-gray-200 rounded animate-pulse"></div>
-                  )}
+                  <Link
+                    href={`/dashboard/applications/${application.applicationId}`}
+                  >
+                    {application.studentName ? (
+                      <div className="font-medium hover:underline">
+                        {application.studentName}
+                      </div>
+                    ) : (
+                      <div className="h-4 w-32 bg-gray-200 rounded animate-pulse"></div>
+                    )}
+                  </Link>
                 </TableCell>
                 <TableCell>
                   {application.academicDegree ? (
@@ -115,22 +121,18 @@ export default function ApplicationsList({
                 </TableCell>
                 <TableCell>
                   {application.studentName ? (
-                    <div className="bg-gray-100 py-1 px-2 text-sm rounded text-center">
-                      {application.isAdminAccepted ? "مقبول" : "قيد المراجعة"}
-                    </div>
+                    <Button
+                      onClick={() =>
+                        handleAcceptApplication(application.applicationId)
+                      }
+                      disabled={application.isAdminAccepted}
+                      className="bg-gray-100 py-1 px-2 text-sm rounded w-full text-center text-black hover:bg-gray-200 transition-colors duration-200"
+                    >
+                      {application.isAdminAccepted ? "مقبول" : "قبول"}
+                    </Button>
                   ) : (
                     <div className="h-4 w-20 bg-gray-200 rounded animate-pulse"></div>
                   )}
-                </TableCell>
-                <TableCell className="text-center">
-                  <Button
-                    onClick={() =>
-                      handleAcceptApplication(application.applicationId)
-                    }
-                    className="bg-green-700 hover:bg-green-600 text-white"
-                  >
-                    قبول
-                  </Button>
                 </TableCell>
               </TableRow>
             ))}
