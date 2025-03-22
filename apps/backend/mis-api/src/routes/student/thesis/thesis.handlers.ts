@@ -29,7 +29,7 @@ export const checkThesisAvailability: AppRouteHandler<
       sql`SELECT 1 FROM is_thesis_available(${application.applicationId})`,
     );
 
-    // Don't ask me why I did this, it needs that as for it to work
+    // Don't ask me why I did this, it needs that `as` for it to work
     return c.json({ available: true as true }, HttpStatusCodes.OK);
   } catch (error) {
     console.error("Error checking thesis:", error);
