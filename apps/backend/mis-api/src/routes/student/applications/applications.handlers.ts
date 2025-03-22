@@ -16,6 +16,7 @@ import {
   emergencyContacts,
   registerations,
 } from "@/db/schema";
+import { formatAcademicYear } from "@/lib/util";
 
 export const getCurrentAcademicYears: AppRouteHandler<
   GetCurrentAcademicYearsRoute
@@ -29,7 +30,7 @@ export const getCurrentAcademicYears: AppRouteHandler<
   return c.json(
     years.map((year) => ({
       academicYearId: year.academicYearId,
-      year: `${new Date(year.startDate).getFullYear()}-${new Date(year.endDate).getFullYear()}`,
+      year: formatAcademicYear(year),
     })),
     HttpStatusCodes.OK,
   );
