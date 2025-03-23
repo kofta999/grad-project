@@ -10,12 +10,15 @@ import * as HttpStatusCodes from "stoker/http-status-codes";
 import db from "@/db";
 import {
   academicQualifications,
+  academicYears,
   addresses,
   applications,
   attachments,
   emergencyContacts,
   registerations,
 } from "@/db/schema";
+import { formatAcademicYear, removeApplicationId } from "@/lib/util";
+import { eq } from "drizzle-orm";
 
 export const getCurrentAcademicYears: AppRouteHandler<
   GetCurrentAcademicYearsRoute
@@ -29,7 +32,7 @@ export const getCurrentAcademicYears: AppRouteHandler<
   return c.json(
     years.map((year) => ({
       academicYearId: year.academicYearId,
-      year: `${new Date(year.startDate).getFullYear()}-${new Date(year.endDate).getFullYear()}`,
+      year: formatAcademicYear(year),
     })),
     HttpStatusCodes.OK,
   );
@@ -113,15 +116,71 @@ export const getApplication: AppRouteHandler<GetApplicationRoute> = async (
 ) => {
   const studentId = c.var.session.get("id")!;
 
-  const application = await db.query.applications.findFirst({
-    where(f, { eq }) {
-      return eq(f.studentId, studentId);
-    },
-    columns: { studentId: false },
-    orderBy({ applicationId }, { desc }) {
-      return desc(applicationId);
-    },
-  })!;
+  const _getApplication = async () => {
+    const a = applications;
+
+    const applicationList = await db
+      .select({
+        application: {
+          isAccepted: a.isAdminAccepted,
+          studentId: a.studentId,
+          applicationId: a.applicationId,
+        },
+        academicQualification: removeApplicationId(academicQualifications),
+        emergencyContact: removeApplicationId(emergencyContacts),
+        registration: removeApplicationId(registerations),
+        academicYear: academicYears,
+      })
+      .from(a)
+      .innerJoin(addresses, eq(a.applicationId, addresses.applicationId))
+      .innerJoin(
+        academicQualifications,
+        eq(a.applicationId, academicQualifications.applicationId),
+      )
+      .innerJoin(
+        emergencyContacts,
+        eq(a.applicationId, emergencyContacts.applicationId),
+      )
+      .innerJoin(
+        registerations,
+        eq(a.applicationId, registerations.applicationId),
+      )
+      .innerJoin(
+        academicYears,
+        eq(registerations.academicYearId, academicYears.academicYearId),
+      )
+      .where(eq(a.studentId, studentId));
+
+    if (applicationList.length === 0) return null;
+
+    const { application, academicYear, registration, ...rest } =
+      applicationList[0];
+
+    const attachmentsList = await db.query.attachments.findMany({
+      where: (f, { eq }) => eq(f.applicationId, application.applicationId),
+      columns: { applicationId: false },
+    });
+
+    const addressesList = await db.query.addresses.findMany({
+      where: (f, { eq }) => eq(f.applicationId, application.applicationId),
+      columns: { applicationId: false },
+    });
+
+    return {
+      ...application,
+      ...rest,
+      registration: {
+        registerationId: registration.registerationId,
+        academicDegree: registration.academicDegree,
+        faculty: registration.faculty,
+        academicYear: formatAcademicYear(academicYear),
+      },
+      attachments: attachmentsList,
+      addresses: addressesList,
+    };
+  };
+
+  const application = await _getApplication();
 
   if (!application) {
     return c.json(
@@ -130,63 +189,5 @@ export const getApplication: AppRouteHandler<GetApplicationRoute> = async (
     );
   }
 
-  const applicationId = application.applicationId;
-
-  const addresses = await db.query.addresses.findMany({
-    where(f, { eq }) {
-      return eq(f.applicationId, applicationId);
-    },
-    columns: { applicationId: false },
-  });
-
-  const academicQualification = await db.query.academicQualifications.findFirst(
-    {
-      where(f, { eq }) {
-        return eq(f.applicationId, applicationId);
-      },
-    },
-  );
-
-  const emergencyContact = await db.query.emergencyContacts.findFirst({
-    where(f, { eq }) {
-      return eq(f.applicationId, applicationId);
-    },
-    columns: { applicationId: false },
-  })!;
-
-  const registration = await db.query.registerations.findFirst({
-    where(f, { eq }) {
-      return eq(f.applicationId, applicationId);
-    },
-    columns: { applicationId: false },
-  })!;
-
-  const attachments = await db.query.attachments.findMany({
-    where(f, { eq }) {
-      return eq(f.applicationId, applicationId);
-    },
-    columns: { applicationId: false },
-  })!;
-
-  if (academicQualification && emergencyContact && registration) {
-    return c.json(
-      {
-        application: {
-          isAccepted: application.isAdminAccepted,
-          applicationId,
-          academicQualification,
-          addresses,
-          attachments,
-          emergencyContact,
-          registration,
-        },
-      },
-      HttpStatusCodes.OK,
-    );
-  }
-
-  return c.json(
-    { message: "Application Not found" },
-    HttpStatusCodes.NOT_FOUND,
-  );
+  return c.json({ application }, HttpStatusCodes.OK);
 };
