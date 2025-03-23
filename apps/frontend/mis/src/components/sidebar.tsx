@@ -34,20 +34,20 @@ export type SideNavItem = {
   subMenuItems?: SideNavItem[];
 };
 
-const SIDENAV_ITEMS = [
+const STUDENT_SIDEBAR_ITEMS = [
   { title: "بيانات الطالب", path: "/dashboard", icon: <LayoutDashboard /> },
-  { title: "تقدم الطالب", path: "/progress", icon: <ChartLine /> },
+  { title: "تقدم الطالب", path: "/dashboard/progress", icon: <ChartLine /> },
   {
     title: "المرحلة التمهيدية",
     path: "/projects",
     icon: <ShieldBan />,
     submenu: true,
     subMenuItems: [
-      { title: "التسجيل", path: "/dashboard/log-courses" },
+      // { title: "التسجيل", path: "/dashboard/log-courses" },
       { title: "المقررات الحالية", path: "/dashboard/current-courses" },
     ],
   },
-  { title: "المصروفات", path: "/messages", icon: <Wallet /> },
+  // { title: "المصروفات", path: "/messages", icon: <Wallet /> },
   {
     title: "الرسالة",
     path: "/dashboard/thesis",
@@ -55,17 +55,35 @@ const SIDENAV_ITEMS = [
   },
   {
     title: "الاعدادات",
-    path: "/settings",
+    path: "/dashboard/settings",
     icon: <Settings />,
     submenu: true,
     subMenuItems: [
       { title: "Account", path: "/dashboard/settings" },
-      { title: "Privacy", path: "/settings/privacy" },
+      // { title: "Privacy", path: "/settings/privacy" },
     ],
   },
 ];
 
-export default function SideNav() {
+const ADMIN_SIDEBAR_ITEMS = [
+  {
+    title: "الطلبات المقدمة",
+    path: "/dashboard/applications",
+    icon: <LayoutDashboard />,
+  },
+  { title: "تسجيل المواد", path: "/dashboard/courses", icon: <ChartLine /> },
+  {
+    title: "التقارير",
+    path: "/dashboard/reports",
+    icon: <File />,
+  },
+];
+
+type SideNavProps = {
+  role: "admin" | "student";
+};
+
+export default function SideNav({ role }: SideNavProps) {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const { loggedInUser, setLoggedInUser, isLoading } = useUserContext();
@@ -96,10 +114,11 @@ export default function SideNav() {
           <>
             <button
               onClick={() => setSubMenuOpen(!subMenuOpen)}
-              className={`flex items-center p-2 rounded-sm w-full justify-between ${pathname.includes(item.path)
-                ? "bg-blue-600 text-white hover:bg-blue-700"
-                : ""
-                }`}
+              className={`flex items-center p-2 rounded-sm w-full justify-between ${
+                pathname.includes(item.path)
+                  ? "bg-blue-600 text-white hover:bg-blue-700"
+                  : ""
+              }`}
             >
               <div className="flex gap-3 items-center">
                 {item.icon}
@@ -117,10 +136,11 @@ export default function SideNav() {
                     key={idx}
                     href={subItem.path}
                     onClick={() => setIsOpen(false)}
-                    className={`mt-3 block p-2 rounded-sm ${pathname.includes(subItem.path)
-                      ? "bg-blue-600 text-white hover:bg-blue-700"
-                      : ""
-                      }`}
+                    className={`mt-3 block p-2 rounded-sm ${
+                      pathname.includes(subItem.path)
+                        ? "bg-blue-600 text-white hover:bg-blue-700"
+                        : ""
+                    }`}
                   >
                     <span>{subItem.title}</span>
                   </Link>
@@ -132,10 +152,11 @@ export default function SideNav() {
           <Link
             href={item.path}
             onClick={() => setIsOpen(false)}
-            className={`flex gap-3 p-2 items-center rounded-sm ${pathname === item.path
-              ? "bg-blue-600 text-white hover:bg-blue-700"
-              : ""
-              }`}
+            className={`flex gap-3 p-2 items-center rounded-sm ${
+              pathname === item.path
+                ? "bg-blue-600 text-white hover:bg-blue-700"
+                : ""
+            }`}
           >
             {item.icon}
             <span className="text-md flex">{item.title}</span>
@@ -176,7 +197,10 @@ export default function SideNav() {
               </Link>
 
               {/* Navigation Items */}
-              {SIDENAV_ITEMS.map((item: any, idx: number) => (
+              {(role === "admin"
+                ? ADMIN_SIDEBAR_ITEMS
+                : STUDENT_SIDEBAR_ITEMS
+              ).map((item: any, idx: number) => (
                 <MenuItem key={idx} item={item} />
               ))}
             </div>
@@ -186,10 +210,10 @@ export default function SideNav() {
               <div className="box bg-blue-600 text-white p-3 rounded-2xl">
                 <div className="welcome flex items-center justify-between">
                   <h1 className="font-bold text-xl">مرحبا</h1>
-                  <Star />
+                  {/* <Star /> */}
                 </div>
                 <p className="mt-3">
-                  هذا الحساب خاص ب{loggedInUser.name}، نتمنى لك يوم مشرق.
+                  هذا الحساب خاص ب{loggedInUser.name}، نتمنى لك يوماً طيباً.
                 </p>
               </div>
               <div className="user flex mt-3 gap-2 items-center justify-between">
@@ -210,8 +234,11 @@ export default function SideNav() {
                     </div>
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-3 cursor-pointer">
-                    <button onClick={() => handleLogout()} className="logout">
-                      Logout
+                    <button
+                      onClick={() => handleLogout()}
+                      className="logout outline-none"
+                    >
+                      تسجيل الخروج
                     </button>
                   </PopoverContent>
                 </Popover>
