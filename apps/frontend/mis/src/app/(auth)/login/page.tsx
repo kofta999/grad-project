@@ -7,14 +7,12 @@ import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
-import { hcWithType, InferRequestType } from "@repo/mis-api";
+import { InferRequestType } from "@repo/mis-api";
 import { apiClient } from "@/lib/client";
 import toast, { Toaster } from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { useUserContext } from "@/context/UserContext";
 import { Loader } from "@/components/ui/loader";
-import { cookies } from "next/headers";
-import { revalidatePath } from "next/cache";
 
 type FormState = InferRequestType<typeof apiClient.auth.login.$post>["json"];
 
@@ -54,7 +52,7 @@ export default function LoginForm() {
       // Next cache will still use the old page (more like the old cookies that render the student page)
       // So using this (exactly after pushing) will invalidate the cache and use latest cookies
       // I hate this framework...
-      router.refresh()
+      router.refresh();
       toast.success("تم الدخول بنجاح");
     } catch (err) {
       console.error("Login error:", err);
@@ -93,7 +91,7 @@ export default function LoginForm() {
                 alt="Faculty of Engineering Logo"
                 width={120}
                 height={120}
-              // className="w-auto h-auto"
+                // className="w-auto h-auto"
               />
               <h1 className="text-2xl font-bold text-gray-900 text-center">
                 مرحبا بك
@@ -138,12 +136,12 @@ export default function LoginForm() {
                     <RadioGroupItem value="student" id="student" />
                   </div>
                   {/* Should be doctor but will set admin for now */}
-                  <div className="flex items-center space-x-2 space-x-reverse">
+                  {/* <div className="flex items-center space-x-2 space-x-reverse">
                     <Label htmlFor="admin" className="mr-2">
                       دكتور
                     </Label>
                     <RadioGroupItem value="admin" id="admin" />
-                  </div>
+                  </div> */}
                 </RadioGroup>
               </div>
 
