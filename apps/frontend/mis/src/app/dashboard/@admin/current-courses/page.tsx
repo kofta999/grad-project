@@ -248,12 +248,12 @@ export default function currentCourses() {
                 onClick={() => setIsDialogOpen(false)}
                 className="text-gray-500 hover:text-gray-700"
               >
-                <X className="h-4 w-4" />
+                <X className="h-6 w-6" />
               </button>
             </div>
 
             {/* Render the logCourses component */}
-            {logCourses()}
+            {logCourses(applicationId)}
           </div>
         </div>
       </Container>

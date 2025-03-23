@@ -1,23 +1,44 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { LucideClipboardList } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
+import { apiClient } from "@/lib/client";
+import toast from "react-hot-toast";
 
-export default function logCourses() {
-  const [courses, setCourses] = useState([
-    { title: "تحليل عددي", creditHours: 3 },
-    { title: "رياضيات هندسية", creditHours: 4 },
-    { title: "فيزياء عامة", creditHours: 3 },
-    { title: "كيمياء عامة", creditHours: 2 },
-    { title: "أحياء عامة", creditHours: 0 },
-    { title: "برمجة متقدمة", creditHours: 3 },
-    { title: "قواعد بيانات", creditHours: 3 },
-    { title: "هندسة البرمجيات", creditHours: 3 },
-    { title: "ذكاء اصطناعي", creditHours: 1 },
-    { title: "تعلم الآلة", creditHours: 3 },
-  ]);
+type Course = {
+  title: string;
+  code: string;
+  creditHours: number;
+  grade?: string;
+};
+
+type CoursesType = Course[];
+
+export default function logCourses(applicationId: number | null) {
+  const [courses, setCourses] = useState<CoursesType>([]);
+
+  const getAvailableCourses = async (applicationId: number) => {
+    try {
+      const res = await apiClient.admin.courses.available[":applicationId"].$get({ param: { applicationId: applicationId.toString() } });
+
+      if (res.status === 200) {
+        const data = await res.json();
+        console.log(data);
+        setCourses(data);
+      } else {
+        toast.error("فشل العثور علي المواد");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  useEffect(() => {
+    if (applicationId) {
+      getAvailableCourses(applicationId);
+    }
+  }, [applicationId]);
 
   return (
     <Card className="w-full max-w-2xl">
@@ -30,18 +51,24 @@ export default function logCourses() {
         <form>
           {courses.map((course) => (
             <Card key={course.title}>
-              <div className="flex items-center gap-4 p-3">
-                <Checkbox />
+              <div className="flex items-center justify-between p-3">
                 <div>
                   <p>{course.title}</p>
                   <CardDescription>{course.creditHours} ساعة معتمدة</CardDescription>
                 </div>
+                <div>
+                  <Button type="submit" className="bg-mainColor hover:bg-blue-600 text-white ml-3">
+                    تسجيل
+                  </Button>
+                  <Button type="submit" className="bg-red-500 hover:bg-red-600 text-white">
+                    ازالة
+                  </Button>
+                </div>
+
               </div>
             </Card>
           ))}
-          <Button type="submit" className="w-full bg-mainColor hover:bg-blue-600 text-white">
-            تسجيل
-          </Button>
+
         </form>
       </CardContent>
     </Card>
