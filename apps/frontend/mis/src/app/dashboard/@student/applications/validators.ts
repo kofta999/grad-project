@@ -15,16 +15,48 @@ export const step1Schema = Yup.object().shape({
     country: Yup.string().required("الدولة مطلوبة"),
     fullAddress: Yup.string().required("العنوان الكامل مطلوب"),
   }),
-  emergencyContact: Yup.object().shape({
-    name: Yup.string().required("الاسم مطلوب"),
-    phoneNumber: Yup.string()
-      .matches(/^\d+$/, "يجب أن يحتوي رقم الهاتف على أرقام فقط")
-      .required("رقم الهاتف مطلوب"),
-    email: Yup.string()
-      .email("البريد الإلكتروني غير صالح")
-      .required("البريد الإلكتروني مطلوب"),
-    address: Yup.string().required("العنوان مطلوب"),
-  }),
+  emergencyContact: Yup.object().shape(
+    {
+      name: Yup.string().when(["phoneNumber", "email", "address"], {
+        // @ts-ignore
+        is: (phoneNumber, email, address) => phoneNumber || email || address,
+        then: (schema) => schema.required("الاسم مطلوب"),
+        otherwise: (schema) => schema,
+      }),
+      phoneNumber: Yup.string().when(["name", "email", "address"], {
+        // @ts-ignore
+        is: (name, email, address) => name || email || address,
+        then: (schema) =>
+          schema
+            .matches(/^\d+$/, "يجب أن يحتوي رقم الهاتف على أرقام فقط")
+            .required("رقم الهاتف مطلوب"),
+        otherwise: (schema) =>
+          schema.matches(/^\d+$/, "يجب أن يحتوي رقم الهاتف على أرقام فقط"),
+      }),
+      email: Yup.string()
+        .email("البريد الإلكتروني غير صالح")
+        .when(["name", "phoneNumber", "address"], {
+          // @ts-ignore
+          is: (name, phoneNumber, address) => name || phoneNumber || address,
+          then: (schema) => schema.required("البريد الإلكتروني مطلوب"),
+          otherwise: (schema) => schema,
+        }),
+      address: Yup.string().when(["name", "phoneNumber", "email"], {
+        // @ts-ignore
+        is: (name, phoneNumber, email) => name || phoneNumber || email,
+        then: (schema) => schema.required("العنوان مطلوب"),
+        otherwise: (schema) => schema,
+      }),
+    },
+    [
+      ["name", "phoneNumber"],
+      ["name", "email"],
+      ["name", "address"],
+      ["phoneNumber", "email"],
+      ["phoneNumber", "address"],
+      ["email", "address"],
+    ],
+  ),
 });
 
 export const step2Schema = Yup.object().shape({

@@ -65,6 +65,10 @@ export default function ApplicationForm() {
           json: {
             ...values,
             ...formikStep1.values,
+            // @ts-ignore
+            emergencyContact: formikStep1.values.emergencyContact.name
+              ? formikStep1.values.emergencyContact
+              : undefined,
             qualification: {
               ...values.qualification,
               date: formikStep2.values.qualification.date.toLocaleDateString(
@@ -119,7 +123,8 @@ export default function ApplicationForm() {
         }
 
         toast.success("تم التسجيل بنجاح!");
-        router.push("/login");
+        router.push("/dashboard");
+        router.refresh();
       } else {
         toast.error("الرجاء تصحيح الأخطاء قبل المتابعة.");
       }
