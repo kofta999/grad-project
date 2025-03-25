@@ -14,6 +14,7 @@ import {
   addresses,
   applications,
   attachments,
+  departments,
   emergencyContacts,
   registerations,
 } from "@/db/schema";
@@ -130,6 +131,7 @@ export const getApplication: AppRouteHandler<GetApplicationRoute> = async (
         emergencyContact: removeApplicationId(emergencyContacts),
         registration: removeApplicationId(registerations),
         academicYear: academicYears,
+        department: departments,
       })
       .from(a)
       .innerJoin(addresses, eq(a.applicationId, addresses.applicationId))
@@ -137,7 +139,7 @@ export const getApplication: AppRouteHandler<GetApplicationRoute> = async (
         academicQualifications,
         eq(a.applicationId, academicQualifications.applicationId),
       )
-      .innerJoin(
+      .leftJoin(
         emergencyContacts,
         eq(a.applicationId, emergencyContacts.applicationId),
       )
@@ -149,11 +151,15 @@ export const getApplication: AppRouteHandler<GetApplicationRoute> = async (
         academicYears,
         eq(registerations.academicYearId, academicYears.academicYearId),
       )
+      .innerJoin(
+        departments,
+        eq(registerations.departmentId, departments.departmentId),
+      )
       .where(eq(a.studentId, studentId));
 
     if (applicationList.length === 0) return null;
 
-    const { application, academicYear, registration, ...rest } =
+    const { application, academicYear, registration, department, ...rest } =
       applicationList[0];
 
     const attachmentsList = await db.query.attachments.findMany({
@@ -171,9 +177,11 @@ export const getApplication: AppRouteHandler<GetApplicationRoute> = async (
       ...rest,
       registration: {
         registerationId: registration.registerationId,
-        academicDegree: registration.academicDegree,
+        academicDegree: department.type,
         faculty: registration.faculty,
+        academicYearId: academicYear.academicYearId,
         academicYear: formatAcademicYear(academicYear),
+        academicProgram: department.title,
       },
       attachments: attachmentsList,
       addresses: addressesList,
@@ -181,6 +189,7 @@ export const getApplication: AppRouteHandler<GetApplicationRoute> = async (
   };
 
   const application = await _getApplication();
+  console.log(application);
 
   if (!application) {
     return c.json(

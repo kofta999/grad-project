@@ -109,7 +109,6 @@ export const registerations = pgTable(
     applicationId: integer("application_id").notNull(),
     academicYearId: integer("academic_year_id").notNull(),
     faculty: text().notNull(),
-    academicDegree: departmentType("academic_degree").notNull(),
     departmentId: integer("department_id").notNull(),
   },
   (table) => {

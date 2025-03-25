@@ -121,13 +121,12 @@ INSERT INTO
 		"application_id",
 		"academic_year_id",
 		"faculty",
-		"academic_degree",
 		"department_id"
 	)
 VALUES
-	(1, 1, 'Engineering', 'diploma', 1),
-	(2, 1, 'Science', 'master', 3),
-	(3, 1, 'Arts', 'phd', 7);
+	(1, 1, 'Engineering', 1),
+	(2, 1, 'Science', 3),
+	(3, 1, 'Arts', 7);
 
 -- Insert sample attachments
 INSERT INTO
