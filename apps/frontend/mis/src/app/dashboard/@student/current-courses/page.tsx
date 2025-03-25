@@ -124,16 +124,16 @@ export default function currentCourses() {
           <Table className="border rounded-md mt-6">
             <TableHeader className="bg-white">
               <TableRow>
-                <TableHead className="text-right font-medium text-[#96A0B6]">
+                <TableHead className="text-right font-medium text-[#96A0B6] w-1/4">
                   اسم المقرر
                 </TableHead>
-                <TableHead className="text-right font-medium text-[#96A0B6]">
+                <TableHead className="text-right font-medium text-[#96A0B6] w-1/4">
                   كود المقرر
                 </TableHead>
-                <TableHead className="text-right font-medium text-[#96A0B6]">
+                <TableHead className="text-right font-medium text-[#96A0B6] w-1/4">
                   عدد الساعات
                 </TableHead>
-                <TableHead className="text-right font-medium text-[#96A0B6]">
+                <TableHead className="text-right font-medium text-[#96A0B6] w-1/4">
                   التقدير
                 </TableHead>
               </TableRow>

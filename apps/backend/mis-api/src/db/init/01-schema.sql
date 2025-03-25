@@ -228,30 +228,35 @@ FROM
 
 CREATE OR REPLACE VIEW "accepted_applications" AS
 SELECT
-	a.application_id,
-	a.student_id,
-	r.department_id,
-	sum(c.total_hours) AS total_completed_hours,
-	sum(
-		CASE
-			WHEN d_c.is_compulsory = TRUE THEN c.total_hours
-			ELSE 0
-		END
-	) AS completed_compulsory_hours
+    a.application_id,
+    a.student_id,
+    r.department_id,
+    COALESCE(sum(
+        CASE
+            WHEN c_res.grade >= 50 THEN c.total_hours
+            ELSE 0
+        END
+    ), 0) AS total_completed_hours,
+    COALESCE(sum(
+        CASE
+            WHEN d_c.is_compulsory = TRUE
+            AND c_res.grade >= 50 THEN c.total_hours
+            ELSE 0
+        END
+    ), 0) AS completed_compulsory_hours
 FROM
-	applications a
-	JOIN registerations r ON r.application_id = a.application_id
-	JOIN course_registrations c_reg ON c_reg.application_id = a.application_id
-	JOIN course_results c_res ON c_res.course_registration_id = c_reg.course_registration_id
-	JOIN courses c ON c.course_id = c_reg.course_id
-	JOIN department_courses d_c ON d_c.course_id = c_reg.course_id
-	AND d_c.department_id = r.department_id
+    applications a
+    JOIN registerations r ON r.application_id = a.application_id
+    LEFT JOIN course_registrations c_reg ON c_reg.application_id = a.application_id
+    LEFT JOIN course_results c_res ON c_res.course_registration_id = c_reg.course_registration_id
+    LEFT JOIN courses c ON c.course_id = c_reg.course_id
+    LEFT JOIN department_courses d_c ON d_c.course_id = c_reg.course_id
+        AND d_c.department_id = r.department_id
 WHERE
-	a.is_admin_accepted = TRUE
-	AND c_res.grade >= 50
+    a.is_admin_accepted = TRUE
 GROUP BY
-	a.application_id,
-	r.department_id;
+    a.application_id,
+    r.department_id;
 
 -- WHERE it using
 -- c_r.academic_year_id, c_r.semester, c_r.application_id
@@ -401,122 +406,6 @@ BEGIN
 END;
 $$;
 
--- Procedures
-CREATE
-OR REPLACE procedure register_course (
-	p_application_id INT,
-	p_course_id INT,
-	p_semester semester_type
-) language plpgsql AS $$
-DECLARE
-    v_prerequisite INT;
-    v_total_hours INT;
-    v_course_hours INT;
-    v_department_id INT;
-    v_max_hours INT := 16; -- The maximum allowed hours per semester is 16
-BEGIN
-	-- Check if the application is accepted
-	IF NOT EXISTS (
-		SELECT 1
-		FROM accepted_applications
-		WHERE application_id = p_application_id
-	) THEN
-		RAISE EXCEPTION 'Application is not yet accepted';
-	END IF;
-
-    -- Check if the course is already registered
-    IF EXISTS (
-        SELECT 1
-        FROM course_registrations
-        WHERE application_id = p_application_id
-          AND course_id = p_course_id
-          AND semester = p_semester
-    ) THEN
-        RAISE EXCEPTION 'Course is already registered for this application and semester';
-    END IF;
-
-    -- Check if the course has a prerequisite
-    SELECT prerequisite INTO v_prerequisite
-    FROM courses
-    WHERE course_id = p_course_id;
-
-    IF v_prerequisite IS NOT NULL THEN
-        -- Check if the prerequisite course is completed
-        IF NOT EXISTS (
-            SELECT 1
-            FROM course_registrations cr
-            JOIN course_results crs ON cr.course_registration_id = crs.course_registration_id
-            WHERE cr.application_id = p_application_id
-              AND cr.course_id = v_prerequisite
-              AND crs.grade >= 50 -- Assuming a passing grade is 50
-        ) THEN
-			-- TODO: Add which prerequisite course is it
-            RAISE EXCEPTION 'Prerequisite course is not completed';
-        END IF;
-    END IF;
-
-    -- Check if total hours + course hours is less than max hours for this semester
-    SELECT SUM(c.total_hours) INTO v_total_hours
-    FROM course_registrations cr
-    JOIN courses c ON cr.course_id = c.course_id
-    WHERE cr.application_id = p_application_id
-      AND cr.semester = p_semester;
-
-    SELECT total_hours INTO v_course_hours
-    FROM courses
-    WHERE course_id = p_course_id;
-
-    IF (COALESCE(v_total_hours, 0) + v_course_hours) > v_max_hours THEN
-        RAISE EXCEPTION 'Total hours exceed the maximum allowed hours for this semester';
-    END IF;
-
-
-    -- Check if the course is available for applicant's department
-    SELECT department_id INTO v_department_id
-    FROM registerations
-    WHERE application_id = p_application_id;
-
-    IF NOT EXISTS (
-        SELECT 1
-        FROM department_courses
-        WHERE department_id = v_department_id
-          AND course_id = p_course_id
-    ) THEN
-        RAISE EXCEPTION 'This course is not available for this academic program';
-    END IF;
-
-    -- Check if passed before or not
-	IF EXISTS (
-	   SELECT 1
-		FROM course_results
-		JOIN course_registrations USING (course_registration_id)
-		WHERE course_registrations.course_id = p_course_id
-		AND course_registrations.application_id = p_application_id
-		-- Assume passing grade is 50
-		AND grade >= 50
-	) THEN
-	   RAISE WARNING 'Course is already passed before';
-	END IF;
-
-	-- Check if the course is registered before or not
-	IF EXISTS (
-	   SELECT 1
-		FROM course_registrations
-		WHERE course_registrations.course_id = p_course_id
-		AND course_registrations.application_id = p_application_id
-	) THEN
-	   RAISE WARNING 'Course is already registered in a previous semester';
-	END IF;
-
-
-    -- Insert into course_registrations
-    INSERT INTO course_registrations (course_id, application_id, semester, academic_year_id)
-    VALUES (p_course_id, p_application_id, p_semester, get_current_academic_year());
-
-    RAISE NOTICE 'Course registered successfully';
-END;
-$$;
-
 -- Create indexes for foreign keys
 CREATE INDEX "applications_student_id_idx" ON "applications" ("student_id");
 
@@ -618,3 +507,121 @@ $$;
 
 CREATE TRIGGER check_thesis_availability before insert ON theses FOR each ROW
 EXECUTE function thesis_availability_trigger ();
+
+CREATE
+OR REPLACE function check_course_availability () returns trigger language plpgsql AS $$
+DECLARE
+    v_prerequisite INT;
+    v_total_hours INT;
+    v_course_hours INT;
+    v_department_id INT;
+    v_max_hours INT := 16; -- The maximum allowed hours per semester is 16
+BEGIN
+
+	-- Check if the application is accepted
+	IF NOT EXISTS (
+		SELECT 1
+		FROM applications
+		WHERE application_id = NEW.application_id AND is_admin_accepted = TRUE
+	) THEN
+		RAISE EXCEPTION 'Application is not yet accepted';
+	END IF;
+
+    -- Check if the course is already registered
+    IF EXISTS (
+        SELECT 1
+        FROM course_registrations
+        WHERE application_id = NEW.application_id
+          AND course_id = NEW.course_id
+          AND semester = NEW.semester
+    ) THEN
+        RAISE EXCEPTION 'Course is already registered for this application and semester';
+    END IF;
+
+    -- Check if the course has a prerequisite
+    SELECT prerequisite INTO v_prerequisite
+    FROM courses
+    WHERE course_id = NEW.course_id;
+
+    IF v_prerequisite IS NOT NULL THEN
+        -- Check if the prerequisite course is completed
+        IF NOT EXISTS (
+            SELECT 1
+            FROM course_registrations cr
+            JOIN course_results crs ON cr.course_registration_id = crs.course_registration_id
+            WHERE cr.application_id = NEW.application_id
+              AND cr.course_id = v_prerequisite
+              AND crs.grade >= 50 -- Assuming a passing grade is 50
+        ) THEN
+			-- TODO: Add which prerequisite course is it
+            RAISE EXCEPTION 'Prerequisite course is not completed';
+        END IF;
+    END IF;
+
+    -- Check if total hours + course hours is less than max hours for this semester
+    SELECT SUM(c.total_hours) INTO v_total_hours
+    FROM course_registrations cr
+    JOIN courses c ON cr.course_id = c.course_id
+    WHERE cr.application_id = NEW.application_id
+      AND cr.semester = NEW.semester;
+
+    SELECT total_hours INTO v_course_hours
+    FROM courses
+    WHERE course_id = NEW.course_id;
+
+    IF (COALESCE(v_total_hours, 0) + v_course_hours) > v_max_hours THEN
+        RAISE EXCEPTION 'Total hours exceed the maximum allowed hours for this semester';
+    END IF;
+
+
+    -- Check if the course is available for applicant's department
+    SELECT department_id INTO v_department_id
+    FROM registerations
+    WHERE application_id = NEW.application_id;
+
+    IF NOT EXISTS (
+        SELECT 1
+        FROM department_courses
+        WHERE department_id = v_department_id
+          AND course_id = NEW.course_id
+    ) THEN
+        RAISE EXCEPTION 'This course is not available for this academic program';
+    END IF;
+
+    -- Check if passed before or not
+	IF EXISTS (
+	   SELECT 1
+		FROM course_results
+		JOIN course_registrations USING (course_registration_id)
+		WHERE course_registrations.course_id = NEW.course_id
+		AND course_registrations.application_id = NEW.application_id
+		-- Assume passing grade is 50
+		AND grade >= 50
+	) THEN
+	   RAISE WARNING 'Course is already passed before';
+	END IF;
+
+	-- Check if the course is registered before or not
+	IF EXISTS (
+	   SELECT 1
+		FROM course_registrations
+		WHERE course_registrations.course_id = NEW.course_id
+		AND course_registrations.application_id = NEW.application_id
+	) THEN
+	   RAISE WARNING 'Course is already registered in a previous semester';
+	END IF;
+
+	NEW.academic_year_id = get_current_academic_year();
+
+
+	RETURN NEW;
+    -- Insert into course_registrations
+    -- INSERT INTO course_registrations (course_id, application_id, semester, academic_year_id)
+    -- VALUES (NEW.course_id, NEW.application_id, NEW.semester, get_current_academic_year());
+
+    -- RAISE NOTICE 'Course registered successfully';
+END;
+$$;
+
+CREATE TRIGGER register_course_trigger before insert ON course_registrations FOR each ROW
+EXECUTE function check_course_availability ();
