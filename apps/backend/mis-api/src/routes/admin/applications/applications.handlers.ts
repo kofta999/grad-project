@@ -2,6 +2,7 @@ import db from "@/db";
 import * as HttpStatusCodes from "stoker/http-status-codes";
 import {
   academicQualifications,
+  academicYears,
   addresses,
   adminApplicationsList,
   applications,
@@ -18,6 +19,7 @@ import {
 } from "./applications.routes";
 import { z } from "zod";
 import { adminApplicationDetailsSchema } from "@/db/validators";
+import { formatAcademicYear, removeApplicationId } from "@/lib/util";
 
 export const acceptApplication: AppRouteHandler<
   AcceptApplicationRoute
@@ -80,9 +82,10 @@ export const getApplicationDetails: AppRouteHandler<
           studentId: a.studentId,
           applicationId: a.applicationId,
         },
-        academicQualification: academicQualifications,
-        emergencyContact: emergencyContacts,
-        registration: registerations,
+        academicQualification: removeApplicationId(academicQualifications),
+        emergencyContact: removeApplicationId(emergencyContacts),
+        registration: removeApplicationId(registerations),
+        academicYear: academicYears,
       })
       .from(a)
       .innerJoin(addresses, eq(a.applicationId, addresses.applicationId))
@@ -98,23 +101,36 @@ export const getApplicationDetails: AppRouteHandler<
         registerations,
         eq(a.applicationId, registerations.applicationId),
       )
+      .innerJoin(
+        academicYears,
+        eq(registerations.academicYearId, academicYears.academicYearId),
+      )
       .where(eq(a.applicationId, applicationId));
 
     if (applicationList.length === 0) return null;
 
     const attachmentsList = await db.query.attachments.findMany({
       where: (f, { eq }) => eq(f.applicationId, applicationId),
+      columns: { applicationId: false },
     });
 
     const addressesList = await db.query.addresses.findMany({
       where: (f, { eq }) => eq(f.applicationId, applicationId),
+      columns: { applicationId: false },
     });
 
-    const { application, ...rest } = applicationList[0];
+    const { application, academicYear, registration, ...rest } =
+      applicationList[0];
 
     return {
       ...application,
       ...rest,
+      registration: {
+        registerationId: registration.registerationId,
+        academicDegree: registration.academicDegree,
+        faculty: registration.faculty,
+        academicYear: formatAcademicYear(academicYear),
+      },
       attachments: attachmentsList,
       addresses: addressesList,
     };

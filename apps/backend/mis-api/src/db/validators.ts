@@ -146,9 +146,13 @@ const applicationDetailsSchema = z.object({
   emergencyContact: createSelectSchema(emergencyContacts).omit({
     applicationId: true,
   }),
-  registration: createSelectSchema(registerations).omit({
-    applicationId: true,
-  }),
+  registration: createSelectSchema(registerations)
+    .omit({
+      applicationId: true,
+      academicYearId: true,
+      departmentId: true,
+    })
+    .extend({ academicYear: z.string() }),
   attachments: z.array(
     createSelectSchema(attachments).omit({ applicationId: true }),
   ),
@@ -217,7 +221,7 @@ export const applicantRegisteredCoursesResponseSchemaForStudent = z.array(
       courseRegistrationId: true,
     })
     .extend({
-      grade: z.number().nullable(),
+      grade: z.string().nullable(),
     }),
 );
 

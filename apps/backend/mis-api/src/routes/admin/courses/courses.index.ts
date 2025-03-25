@@ -11,6 +11,7 @@ const router = createRouter()
     routes.getAvailableCoursesForApplication,
     handlers.getAvailableCoursesForApplication,
   )
-  .openapi(routes.registerCourse, handlers.registerCourse);
+  .openapi(routes.registerCourse, handlers.registerCourse)
+  .openapi(routes.deleteCourse, handlers.deleteCourse);
 
 export default router;
