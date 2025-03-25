@@ -40,7 +40,7 @@ VALUES
 		TRUE,
 		'mohamed.ali@example.com',
 		'Egyptian',
-		'http://example.com/mohamed.jpg',
+		'http://localhost:3002/avatar.jpg',
 		'0123456789',
 		'0987654321',
 		'01234',
@@ -64,7 +64,7 @@ VALUES
 		TRUE,
 		'ahmed.samir@example.com',
 		'Egyptian',
-		'http://example.com/ahmed.jpg',
+		'http://localhost:3002/avatar.jpg',
 		'0112233445',
 		'0556677889',
 		'05678',
@@ -88,7 +88,7 @@ VALUES
 		FALSE,
 		'sara.hassan@example.com',
 		'Egyptian',
-		'http://example.com/sara.jpg',
+		'http://localhost:3002/avatar.jpg',
 		'0109988776',
 		'0776655443',
 		'03456',
@@ -136,17 +136,17 @@ VALUES
 	(
 		1,
 		'resume',
-		'http://example.com/resume_mohamed.pdf'
+		'http://localhost:3002/avatar.jpg'
 	),
 	(
 		2,
 		'resume',
-		'http://example.com/resume_ahmed.pdf'
+		'http://localhost:3002/avatar.jpg'
 	),
 	(
 		3,
 		'portfolio',
-		'http://example.com/portfolio_sara.pdf'
+		'http://localhost:3002/avatar.jpg'
 	);
 
 -- Insert sample addresses
