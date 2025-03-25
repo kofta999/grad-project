@@ -1,8 +1,6 @@
-"use client";
 import "./styles.css";
 import { Cairo } from "next/font/google";
 import { cn } from "@/lib/utils";
-import { usePathname } from "next/navigation";
 import { UserContextProvider } from "@/context/UserContext";
 
 const cairo = Cairo({
@@ -14,12 +12,6 @@ type RootLayoutProps = {
 };
 
 export default function RootLayout({ children }: RootLayoutProps): JSX.Element {
-  const pathname = usePathname();
-  const isAuthPage =
-    pathname === "/login" ||
-    pathname === "/register" ||
-    pathname === "/applications";
-
   return (
     <html lang="ar" dir="rtl">
       <head>

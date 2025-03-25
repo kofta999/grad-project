@@ -19,7 +19,8 @@ import {
 import { CalendarIcon } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
-import { FormStep2Type, InitialFormDataType } from "../page";
+import { FormStep2Type } from "../validators";
+import { InitialFormDataType } from "./application-form";
 import { FormikProps } from "formik";
 
 interface Step2Props {

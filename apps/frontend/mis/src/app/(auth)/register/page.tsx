@@ -8,6 +8,7 @@ import { apiClient } from "@/lib/client";
 import toast, { Toaster } from "react-hot-toast";
 import * as Yup from "yup";
 import { useFormik } from "formik";
+import { useRouter } from "next/navigation";
 
 export type FormType = InferRequestType<
   typeof apiClient.auth.register.$post
@@ -70,6 +71,7 @@ const step2Schema = Yup.object().shape({
 
 export default function RegistrationForm() {
   const [step, setStep] = useState(1);
+  const router = useRouter();
 
   const handleStep1Submit = async () => {
     try {
@@ -102,6 +104,7 @@ export default function RegistrationForm() {
         const result = await res.json();
         console.log("Registration successful:", result);
         toast.success("تم التسجيل بنجاح!");
+        router.push("/login");
       } else {
         toast.error("الرجاء تصحيح الأخطاء قبل المتابعة.");
       }
