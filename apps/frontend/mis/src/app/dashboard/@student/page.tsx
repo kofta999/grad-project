@@ -1,5 +1,5 @@
 import Link from "next/link";
-import ApplicationDetails from "./_components/application-details";
+import ApplicationDetails from "../_components/application-details";
 import { getServerApiClient } from "@/lib/client";
 import { Button } from "@/components/ui/button";
 
@@ -21,7 +21,22 @@ export default async function Page() {
   }
 
   const data = await response.json();
-  const student = data.application;
+  const application = data.application;
 
-  return <ApplicationDetails student={student} />;
+  return (
+    <>
+      <div className="min-h-screen bg-gray-50 p-6" dir="rtl">
+        <div className="max-w-4xl mx-auto p-8">
+          <div className="relative flex justify-center items-center">
+            <h1 className="text-3xl font-bold text-center text-blue-600 mb-5">
+              بيانات التقديم (
+              {application?.isAccepted ? "مقبول" : "تحت المراجعة"})
+            </h1>
+          </div>
+
+          <ApplicationDetails application={application!} />
+        </div>
+      </div>
+    </>
+  );
 }

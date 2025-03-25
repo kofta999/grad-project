@@ -1,0 +1,201 @@
+import {
+  GraduationCap,
+  School,
+  User,
+  Home,
+  Phone,
+  Info,
+  File,
+  FileText,
+  MapPin,
+  Mail,
+} from "lucide-react";
+import { apiClient } from "@/lib/client";
+import { InferResponseType } from "@repo/mis-api";
+
+// Instead of re-creating the types, we can use this utility Type provided by Hono
+// This returns the response of GET /student/applications route
+// 200 is for the status code's response, and ["application"] because the response is like {application: {...}}
+type Application = InferResponseType<
+  typeof apiClient.student.applications.$get,
+  200
+>["application"] &
+  InferResponseType<
+    (typeof apiClient.admin.applications)[":id"]["$get"],
+    200
+  >["application"];
+
+export default async function ApplicationDetails({
+  application,
+}: {
+  application: Application;
+}) {
+  return (
+    <>
+      {/* نظرة عامة */}
+      <div className="mb-2 py-8">
+        <h2 className="text-xl font-semibold text-gray-700 mb-4 flex items-center">
+          <GraduationCap className="ml-2" /> نظرة عامة
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-white rounded-lg shadow-lg p-3">
+          <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
+            <p className="text-gray-600">العام الأكاديمي للتسجيل</p>
+            <p className="text-lg font-semibold text-gray-800">
+              {application?.registration?.academicYear}
+            </p>
+          </div>
+          <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
+            <p className="text-gray-600">حالة الطلب</p>
+            <p className="text-lg font-semibold text-gray-800">
+              {application?.isAccepted ? "مقبول" : "قيد المراجعة"}
+            </p>
+          </div>
+          <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
+            <p className="text-gray-600">الكلية</p>
+            <p className="text-lg font-semibold text-gray-800">
+              {application?.registration?.faculty}
+            </p>
+          </div>
+          <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
+            <p className="text-gray-600">البرنامج العلمي</p>
+            <p className="text-lg font-semibold text-gray-800">
+              {application.registration.academicProgram}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* المعلومات الأكاديمية */}
+      <div className="mb-2 py-8">
+        <h2 className="text-xl font-semibold text-gray-700 mb-4 flex items-center">
+          <School className="ml-2" /> المعلومات الأكاديمية
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-white rounded-lg shadow-lg p-3">
+          <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
+            <p className="text-gray-600">المؤهل</p>
+            <p className="text-lg font-semibold text-gray-800">
+              {application?.academicQualification?.qualification}
+            </p>
+          </div>
+          <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
+            <p className="text-gray-600">الجامعة</p>
+            <p className="text-lg font-semibold text-gray-800">
+              {application?.academicQualification?.university}
+            </p>
+          </div>
+          <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
+            <p className="text-gray-600">الكلية</p>
+            <p className="text-lg font-semibold text-gray-800">
+              {application?.academicQualification?.faculty}
+            </p>
+          </div>
+          <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
+            <p className="text-gray-600">التخصص</p>
+            <p className="text-lg font-semibold text-gray-800">
+              {application?.academicQualification?.specialization}
+            </p>
+          </div>
+          <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
+            <p className="text-gray-600">سنة النخرج</p>
+            <p className="text-lg font-semibold text-gray-800">
+              {application?.academicQualification?.year}
+            </p>
+          </div>
+          <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
+            <p className="text-gray-600">المعدل التراكمي</p>
+            <p className="text-lg font-semibold text-gray-800">
+              {application?.academicQualification?.gpa}
+            </p>
+          </div>
+          <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
+            <p className="text-gray-600">التقدير الأكاديمي</p>
+            <p className="text-lg font-semibold text-gray-800">
+              {application?.academicQualification?.grade}
+            </p>
+          </div>
+          <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
+            <p className="text-gray-600">الدولة</p>
+            <p className="text-lg font-semibold text-gray-800">
+              {application?.academicQualification?.country}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* المعلومات الشخصية */}
+      <div className="mb-2 py-8">
+        <h2 className="text-xl font-semibold text-gray-700 mb-4 flex items-center">
+          <Info className="ml-2" /> المعلومات الشخصية
+        </h2>
+        <div className="grid grid-cols-1 gap-4 bg-white rounded-lg shadow-lg p-3">
+          <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
+            <h2 className="text-gray-600 mb-4 flex items-center">العنوان</h2>
+            {application?.addresses?.map((address, index) => (
+              <p
+                key={index}
+                className="text-lg font-semibold text-gray-800 flex items-center"
+              >
+                <Home className="ml-2" />
+                {address.fullAddress}, {address.city}, {address.country} (
+                {address.type})
+              </p>
+            ))}
+          </div>
+          {application.emergencyContact && (
+            <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
+              <h2 className="text-gray-600 mb-4 flex items-center">
+                معلومات الاتصال في حالات الطوارئ
+              </h2>
+              <p className="text-lg font-semibold text-gray-800 mb-3 flex items-center">
+                <User className="ml-2" />
+                {application?.emergencyContact?.name}
+              </p>
+              <p className="text-lg font-semibold text-gray-800 mb-3 flex items-center">
+                <Phone className="ml-2" />
+                {application?.emergencyContact?.phoneNumber}
+              </p>
+              <p className="text-lg font-semibold text-gray-800 mb-3 flex items-center">
+                <Mail className="ml-2" />
+                {application?.emergencyContact?.email || "غير متوفر"}
+              </p>
+              <p className="text-lg font-semibold text-gray-800 mb-3 flex items-center">
+                <MapPin className="ml-2" />
+                {application?.emergencyContact?.address || "غير متوفر"}
+              </p>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* المستندات المرفوعة */}
+      <div className="mb-2 py-8">
+        <h2 className="text-xl font-semibold text-gray-700 mb-4 flex items-center">
+          <FileText className="ml-2" /> المستندات المرفوعة
+        </h2>
+        <div className="grid grid-cols-1 gap-4 bg-white rounded-lg shadow-lg p-3">
+          {application?.attachments?.map((attachment, index) => (
+            <div
+              key={index}
+              className="bg-gray-50 p-4 rounded-lg shadow-sm flex justify-between items-center"
+            >
+              <h2 className="text-gray-800 mb-4 flex items-center">
+                <File className="ml-2" />
+                {attachment.type}
+              </h2>
+              <div className="rounded-md border border-gray-400 px-5 pb-1">
+                <a
+                  className="text-gray-800"
+                  href={attachment.attachmentUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  عرض
+                </a>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </>
+  );
+}
