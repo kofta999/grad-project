@@ -209,7 +209,7 @@ export default function ApplicationForm() {
 
   useEffect(() => {
     const getAvailableDepartments = async (
-      type: FormType["registration"]["academicDegree"],
+      type: "diploma" | "master" | "phd",
     ) => {
       const res =
         await apiClient.student.applications.availableDepartments.$get({

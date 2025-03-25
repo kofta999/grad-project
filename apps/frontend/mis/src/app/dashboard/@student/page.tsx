@@ -7,8 +7,6 @@ export default async function Page() {
   const apiClient = await getServerApiClient();
   const response = await apiClient.student.applications.$get();
 
-  console.log(response);
-
   if (!response.ok) {
     return (
       <div className="min-h-screen bg-gray-50 max-w-4xl mx-auto p-8 flex justify-center items-center flex-col gap-20">

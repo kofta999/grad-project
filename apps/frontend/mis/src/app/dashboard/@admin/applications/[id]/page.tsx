@@ -304,7 +304,7 @@ export default function AdminPage() {
             <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
               <p className="text-gray-600">العام الأكاديمي للتسجيل</p>
               <p className="text-lg font-semibold text-gray-800">
-                {application.registration.academicYearId}
+                {application.registration.academicYear}
               </p>
             </div>
             <div className="bg-gray-50 p-4 rounded-lg shadow-sm">

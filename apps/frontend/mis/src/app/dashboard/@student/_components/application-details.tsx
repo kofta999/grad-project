@@ -32,7 +32,7 @@ export default async function ApplicationDetails({
       <div className="max-w-4xl mx-auto p-8">
         <div className="relative flex justify-center items-center">
           <h1 className="text-3xl font-bold text-center text-blue-600 mb-5">
-            بيانات التقديم
+            بيانات التقديم ({student.isAccepted ? "مقبول" : "تحت المراجعة"})
           </h1>
         </div>
 
@@ -45,7 +45,7 @@ export default async function ApplicationDetails({
             <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
               <p className="text-gray-600">العام الأكاديمي للتسجيل</p>
               <p className="text-lg font-semibold text-gray-800">
-                {student?.registration?.academicYearId}
+                {student?.registration?.academicYear}
               </p>
             </div>
             <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
@@ -55,15 +55,15 @@ export default async function ApplicationDetails({
               </p>
             </div>
             <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
-              <p className="text-gray-600">الدرجة العلمية</p>
+              <p className="text-gray-600">الكلية</p>
               <p className="text-lg font-semibold text-gray-800">
-                {student?.registration?.academicDegree}
+                {student?.registration?.faculty}
               </p>
             </div>
             <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
               <p className="text-gray-600">البرنامج العلمي</p>
               <p className="text-lg font-semibold text-gray-800">
-                {student?.registration?.faculty}
+                {student.registration.academicProgram}
               </p>
             </div>
           </div>
@@ -145,27 +145,29 @@ export default async function ApplicationDetails({
                 </p>
               ))}
             </div>
-            <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
-              <h2 className="text-gray-600 mb-4 flex items-center">
-                معلومات الاتصال في حالات الطوارئ
-              </h2>
-              <p className="text-lg font-semibold text-gray-800 mb-3 flex items-center">
-                <User className="ml-2" />
-                {student?.emergencyContact?.name}
-              </p>
-              <p className="text-lg font-semibold text-gray-800 mb-3 flex items-center">
-                <Phone className="ml-2" />
-                {student?.emergencyContact?.phoneNumber}
-              </p>
-              <p className="text-lg font-semibold text-gray-800 mb-3 flex items-center">
-                <Mail className="ml-2" />
-                {student?.emergencyContact?.email || "غير متوفر"}
-              </p>
-              <p className="text-lg font-semibold text-gray-800 mb-3 flex items-center">
-                <MapPin className="ml-2" />
-                {student?.emergencyContact?.address || "غير متوفر"}
-              </p>
-            </div>
+            {student.emergencyContact && (
+              <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
+                <h2 className="text-gray-600 mb-4 flex items-center">
+                  معلومات الاتصال في حالات الطوارئ
+                </h2>
+                <p className="text-lg font-semibold text-gray-800 mb-3 flex items-center">
+                  <User className="ml-2" />
+                  {student?.emergencyContact?.name}
+                </p>
+                <p className="text-lg font-semibold text-gray-800 mb-3 flex items-center">
+                  <Phone className="ml-2" />
+                  {student?.emergencyContact?.phoneNumber}
+                </p>
+                <p className="text-lg font-semibold text-gray-800 mb-3 flex items-center">
+                  <Mail className="ml-2" />
+                  {student?.emergencyContact?.email || "غير متوفر"}
+                </p>
+                <p className="text-lg font-semibold text-gray-800 mb-3 flex items-center">
+                  <MapPin className="ml-2" />
+                  {student?.emergencyContact?.address || "غير متوفر"}
+                </p>
+              </div>
+            )}
           </div>
         </div>
 
