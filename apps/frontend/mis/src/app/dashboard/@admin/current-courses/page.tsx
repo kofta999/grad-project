@@ -23,8 +23,8 @@ import {
 } from "@/components/ui/table";
 import { apiClient } from "@/lib/client";
 import toast from "react-hot-toast";
-import { Button } from '@/components/ui/button';
-import logCourses from '../current-courses/log-courses/page';
+import { Button } from "@/components/ui/button";
+import logCourses from "../current-courses/log-courses/page";
 import { X } from "lucide-react";
 
 type Course = {
@@ -54,10 +54,9 @@ type ApplicationType = {
 
 type SemesterType = "first" | "second" | "third";
 
-
 export default function currentCourses() {
-  const [student, setStudent] = useState<StudentType>({})
-  const [application, setApplication] = useState<ApplicationType>({})
+  const [student, setStudent] = useState<StudentType>({});
+  const [application, setApplication] = useState<ApplicationType>({});
 
   const [applicationId, setApplicationId] = useState<number | null>(null);
   const [academicYear, setAcademicYear] = useState<number | null>(null);
@@ -78,7 +77,10 @@ export default function currentCourses() {
     }
 
     try {
-      const res = await apiClient.admin.applications[":id"].$get({ param: { id: id.toString() }, query: {} });
+      const res = await apiClient.admin.applications[":id"].$get({
+        param: { id: id.toString() },
+        query: {},
+      });
       if (res.status === 200) {
         const data = await res.json();
         // Data WILL be there
@@ -92,13 +94,11 @@ export default function currentCourses() {
         setApplication({});
         setAcademicYear(null);
       }
-
     } catch (error) {
       console.error("Error fetching application:", error);
       toast.error("فشل العثور علي المستخدم");
     }
   };
-
 
   const getCourses = async (
     applicationId: number,
@@ -124,7 +124,6 @@ export default function currentCourses() {
       } else {
         toast.error("فشل العثور علي المواد");
       }
-
     } catch (error) {
       console.error("Error fetching courses:", error);
       toast.error("فشل العثور علي المواد");
@@ -147,7 +146,10 @@ export default function currentCourses() {
 
   return (
     <Container>
-      <SearchBar placeholder="ابحث هنا..." onChange={(value) => handleSearch(value)} />
+      <SearchBar
+        placeholder="ابحث هنا..."
+        onChange={(value) => handleSearch(value)}
+      />
       <Card>
         <CardContent>
           <div className="flex flex-col mb-6 md:flex-row md:gap-6">
@@ -163,7 +165,9 @@ export default function currentCourses() {
               <p className="text-sm">الاسم / {student?.fullNameAr}</p>
               <p className="text-sm">تاريخ الميلاد / {student?.dob}</p>
               <p className="text-sm">الرقم القومي / {student?.idNumber}</p>
-              <p className="text-sm">الدرجة العلمية / {application.registration?.academicDegree}</p>
+              <p className="text-sm">
+                الدرجة العلمية / {application.registration?.academicDegree}
+              </p>
               <p className="text-sm">رقم الهاتف / {student?.phoneNoMain}</p>
               <p className="text-sm">العام الاكاديمي للتسجيل / {application.registration?.academicYear}</p>
             </CardGrid>
@@ -258,6 +262,6 @@ export default function currentCourses() {
           </div>
         </div>
       </Container>
-    </Container >
+    </Container>
   );
 }

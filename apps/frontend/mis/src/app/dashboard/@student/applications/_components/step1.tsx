@@ -2,12 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import toast, { Toaster } from "react-hot-toast";
-import {
-  Card,
-  CardContent,
-  CardGrid,
-  CardHeader,
-} from "@/components/ui/card";
+import { Card, CardContent, CardGrid, CardHeader } from "@/components/ui/card";
 import {
   Select,
   SelectContent,
@@ -15,9 +10,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { MapPin, Phone,User, Mail } from "lucide-react";
+import { MapPin, Phone, User, Mail } from "lucide-react";
 import { Container, ContainerTitle } from "@/components/ui/container";
-import { FormStep1Type } from "../page";
+import { FormStep1Type } from "../validators";
 import { FormikProps } from "formik";
 
 interface Step1Props {
@@ -25,7 +20,6 @@ interface Step1Props {
 }
 
 export default function Step1({ formik }: Step1Props) {
-
   return (
     <Container>
       <ContainerTitle>بيانات التسجيل</ContainerTitle>
@@ -228,11 +222,12 @@ export default function Step1({ formik }: Step1Props) {
                   onChange={formik.handleChange}
                   icon={<MapPin className="h-4 w-4" />}
                 />
-                {formik.touched.emergencyContact?.address && formik.errors.emergencyContact?.address && (
-                  <p className="text-red-500 text-sm">
-                    {formik.errors.emergencyContact?.address}
-                  </p>
-                )}
+                {formik.touched.emergencyContact?.address &&
+                  formik.errors.emergencyContact?.address && (
+                    <p className="text-red-500 text-sm">
+                      {formik.errors.emergencyContact?.address}
+                    </p>
+                  )}
               </div>
 
               {/* Phone Number */}
@@ -245,11 +240,12 @@ export default function Step1({ formik }: Step1Props) {
                   onChange={formik.handleChange}
                   icon={<Phone className="h-4 w-4" />}
                 />
-                {formik.touched.emergencyContact?.phoneNumber && formik.errors.emergencyContact?.phoneNumber && (
-                  <p className="text-red-500 text-sm">
-                    {formik.errors.emergencyContact?.phoneNumber}
-                  </p>
-                )}
+                {formik.touched.emergencyContact?.phoneNumber &&
+                  formik.errors.emergencyContact?.phoneNumber && (
+                    <p className="text-red-500 text-sm">
+                      {formik.errors.emergencyContact?.phoneNumber}
+                    </p>
+                  )}
               </div>
 
               {/* Email */}
@@ -261,11 +257,12 @@ export default function Step1({ formik }: Step1Props) {
                   onChange={formik.handleChange}
                   icon={<Mail className="h-4 w-4" />}
                 />
-                {formik.touched.emergencyContact?.email && formik.errors.emergencyContact?.email && (
-                  <p className="text-red-500 text-sm">
-                    {formik.errors.emergencyContact?.email}
-                  </p>
-                )}
+                {formik.touched.emergencyContact?.email &&
+                  formik.errors.emergencyContact?.email && (
+                    <p className="text-red-500 text-sm">
+                      {formik.errors.emergencyContact?.email}
+                    </p>
+                  )}
               </div>
             </CardGrid>
           </CardContent>
@@ -273,12 +270,14 @@ export default function Step1({ formik }: Step1Props) {
 
         {/* Submit Button */}
         <div className="flex justify-center items-center">
-          <Button type="submit" className="px-8 py-2 bg-mainColor hover:bg-blue-700 text-white">
+          <Button
+            type="submit"
+            className="px-8 py-2 bg-mainColor hover:bg-blue-700 text-white"
+          >
             التالي
           </Button>
         </div>
       </form>
-
     </Container>
   );
 }

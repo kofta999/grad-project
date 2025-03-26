@@ -40,7 +40,7 @@ VALUES
 		TRUE,
 		'mohamed.ali@example.com',
 		'Egyptian',
-		'http://example.com/mohamed.jpg',
+		'http://localhost:3002/avatar.jpg',
 		'0123456789',
 		'0987654321',
 		'01234',
@@ -64,7 +64,7 @@ VALUES
 		TRUE,
 		'ahmed.samir@example.com',
 		'Egyptian',
-		'http://example.com/ahmed.jpg',
+		'http://localhost:3002/avatar.jpg',
 		'0112233445',
 		'0556677889',
 		'05678',
@@ -88,7 +88,7 @@ VALUES
 		FALSE,
 		'sara.hassan@example.com',
 		'Egyptian',
-		'http://example.com/sara.jpg',
+		'http://localhost:3002/avatar.jpg',
 		'0109988776',
 		'0776655443',
 		'03456',
@@ -121,13 +121,12 @@ INSERT INTO
 		"application_id",
 		"academic_year_id",
 		"faculty",
-		"academic_degree",
 		"department_id"
 	)
 VALUES
-	(1, 1, 'Engineering', 'diploma', 1),
-	(2, 1, 'Science', 'master', 3),
-	(3, 1, 'Arts', 'phd', 7);
+	(1, 1, 'Engineering', 1),
+	(2, 1, 'Science', 3),
+	(3, 1, 'Arts', 7);
 
 -- Insert sample attachments
 INSERT INTO
@@ -136,17 +135,17 @@ VALUES
 	(
 		1,
 		'resume',
-		'http://example.com/resume_mohamed.pdf'
+		'http://localhost:3002/avatar.jpg'
 	),
 	(
 		2,
 		'resume',
-		'http://example.com/resume_ahmed.pdf'
+		'http://localhost:3002/avatar.jpg'
 	),
 	(
 		3,
 		'portfolio',
-		'http://example.com/portfolio_sara.pdf'
+		'http://localhost:3002/avatar.jpg'
 	);
 
 -- Insert sample addresses

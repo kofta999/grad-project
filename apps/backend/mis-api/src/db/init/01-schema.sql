@@ -85,7 +85,6 @@ CREATE TABLE "registerations" (
 	"academic_year_id" INT NOT NULL,
 	"faculty" TEXT NOT NULL,
 	-- TODO: I may not need that as the department has it all
-	"academic_degree" department_type NOT NULL,
 	-- academic_program = department
 	"department_id" INT NOT NULL,
 	FOREIGN key ("application_id") REFERENCES "applications" ("application_id"),
@@ -216,7 +215,7 @@ CREATE VIEW admin_applications_list AS
 SELECT
 	a.application_id,
 	s.full_name_ar AS student_name,
-	r.academic_degree,
+	d.type as academic_degree,
 	-- TODO: Add real dep name
 	d.title AS department,
 	a.is_admin_accepted
