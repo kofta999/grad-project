@@ -28,8 +28,10 @@ import logCourses from '../current-courses/log-courses/page';
 import { X } from "lucide-react";
 
 type Course = {
-  title: string;
+  course_id: number;
   code: string;
+  title: string;
+  prerequisite: number;
   totalHours: number;
   grade?: string;
 };
@@ -59,7 +61,7 @@ export default function currentCourses() {
 
   const [applicationId, setApplicationId] = useState<number | null>(null);
   const [academicYear, setAcademicYear] = useState<number | null>(null);
-  const [semester, setSemester] = useState<SemesterType | null>();
+  const [semester, setSemester] = useState<SemesterType | null>(null);
 
   const [courses, setCourses] = useState<CoursesType>([]);
 
@@ -76,10 +78,9 @@ export default function currentCourses() {
     }
 
     try {
-      const res = await apiClient.admin.applications[":id"].$get({param: { id: id.toString() }, query: {}});
+      const res = await apiClient.admin.applications[":id"].$get({ param: { id: id.toString() }, query: {} });
       if (res.status === 200) {
         const data = await res.json();
-
         // Data WILL be there
         setStudent(data.student!);
         setApplication(data.application!);
@@ -164,8 +165,7 @@ export default function currentCourses() {
               <p className="text-sm">الرقم القومي / {student?.idNumber}</p>
               <p className="text-sm">الدرجة العلمية / {application.registration?.academicDegree}</p>
               <p className="text-sm">رقم الهاتف / {student?.phoneNoMain}</p>
-              {/* Can't get academic year from response */}
-              {/* <p className="text-sm">العام الاكاديمي للتسجيل / </p> */}
+              <p className="text-sm">العام الاكاديمي للتسجيل / {application.registration?.academicYear}</p>
             </CardGrid>
           </div>
           <Select
@@ -234,7 +234,7 @@ export default function currentCourses() {
       {/* Dialog */}
       <Container className="p-0">
         {/* Button to open the dialog */}
-        <Button onClick={() => setIsDialogOpen(true)}>صفحة تسجيل المواد</Button>
+        <Button onClick={() => setIsDialogOpen(true)} disabled={!applicationId || !semester}>صفحة تسجيل المواد</Button>
 
         {/* Dialog Overlay */}
         <div
@@ -254,7 +254,7 @@ export default function currentCourses() {
             </div>
 
             {/* Render the logCourses component */}
-            {logCourses(applicationId)}
+            {logCourses(applicationId as number, semester as SemesterType)}
           </div>
         </div>
       </Container>
