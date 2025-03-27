@@ -1,3 +1,4 @@
+import SideBar from "@/components/sidebar";
 import { cookies, headers } from "next/headers";
 import { notFound, redirect } from "next/navigation";
 
@@ -38,5 +39,12 @@ export default function Layout({
     }
   }
 
-  return role === "admin" ? admin : student;
+  return (
+    <div className="grid grid-cols-1 xl:grid-cols-[250px,1fr]">
+      <aside className="sideNav">
+        <SideBar role={role} />
+      </aside>
+      <main>{role === "admin" ? admin : student}</main>
+    </div>
+  );
 }

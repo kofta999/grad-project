@@ -3,14 +3,12 @@ import type { NextRequest } from "next/server";
 import { apiClient } from "./lib/client";
 
 export async function middleware(request: NextRequest) {
-  // Skip authentication check for login page to avoid redirect loops
-  if (request.nextUrl.pathname === "/login") {
-    return NextResponse.next();
-  }
+  const { pathname } = request.nextUrl;
+  const isAuthPage = pathname === "/login" || pathname === "/register";
+  const isDashboardPage = pathname.startsWith("/dashboard") || pathname === "/";
 
   try {
-    // Make a request to your authentication check endpoint
-    // You can use a HEAD request which is lightweight (no response body needed)
+    // Check authentication status
     const authCheckResponse = await apiClient.index.$get(
       {},
       {
@@ -23,38 +21,66 @@ export async function middleware(request: NextRequest) {
       },
     );
 
-    // If auth check is successful, continue with the request
-    if (authCheckResponse.ok) {
-      const response = NextResponse.next();
-      // Add the current pathname as a custom header if needed
-      response.headers.set("x-pathname", request.nextUrl.pathname);
+    const isAuthenticated = authCheckResponse.ok;
+
+    // If user is authenticated and trying to access auth pages, redirect to dashboard
+    if (isAuthenticated && isAuthPage) {
+      return NextResponse.redirect(new URL("/dashboard", request.url));
+    }
+
+    // If user is not authenticated and trying to access dashboard pages, redirect to login
+    if (!isAuthenticated && isDashboardPage) {
+      const response = NextResponse.redirect(new URL("/login", request.url));
+
+      // Clear cookies
+      response.cookies.set("sessionId", "", {
+        expires: new Date(0),
+        path: "/",
+      });
+
+      response.cookies.set("userRole", "", {
+        expires: new Date(0),
+        path: "/",
+      });
+
       return response;
     }
+
+    // For all other cases, proceed normally
+    const response = NextResponse.next();
+    response.headers.set("x-pathname", pathname);
+    return response;
   } catch (error) {
     console.error("Auth check failed:", error);
+
+    // Only redirect to login if trying to access protected routes
+    if (isDashboardPage) {
+      const response = NextResponse.redirect(new URL("/login", request.url));
+
+      // Clear cookies
+      response.cookies.set("sessionId", "", {
+        expires: new Date(0),
+        path: "/",
+      });
+
+      response.cookies.set("userRole", "", {
+        expires: new Date(0),
+        path: "/",
+      });
+
+      return response;
+    }
+
+    return NextResponse.next();
   }
-
-  // If we're here, either the auth check failed or an error occurred
-  // Clear the authentication cookies and redirect to login
-  const response = NextResponse.redirect(new URL("/login", request.url));
-
-  // Clear cookies by setting them to empty with past expiration
-  response.cookies.set("sessionId", "", {
-    expires: new Date(0),
-    path: "/",
-  });
-
-  response.cookies.set("userRole", "", {
-    expires: new Date(0),
-    path: "/",
-  });
-
-  return response;
 }
 
 export const config = {
   matcher: [
-    // Apply to all routes except public assets, api routes, etc.
-    "/((?!_next/static|_next/image|favicon.ico|api/auth/check).*)",
+    // Match login, register, dashboard routes and root path
+    "/",
+    "/login",
+    "/register",
+    "/dashboard/:path*",
   ],
 };

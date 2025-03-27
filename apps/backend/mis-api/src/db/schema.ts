@@ -109,7 +109,6 @@ export const registerations = pgTable(
     applicationId: integer("application_id").notNull(),
     academicYearId: integer("academic_year_id").notNull(),
     faculty: text().notNull(),
-    academicDegree: departmentType("academic_degree").notNull(),
     departmentId: integer("department_id").notNull(),
   },
   (table) => {
@@ -379,6 +378,29 @@ export const courseResults = pgTable(
       }),
     };
   },
+);
+
+export const theses = pgTable(
+  "theses",
+  {
+    thesisId: serial("thesis_id").primaryKey().notNull(),
+    applicationId: integer("application_id").notNull(),
+    attachmentId: integer("attachment_id").notNull(),
+    title: text().notNull(),
+  },
+  (table) => [
+    foreignKey({
+      columns: [table.applicationId],
+      foreignColumns: [applications.applicationId],
+      name: "theses_application_id_fkey",
+    }),
+    foreignKey({
+      columns: [table.attachmentId],
+      foreignColumns: [attachments.attachmentId],
+      name: "theses_attachment_id_fkey",
+    }),
+    unique("theses_application_id_key").on(table.applicationId),
+  ],
 );
 
 export const departmentCourses = pgTable(

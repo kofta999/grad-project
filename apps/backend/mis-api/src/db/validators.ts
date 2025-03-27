@@ -143,16 +143,22 @@ const applicationDetailsSchema = z.object({
   academicQualification: createSelectSchema(academicQualifications).omit({
     applicationId: true,
   }),
-  emergencyContact: createSelectSchema(emergencyContacts).omit({
-    applicationId: true,
-  }),
+  emergencyContact: createSelectSchema(emergencyContacts)
+    .omit({
+      applicationId: true,
+    })
+    .nullable(),
   registration: createSelectSchema(registerations)
     .omit({
       applicationId: true,
       academicYearId: true,
       departmentId: true,
     })
-    .extend({ academicYear: z.string() }),
+    .extend({
+      academicYear: z.string(),
+      academicDegree: z.string(),
+      academicProgram: z.string(),
+    }),
   attachments: z.array(
     createSelectSchema(attachments).omit({ applicationId: true }),
   ),
@@ -221,7 +227,7 @@ export const applicantRegisteredCoursesResponseSchemaForStudent = z.array(
       courseRegistrationId: true,
     })
     .extend({
-      grade: z.number().nullable(),
+      grade: z.string().nullable(),
     }),
 );
 
@@ -231,4 +237,9 @@ export const getStudentSchema = createSelectSchema(students).omit({
   secAnswer: true,
   createdAt: true,
   updatedAt: true,
+});
+
+export const submitThesisSchema = z.object({
+  title: z.string().min(1),
+  attachmentUrl: z.string().url(),
 });

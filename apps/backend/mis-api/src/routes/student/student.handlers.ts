@@ -15,6 +15,7 @@ import {
   GetStudentDetailsRoute,
 } from "./student.routes";
 import * as HttpStatusCodes from "stoker/http-status-codes";
+import { convertDegreeToGrade } from "@/lib/util";
 
 export const getApplicantRegisteredCourses: AppRouteHandler<
   GetApplicantRegisteredCourses
@@ -62,7 +63,13 @@ export const getApplicantRegisteredCourses: AppRouteHandler<
       ),
     );
 
-  return c.json(courses, HttpStatusCodes.OK);
+  return c.json(
+    courses.map((c) => ({
+      ...c,
+      grade: c.grade ? convertDegreeToGrade(c.grade) : null,
+    })),
+    HttpStatusCodes.OK,
+  );
 };
 
 export const editStudentInfo: AppRouteHandler<EditStudentInfoRoute> = async (

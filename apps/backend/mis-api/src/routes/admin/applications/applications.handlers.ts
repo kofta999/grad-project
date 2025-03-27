@@ -7,6 +7,7 @@ import {
   adminApplicationsList,
   applications,
   attachments,
+  departments,
   emergencyContacts,
   registerations,
 } from "@/db/schema";
@@ -86,6 +87,7 @@ export const getApplicationDetails: AppRouteHandler<
         emergencyContact: removeApplicationId(emergencyContacts),
         registration: removeApplicationId(registerations),
         academicYear: academicYears,
+        department: departments,
       })
       .from(a)
       .innerJoin(addresses, eq(a.applicationId, addresses.applicationId))
@@ -93,7 +95,7 @@ export const getApplicationDetails: AppRouteHandler<
         academicQualifications,
         eq(a.applicationId, academicQualifications.applicationId),
       )
-      .innerJoin(
+      .leftJoin(
         emergencyContacts,
         eq(a.applicationId, emergencyContacts.applicationId),
       )
@@ -104,6 +106,10 @@ export const getApplicationDetails: AppRouteHandler<
       .innerJoin(
         academicYears,
         eq(registerations.academicYearId, academicYears.academicYearId),
+      )
+      .innerJoin(
+        departments,
+        eq(registerations.departmentId, departments.departmentId),
       )
       .where(eq(a.applicationId, applicationId));
 
@@ -119,7 +125,7 @@ export const getApplicationDetails: AppRouteHandler<
       columns: { applicationId: false },
     });
 
-    const { application, academicYear, registration, ...rest } =
+    const { application, academicYear, registration, department, ...rest } =
       applicationList[0];
 
     return {
@@ -127,9 +133,11 @@ export const getApplicationDetails: AppRouteHandler<
       ...rest,
       registration: {
         registerationId: registration.registerationId,
-        academicDegree: registration.academicDegree,
+        academicDegree: department.type,
         faculty: registration.faculty,
+        academicYearId: academicYear.academicYearId,
         academicYear: formatAcademicYear(academicYear),
+        academicProgram: department.title,
       },
       attachments: attachmentsList,
       addresses: addressesList,
