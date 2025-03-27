@@ -14,12 +14,9 @@ import {
   Shield,
   Cake,
 } from "lucide-react";
+import { StudentType } from "@/lib/types";
 
-type Student = Required<
-  InferResponseType<(typeof apiClient.admin.applications)[":id"]["$get"], 200>
->["student"];
-
-export default function StudentDetails({ student }: { student: Student }) {
+export default function StudentDetails({ student }: { student: StudentType }) {
   return (
     <>
       {/* تفاصيل الطالب */}

@@ -71,7 +71,11 @@ const ADMIN_SIDEBAR_ITEMS = [
     path: "/dashboard/applications",
     icon: <LayoutDashboard />,
   },
-  { title: "تسجيل المواد", path: "/dashboard/courses", icon: <ChartLine /> },
+  {
+    title: "تسجيل المواد",
+    path: "/dashboard/courseRegistrations",
+    icon: <ChartLine />,
+  },
   {
     title: "التقارير",
     path: "/dashboard/reports",

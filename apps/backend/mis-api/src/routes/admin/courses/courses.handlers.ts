@@ -45,11 +45,21 @@ export const getAvailableCoursesForApplication: AppRouteHandler<
 > = async (c) => {
   const applicationId = c.req.param("applicationId");
 
-  const availableCourses = await db.execute<typeof courses.$inferSelect>(
+  const availableCourses = await db.execute(
     sql`SELECT * FROM available_courses_for_application(${applicationId})`,
   );
 
-  return c.json(availableCourses.rows, HttpStatusCodes.OK);
+  // Must manually convert as db.execute won't convert the columns
+  return c.json(
+    availableCourses.rows.map((c) => ({
+      courseId: c.course_id,
+      code: c.code,
+      title: c.title,
+      prerequisite: c.prerequisite,
+      totalHours: c.total_hours,
+    })),
+    HttpStatusCodes.OK,
+  );
 };
 
 export const registerCourse: AppRouteHandler<RegisterCourseRoute> = async (

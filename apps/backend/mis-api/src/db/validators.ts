@@ -151,7 +151,6 @@ const applicationDetailsSchema = z.object({
   registration: createSelectSchema(registerations)
     .omit({
       applicationId: true,
-      academicYearId: true,
       departmentId: true,
     })
     .extend({
