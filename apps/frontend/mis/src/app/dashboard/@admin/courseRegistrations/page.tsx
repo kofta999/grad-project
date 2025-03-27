@@ -24,39 +24,24 @@ import {
 import { apiClient } from "@/lib/client";
 import toast from "react-hot-toast";
 import { Button } from "@/components/ui/button";
-import logCourses from "../current-courses/log-courses/page";
+import logCourses from "../_components/register-course-dialog";
 import { X } from "lucide-react";
+import RegisterCourseDialog from "../_components/register-course-dialog";
+import { InferResponseType } from "@repo/mis-api";
+import { StudentType, ApplicationType } from "@/lib/types";
 
-type Course = {
-  course_id: number;
-  code: string;
-  title: string;
-  prerequisite: number;
-  totalHours: number;
-  grade?: string;
-};
+type Course = InferResponseType<
+  (typeof apiClient.admin.courses.available)[":applicationId"]["$get"],
+  200
+>[number];
 
 type CoursesType = Course[];
-
-type StudentType = {
-  fullNameAr?: string;
-  dob?: string;
-  idNumber?: string;
-  phoneNoMain?: string;
-};
-
-type ApplicationType = {
-  registration?: {
-    academicYearId?: number;
-    academicDegree?: string;
-  };
-};
 
 type SemesterType = "first" | "second" | "third";
 
 export default function currentCourses() {
-  const [student, setStudent] = useState<StudentType>({});
-  const [application, setApplication] = useState<ApplicationType>({});
+  const [student, setStudent] = useState<StudentType | null>(null);
+  const [application, setApplication] = useState<ApplicationType | null>(null);
 
   const [applicationId, setApplicationId] = useState<number | null>(null);
   const [academicYear, setAcademicYear] = useState<number | null>(null);
@@ -70,8 +55,8 @@ export default function currentCourses() {
     // Check if id is null or invalid
     if (id === null || id === 0) {
       // Reset states if the search input is cleared
-      setStudent({});
-      setApplication({});
+      setStudent(null);
+      setApplication(null);
       setAcademicYear(null);
       return;
     }
@@ -90,8 +75,8 @@ export default function currentCourses() {
       } else {
         toast.error("مستخدم غير موجود");
 
-        setStudent({});
-        setApplication({});
+        setStudent(null);
+        setApplication(null);
         setAcademicYear(null);
       }
     } catch (error) {
@@ -148,7 +133,7 @@ export default function currentCourses() {
     <Container>
       <SearchBar
         placeholder="ابحث هنا..."
-        onChange={(value) => handleSearch(value)}
+        onChange={(value) => handleSearch(value as string)}
       />
       <Card>
         <CardContent>
@@ -166,12 +151,12 @@ export default function currentCourses() {
               <p className="text-sm">تاريخ الميلاد / {student?.dob}</p>
               <p className="text-sm">الرقم القومي / {student?.idNumber}</p>
               <p className="text-sm">
-                الدرجة العلمية / {application.registration?.academicDegree}
+                الدرجة العلمية / {application?.registration?.academicDegree}
               </p>
               <p className="text-sm">رقم الهاتف / {student?.phoneNoMain}</p>
               <p className="text-sm">
                 العام الاكاديمي للتسجيل /{" "}
-                {application.registration?.academicYear}
+                {application?.registration.academicYear}
               </p>
             </CardGrid>
           </div>
@@ -267,7 +252,12 @@ export default function currentCourses() {
             </div>
 
             {/* Render the logCourses component */}
-            {logCourses(applicationId as number, semester as SemesterType)}
+            {applicationId && semester && (
+              <RegisterCourseDialog
+                applicationId={applicationId}
+                semester={semester}
+              />
+            )}
           </div>
         </div>
       </Container>

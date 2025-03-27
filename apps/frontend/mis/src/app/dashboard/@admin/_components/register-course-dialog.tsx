@@ -1,33 +1,44 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { LucideClipboardList } from "lucide-react";
-import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { apiClient } from "@/lib/client";
 import toast from "react-hot-toast";
+import { InferResponseType } from "@repo/mis-api";
 
-type Course = {
-  code: string;
-  course_id: number;
-  prerequisite: string | null;
-  title: string;
-  total_hours: number;
-  grade?: string;
-};
+type Course = InferResponseType<
+  (typeof apiClient.admin.courses.available)[":applicationId"]["$get"],
+  200
+>[number];
 
 type CoursesType = Course[];
 type SemesterType = "first" | "second" | "third";
 
-export default function logCourses(applicationId: number, semester: SemesterType) {
+export default function RegisterCourseDialog({
+  applicationId,
+  semester,
+}: {
+  applicationId: number;
+  semester: SemesterType;
+}) {
   const [courses, setCourses] = useState<CoursesType>([]);
   const [buttonStatus, setButtonStatus] = useState(true);
 
   const getAvailableCourses = async (applicationId: number) => {
     try {
-      const res = await apiClient.admin.courses.available[":applicationId"].$get({ param: { applicationId: applicationId.toString() } });
+      const res = await apiClient.admin.courses.available[
+        ":applicationId"
+      ].$get({ param: { applicationId: applicationId.toString() } });
 
       if (res.status === 200) {
         const data = await res.json();
+        console.log(data);
         setCourses(data);
       } else {
         toast.error("فشل العثور علي المواد");
@@ -35,20 +46,29 @@ export default function logCourses(applicationId: number, semester: SemesterType
     } catch (error) {
       console.log(error);
     }
-  }
+  };
 
-  const registerCourse = async (e: React.FormEvent, course: Course, semester: SemesterType, applicationId: number) => {
+  const registerCourse = async (
+    e: React.FormEvent,
+    course: Course,
+    semester: SemesterType,
+    applicationId: number,
+  ) => {
     e.preventDefault();
-    const { course_id }: { course_id: number } = course;
-    console.log(applicationId, course_id, semester);
+    const { courseId } = course;
+    console.log(applicationId, courseId, semester);
     try {
       const res = await apiClient.admin.courses.register.$post({
-        json: { applicationId: applicationId, courseId: course_id, semester: semester }
+        json: {
+          applicationId,
+          courseId,
+          semester,
+        },
       });
 
-      if (res.status === 200) {
+      if (res.status === 201) {
         const data = await res.json();
-        // console.log(data);
+        console.log(data);
         toast.success("تم تسجيل المادة بنجاح");
         setButtonStatus(false);
       } else {
@@ -58,19 +78,17 @@ export default function logCourses(applicationId: number, semester: SemesterType
     } catch (error) {
       console.log(error);
     }
-  }
+  };
 
   const removeCourse = async (e: React.FormEvent, course: Course) => {
     e.preventDefault();
-    const { course_id }: { course_id: number } = course;
+    const { courseId } = course;
     try {
       const res = await apiClient.admin.courses[":id"].$delete({
-        param: { id: course_id.toString() },
+        param: { id: courseId.toString() },
       });
 
-      if (res.status === 200) {
-        const data = await res.json();
-        // console.log(data);
+      if (res.status === 204) {
         toast.success("تم حذف المادة بنجاح");
         setButtonStatus(true);
       } else {
@@ -80,7 +98,7 @@ export default function logCourses(applicationId: number, semester: SemesterType
     } catch (error) {
       console.log(error);
     }
-  }
+  };
 
   useEffect(() => {
     if (applicationId) {
@@ -88,14 +106,14 @@ export default function logCourses(applicationId: number, semester: SemesterType
     }
   }, [applicationId]);
 
-
   return (
     <Card className="w-full max-w-2xl">
       <CardContent>
         <LucideClipboardList className="text-mainColor mb-4" />
         <CardHeader>تسجيل المواد الدراسيه</CardHeader>
         <CardDescription>
-          يجب عليك بتسجيل عدد من المواد بما يعادل 9 من الساعات المعتمده وبحد اقصى 19
+          يجب عليك بتسجيل عدد من المواد بما يعادل 9 من الساعات المعتمده وبحد
+          اقصى 19
         </CardDescription>
         <form>
           {courses.map((course) => (
@@ -103,10 +121,25 @@ export default function logCourses(applicationId: number, semester: SemesterType
               <div className="flex items-center justify-between p-3">
                 <div>
                   <p>{course.title}</p>
-                  <CardDescription>{course.total_hours} ساعة معتمدة</CardDescription>
+                  <CardDescription>
+                    {course.totalHours} ساعة معتمدة
+                  </CardDescription>
                 </div>
                 <div>
-                  <Button onClick={buttonStatus ? (e) => registerCourse(e, course, semester, applicationId) : (e) => removeCourse(e, course)} type="submit" className={buttonStatus ? "bg-mainColor hover:bg-blue-600 text-white ml-3" : "bg-red-500 hover:bg-red-600 text-white"}>
+                  <Button
+                    onClick={
+                      buttonStatus
+                        ? (e) =>
+                            registerCourse(e, course, semester, applicationId)
+                        : (e) => removeCourse(e, course)
+                    }
+                    type="submit"
+                    className={
+                      buttonStatus
+                        ? "bg-mainColor hover:bg-blue-600 text-white ml-3"
+                        : "bg-red-500 hover:bg-red-600 text-white"
+                    }
+                  >
                     {buttonStatus ? "تسجيل" : "ازالة"}
                   </Button>
                 </div>
