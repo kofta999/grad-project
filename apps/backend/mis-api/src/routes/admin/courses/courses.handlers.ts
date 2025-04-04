@@ -57,6 +57,7 @@ export const getAvailableCoursesForApplication: AppRouteHandler<
       title: c.title,
       prerequisite: c.prerequisite,
       totalHours: c.total_hours,
+      courseRegistrationId: c.course_registration_id,
     })),
     HttpStatusCodes.OK,
   );
