@@ -189,7 +189,9 @@ export const AvailableCoursesSchema = z.object({
   application_id: z.number().int().positive(),
 });
 
-export const availableCoursesSchema = z.array(createSelectSchema(courses));
+export const availableCoursesSchema = z.array(
+  createSelectSchema(courses).extend({ courseRegistrationId: z.number() }),
+);
 
 export const applicantRegisteredCoursesRequestSchema = z.object({
   applicationId: z.number(),

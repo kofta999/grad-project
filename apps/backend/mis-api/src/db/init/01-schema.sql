@@ -312,7 +312,15 @@ WHERE
 -- 	AND d_c.department_id = r.department_id;
 --
 CREATE
-OR REPLACE function available_courses_for_application (p_application_id INT) returns setof courses AS $$
+OR REPLACE function available_courses_for_application (p_application_id INT)
+RETURNS TABLE (
+    course_id INT,
+    code TEXT,
+    title TEXT,
+    prerequisite INT,
+    total_hours INT,
+    course_registration_id INT
+) AS $$
 BEGIN
     RETURN QUERY
     SELECT
@@ -320,12 +328,17 @@ BEGIN
         c.code,
         c.title,
         c.prerequisite,
-        c.total_hours
+        c.total_hours,
+        c_r.course_registration_id
     FROM
         accepted_applications a
         JOIN registerations r ON r.application_id = a.application_id
         JOIN department_courses d_c ON d_c.department_id = r.department_id
         JOIN courses c ON c.course_id = d_c.course_id
+        LEFT JOIN course_registrations c_r ON
+            c_r.course_id = c.course_id
+            AND c_r.application_id = a.application_id
+            AND c_r.academic_year_id = get_current_academic_year()
     WHERE
         r.academic_year_id = get_current_academic_year()
         AND a.application_id = p_application_id;
