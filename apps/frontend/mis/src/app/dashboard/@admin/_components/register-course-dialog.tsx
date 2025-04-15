@@ -23,12 +23,15 @@ type SemesterType = "first" | "second" | "third";
 export default function RegisterCourseDialog({
   applicationId,
   semester,
+  userRegisteredCourses,
+  setUserRegisteredCourses
 }: {
   applicationId: number;
   semester: SemesterType;
+  userRegisteredCourses: CoursesType;
+  setUserRegisteredCourses: (courses: CoursesType) => void;
 }) {
-  const [courses, setCourses] = useState<CoursesType>([]);
-  const [buttonStatus, setButtonStatus] = useState(true);
+  const [availableCourses, setAvailableCourses] = useState<CoursesType>([]);
 
   const getAvailableCourses = async (applicationId: number) => {
     try {
@@ -38,65 +41,103 @@ export default function RegisterCourseDialog({
 
       if (res.status === 200) {
         const data = await res.json();
-        console.log(data);
-        setCourses(data);
+
+        // Filter out courses that are already registered
+        const registeredCourseIds = userRegisteredCourses
+          .filter(course => course?.grade >= 60)
+          .map(course => course.courseId);
+
+        const filteredCourses = data.filter(course =>
+          !registeredCourseIds.includes(course.courseId)
+        );
+
+        setAvailableCourses(filteredCourses);
       } else {
         toast.error("فشل العثور علي المواد");
       }
     } catch (error) {
-      console.log(error);
+      toast.error("حدث خطأ أثناء جلب المواد المتاحة");
     }
   };
 
-  const registerCourse = async (
-    e: React.FormEvent,
-    course: Course,
-    semester: SemesterType,
-    applicationId: number,
-  ) => {
-    e.preventDefault();
-    const { courseId } = course;
-    console.log(applicationId, courseId, semester);
+  const registerCourse = async (course: Course) => {
     try {
+      const hoursArray = userRegisteredCourses.map(course => course.totalHours);
+      const totalHours = hoursArray.reduce((a, b) => a + b, 0)
+
+      if (totalHours >= 16) {
+        toast.error("تجاوز عدد الساعات المسموح بها");
+        return;
+      }
+
       const res = await apiClient.admin.courses.register.$post({
         json: {
           applicationId,
-          courseId,
+          courseId: course.courseId,
           semester,
         },
       });
 
       if (res.status === 201) {
         const data = await res.json();
-        console.log(data);
+
+        const registeredCourse = {
+          ...course,
+          courseRegistrationId: data.courseRegistrationId,
+          grade: null
+        };
+        console.log(registeredCourse);
+
+        setUserRegisteredCourses(prev => [...prev, registeredCourse]);
+
         toast.success("تم تسجيل المادة بنجاح");
-        setButtonStatus(false);
       } else {
         toast.error("فشل تسجيل المادة");
-        setButtonStatus(true);
       }
     } catch (error) {
-      console.log(error);
+      console.log("Registration error:", error);
+      toast.error("حدث خطأ أثناء تسجيل المادة");
     }
   };
 
-  const removeCourse = async (e: React.FormEvent, course: Course) => {
-    e.preventDefault();
-    const { courseId } = course;
+  const removeCourse = async (course: Course) => {
     try {
-      const res = await apiClient.admin.courses[":id"].$delete({
-        param: { id: courseId.toString() },
-      });
+      if (!course.courseRegistrationId) {
+        toast.error("لا يوجد معرف تسجيل للمادة");
+        return;
+      }
 
-      if (res.status === 204) {
+      const res = await apiClient.admin.courses[":id"].$delete({
+        param: { id: course.courseRegistrationId.toString() },
+      });
+      const status = await res.json()
+
+      if (status === 204) {
+        setUserRegisteredCourses(prev =>
+          prev.filter(rc => rc.courseRegistrationId !== course.courseRegistrationId)
+        );
+        setAvailableCourses(prev => [...prev, { ...course, courseRegistrationId: undefined }]);
+
         toast.success("تم حذف المادة بنجاح");
-        setButtonStatus(true);
+      } else if (status.error === "This course is already passed, mustn't be deleted") {
+        toast.error("لا يمكن حذف المادة المكتملة");
       } else {
         toast.error("فشل حذف المادة");
-        setButtonStatus(false);
       }
     } catch (error) {
-      console.log(error);
+      console.log("Deletion error:", error);
+      toast.error("حدث خطأ أثناء حذف المادة");
+    }
+  };
+
+  const handleCourseAction = (e: React.FormEvent, course: Course) => {
+    e.preventDefault();
+    const isRegistered = userRegisteredCourses.some(rc => rc.courseId === course.courseId);
+
+    if (isRegistered) {
+      removeCourse(course);
+    } else {
+      registerCourse(course);
     }
   };
 
@@ -104,49 +145,48 @@ export default function RegisterCourseDialog({
     if (applicationId) {
       getAvailableCourses(applicationId);
     }
-  }, [applicationId]);
+  }, [applicationId, userRegisteredCourses]);
 
   return (
     <Card className="w-full max-w-2xl">
-      <CardContent>
+      <CardContent className="p-3 md:p-6">
         <LucideClipboardList className="text-mainColor mb-4" />
         <CardHeader>تسجيل المواد الدراسيه</CardHeader>
         <CardDescription>
           يجب عليك بتسجيل عدد من المواد بما يعادل 9 من الساعات المعتمده وبحد
           اقصى 19
         </CardDescription>
-        <form>
-          {courses.map((course) => (
-            <Card key={course.title}>
-              <div className="flex items-center justify-between p-3">
-                <div>
-                  <p>{course.title}</p>
-                  <CardDescription>
-                    {course.totalHours} ساعة معتمدة
-                  </CardDescription>
+        <div>
+          {availableCourses.map((course) => {
+            const isRegistered = userRegisteredCourses.some(rc => rc.courseId === course.courseId);
+
+            return (
+              <Card key={course.courseId} className="mt-3 md:p-6">
+                <div className="flex justify-between flex-col md:flex-row p-3 mx-3 md:mx-0">
+                  <div>
+                    <p>{course.title}</p>
+                    <CardDescription className="my-3 md:m-0">
+                      {course.totalHours} ساعة معتمدة
+                    </CardDescription>
+                  </div>
+                  <div>
+                    <Button
+                      onClick={(e) => handleCourseAction(e, course)}
+                      type="submit"
+                      className={
+                        isRegistered
+                          ? "bg-red-500 hover:bg-red-600 text-white w-[100px]"
+                          : "bg-mainColor hover:bg-blue-600 text-white w-[100px]"
+                      }
+                    >
+                      {isRegistered ? "ازالة" : "تسجيل"}
+                    </Button>
+                  </div>
                 </div>
-                <div>
-                  <Button
-                    onClick={
-                      buttonStatus
-                        ? (e) =>
-                            registerCourse(e, course, semester, applicationId)
-                        : (e) => removeCourse(e, course)
-                    }
-                    type="submit"
-                    className={
-                      buttonStatus
-                        ? "bg-mainColor hover:bg-blue-600 text-white ml-3"
-                        : "bg-red-500 hover:bg-red-600 text-white"
-                    }
-                  >
-                    {buttonStatus ? "تسجيل" : "ازالة"}
-                  </Button>
-                </div>
-              </div>
-            </Card>
-          ))}
-        </form>
+              </Card>
+            );
+          })}
+        </div>
       </CardContent>
     </Card>
   );

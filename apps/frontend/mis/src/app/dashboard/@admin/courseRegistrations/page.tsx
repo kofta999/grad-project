@@ -24,7 +24,6 @@ import {
 import { apiClient } from "@/lib/client";
 import toast from "react-hot-toast";
 import { Button } from "@/components/ui/button";
-import logCourses from "../_components/register-course-dialog";
 import { X } from "lucide-react";
 import RegisterCourseDialog from "../_components/register-course-dialog";
 import { InferResponseType } from "@repo/mis-api";
@@ -239,7 +238,7 @@ export default function currentCourses() {
             }`}
         >
           {/* Dialog Content */}
-          <div className="dialog-content bg-white p-6 rounded-lg w-full max-w-2xl h-[90%] overflow-y-scroll my-6">
+          <div className="dialog-content bg-white p-3 md:p-6 rounded-lg w-full max-w-2xl h-[90%] overflow-y-scroll m-6 md:m-0">
             {/* Dialog Header */}
             <div className="dialog-header flex justify-between items-center mb-4">
               <button
@@ -251,10 +250,12 @@ export default function currentCourses() {
             </div>
 
             {/* Render the logCourses component */}
-            {applicationId && semester && (
+            {applicationId && semester && courses.length > 0 && (
               <RegisterCourseDialog
                 applicationId={applicationId}
                 semester={semester}
+                userRegisteredCourses={courses}
+                setUserRegisteredCourses={setCourses}
               />
             )}
           </div>
