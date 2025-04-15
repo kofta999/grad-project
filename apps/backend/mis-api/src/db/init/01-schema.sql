@@ -232,14 +232,14 @@ SELECT
     r.department_id,
     COALESCE(sum(
         CASE
-            WHEN c_res.grade >= 50 THEN c.total_hours
+            WHEN c_res.grade >= 60 THEN c.total_hours
             ELSE 0
         END
     ), 0) AS total_completed_hours,
     COALESCE(sum(
         CASE
             WHEN d_c.is_compulsory = TRUE
-            AND c_res.grade >= 50 THEN c.total_hours
+            AND c_res.grade >= 60 THEN c.total_hours
             ELSE 0
         END
     ), 0) AS completed_compulsory_hours
@@ -268,6 +268,7 @@ SELECT
 	c.total_hours,
 	c_r.academic_year_id,
 	c_r.semester,
+	c_res.grade,
 	c_r.application_id,
 	c_r.course_registration_id
 FROM
@@ -275,6 +276,7 @@ FROM
 	JOIN department_courses d_c ON d_c.course_id = c_r.course_id
 	JOIN courses c ON c.course_id = c_r.course_id
 	JOIN registerations r ON r.application_id = c_r.application_id
+	LEFT JOIN course_results c_res ON c_res.course_registration_id = c_r.course_registration_id
 WHERE
 	-- c_r.academic_year_id = get_current_academic_year ()
 	d_c.department_id = r.department_id;
@@ -311,8 +313,7 @@ WHERE
 -- 	c_r.academic_year_id = get_current_academic_year ()
 -- 	AND d_c.department_id = r.department_id;
 --
-CREATE
-OR REPLACE function available_courses_for_application (p_application_id INT)
+CREATE OR REPLACE function available_courses_for_application(p_application_id INT)
 RETURNS TABLE (
     course_id INT,
     code TEXT,
@@ -339,9 +340,12 @@ BEGIN
             c_r.course_id = c.course_id
             AND c_r.application_id = a.application_id
             AND c_r.academic_year_id = get_current_academic_year()
+        LEFT JOIN course_results c_res ON
+            c_res.course_registration_id = c_r.course_registration_id
     WHERE
         r.academic_year_id = get_current_academic_year()
-        AND a.application_id = p_application_id;
+        AND a.application_id = p_application_id
+        AND c_res.course_registration_id IS NULL;  -- Only include rows without a grade entry
 END;
 $$ language plpgsql;
 
@@ -563,7 +567,7 @@ BEGIN
             JOIN course_results crs ON cr.course_registration_id = crs.course_registration_id
             WHERE cr.application_id = NEW.application_id
               AND cr.course_id = v_prerequisite
-              AND crs.grade >= 50 -- Assuming a passing grade is 50
+              AND crs.grade >= 60 -- Assuming a passing grade is 60
         ) THEN
 			-- TODO: Add which prerequisite course is it
             RAISE EXCEPTION 'Prerequisite course is not completed';
@@ -607,10 +611,10 @@ BEGIN
 		JOIN course_registrations USING (course_registration_id)
 		WHERE course_registrations.course_id = NEW.course_id
 		AND course_registrations.application_id = NEW.application_id
-		-- Assume passing grade is 50
-		AND grade >= 50
+		-- Assume passing grade is 60
+		AND grade >= 60
 	) THEN
-	   RAISE WARNING 'Course is already passed before';
+	   RAISE EXCEPTION 'Course is already passed before';
 	END IF;
 
 	-- Check if the course is registered before or not
@@ -620,7 +624,7 @@ BEGIN
 		WHERE course_registrations.course_id = NEW.course_id
 		AND course_registrations.application_id = NEW.application_id
 	) THEN
-	   RAISE WARNING 'Course is already registered in a previous semester';
+	   RAISE EXCEPTION 'Course is already registered in a previous semester';
 	END IF;
 
 	NEW.academic_year_id = get_current_academic_year();
