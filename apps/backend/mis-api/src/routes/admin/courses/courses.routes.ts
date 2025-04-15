@@ -7,9 +7,9 @@ import {
 import { isAuthenticated } from "@/middlewares/isAuthenticated";
 import { requireRole } from "@/middlewares/requireRole";
 import { createRoute, z } from "@hono/zod-openapi";
-import { jsonContent, jsonContentRequired } from "stoker/openapi/helpers";
 import * as HttpStatusCodes from "stoker/http-status-codes";
-import { createErrorSchema, IdParamsSchema } from "stoker/openapi/schemas";
+import { jsonContent, jsonContentRequired } from "stoker/openapi/helpers";
+import { IdParamsSchema, createErrorSchema } from "stoker/openapi/schemas";
 
 const tags = ["Admin"];
 

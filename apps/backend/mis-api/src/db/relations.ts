@@ -1,19 +1,19 @@
 import { relations } from "drizzle-orm/relations";
 import {
-  students,
-  applications,
-  registerations,
-  academicYears,
-  departments,
-  attachments,
-  addresses,
-  emergencyContacts,
   academicQualifications,
-  courses,
+  academicYears,
+  addresses,
+  applications,
+  attachments,
   courseRegistrations,
   courseResults,
-  theses,
+  courses,
   departmentCourses,
+  departments,
+  emergencyContacts,
+  registerations,
+  students,
+  theses,
 } from "./schema";
 
 export const applicationsRelations = relations(

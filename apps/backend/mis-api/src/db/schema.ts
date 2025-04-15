@@ -1,21 +1,21 @@
+import { sql } from "drizzle-orm";
 import {
-  pgTable,
-  unique,
-  serial,
-  text,
+  bigint,
   boolean,
   date,
-  timestamp,
-  index,
   foreignKey,
+  index,
   integer,
-  primaryKey,
-  pgView,
-  bigint,
   pgEnum,
+  pgTable,
+  pgView,
+  primaryKey,
   real,
+  serial,
+  text,
+  timestamp,
+  unique,
 } from "drizzle-orm/pg-core";
-import { sql } from "drizzle-orm";
 
 export const addressType = pgEnum("address_type", ["permanent", "current"]);
 export const departmentType = pgEnum("department_type", [
@@ -465,9 +465,10 @@ export const detailedCourseRegistrationsView = pgView(
     totalHours: integer("total_hours").notNull(),
     academicYearId: integer("academic_year_id").notNull(),
     semester: semesterType().notNull(),
+    grade: integer().notNull(),
     applicationId: integer("application_id").notNull(),
     courseRegistrationId: integer("course_registration_id").notNull(),
   },
 ).as(
-  sql`SELECT c.course_id, c.code, c.title, c.prerequisite, c.total_hours, c_r.academic_year_id, c_r.semester, c_r.application_id, c_r.course_registration_id FROM course_registrations c_r JOIN department_courses d_c ON d_c.course_id = c_r.course_id JOIN courses c ON c.course_id = c_r.course_id JOIN registerations r ON r.application_id = c_r.application_id WHERE d_c.department_id = r.department_id`,
+  sql`SELECT c.course_id, c.code, c.title, c.prerequisite, c.total_hours, c_r.academic_year_id, c_r.semester, c_res.grade, c_r.application_id, c_r.course_registration_id FROM course_registrations c_r JOIN department_courses d_c ON d_c.course_id = c_r.course_id JOIN courses c ON c.course_id = c_r.course_id JOIN registerations r ON r.application_id = c_r.application_id LEFT JOIN course_results c_res ON c_res.course_registration_id = c_r.course_registration_id WHERE d_c.department_id = r.department_id`,
 );

@@ -1,8 +1,10 @@
+import { ROLES } from "@/lib/constants";
 import {
   createInsertSchema,
   createSelectSchema,
   createUpdateSchema,
 } from "drizzle-zod";
+import { z } from "zod";
 import {
   academicQualifications,
   academicYears,
@@ -10,14 +12,12 @@ import {
   adminApplicationsList,
   applications,
   attachments,
+  courses,
   detailedCourseRegistrationsView,
   emergencyContacts,
   registerations,
   students,
-  courses,
 } from "./schema";
-import { z } from "zod";
-import { ROLES } from "@/lib/constants";
 
 // Won't use drizzle magic here because it's not worth omitting all fields for only email and pass
 export const loginSchema = z.object({
@@ -51,7 +51,7 @@ export const registerSchema = createInsertSchema(students, {
   phoneNoSec: z.string().optional(),
   fax: z.string().optional(),
   idType: z.enum(["national_id", "passport"]),
-  idIssuanceDate: z.string().refine((date) => !isNaN(Date.parse(date)), {
+  idIssuanceDate: z.string().refine((date) => !Number.isNaN(Date.parse(date)), {
     message: "Invalid date for ID issuance",
   }),
   idNumber: z.string().min(1, "ID number is required"),
@@ -74,7 +74,7 @@ export const registerSchema = createInsertSchema(students, {
   secQuestion: z.string().min(1, "Security question is required"),
   secAnswer: z.string().min(1, "Security answer is required"),
   militaryStatus: z.string().min(1, "Military status is required"),
-  dob: z.string().refine((date) => !isNaN(Date.parse(date)), {
+  dob: z.string().refine((date) => !Number.isNaN(Date.parse(date)), {
     message: "Invalid date of birth",
   }),
 })

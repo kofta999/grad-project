@@ -1,19 +1,19 @@
-import { AppRouteHandler } from "@/lib/types";
-import * as HttpStatusCodes from "stoker/http-status-codes";
-import {
-  DeleteCourseRoute,
-  GetApplicantRegisteredCoursesRoute,
-  GetAvailableCoursesRoute,
-  RegisterCourseRoute,
-} from "./courses.routes";
 import db from "@/db";
 import {
   courseRegistrations,
   courses,
   detailedCourseRegistrationsView as dcv,
 } from "@/db/schema";
+import type { AppRouteHandler } from "@/lib/types";
 import { and, eq } from "drizzle-orm";
 import { sql } from "drizzle-orm";
+import * as HttpStatusCodes from "stoker/http-status-codes";
+import type {
+  DeleteCourseRoute,
+  GetApplicantRegisteredCoursesRoute,
+  GetAvailableCoursesRoute,
+  RegisterCourseRoute,
+} from "./courses.routes";
 
 export const getApplicantRegisteredCourses: AppRouteHandler<
   GetApplicantRegisteredCoursesRoute
@@ -27,14 +27,15 @@ export const getApplicantRegisteredCourses: AppRouteHandler<
       title: dcv.title,
       prerequisite: dcv.prerequisite,
       totalHours: dcv.totalHours,
+      grade: dcv.grade,
     })
     .from(dcv)
     .where(
       and(
         eq(dcv.academicYearId, academicYearId),
         eq(dcv.semester, semester),
-        eq(dcv.applicationId, applicationId)
-      )
+        eq(dcv.applicationId, applicationId),
+      ),
     );
 
   return c.json(courses, HttpStatusCodes.OK);
@@ -46,7 +47,7 @@ export const getAvailableCoursesForApplication: AppRouteHandler<
   const applicationId = c.req.param("applicationId");
 
   const availableCourses = await db.execute(
-    sql`SELECT * FROM available_courses_for_application(${applicationId})`
+    sql`SELECT * FROM available_courses_for_application(${applicationId})`,
   );
 
   // Must manually convert as db.execute won't convert the columns
@@ -59,12 +60,12 @@ export const getAvailableCoursesForApplication: AppRouteHandler<
       totalHours: c.total_hours,
       courseRegistrationId: c.course_registration_id,
     })),
-    HttpStatusCodes.OK
+    HttpStatusCodes.OK,
   );
 };
 
 export const registerCourse: AppRouteHandler<RegisterCourseRoute> = async (
-  c
+  c,
 ) => {
   const { applicationId, courseId, semester } = c.req.valid("json");
   try {
@@ -84,7 +85,7 @@ export const registerCourse: AppRouteHandler<RegisterCourseRoute> = async (
         message: "Course registered successfully",
         courseRegistrationId: registeredCourse[0].courseRegistrationId,
       },
-      HttpStatusCodes.CREATED
+      HttpStatusCodes.CREATED,
     );
   } catch (error) {
     console.error("Error registering course:", error);
@@ -104,7 +105,7 @@ export const deleteCourse: AppRouteHandler<DeleteCourseRoute> = async (c) => {
     return c.json(HttpStatusCodes.NO_CONTENT);
   } catch (error) {
     console.error("Error deleting course:", error);
-    let errorMessage;
+    let errorMessage: string;
     // @ts-ignore
     if (error.code && error.code === "23503") {
       errorMessage = "This course is already passed, mustn't be deleted";
