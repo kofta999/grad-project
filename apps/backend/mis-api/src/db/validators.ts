@@ -204,7 +204,6 @@ export const applicantRegisteredCoursesResponseSchema = z.array(
     academicYearId: true,
     applicationId: true,
     semester: true,
-    courseRegistrationId: true,
   }),
 );
 

@@ -28,6 +28,7 @@ export const getApplicantRegisteredCourses: AppRouteHandler<
       prerequisite: dcv.prerequisite,
       totalHours: dcv.totalHours,
       grade: dcv.grade,
+      courseRegistrationId: dcv.courseRegistrationId,
     })
     .from(dcv)
     .where(
