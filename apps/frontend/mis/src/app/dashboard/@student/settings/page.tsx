@@ -19,9 +19,7 @@ export default function Settings() {
             <CardHeader>تفاصيل الحساب</CardHeader>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <CardContent className="rounded-lg border shadow-sm p-0">
-                <CardHeader className="border-b py-3 pr-4 mb-0">
-                  التفاصيل الشخصية
-                </CardHeader>
+                <CardHeader className="border-b py-3 pr-4 mb-0">التفاصيل الشخصية</CardHeader>
                 <div className="grid grid-cols-1 gap-4 p-4">
                   <div className="space-y-2">
                     <Label>الاسم بالكامل</Label>
@@ -43,9 +41,7 @@ export default function Settings() {
                 </div>
               </CardContent>
               <CardContent className="rounded-lg border shadow-sm p-0">
-                <CardHeader className="border-b py-3 pr-4 mb-0">
-                  التفاصيل الدراسية
-                </CardHeader>
+                <CardHeader className="border-b py-3 pr-4 mb-0">التفاصيل الدراسية</CardHeader>
                 <div className="grid grid-cols-1 gap-4 p-4">
                   <div className="space-y-2">
                     <Label>الكلية</Label>

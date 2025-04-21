@@ -52,9 +52,7 @@ export default function Step1({ formik }: Step1Props) {
                 </Select>
                 {formik.touched.permanentAddress?.country &&
                   formik.errors.permanentAddress?.country && (
-                    <p className="text-red-500 text-sm">
-                      {formik.errors.permanentAddress.country}
-                    </p>
+                    <p className="text-red-500 text-sm">{formik.errors.permanentAddress.country}</p>
                   )}
               </div>
 
@@ -78,12 +76,9 @@ export default function Step1({ formik }: Step1Props) {
                     <SelectItem value="region3">المنطقة 3</SelectItem>
                   </SelectContent>
                 </Select>
-                {formik.touched.permanentAddress?.city &&
-                  formik.errors.permanentAddress?.city && (
-                    <p className="text-red-500 text-sm">
-                      {formik.errors.permanentAddress.city}
-                    </p>
-                  )}
+                {formik.touched.permanentAddress?.city && formik.errors.permanentAddress?.city && (
+                  <p className="text-red-500 text-sm">{formik.errors.permanentAddress.city}</p>
+                )}
               </div>
 
               {/* Full Address */}
@@ -135,9 +130,7 @@ export default function Step1({ formik }: Step1Props) {
                 </Select>
                 {formik.touched.currentAddress?.country &&
                   formik.errors.currentAddress?.country && (
-                    <p className="text-red-500 text-sm">
-                      {formik.errors.currentAddress.country}
-                    </p>
+                    <p className="text-red-500 text-sm">{formik.errors.currentAddress.country}</p>
                   )}
               </div>
 
@@ -148,9 +141,7 @@ export default function Step1({ formik }: Step1Props) {
                 </Label>
                 <Select
                   value={formik.values.currentAddress.city}
-                  onValueChange={(value: any) =>
-                    formik.setFieldValue("currentAddress.city", value)
-                  }
+                  onValueChange={(value: any) => formik.setFieldValue("currentAddress.city", value)}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="اختر المدينة" />
@@ -161,12 +152,9 @@ export default function Step1({ formik }: Step1Props) {
                     <SelectItem value="region3">المنطقة 3</SelectItem>
                   </SelectContent>
                 </Select>
-                {formik.touched.currentAddress?.city &&
-                  formik.errors.currentAddress?.city && (
-                    <p className="text-red-500 text-sm">
-                      {formik.errors.currentAddress.city}
-                    </p>
-                  )}
+                {formik.touched.currentAddress?.city && formik.errors.currentAddress?.city && (
+                  <p className="text-red-500 text-sm">{formik.errors.currentAddress.city}</p>
+                )}
               </div>
 
               {/* Full Address */}
@@ -205,12 +193,9 @@ export default function Step1({ formik }: Step1Props) {
                   onChange={formik.handleChange}
                   icon={<User className="h-4 w-4" />}
                 />
-                {formik.touched.emergencyContact?.name &&
-                  formik.errors.emergencyContact?.name && (
-                    <p className="text-red-500 text-sm">
-                      {formik.errors.emergencyContact.name}
-                    </p>
-                  )}
+                {formik.touched.emergencyContact?.name && formik.errors.emergencyContact?.name && (
+                  <p className="text-red-500 text-sm">{formik.errors.emergencyContact.name}</p>
+                )}
               </div>
 
               {/* Address */}
@@ -259,9 +244,7 @@ export default function Step1({ formik }: Step1Props) {
                 />
                 {formik.touched.emergencyContact?.email &&
                   formik.errors.emergencyContact?.email && (
-                    <p className="text-red-500 text-sm">
-                      {formik.errors.emergencyContact?.email}
-                    </p>
+                    <p className="text-red-500 text-sm">{formik.errors.emergencyContact?.email}</p>
                   )}
               </div>
             </CardGrid>
@@ -270,10 +253,7 @@ export default function Step1({ formik }: Step1Props) {
 
         {/* Submit Button */}
         <div className="flex justify-center items-center">
-          <Button
-            type="submit"
-            className="px-8 py-2 bg-mainColor hover:bg-blue-700 text-white"
-          >
+          <Button type="submit" className="px-8 py-2 bg-mainColor hover:bg-blue-700 text-white">
             التالي
           </Button>
         </div>

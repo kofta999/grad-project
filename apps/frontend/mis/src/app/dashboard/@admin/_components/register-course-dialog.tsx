@@ -1,12 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { LucideClipboardList } from "lucide-react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { apiClient } from "@/lib/client";
 import toast from "react-hot-toast";
@@ -17,10 +12,7 @@ type AvailableCourse = InferResponseType<
   200
 >[number];
 
-type RegisteredCourse = InferResponseType<
-  typeof apiClient.admin.courses.list.$post,
-  200
->[number];
+type RegisteredCourse = InferResponseType<typeof apiClient.admin.courses.list.$post, 200>[number];
 
 type SemesterType = "first" | "second" | "third";
 
@@ -35,15 +27,13 @@ export default function RegisterCourseDialog({
   userRegisteredCourses: RegisteredCourse[];
   setUserRegisteredCourses: (courses: RegisteredCourse[]) => void;
 }) {
-  const [availableCourses, setAvailableCourses] = useState<AvailableCourse[]>(
-    [],
-  );
+  const [availableCourses, setAvailableCourses] = useState<AvailableCourse[]>([]);
 
   const getAvailableCourses = async (applicationId: number) => {
     try {
-      const res = await apiClient.admin.courses.available[
-        ":applicationId"
-      ].$get({ param: { applicationId: applicationId.toString() } });
+      const res = await apiClient.admin.courses.available[":applicationId"].$get({
+        param: { applicationId: applicationId.toString() },
+      });
 
       if (res.status === 200) {
         const data = await res.json();
@@ -54,7 +44,7 @@ export default function RegisterCourseDialog({
           .map((course) => course.courseId);
 
         const filteredCourses = data.filter(
-          (course) => !registeredCourseIds.includes(course.courseId),
+          (course) => !registeredCourseIds.includes(course.courseId)
         );
 
         setAvailableCourses(filteredCourses);
@@ -68,9 +58,7 @@ export default function RegisterCourseDialog({
 
   const registerCourse = async (course: AvailableCourse) => {
     try {
-      const hoursArray = userRegisteredCourses.map(
-        (course) => course.totalHours,
-      );
+      const hoursArray = userRegisteredCourses.map((course) => course.totalHours);
       const totalHours = hoursArray.reduce((a, b) => a + b, 0);
 
       if (totalHours >= 16) {
@@ -121,22 +109,15 @@ export default function RegisterCourseDialog({
 
       if (status === 204) {
         setUserRegisteredCourses((prev) =>
-          prev.filter(
-            (rc) => rc.courseRegistrationId !== course.courseRegistrationId,
-          ),
+          prev.filter((rc) => rc.courseRegistrationId !== course.courseRegistrationId)
         );
 
-        setAvailableCourses((prev) => [
-          ...prev,
-          { ...course, courseRegistrationId: null },
-        ]);
+        setAvailableCourses((prev) => [...prev, { ...course, courseRegistrationId: null }]);
 
         await getAvailableCourses(applicationId);
 
         toast.success("تم حذف المادة بنجاح");
-      } else if (
-        status.error === "This course is already passed, mustn't be deleted"
-      ) {
+      } else if (status.error === "This course is already passed, mustn't be deleted") {
         toast.error("لا يمكن حذف المادة المكتملة");
       } else {
         toast.error("فشل حذف المادة");
@@ -149,9 +130,7 @@ export default function RegisterCourseDialog({
 
   const handleCourseAction = async (e: React.FormEvent, course: AvailableCourse) => {
     e.preventDefault();
-    const isRegistered = userRegisteredCourses.some(
-      (rc) => rc.courseId === course.courseId,
-    );
+    const isRegistered = userRegisteredCourses.some((rc) => rc.courseId === course.courseId);
 
     if (isRegistered) {
       removeCourse(course);
@@ -159,7 +138,6 @@ export default function RegisterCourseDialog({
       registerCourse(course);
     }
   };
-
 
   useEffect(() => {
     if (applicationId) {
@@ -173,13 +151,12 @@ export default function RegisterCourseDialog({
         <LucideClipboardList className="text-mainColor mb-4" />
         <CardHeader>تسجيل المواد الدراسيه</CardHeader>
         <CardDescription>
-          يجب عليك بتسجيل عدد من المواد بما يعادل 9 من الساعات المعتمده وبحد
-          اقصى 19
+          يجب عليك بتسجيل عدد من المواد بما يعادل 9 من الساعات المعتمده وبحد اقصى 19
         </CardDescription>
         <div>
           {availableCourses.map((course) => {
             const isRegistered = userRegisteredCourses.some(
-              (rc) => rc.courseId === course.courseId,
+              (rc) => rc.courseId === course.courseId
             );
 
             return (

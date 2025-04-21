@@ -4,10 +4,7 @@ import * as HttpStatusCodes from "stoker/http-status-codes";
 import { requireRole } from "@/middlewares/requireRole";
 import { createRoute } from "@hono/zod-openapi";
 import { jsonContent, jsonContentRequired } from "stoker/openapi/helpers";
-import {
-  createErrorSchema,
-  createMessageObjectSchema,
-} from "stoker/openapi/schemas";
+import { createErrorSchema, createMessageObjectSchema } from "stoker/openapi/schemas";
 import {
   applicantRegisteredCoursesRequestSchemaForStudent,
   applicantRegisteredCoursesResponseSchemaForStudent,
@@ -29,15 +26,15 @@ export const getApplicantRegisteredCourses = createRoute({
   responses: {
     [HttpStatusCodes.OK]: jsonContent(
       applicantRegisteredCoursesResponseSchemaForStudent,
-      "A list of all applicant's registered courses",
+      "A list of all applicant's registered courses"
     ),
     [HttpStatusCodes.NOT_FOUND]: jsonContent(
       createMessageObjectSchema("Application not found"),
-      "Application not found",
+      "Application not found"
     ),
     [HttpStatusCodes.UNAUTHORIZED]: jsonContent(
       createMessageObjectSchema("Unauthorized"),
-      "Unauthorized",
+      "Unauthorized"
     ),
   },
 });
@@ -48,28 +45,25 @@ export const editStudentInfo = createRoute({
   middleware: [isAuthenticated, requireRole("student")],
   tags,
   request: {
-    body: jsonContentRequired(
-      editStudentInfoSchema,
-      "Updated student information",
-    ),
+    body: jsonContentRequired(editStudentInfoSchema, "Updated student information"),
   },
   responses: {
     [HttpStatusCodes.OK]: jsonContent(
       createMessageObjectSchema("Student info updated successfully"),
-      "Success response",
+      "Success response"
     ),
     [HttpStatusCodes.NOT_FOUND]: jsonContent(
       createMessageObjectSchema("Student not found"),
-      "Student not found",
+      "Student not found"
     ),
     [HttpStatusCodes.UNAUTHORIZED]: jsonContent(
       createMessageObjectSchema("Unauthorized"),
-      "Unauthorized",
+      "Unauthorized"
     ),
     // I don't know if we will use this or no, but i noticed that is common in the nodejs community websites :D
     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
       createErrorSchema(editStudentInfoSchema),
-      "Validation error",
+      "Validation error"
     ),
   },
 });
@@ -82,15 +76,15 @@ export const getRegisteredAcademicYears = createRoute({
   responses: {
     [HttpStatusCodes.OK]: jsonContent(
       currentAcademicYearsSchema,
-      "An array of available academic years",
+      "An array of available academic years"
     ),
     [HttpStatusCodes.NOT_FOUND]: jsonContent(
       createMessageObjectSchema("Application not found"),
-      "Application not found",
+      "Application not found"
     ),
     [HttpStatusCodes.UNAUTHORIZED]: jsonContent(
       createMessageObjectSchema("Unauthorized"),
-      "Unauthorized",
+      "Unauthorized"
     ),
   },
 });
@@ -104,17 +98,16 @@ export const getStudentDetails = createRoute({
     [HttpStatusCodes.OK]: jsonContent(studentDetailsSchema, "Student details"),
     [HttpStatusCodes.NOT_FOUND]: jsonContent(
       createMessageObjectSchema("Student not found"),
-      "Student not found",
+      "Student not found"
     ),
     [HttpStatusCodes.UNAUTHORIZED]: jsonContent(
       createMessageObjectSchema("Unauthorized"),
-      "Unauthorized",
+      "Unauthorized"
     ),
   },
 });
 
-export type GetApplicantRegisteredCourses =
-  typeof getApplicantRegisteredCourses;
+export type GetApplicantRegisteredCourses = typeof getApplicantRegisteredCourses;
 
 export type EditStudentInfoRoute = typeof editStudentInfo;
 

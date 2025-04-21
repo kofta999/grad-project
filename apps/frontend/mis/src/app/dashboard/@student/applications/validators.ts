@@ -30,8 +30,7 @@ export const step1Schema = Yup.object().shape({
           schema
             .matches(/^\d+$/, "يجب أن يحتوي رقم الهاتف على أرقام فقط")
             .required("رقم الهاتف مطلوب"),
-        otherwise: (schema) =>
-          schema.matches(/^\d+$/, "يجب أن يحتوي رقم الهاتف على أرقام فقط"),
+        otherwise: (schema) => schema.matches(/^\d+$/, "يجب أن يحتوي رقم الهاتف على أرقام فقط"),
       }),
       email: Yup.string()
         .email("البريد الإلكتروني غير صالح")
@@ -55,7 +54,7 @@ export const step1Schema = Yup.object().shape({
       ["phoneNumber", "email"],
       ["phoneNumber", "address"],
       ["email", "address"],
-    ],
+    ]
   ),
 });
 
@@ -98,6 +97,6 @@ export const step3Schema = Yup.object().shape({
     Yup.object({
       type: Yup.string().required(),
       attachmentUrl: Yup.string().required(),
-    }),
+    })
   ).required(),
 });

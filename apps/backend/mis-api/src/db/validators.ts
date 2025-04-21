@@ -1,9 +1,5 @@
 import { ROLES } from "@/lib/constants";
-import {
-  createInsertSchema,
-  createSelectSchema,
-  createUpdateSchema,
-} from "drizzle-zod";
+import { createInsertSchema, createSelectSchema, createUpdateSchema } from "drizzle-zod";
 import { z } from "zod";
 import {
   academicQualifications,
@@ -37,7 +33,7 @@ export const loginSchema = z.object({
 export const currentAcademicYearsSchema = z.array(
   createSelectSchema(academicYears)
     .omit({ endDate: true, startDate: true })
-    .extend({ year: z.string() }),
+    .extend({ year: z.string() })
 );
 
 export const registerSchema = createInsertSchema(students, {
@@ -57,20 +53,11 @@ export const registerSchema = createInsertSchema(students, {
   idNumber: z.string().min(1, "ID number is required"),
   idAuthority: z.string().min(1, "ID authority is required"),
   martialStatus: z
-    .enum([
-      "single",
-      "married",
-      "married_with_dependents",
-      "divorced",
-      "widow",
-      "other",
-    ])
+    .enum(["single", "married", "married_with_dependents", "divorced", "widow", "other"])
     .optional(),
   isWorking: z.boolean(),
   jobType: z.string().optional(),
-  hashedPassword: z
-    .string()
-    .min(8, "Password must be at least 8 characters long"),
+  hashedPassword: z.string().min(8, "Password must be at least 8 characters long"),
   secQuestion: z.string().min(1, "Security question is required"),
   secAnswer: z.string().min(1, "Security answer is required"),
   militaryStatus: z.string().min(1, "Military status is required"),
@@ -84,9 +71,7 @@ export const registerSchema = createInsertSchema(students, {
     updatedAt: true,
   })
   .extend({
-    confirmPassword: z
-      .string()
-      .min(8, "Password must be at least 8 characters long"),
+    confirmPassword: z.string().min(8, "Password must be at least 8 characters long"),
   });
 
 export const applicationSchema = z.object({
@@ -119,7 +104,7 @@ export const attachmentsSchema = z.object({
     createInsertSchema(attachments).omit({
       attachmentId: true,
       applicationId: true,
-    }),
+    })
   ),
 });
 
@@ -128,9 +113,7 @@ export const acceptApplicationSchema = createSelectSchema(applications).omit({
   isAdminAccepted: true,
 });
 
-export const adminApplicationsListSchema = z.array(
-  createSelectSchema(adminApplicationsList),
-);
+export const adminApplicationsListSchema = z.array(createSelectSchema(adminApplicationsList));
 
 const applicationDetailsSchema = z.object({
   applicationId: z.number(),
@@ -138,7 +121,7 @@ const applicationDetailsSchema = z.object({
   addresses: z.array(
     createSelectSchema(addresses).omit({
       applicationId: true,
-    }),
+    })
   ),
   academicQualification: createSelectSchema(academicQualifications).omit({
     applicationId: true,
@@ -158,9 +141,7 @@ const applicationDetailsSchema = z.object({
       academicDegree: z.string(),
       academicProgram: z.string(),
     }),
-  attachments: z.array(
-    createSelectSchema(attachments).omit({ applicationId: true }),
-  ),
+  attachments: z.array(createSelectSchema(attachments).omit({ applicationId: true })),
 });
 
 export const adminApplicationDetailsSchema = z.object({
@@ -190,7 +171,7 @@ export const AvailableCoursesSchema = z.object({
 });
 
 export const availableCoursesSchema = z.array(
-  createSelectSchema(courses).extend({ courseRegistrationId: z.number() }),
+  createSelectSchema(courses).extend({ courseRegistrationId: z.number() })
 );
 
 export const applicantRegisteredCoursesRequestSchema = z.object({
@@ -204,7 +185,7 @@ export const applicantRegisteredCoursesResponseSchema = z.array(
     academicYearId: true,
     applicationId: true,
     semester: true,
-  }),
+  })
 );
 
 export const registerCourseSchema = z.object({
@@ -228,7 +209,7 @@ export const applicantRegisteredCoursesResponseSchemaForStudent = z.array(
     })
     .extend({
       grade: z.string().nullable(),
-    }),
+    })
 );
 
 export const getStudentSchema = createSelectSchema(students).omit({

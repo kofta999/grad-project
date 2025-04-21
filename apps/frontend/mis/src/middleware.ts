@@ -18,7 +18,7 @@ export async function middleware(request: NextRequest) {
             Cookie: request.headers.get("cookie") || "",
           },
         },
-      },
+      }
     );
 
     const isAuthenticated = authCheckResponse.ok;

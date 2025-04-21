@@ -22,10 +22,7 @@ import { apiClient } from "@/lib/client";
 import { InferResponseType } from "@repo/mis-api";
 import toast from "react-hot-toast";
 
-type CoursesType = InferResponseType<
-  typeof apiClient.student.courses.$get,
-  200
->;
+type CoursesType = InferResponseType<typeof apiClient.student.courses.$get, 200>;
 
 interface AcademicYear {
   academicYearId: number;
@@ -49,15 +46,12 @@ export default function currentCourses() {
     getCurrentAcademicYear();
   }, []);
 
-  const getCourses = async (
-    semester: SemesterType,
-    academicYear: AcademicYear | null,
-  ) => {
+  const getCourses = async (semester: SemesterType, academicYear: AcademicYear | null) => {
     try {
       const res = await apiClient.student.courses.$get({
         query: {
           semester: semester,
-          academicYearId: academicYear?.academicYearId.toString() || '',
+          academicYearId: academicYear?.academicYearId.toString() || "",
         },
       });
 
@@ -82,9 +76,7 @@ export default function currentCourses() {
         <CardContent>
           <Select
             className="w-full md:w-1/2"
-            onValueChange={(value: SemesterType) =>
-              getCourses(value, academicYear)
-            }
+            onValueChange={(value: SemesterType) => getCourses(value, academicYear)}
           >
             <SelectTrigger className="w-full md:w-1/2">
               <SelectValue placeholder="اختر الترم" />
@@ -129,9 +121,7 @@ export default function currentCourses() {
                   >
                     <TableCell className="text-right">{course.title}</TableCell>
                     <TableCell className="text-right">{course.code}</TableCell>
-                    <TableCell className="text-right">
-                      {course.totalHours}
-                    </TableCell>
+                    <TableCell className="text-right">{course.totalHours}</TableCell>
                     <TableCell className="text-right">
                       {course.grade ? course.grade : "مسجل على الفصل الحالي"}
                     </TableCell>

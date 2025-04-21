@@ -1,16 +1,11 @@
 import { AppRouteHandler } from "@/lib/types";
-import {
-  CheckThesisAvailabilityRoute,
-  SubmitThesisRoute,
-} from "./thesis.routes";
+import { CheckThesisAvailabilityRoute, SubmitThesisRoute } from "./thesis.routes";
 import * as HttpStatusCodes from "stoker/http-status-codes";
 import db from "@/db";
 import { sql } from "drizzle-orm";
 import { attachments, theses } from "@/db/schema";
 
-export const checkThesisAvailability: AppRouteHandler<
-  CheckThesisAvailabilityRoute
-> = async (c) => {
+export const checkThesisAvailability: AppRouteHandler<CheckThesisAvailabilityRoute> = async (c) => {
   // Must be there because of the middleware
   const studentId = c.var.session.get("id")!;
 
@@ -22,28 +17,19 @@ export const checkThesisAvailability: AppRouteHandler<
   });
 
   if (!application) {
-    return c.json(
-      { message: "Application not found" },
-      HttpStatusCodes.NOT_FOUND,
-    );
+    return c.json({ message: "Application not found" }, HttpStatusCodes.NOT_FOUND);
   }
 
   try {
-    await db.execute(
-      sql`SELECT 1 FROM is_thesis_available(${application.applicationId})`,
-    );
+    await db.execute(sql`SELECT 1 FROM is_thesis_available(${application.applicationId})`);
 
     // Don't ask me why I did this, it needs that `as` for it to work
     return c.json({ available: true as true }, HttpStatusCodes.OK);
   } catch (error) {
     console.error("Error checking thesis:", error);
-    const errorMessage =
-      error instanceof Error ? error.message : "Failed to check thesis";
+    const errorMessage = error instanceof Error ? error.message : "Failed to check thesis";
 
-    return c.json(
-      { available: false as false, reason: errorMessage },
-      HttpStatusCodes.FORBIDDEN,
-    );
+    return c.json({ available: false as false, reason: errorMessage }, HttpStatusCodes.FORBIDDEN);
   }
 };
 
@@ -60,10 +46,7 @@ export const submitThesis: AppRouteHandler<SubmitThesisRoute> = async (c) => {
   });
 
   if (!application) {
-    return c.json(
-      { message: "Application not found" },
-      HttpStatusCodes.NOT_FOUND,
-    );
+    return c.json({ message: "Application not found" }, HttpStatusCodes.NOT_FOUND);
   }
 
   try {
@@ -74,15 +57,12 @@ export const submitThesis: AppRouteHandler<SubmitThesisRoute> = async (c) => {
       .returning();
     const attachment = result[0];
 
-    await db
-      .insert(theses)
-      .values({ applicationId, title, attachmentId: attachment.attachmentId });
+    await db.insert(theses).values({ applicationId, title, attachmentId: attachment.attachmentId });
 
     return c.json({}, HttpStatusCodes.OK);
   } catch (error) {
     console.error("Error checking thesis:", error);
-    const errorMessage =
-      error instanceof Error ? error.message : "Failed to check thesis";
+    const errorMessage = error instanceof Error ? error.message : "Failed to check thesis";
 
     return c.json({ message: errorMessage }, HttpStatusCodes.FORBIDDEN);
   }

@@ -3,20 +3,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardGrid, CardHeader } from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import {
-  Briefcase,
-  Building,
-  CalendarIcon,
-  CreditCard,
-  Shield,
-  Upload,
-} from "lucide-react";
+import { Briefcase, Building, CalendarIcon, CreditCard, Shield, Upload } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import {
   Select,
   SelectContent,
@@ -37,9 +26,7 @@ interface Step2Props {
 }
 
 export default function Step2({ goPrevStep, formik }: Step2Props) {
-  const handlePhotoUpload = async (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) => {
+  const handlePhotoUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
       const res = await apiClient.auth.upload.$post({ form: { file } });
@@ -68,9 +55,7 @@ export default function Step2({ goPrevStep, formik }: Step2Props) {
                 <Select
                   name="idType"
                   value={formik.values.idType}
-                  onValueChange={(value: string) =>
-                    formik.setFieldValue("idType", value)
-                  }
+                  onValueChange={(value: string) => formik.setFieldValue("idType", value)}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="اختر نوع الهوية" />
@@ -95,9 +80,7 @@ export default function Step2({ goPrevStep, formik }: Step2Props) {
                   icon={<CreditCard className="h-4 w-4" />}
                 />
                 {formik.touched.idNumber && formik.errors.idNumber && (
-                  <p className="text-red-500 text-sm">
-                    {formik.errors.idNumber}
-                  </p>
+                  <p className="text-red-500 text-sm">{formik.errors.idNumber}</p>
                 )}
               </div>
               <div className="space-y-2">
@@ -110,8 +93,7 @@ export default function Step2({ goPrevStep, formik }: Step2Props) {
                       variant={"outline"}
                       className={cn(
                         "w-full justify-start text-right font-normal",
-                        !formik.values.idIssuanceDate &&
-                          "text-muted-foreground",
+                        !formik.values.idIssuanceDate && "text-muted-foreground"
                       )}
                     >
                       {formik.values.idIssuanceDate ? (
@@ -136,12 +118,11 @@ export default function Step2({ goPrevStep, formik }: Step2Props) {
                     />
                   </PopoverContent>
                 </Popover>
-                {formik.touched.idIssuanceDate &&
-                  formik.errors.idIssuanceDate && (
-                    <p className="text-red-500 text-sm">
-                      <>{formik.errors.idIssuanceDate}</>
-                    </p>
-                  )}
+                {formik.touched.idIssuanceDate && formik.errors.idIssuanceDate && (
+                  <p className="text-red-500 text-sm">
+                    <>{formik.errors.idIssuanceDate}</>
+                  </p>
+                )}
               </div>
               <div className="space-y-2">
                 <Label>
@@ -154,9 +135,7 @@ export default function Step2({ goPrevStep, formik }: Step2Props) {
                   icon={<Building className="h-4 w-4" />}
                 />
                 {formik.touched.idAuthority && formik.errors.idAuthority && (
-                  <p className="text-red-500 text-sm">
-                    {formik.errors.idAuthority}
-                  </p>
+                  <p className="text-red-500 text-sm">{formik.errors.idAuthority}</p>
                 )}
               </div>
             </CardGrid>
@@ -175,9 +154,7 @@ export default function Step2({ goPrevStep, formik }: Step2Props) {
                 <Select
                   name="maritalStatus"
                   value={formik.values.martialStatus} // Bind Formik state
-                  onValueChange={(value: string) =>
-                    formik.setFieldValue("martialStatus", value)
-                  } // Update Formik state
+                  onValueChange={(value: string) => formik.setFieldValue("martialStatus", value)} // Update Formik state
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="اختر الحالة" />
@@ -185,21 +162,16 @@ export default function Step2({ goPrevStep, formik }: Step2Props) {
                   <SelectContent>
                     <SelectItem value="single">أعزب</SelectItem>
                     <SelectItem value="married">متزوج</SelectItem>
-                    <SelectItem value="married_with_dependents">
-                      متزوج ويعول
-                    </SelectItem>
+                    <SelectItem value="married_with_dependents">متزوج ويعول</SelectItem>
                     <SelectItem value="divorced">مطلق</SelectItem>
                     <SelectItem value="widowed">أرمل</SelectItem>
                     <SelectItem value="other">أخرى</SelectItem>
                   </SelectContent>
                 </Select>
 
-                {formik.touched.martialStatus &&
-                  formik.errors.martialStatus && (
-                    <p className="text-red-500 text-sm">
-                      {formik.errors.martialStatus}
-                    </p>
-                  )}
+                {formik.touched.martialStatus && formik.errors.martialStatus && (
+                  <p className="text-red-500 text-sm">{formik.errors.martialStatus}</p>
+                )}
               </div>
               <div className="space-y-2">
                 <Label>
@@ -211,12 +183,9 @@ export default function Step2({ goPrevStep, formik }: Step2Props) {
                   onChange={formik.handleChange}
                   icon={<Shield className="h-4 w-4" />}
                 />
-                {formik.touched.militaryStatus &&
-                  formik.errors.militaryStatus && (
-                    <p className="text-red-500 text-sm">
-                      {formik.errors.militaryStatus}
-                    </p>
-                  )}
+                {formik.touched.militaryStatus && formik.errors.militaryStatus && (
+                  <p className="text-red-500 text-sm">{formik.errors.militaryStatus}</p>
+                )}
               </div>
               <div className="space-y-2">
                 <Label>
@@ -240,9 +209,7 @@ export default function Step2({ goPrevStep, formik }: Step2Props) {
                   </div>
                 </RadioGroup>
                 {formik.touched.isWorking && formik.errors.isWorking && (
-                  <p className="text-red-500 text-sm">
-                    {formik.errors.isWorking}
-                  </p>
+                  <p className="text-red-500 text-sm">{formik.errors.isWorking}</p>
                 )}
               </div>
               <div className="space-y-2">
@@ -306,17 +273,10 @@ export default function Step2({ goPrevStep, formik }: Step2Props) {
 
         {/* Submit Buttons */}
         <div className="flex justify-center gap-16">
-          <Button
-            variant="outline"
-            className="border-[#BABABA]"
-            onClick={goPrevStep}
-          >
+          <Button variant="outline" className="border-[#BABABA]" onClick={goPrevStep}>
             السابق
           </Button>
-          <Button
-            className="bg-mainColor hover:bg-blue-700 text-white"
-            type="submit"
-          >
+          <Button className="bg-mainColor hover:bg-blue-700 text-white" type="submit">
             التسجيل
           </Button>
         </div>

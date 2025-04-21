@@ -120,13 +120,9 @@ export default async function ApplicationDetails({
           <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
             <h2 className="text-gray-600 mb-4 flex items-center">العنوان</h2>
             {application?.addresses?.map((address, index) => (
-              <p
-                key={index}
-                className="text-lg font-semibold text-gray-800 flex items-center"
-              >
+              <p key={index} className="text-lg font-semibold text-gray-800 flex items-center">
                 <Home className="ml-2" />
-                {address.fullAddress}, {address.city}, {address.country} (
-                {address.type})
+                {address.fullAddress}, {address.city}, {address.country} ({address.type})
               </p>
             ))}
           </div>

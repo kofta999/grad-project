@@ -15,9 +15,7 @@ import { InferResponseType } from "@repo/mis-api";
 import toast from "react-hot-toast";
 import Link from "next/link";
 
-type ApplicationsList = InferResponseType<
-  typeof apiClient.admin.applications.$get
->;
+type ApplicationsList = InferResponseType<typeof apiClient.admin.applications.$get>;
 
 export default function ApplicationsList({
   applicationsList,
@@ -47,10 +45,8 @@ export default function ApplicationsList({
       // Update the application status in the UI
       setApplications((prevApplications) =>
         prevApplications.map((app) =>
-          app.applicationId === applicationId
-            ? { ...app, isAdminAccepted: true }
-            : app,
-        ),
+          app.applicationId === applicationId ? { ...app, isAdminAccepted: true } : app
+        )
       );
 
       // Show success message
@@ -88,18 +84,11 @@ export default function ApplicationsList({
           </TableHeader>
           <TableBody>
             {applications.map((application) => (
-              <TableRow
-                key={application.applicationId}
-                className="border-b h-12"
-              >
+              <TableRow key={application.applicationId} className="border-b h-12">
                 <TableCell>
-                  <Link
-                    href={`/dashboard/applications/${application.applicationId}`}
-                  >
+                  <Link href={`/dashboard/applications/${application.applicationId}`}>
                     {application.studentName ? (
-                      <div className="font-medium hover:underline">
-                        {application.studentName}
-                      </div>
+                      <div className="font-medium hover:underline">{application.studentName}</div>
                     ) : (
                       <div className="h-4 w-32 bg-gray-200 rounded animate-pulse"></div>
                     )}
@@ -122,9 +111,7 @@ export default function ApplicationsList({
                 <TableCell>
                   {application.studentName ? (
                     <Button
-                      onClick={() =>
-                        handleAcceptApplication(application.applicationId)
-                      }
+                      onClick={() => handleAcceptApplication(application.applicationId)}
                       disabled={application.isAdminAccepted}
                       className="bg-gray-100 py-1 px-2 text-sm rounded w-full text-center text-black hover:bg-gray-200 transition-colors duration-200"
                     >

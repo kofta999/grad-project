@@ -13,11 +13,7 @@ import {
   X,
   Menu,
 } from "lucide-react";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -119,9 +115,7 @@ export default function SideNav({ role }: SideNavProps) {
             <button
               onClick={() => setSubMenuOpen(!subMenuOpen)}
               className={`flex items-center p-2 rounded-sm w-full justify-between ${
-                pathname.includes(item.path)
-                  ? "bg-blue-600 text-white hover:bg-blue-700"
-                  : ""
+                pathname.includes(item.path) ? "bg-blue-600 text-white hover:bg-blue-700" : ""
               }`}
             >
               <div className="flex gap-3 items-center">
@@ -157,9 +151,7 @@ export default function SideNav({ role }: SideNavProps) {
             href={item.path}
             onClick={() => setIsOpen(false)}
             className={`flex gap-3 p-2 items-center rounded-sm ${
-              pathname === item.path
-                ? "bg-blue-600 text-white hover:bg-blue-700"
-                : ""
+              pathname === item.path ? "bg-blue-600 text-white hover:bg-blue-700" : ""
             }`}
           >
             {item.icon}
@@ -201,12 +193,11 @@ export default function SideNav({ role }: SideNavProps) {
               </Link>
 
               {/* Navigation Items */}
-              {(role === "admin"
-                ? ADMIN_SIDEBAR_ITEMS
-                : STUDENT_SIDEBAR_ITEMS
-              ).map((item: any, idx: number) => (
-                <MenuItem key={idx} item={item} />
-              ))}
+              {(role === "admin" ? ADMIN_SIDEBAR_ITEMS : STUDENT_SIDEBAR_ITEMS).map(
+                (item: any, idx: number) => (
+                  <MenuItem key={idx} item={item} />
+                )
+              )}
             </div>
 
             {/* Footer Section */}
@@ -216,9 +207,7 @@ export default function SideNav({ role }: SideNavProps) {
                   <h1 className="font-bold text-xl">مرحبا</h1>
                   {/* <Star /> */}
                 </div>
-                <p className="mt-3">
-                  هذا الحساب خاص ب{loggedInUser.name}، نتمنى لك يوماً طيباً.
-                </p>
+                <p className="mt-3">هذا الحساب خاص ب{loggedInUser.name}، نتمنى لك يوماً طيباً.</p>
               </div>
               <div className="user flex mt-3 gap-2 items-center justify-between">
                 <div className="flex gap-5">
@@ -238,10 +227,7 @@ export default function SideNav({ role }: SideNavProps) {
                     </div>
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-3 cursor-pointer">
-                    <button
-                      onClick={() => handleLogout()}
-                      className="logout outline-none"
-                    >
+                    <button onClick={() => handleLogout()} className="logout outline-none">
                       تسجيل الخروج
                     </button>
                   </PopoverContent>

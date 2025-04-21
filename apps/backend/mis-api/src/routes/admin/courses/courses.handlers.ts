@@ -1,9 +1,5 @@
 import db from "@/db";
-import {
-  courseRegistrations,
-  courses,
-  detailedCourseRegistrationsView as dcv,
-} from "@/db/schema";
+import { courseRegistrations, courses, detailedCourseRegistrationsView as dcv } from "@/db/schema";
 import type { AppRouteHandler } from "@/lib/types";
 import { and, eq } from "drizzle-orm";
 import { sql } from "drizzle-orm";
@@ -35,20 +31,20 @@ export const getApplicantRegisteredCourses: AppRouteHandler<
       and(
         eq(dcv.academicYearId, academicYearId),
         eq(dcv.semester, semester),
-        eq(dcv.applicationId, applicationId),
-      ),
+        eq(dcv.applicationId, applicationId)
+      )
     );
 
   return c.json(courses, HttpStatusCodes.OK);
 };
 
-export const getAvailableCoursesForApplication: AppRouteHandler<
-  GetAvailableCoursesRoute
-> = async (c) => {
+export const getAvailableCoursesForApplication: AppRouteHandler<GetAvailableCoursesRoute> = async (
+  c
+) => {
   const applicationId = c.req.param("applicationId");
 
   const availableCourses = await db.execute(
-    sql`SELECT * FROM available_courses_for_application(${applicationId})`,
+    sql`SELECT * FROM available_courses_for_application(${applicationId})`
   );
 
   // Must manually convert as db.execute won't convert the columns
@@ -61,13 +57,11 @@ export const getAvailableCoursesForApplication: AppRouteHandler<
       totalHours: c.total_hours,
       courseRegistrationId: c.course_registration_id,
     })),
-    HttpStatusCodes.OK,
+    HttpStatusCodes.OK
   );
 };
 
-export const registerCourse: AppRouteHandler<RegisterCourseRoute> = async (
-  c,
-) => {
+export const registerCourse: AppRouteHandler<RegisterCourseRoute> = async (c) => {
   const { applicationId, courseId, semester } = c.req.valid("json");
   try {
     const registeredCourse = await db
@@ -86,12 +80,11 @@ export const registerCourse: AppRouteHandler<RegisterCourseRoute> = async (
         message: "Course registered successfully",
         courseRegistrationId: registeredCourse[0].courseRegistrationId,
       },
-      HttpStatusCodes.CREATED,
+      HttpStatusCodes.CREATED
     );
   } catch (error) {
     console.error("Error registering course:", error);
-    const errorMessage =
-      error instanceof Error ? error.message : "Failed to register course";
+    const errorMessage = error instanceof Error ? error.message : "Failed to register course";
     return c.json({ error: errorMessage }, HttpStatusCodes.BAD_REQUEST);
   }
 };
@@ -99,9 +92,7 @@ export const registerCourse: AppRouteHandler<RegisterCourseRoute> = async (
 export const deleteCourse: AppRouteHandler<DeleteCourseRoute> = async (c) => {
   const { id } = c.req.valid("param");
   try {
-    await db
-      .delete(courseRegistrations)
-      .where(eq(courseRegistrations.courseRegistrationId, id));
+    await db.delete(courseRegistrations).where(eq(courseRegistrations.courseRegistrationId, id));
 
     return c.json(HttpStatusCodes.NO_CONTENT);
   } catch (error) {
@@ -111,8 +102,7 @@ export const deleteCourse: AppRouteHandler<DeleteCourseRoute> = async (c) => {
     if (error.code && error.code === "23503") {
       errorMessage = "This course is already passed, mustn't be deleted";
     } else {
-      errorMessage =
-        error instanceof Error ? error.message : "Failed to delete course";
+      errorMessage = error instanceof Error ? error.message : "Failed to delete course";
     }
     return c.json({ error: errorMessage }, HttpStatusCodes.BAD_REQUEST);
   }

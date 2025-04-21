@@ -29,10 +29,7 @@ import RegisterCourseDialog from "../_components/register-course-dialog";
 import { InferResponseType } from "@repo/mis-api";
 import { StudentType, ApplicationType } from "@/lib/types";
 
-type RegisteredCourse = InferResponseType<
-  typeof apiClient.admin.courses.list.$post,
-  200
->[number];
+type RegisteredCourse = InferResponseType<typeof apiClient.admin.courses.list.$post, 200>[number];
 type CoursesType = RegisteredCourse[];
 
 type SemesterType = "first" | "second" | "third";
@@ -86,7 +83,7 @@ export default function currentCourses() {
   const getCourses = async (
     applicationId: number,
     semester: SemesterType,
-    academicYearId: number,
+    academicYearId: number
   ) => {
     if (!applicationId || !semester || !academicYearId) {
       setCourses([]);
@@ -138,12 +135,7 @@ export default function currentCourses() {
         <CardContent>
           <div className="flex flex-col mb-6 md:flex-row md:gap-6">
             <div className="image-Container border-2 border-mainColor rounded-lg overflow-hidden flex items-center justify-center">
-              <Image
-                src="/avatar.jpg"
-                alt="placeholder"
-                width={120}
-                height={120}
-              />
+              <Image src="/avatar.jpg" alt="placeholder" width={120} height={120} />
             </div>
             <CardGrid className="mt-6 md:mt-0">
               <p className="text-sm">الاسم / {student?.fullNameAr}</p>
@@ -154,8 +146,7 @@ export default function currentCourses() {
               </p>
               <p className="text-sm">رقم الهاتف / {student?.phoneNoMain}</p>
               <p className="text-sm">
-                العام الاكاديمي للتسجيل /{" "}
-                {application?.registration.academicYear}
+                العام الاكاديمي للتسجيل / {application?.registration.academicYear}
               </p>
             </CardGrid>
           </div>
@@ -208,9 +199,7 @@ export default function currentCourses() {
                   >
                     <TableCell className="text-right">{course.title}</TableCell>
                     <TableCell className="text-right">{course.code}</TableCell>
-                    <TableCell className="text-right">
-                      {course.totalHours}
-                    </TableCell>
+                    <TableCell className="text-right">{course.totalHours}</TableCell>
                     <TableCell className="text-right">
                       {course.grade ? course.grade : "مسجل على الفصل الحالي"}
                     </TableCell>
@@ -225,23 +214,24 @@ export default function currentCourses() {
       {/* Dialog */}
       <Container className="p-0">
         {/* Button to open the dialog */}
-        <Button
-          onClick={() => setIsDialogOpen(true)}
-          disabled={!applicationId || !semester}
-        >
+        <Button onClick={() => setIsDialogOpen(true)} disabled={!applicationId || !semester}>
           صفحة تسجيل المواد
         </Button>
 
         {/* Dialog Overlay */}
         <div
-          className={`overlay bg-black/55 fixed inset-0 flex items-center justify-center z-50 ${isDialogOpen ? "block" : "hidden"
-            }`}
+          className={`overlay bg-black/55 fixed inset-0 flex items-center justify-center z-50 ${
+            isDialogOpen ? "block" : "hidden"
+          }`}
         >
           {/* Dialog Content */}
           <div className="dialog-content bg-white p-3 md:p-6 rounded-lg w-full max-w-2xl h-[90%] overflow-y-scroll m-6 md:m-0">
             {/* Dialog Header */}
             <div className="dialog-header flex justify-between items-center mb-4">
-              <button onClick={() => setIsDialogOpen(false)} className="absolute top-3 right-5 lg:right-10 text-white">
+              <button
+                onClick={() => setIsDialogOpen(false)}
+                className="absolute top-3 right-5 lg:right-10 text-white"
+              >
                 <X className="h-8 w-8" />
               </button>
             </div>

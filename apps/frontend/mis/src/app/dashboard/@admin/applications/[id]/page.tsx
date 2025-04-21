@@ -2,11 +2,7 @@ import ApplicationDetails from "@/app/dashboard/_components/application-details"
 import StudentDetails from "@/app/dashboard/_components/student-details";
 import { getServerApiClient } from "@/lib/client";
 
-export default async function AdminPage({
-  params: { id },
-}: {
-  params: { id: string };
-}) {
+export default async function AdminPage({ params: { id } }: { params: { id: string } }) {
   const apiClient = await getServerApiClient();
   try {
     const response = await apiClient.admin.applications[":id"].$get({
@@ -26,8 +22,7 @@ export default async function AdminPage({
           <div className="max-w-4xl mx-auto p-8">
             <div className="relative flex justify-center items-center">
               <h1 className="text-3xl font-bold text-center text-blue-600 mb-5">
-                بيانات التقديم (
-                {application?.isAccepted ? "مقبول" : "تحت المراجعة"})
+                بيانات التقديم ({application?.isAccepted ? "مقبول" : "تحت المراجعة"})
               </h1>
             </div>
 

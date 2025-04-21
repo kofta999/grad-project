@@ -65,7 +65,6 @@ Docker Compose is included in Docker Desktop for Windows and macOS. For Linux, f
    ```sh
    bun dev
    ```
-   
 
 ### Backend Only
 
@@ -80,7 +79,8 @@ Docker Compose is included in Docker Desktop for Windows and macOS. For Linux, f
    ```sh
    bun dev
    ```
-This will start the Docker containers and run the backend server with hot-reloading.
+
+   This will start the Docker containers and run the backend server with hot-reloading.
 
 ### Frontend Only
 
@@ -95,6 +95,5 @@ This will start the Docker containers and run the backend server with hot-reload
    ```sh
    bun dev
    ```
-   
-   
+
 This will start the Next.js development server on port 3002.

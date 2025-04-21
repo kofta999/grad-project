@@ -22,11 +22,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Calendar } from "@/components/ui/calendar";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Container, ContainerTitle } from "@/components/ui/container";
 import { FormStep1Type } from "../page";
 import { FormikProps } from "formik";
@@ -36,7 +32,6 @@ interface Step1Props {
 }
 
 export default function Step1({ formik }: Step1Props) {
-
   return (
     <Container>
       <ContainerTitle>إنشاء حساب جديد</ContainerTitle>
@@ -59,9 +54,7 @@ export default function Step1({ formik }: Step1Props) {
                   icon={<User className="h-4 w-4" />}
                 />
                 {formik.touched.fullNameAr && formik.errors.fullNameAr && (
-                  <p className="text-red-500 text-sm">
-                    {formik.errors.fullNameAr}
-                  </p>
+                  <p className="text-red-500 text-sm">{formik.errors.fullNameAr}</p>
                 )}
               </div>
               <div className="space-y-2">
@@ -77,9 +70,7 @@ export default function Step1({ formik }: Step1Props) {
                   icon={<User className="h-4 w-4" />}
                 />
                 {formik.touched.fullNameEn && formik.errors.fullNameEn && (
-                  <p className="text-red-500 text-sm">
-                    {formik.errors.fullNameEn}
-                  </p>
+                  <p className="text-red-500 text-sm">{formik.errors.fullNameEn}</p>
                 )}
               </div>
               <div className="space-y-2">
@@ -118,9 +109,7 @@ export default function Step1({ formik }: Step1Props) {
                   icon={<Flag className="h-4 w-4" />}
                 />
                 {formik.touched.nationality && formik.errors.nationality && (
-                  <p className="text-red-500 text-sm">
-                    {formik.errors.nationality}
-                  </p>
+                  <p className="text-red-500 text-sm">{formik.errors.nationality}</p>
                 )}
               </div>
               <div className="space-y-2 col-span-2 justify-self-center w-full max-w-[calc(100%/2)]">
@@ -134,7 +123,7 @@ export default function Step1({ formik }: Step1Props) {
                       variant={"outline"}
                       className={cn(
                         "w-full justify-start text-right font-normal",
-                        !formik.values.dob && "text-muted-foreground",
+                        !formik.values.dob && "text-muted-foreground"
                       )}
                     >
                       {formik.values.dob ? (
@@ -172,9 +161,7 @@ export default function Step1({ formik }: Step1Props) {
         {/* Contact Information */}
         <Card>
           <CardContent className="pt-6">
-            <CardHeader className="text-lg font-semibold mb-4">
-              معلومات الاتصال
-            </CardHeader>
+            <CardHeader className="text-lg font-semibold mb-4">معلومات الاتصال</CardHeader>
             <CardGrid>
               <div className="space-y-2">
                 <Label>
@@ -221,9 +208,7 @@ export default function Step1({ formik }: Step1Props) {
                   icon={<Phone className="h-4 w-4" />}
                 />
                 {formik.touched.phoneNoMain && formik.errors.phoneNoMain && (
-                  <p className="text-red-500 text-sm">
-                    {formik.errors.phoneNoMain}
-                  </p>
+                  <p className="text-red-500 text-sm">{formik.errors.phoneNoMain}</p>
                 )}
               </div>
               <div className="space-y-2">
@@ -237,9 +222,7 @@ export default function Step1({ formik }: Step1Props) {
                   icon={<Phone className="h-4 w-4" />}
                 />
                 {formik.touched.phoneNoSec && formik.errors.phoneNoSec && (
-                  <p className="text-red-500 text-sm">
-                    {formik.errors.phoneNoSec}
-                  </p>
+                  <p className="text-red-500 text-sm">{formik.errors.phoneNoSec}</p>
                 )}
               </div>
             </CardGrid>
@@ -249,9 +232,7 @@ export default function Step1({ formik }: Step1Props) {
         {/* Security */}
         <Card>
           <CardContent className="pt-6">
-            <CardHeader className="text-lg font-semibold mb-4">
-              الأمان
-            </CardHeader>
+            <CardHeader className="text-lg font-semibold mb-4">الأمان</CardHeader>
             <CardGrid>
               <div className="space-y-2">
                 <Label>
@@ -266,12 +247,9 @@ export default function Step1({ formik }: Step1Props) {
                   onBlur={formik.handleBlur}
                   icon={<Eye className="h-4 w-4" />}
                 />
-                {formik.touched.hashedPassword &&
-                  formik.errors.hashedPassword && (
-                    <p className="text-red-500 text-sm">
-                      {formik.errors.hashedPassword}
-                    </p>
-                  )}
+                {formik.touched.hashedPassword && formik.errors.hashedPassword && (
+                  <p className="text-red-500 text-sm">{formik.errors.hashedPassword}</p>
+                )}
               </div>
               <div className="space-y-2">
                 <Label>
@@ -286,12 +264,9 @@ export default function Step1({ formik }: Step1Props) {
                   onBlur={formik.handleBlur}
                   icon={<Eye className="h-4 w-4" />}
                 />
-                {formik.touched.confirmPassword &&
-                  formik.errors.confirmPassword && (
-                    <p className="text-red-500 text-sm">
-                      {formik.errors.confirmPassword}
-                    </p>
-                  )}
+                {formik.touched.confirmPassword && formik.errors.confirmPassword && (
+                  <p className="text-red-500 text-sm">{formik.errors.confirmPassword}</p>
+                )}
               </div>
               <div className="space-y-2">
                 <Label>
@@ -306,9 +281,7 @@ export default function Step1({ formik }: Step1Props) {
                   icon={<Shield className="h-4 w-4" />}
                 />
                 {formik.touched.secQuestion && formik.errors.secQuestion && (
-                  <p className="text-red-500 text-sm">
-                    {formik.errors.secQuestion}
-                  </p>
+                  <p className="text-red-500 text-sm">{formik.errors.secQuestion}</p>
                 )}
               </div>
               <div className="space-y-2">
@@ -324,9 +297,7 @@ export default function Step1({ formik }: Step1Props) {
                   icon={<UserCheck className="h-4 w-4" />}
                 />
                 {formik.touched.secAnswer && formik.errors.secAnswer && (
-                  <p className="text-red-500 text-sm">
-                    {formik.errors.secAnswer}
-                  </p>
+                  <p className="text-red-500 text-sm">{formik.errors.secAnswer}</p>
                 )}
               </div>
             </CardGrid>
@@ -334,10 +305,7 @@ export default function Step1({ formik }: Step1Props) {
         </Card>
 
         <div className="flex justify-center items-center">
-          <Button
-            className="px-8 py-2 bg-mainColor hover:bg-blue-700 text-white"
-            type="submit"
-          >
+          <Button className="px-8 py-2 bg-mainColor hover:bg-blue-700 text-white" type="submit">
             التالي
           </Button>
         </div>

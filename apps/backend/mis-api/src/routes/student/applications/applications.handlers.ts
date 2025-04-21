@@ -21,9 +21,7 @@ import {
 import { formatAcademicYear, removeApplicationId } from "@/lib/util";
 import { eq } from "drizzle-orm";
 
-export const getCurrentAcademicYears: AppRouteHandler<
-  GetCurrentAcademicYearsRoute
-> = async (c) => {
+export const getCurrentAcademicYears: AppRouteHandler<GetCurrentAcademicYearsRoute> = async (c) => {
   const years = await db.query.academicYears.findMany({
     where(f, { gte }) {
       return gte(f.startDate, new Date().toDateString());
@@ -35,13 +33,11 @@ export const getCurrentAcademicYears: AppRouteHandler<
       academicYearId: year.academicYearId,
       year: formatAcademicYear(year),
     })),
-    HttpStatusCodes.OK,
+    HttpStatusCodes.OK
   );
 };
 
-export const getAvailableDepartments: AppRouteHandler<
-  GetAvailableDepartmentsRoute
-> = async (c) => {
+export const getAvailableDepartments: AppRouteHandler<GetAvailableDepartmentsRoute> = async (c) => {
   const { type } = c.req.valid("query");
 
   const departments = await db.query.departments.findMany({
@@ -55,16 +51,9 @@ export const getAvailableDepartments: AppRouteHandler<
   return c.json(departments, HttpStatusCodes.OK);
 };
 
-export const createApplication: AppRouteHandler<
-  CreateApplicationRoute
-> = async (c) => {
-  let {
-    permanentAddress,
-    currentAddress,
-    qualification,
-    emergencyContact,
-    registration,
-  } = c.req.valid("json");
+export const createApplication: AppRouteHandler<CreateApplicationRoute> = async (c) => {
+  let { permanentAddress, currentAddress, qualification, emergencyContact, registration } =
+    c.req.valid("json");
 
   // Should be there because of middleware
   let studentId = c.var.session.get("id")!;
@@ -76,35 +65,27 @@ export const createApplication: AppRouteHandler<
 
   const applicationId = newApplication[0].applicationId;
 
-  await db
-    .insert(addresses)
-    .values({ ...permanentAddress, applicationId, type: "permanent" });
+  await db.insert(addresses).values({ ...permanentAddress, applicationId, type: "permanent" });
 
-  await db
-    .insert(addresses)
-    .values({ ...currentAddress, applicationId, type: "current" });
+  await db.insert(addresses).values({ ...currentAddress, applicationId, type: "current" });
 
   if (emergencyContact) {
-    await db
-      .insert(emergencyContacts)
-      .values({ ...emergencyContact, applicationId });
+    await db.insert(emergencyContacts).values({ ...emergencyContact, applicationId });
   }
 
-  await db
-    .insert(academicQualifications)
-    .values({ ...qualification, applicationId });
+  await db.insert(academicQualifications).values({ ...qualification, applicationId });
 
   await db.insert(registerations).values({ ...registration, applicationId });
 
   return c.json({ success: true, applicationId }, HttpStatusCodes.OK);
 };
 
-export const saveApplicationAttachments: AppRouteHandler<
-  SaveApplicationAttachmentsRoute
-> = async (c) => {
+export const saveApplicationAttachments: AppRouteHandler<SaveApplicationAttachmentsRoute> = async (
+  c
+) => {
   const { applicationId, attachments: attachmentsArr } = c.req.valid("json");
   const promises = attachmentsArr.map((attachment) =>
-    db.insert(attachments).values({ ...attachment, applicationId }),
+    db.insert(attachments).values({ ...attachment, applicationId })
   );
 
   await Promise.all(promises);
@@ -112,9 +93,7 @@ export const saveApplicationAttachments: AppRouteHandler<
   return c.json({ success: true, applicationId }, HttpStatusCodes.OK);
 };
 
-export const getApplication: AppRouteHandler<GetApplicationRoute> = async (
-  c,
-) => {
+export const getApplication: AppRouteHandler<GetApplicationRoute> = async (c) => {
   const studentId = c.var.session.get("id")!;
 
   const _getApplication = async () => {
@@ -135,32 +114,16 @@ export const getApplication: AppRouteHandler<GetApplicationRoute> = async (
       })
       .from(a)
       .innerJoin(addresses, eq(a.applicationId, addresses.applicationId))
-      .innerJoin(
-        academicQualifications,
-        eq(a.applicationId, academicQualifications.applicationId),
-      )
-      .leftJoin(
-        emergencyContacts,
-        eq(a.applicationId, emergencyContacts.applicationId),
-      )
-      .innerJoin(
-        registerations,
-        eq(a.applicationId, registerations.applicationId),
-      )
-      .innerJoin(
-        academicYears,
-        eq(registerations.academicYearId, academicYears.academicYearId),
-      )
-      .innerJoin(
-        departments,
-        eq(registerations.departmentId, departments.departmentId),
-      )
+      .innerJoin(academicQualifications, eq(a.applicationId, academicQualifications.applicationId))
+      .leftJoin(emergencyContacts, eq(a.applicationId, emergencyContacts.applicationId))
+      .innerJoin(registerations, eq(a.applicationId, registerations.applicationId))
+      .innerJoin(academicYears, eq(registerations.academicYearId, academicYears.academicYearId))
+      .innerJoin(departments, eq(registerations.departmentId, departments.departmentId))
       .where(eq(a.studentId, studentId));
 
     if (applicationList.length === 0) return null;
 
-    const { application, academicYear, registration, department, ...rest } =
-      applicationList[0];
+    const { application, academicYear, registration, department, ...rest } = applicationList[0];
 
     const attachmentsList = await db.query.attachments.findMany({
       where: (f, { eq }) => eq(f.applicationId, application.applicationId),
@@ -192,10 +155,7 @@ export const getApplication: AppRouteHandler<GetApplicationRoute> = async (
   console.log(application);
 
   if (!application) {
-    return c.json(
-      { message: "Application Not found" },
-      HttpStatusCodes.NOT_FOUND,
-    );
+    return c.json({ message: "Application Not found" }, HttpStatusCodes.NOT_FOUND);
   }
 
   return c.json({ application }, HttpStatusCodes.OK);

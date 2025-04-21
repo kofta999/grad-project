@@ -10,9 +10,7 @@ import * as Yup from "yup";
 import { useFormik } from "formik";
 import { useRouter } from "next/navigation";
 
-export type FormType = InferRequestType<
-  typeof apiClient.auth.register.$post
->["json"];
+export type FormType = InferRequestType<typeof apiClient.auth.register.$post>["json"];
 
 export type FormStep1Type = Yup.InferType<typeof step1Schema>;
 export type FormStep2Type = Yup.InferType<typeof step2Schema>;
@@ -22,12 +20,8 @@ const step1Schema = Yup.object().shape({
   fullNameEn: Yup.string().required("الاسم الكامل بالإنجليزية مطلوب"),
   gender: Yup.boolean().required(),
   nationality: Yup.string().required("الجنسية مطلوبة"),
-  dob: Yup.date()
-    .typeError("تاريخ الميلاد غير صالح")
-    .required("تاريخ الميلاد مطلوب"),
-  email: Yup.string()
-    .email("البريد الإلكتروني غير صالح")
-    .required("البريد الإلكتروني غير صالح"),
+  dob: Yup.date().typeError("تاريخ الميلاد غير صالح").required("تاريخ الميلاد مطلوب"),
+  email: Yup.string().email("البريد الإلكتروني غير صالح").required("البريد الإلكتروني غير صالح"),
   fax: Yup.string().optional(),
   phoneNoMain: Yup.string().required("رقم الهاتف الرئيسي مطلوب"),
   phoneNoSec: Yup.string().optional(),
@@ -46,23 +40,14 @@ const step2Schema = Yup.object().shape({
   // Will not use url() because its too strict the errors even if the link is correct
   // Trust me on this one lil bro
   imageUrl: Yup.string().required("الصورة الشخصية مطلوبة"),
-  idType: Yup.string()
-    .oneOf(["national_id", "passport"])
-    .required("نوع الهوية مطلوب"),
+  idType: Yup.string().oneOf(["national_id", "passport"]).required("نوع الهوية مطلوب"),
   idIssuanceDate: Yup.date()
     .typeError("تاريخ إصدار الهوية غير صالح")
     .required("تاريخ إصدار الهوية مطلوب"),
   idNumber: Yup.string().required("رقم الهوية مطلوب"),
   idAuthority: Yup.string().required("جهة إصدار الهوية مطلوبة"),
   martialStatus: Yup.string()
-    .oneOf([
-      "single",
-      "married",
-      "married_with_dependents",
-      "divorced",
-      "widow",
-      "other",
-    ])
+    .oneOf(["single", "married", "married_with_dependents", "divorced", "widow", "other"])
     .optional(),
   isWorking: Yup.boolean().required(),
   jobType: Yup.string().optional(),
@@ -96,8 +81,7 @@ export default function RegistrationForm() {
             ...values,
             ...formikStep1.values,
             dob: formikStep1.values.dob.toLocaleDateString("en-US"),
-            idIssuanceDate:
-              formikStep2.values.idIssuanceDate.toLocaleDateString("en-US"),
+            idIssuanceDate: formikStep2.values.idIssuanceDate.toLocaleDateString("en-US"),
           },
         });
 
@@ -158,9 +142,7 @@ export default function RegistrationForm() {
 
       {step === 1 && <Step1 formik={formikStep1} />}
 
-      {step !== 1 && (
-        <Step2 goPrevStep={() => setStep(1)} formik={formikStep2} />
-      )}
+      {step !== 1 && <Step2 goPrevStep={() => setStep(1)} formik={formikStep2} />}
 
       <Toaster />
     </>

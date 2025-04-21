@@ -24,10 +24,7 @@ import { apiClient } from "@/lib/client";
 import { useUserContext } from "@/context/UserContext";
 import { InferResponseType } from "@repo/mis-api";
 
-type CoursesType = InferResponseType<
-  typeof apiClient.student.courses.$get,
-  200
->;
+type CoursesType = InferResponseType<typeof apiClient.student.courses.$get, 200>;
 
 interface AcademicYear {
   academicYearId: number;
@@ -51,10 +48,7 @@ export default function currentCourses() {
     getCurrentAcademicYear();
   }, []);
 
-  const getCourses = async (
-    semester: string | string[],
-    academicYearId: string | string[],
-  ) => {
+  const getCourses = async (semester: string | string[], academicYearId: string | string[]) => {
     try {
       const res = await apiClient.student.courses.$get({
         query: {
@@ -77,7 +71,7 @@ export default function currentCourses() {
   const handleSearch = (value: string) => {
     console.log(value);
     const filteredCourses = courses.filter((course: any) =>
-      course.title.toLowerCase().includes(value.toLowerCase()),
+      course.title.toLowerCase().includes(value.toLowerCase())
     );
     setCourses(filteredCourses);
   };
@@ -89,12 +83,7 @@ export default function currentCourses() {
         <CardContent>
           <div className="flex flex-col mb-6 md:flex-row md:gap-6">
             <div className="image-Container border-2 border-mainColor rounded-lg overflow-hidden flex items-center justify-center">
-              <Image
-                src="/avatar.jpg"
-                alt="placeholder"
-                width={120}
-                height={120}
-              />
+              <Image src="/avatar.jpg" alt="placeholder" width={120} height={120} />
             </div>
             <CardGrid className="mt-6 md:mt-0">
               <p className="text-sm">الاسم / {loggedInUser?.name}</p>
@@ -107,9 +96,7 @@ export default function currentCourses() {
           </div>
           <Select
             className="w-full md:w-1/2"
-            onValueChange={(value: string) =>
-              getCourses(value, academicYear?.academicYearId)
-            }
+            onValueChange={(value: string) => getCourses(value, academicYear?.academicYearId)}
           >
             <SelectTrigger className="w-full md:w-1/2">
               <SelectValue placeholder="اختر الترم" />
@@ -123,18 +110,10 @@ export default function currentCourses() {
           <Table className="border rounded-md mt-6">
             <TableHeader className="bg-white">
               <TableRow>
-                <TableHead className="text-right font-medium text-[#96A0B6]">
-                  اسم المقرر
-                </TableHead>
-                <TableHead className="text-right font-medium text-[#96A0B6]">
-                  كود المقرر
-                </TableHead>
-                <TableHead className="text-right font-medium text-[#96A0B6]">
-                  عدد الساعات
-                </TableHead>
-                <TableHead className="text-right font-medium text-[#96A0B6]">
-                  التقدير
-                </TableHead>
+                <TableHead className="text-right font-medium text-[#96A0B6]">اسم المقرر</TableHead>
+                <TableHead className="text-right font-medium text-[#96A0B6]">كود المقرر</TableHead>
+                <TableHead className="text-right font-medium text-[#96A0B6]">عدد الساعات</TableHead>
+                <TableHead className="text-right font-medium text-[#96A0B6]">التقدير</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -147,9 +126,7 @@ export default function currentCourses() {
                 >
                   <TableCell className="text-right">{course.title}</TableCell>
                   <TableCell className="text-right">{course.code}</TableCell>
-                  <TableCell className="text-right">
-                    {course.totalHours}
-                  </TableCell>
+                  <TableCell className="text-right">{course.totalHours}</TableCell>
                   <TableCell className="text-right">
                     {course.grade ? course.grade : "مسجل على الفصل الحالي"}
                   </TableCell>

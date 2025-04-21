@@ -12,7 +12,4 @@ export type ApplicationType = InferResponseType<
   typeof apiClient.student.applications.$get,
   200
 >["application"] &
-  InferResponseType<
-    (typeof apiClient.admin.applications)[":id"]["$get"],
-    200
-  >["application"];
+  InferResponseType<(typeof apiClient.admin.applications)[":id"]["$get"], 200>["application"];

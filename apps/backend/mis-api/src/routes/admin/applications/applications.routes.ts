@@ -28,19 +28,19 @@ export const acceptApplication = createRoute({
   responses: {
     [HttpStatusCodes.OK]: jsonContent(
       createMessageObjectSchema("Application accepted"),
-      "Application accepted",
+      "Application accepted"
     ),
     [HttpStatusCodes.NOT_FOUND]: jsonContent(
       createMessageObjectSchema("Application not found"),
-      "Application not found",
+      "Application not found"
     ),
     [HttpStatusCodes.CONFLICT]: jsonContent(
       createMessageObjectSchema("Application already accepted"),
-      "Application already accepted",
+      "Application already accepted"
     ),
     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
       createErrorSchema(acceptApplicationSchema),
-      "The validation error(s)",
+      "The validation error(s)"
     ),
   },
 });
@@ -53,7 +53,7 @@ export const getAllApplications = createRoute({
   responses: {
     [HttpStatusCodes.OK]: jsonContent(
       adminApplicationsListSchema,
-      "A list of all students with applications",
+      "A list of all students with applications"
     ),
   },
 });
@@ -72,16 +72,13 @@ export const getApplicationDetails = createRoute({
   responses: {
     [HttpStatusCodes.OK]: jsonContent(
       adminApplicationDetailsSchema,
-      "A list of all students with applications",
+      "A list of all students with applications"
     ),
     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
       createErrorSchema(IdParamsSchema),
-      "Invalid id error",
+      "Invalid id error"
     ),
-    [HttpStatusCodes.NOT_FOUND]: jsonContent(
-      notFoundSchema,
-      "Application not found",
-    ),
+    [HttpStatusCodes.NOT_FOUND]: jsonContent(notFoundSchema, "Application not found"),
   },
 });
 

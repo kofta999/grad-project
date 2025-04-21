@@ -1,15 +1,13 @@
-import * as React from "react"
+import * as React from "react";
 
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
   ({ className, type, icon, ...props }, ref) => {
     return (
       <div className="relative w-full">
         {icon && (
-          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-mainColor">
-            {icon}
-          </span>
+          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-mainColor">{icon}</span>
         )}
         <input
           type={type}
@@ -27,4 +25,4 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 
 Input.displayName = "Input";
 
-export { Input }
+export { Input };

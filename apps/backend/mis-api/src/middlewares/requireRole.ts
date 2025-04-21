@@ -9,9 +9,6 @@ export const requireRole = (role: (typeof ROLES)[number]) =>
     if (c.var.session.get("role") === role) {
       await next();
     } else {
-      return c.json(
-        { message: HttpStatusPhrases.FORBIDDEN },
-        HttpStatusCodes.FORBIDDEN,
-      );
+      return c.json({ message: HttpStatusPhrases.FORBIDDEN }, HttpStatusCodes.FORBIDDEN);
     }
   });

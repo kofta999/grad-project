@@ -20,9 +20,7 @@ import {
   step3Schema,
 } from "../validators";
 
-export type FormType = InferRequestType<
-  typeof apiClient.student.applications.$post
->["json"];
+export type FormType = InferRequestType<typeof apiClient.student.applications.$post>["json"];
 
 export type InitialFormDataType = {
   currentAcademicYears: InferResponseType<
@@ -71,9 +69,7 @@ export default function ApplicationForm() {
               : undefined,
             qualification: {
               ...values.qualification,
-              date: formikStep2.values.qualification.date.toLocaleDateString(
-                "en-US",
-              ),
+              date: formikStep2.values.qualification.date.toLocaleDateString("en-US"),
             },
           },
         });
@@ -107,14 +103,12 @@ export default function ApplicationForm() {
           throw new Error("Application id not found");
         }
 
-        const response = await apiClient.student.applications.attachments.$post(
-          {
-            json: {
-              applicationId,
-              attachments: values.attachments,
-            },
+        const response = await apiClient.student.applications.attachments.$post({
+          json: {
+            applicationId,
+            attachments: values.attachments,
           },
-        );
+        });
         const result = await response.json();
 
         if (!response.ok) {
@@ -195,8 +189,7 @@ export default function ApplicationForm() {
 
   useEffect(() => {
     const getAcademicYears = async () => {
-      const res =
-        await apiClient.student.applications.currentAcademicYears.$get();
+      const res = await apiClient.student.applications.currentAcademicYears.$get();
 
       const data = await res.json();
       console.log(data);
@@ -208,13 +201,10 @@ export default function ApplicationForm() {
   }, []);
 
   useEffect(() => {
-    const getAvailableDepartments = async (
-      type: "diploma" | "master" | "phd",
-    ) => {
-      const res =
-        await apiClient.student.applications.availableDepartments.$get({
-          query: { type },
-        });
+    const getAvailableDepartments = async (type: "diploma" | "master" | "phd") => {
+      const res = await apiClient.student.applications.availableDepartments.$get({
+        query: { type },
+      });
 
       const data = await res.json();
       console.log(data);
@@ -232,16 +222,10 @@ export default function ApplicationForm() {
       {step === 1 && <Step1 formik={formikStep1} />}
 
       {step === 2 && (
-        <Step2
-          goPrevStep={() => setStep(1)}
-          formik={formikStep2}
-          initialData={initialData}
-        />
+        <Step2 goPrevStep={() => setStep(1)} formik={formikStep2} initialData={initialData} />
       )}
 
-      {step === 3 && (
-        <Step3 goPrevStep={() => setStep(2)} formik={formikStep3} />
-      )}
+      {step === 3 && <Step3 goPrevStep={() => setStep(2)} formik={formikStep3} />}
 
       <Toaster />
     </>

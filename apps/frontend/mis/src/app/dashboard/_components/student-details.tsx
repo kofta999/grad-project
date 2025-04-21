@@ -47,9 +47,7 @@ export default function StudentDetails({ student }: { student: StudentType }) {
                 <Mail className="text-gray-600 ml-2" />
                 البريد الالكتروني
               </p>
-              <p className="text-lg font-semibold text-gray-800">
-                {student.email}
-              </p>
+              <p className="text-lg font-semibold text-gray-800">{student.email}</p>
             </div>
             <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
               <p className="text-gray-600 flex items-center">
@@ -137,18 +135,14 @@ export default function StudentDetails({ student }: { student: StudentType }) {
                 <Phone className="text-gray-600 ml-2" />
                 الفاكس
               </p>
-              <p className="text-lg font-semibold text-gray-800">
-                {student.fax || "غير متوفر"}
-              </p>
+              <p className="text-lg font-semibold text-gray-800">{student.fax || "غير متوفر"}</p>
             </div>
             <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
               <p className="text-gray-600 flex items-center">
                 <IdCard className="text-gray-600 ml-2" />
                 نوع الهوية
               </p>
-              <p className="text-lg font-semibold text-gray-800">
-                {student.idType || "غير متوفر"}
-              </p>
+              <p className="text-lg font-semibold text-gray-800">{student.idType || "غير متوفر"}</p>
             </div>
             <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
               <p className="text-gray-600 flex items-center">
@@ -182,9 +176,7 @@ export default function StudentDetails({ student }: { student: StudentType }) {
                 <Cake className="text-gray-600 ml-2" />
                 تاريخ الميلاد
               </p>
-              <p className="text-lg font-semibold text-gray-800">
-                {student.dob || "غير متوفر"}
-              </p>
+              <p className="text-lg font-semibold text-gray-800">{student.dob || "غير متوفر"}</p>
             </div>
           </div>
         </div>

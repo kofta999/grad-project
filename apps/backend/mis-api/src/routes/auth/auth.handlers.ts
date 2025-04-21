@@ -1,10 +1,5 @@
 import { AppRouteHandler } from "@/lib/types";
-import {
-  LoginRoute,
-  LogoutRoute,
-  RegisterStage1Route,
-  UploadRoute,
-} from "./auth.routes";
+import { LoginRoute, LogoutRoute, RegisterStage1Route, UploadRoute } from "./auth.routes";
 import * as HttpStatusCodes from "stoker/http-status-codes";
 import * as HttpStatusPhrases from "stoker/http-status-phrases";
 import db from "@/db";
@@ -19,20 +14,14 @@ export const register: AppRouteHandler<RegisterStage1Route> = async (c) => {
     throw new Error("TODO: FIXME");
   }
 
-  studentData.hashedPassword = await bcrypt.hash(
-    studentData.hashedPassword,
-    10,
-  );
+  studentData.hashedPassword = await bcrypt.hash(studentData.hashedPassword, 10);
 
   const newStudents = await db
     .insert(students)
     .values(studentData)
     .returning({ studentId: students.studentId });
 
-  return c.json(
-    { success: true, studentId: newStudents[0].studentId },
-    HttpStatusCodes.OK,
-  );
+  return c.json({ success: true, studentId: newStudents[0].studentId }, HttpStatusCodes.OK);
 };
 
 export const login: AppRouteHandler<LoginRoute> = async (c) => {
@@ -69,17 +58,11 @@ export const login: AppRouteHandler<LoginRoute> = async (c) => {
   }
 
   if (!user) {
-    return c.json(
-      { message: HttpStatusPhrases.UNAUTHORIZED },
-      HttpStatusCodes.UNAUTHORIZED,
-    );
+    return c.json({ message: HttpStatusPhrases.UNAUTHORIZED }, HttpStatusCodes.UNAUTHORIZED);
   }
 
   if (!(await bcrypt.compare(password, user.hashedPassword))) {
-    return c.json(
-      { message: HttpStatusPhrases.UNAUTHORIZED },
-      HttpStatusCodes.UNAUTHORIZED,
-    );
+    return c.json({ message: HttpStatusPhrases.UNAUTHORIZED }, HttpStatusCodes.UNAUTHORIZED);
   }
 
   c.var.session.set("id", userId!);
