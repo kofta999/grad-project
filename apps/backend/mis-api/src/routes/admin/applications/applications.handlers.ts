@@ -1,18 +1,5 @@
-import db from "@/db";
 import * as HttpStatusCodes from "stoker/http-status-codes";
-import {
-  academicQualifications,
-  academicYears,
-  addresses,
-  adminApplicationsList,
-  applications,
-  attachments,
-  departments,
-  emergencyContacts,
-  registerations,
-} from "@/db/schema";
 import { AppRouteHandler } from "@/lib/types";
-import { eq } from "drizzle-orm";
 import {
   AcceptApplicationRoute,
   GetAllApplicationsRoute,
@@ -20,137 +7,59 @@ import {
 } from "./applications.routes";
 import { z } from "zod";
 import { adminApplicationDetailsSchema } from "@/db/validators";
-import { formatAcademicYear, removeApplicationId } from "@/lib/util";
+import { AdminApplicationService } from "@/services/admin-application.service";
+import { ApplicationDetailsDTO } from "@/dtos/application-details.dto";
+import { StudentDetailsDTO } from "@/dtos/student-details.dto";
+
+const adminApplicationService = new AdminApplicationService();
 
 export const acceptApplication: AppRouteHandler<AcceptApplicationRoute> = async (c) => {
   const { applicationId } = c.req.valid("json");
 
-  const maybeApplication = await db.query.applications.findFirst({
-    where(fields, operators) {
-      return operators.eq(fields.applicationId, applicationId);
-    },
-    columns: {
-      isAdminAccepted: true,
-    },
-  });
+  const operationStatus = await adminApplicationService.acceptApplication(applicationId);
 
-  if (!maybeApplication) {
+  if (operationStatus == null) {
     return c.json({ message: "Application not found" }, HttpStatusCodes.NOT_FOUND);
   }
 
-  if (maybeApplication.isAdminAccepted === true) {
+  if (!operationStatus) {
     return c.json({ message: "Application already accepted" }, HttpStatusCodes.CONFLICT);
   }
-
-  await db
-    .update(applications)
-    .set({ isAdminAccepted: true })
-    .where(eq(applications.applicationId, applicationId));
 
   return c.json({ message: "Application accepted" }, HttpStatusCodes.OK);
 };
 
 export const getAllApplications: AppRouteHandler<GetAllApplicationsRoute> = async (c) => {
-  const results = await db.select().from(adminApplicationsList);
+  const applicationsList = await adminApplicationService.getAllApplications();
 
-  return c.json(results, HttpStatusCodes.OK);
+  return c.json(applicationsList, HttpStatusCodes.OK);
 };
 
 export const getApplicationDetails: AppRouteHandler<GetApplicationDetailsRoute> = async (c) => {
   const { id: applicationId } = c.req.valid("param");
   const { fetch } = c.req.valid("query");
-  let res: z.infer<typeof adminApplicationDetailsSchema> = {};
-
-  const getApplication = async () => {
-    const a = applications;
-
-    const applicationList = await db
-      .select({
-        application: {
-          isAccepted: a.isAdminAccepted,
-          studentId: a.studentId,
-          applicationId: a.applicationId,
-        },
-        academicQualification: removeApplicationId(academicQualifications),
-        emergencyContact: removeApplicationId(emergencyContacts),
-        registration: removeApplicationId(registerations),
-        academicYear: academicYears,
-        department: departments,
-      })
-      .from(a)
-      .innerJoin(addresses, eq(a.applicationId, addresses.applicationId))
-      .innerJoin(academicQualifications, eq(a.applicationId, academicQualifications.applicationId))
-      .leftJoin(emergencyContacts, eq(a.applicationId, emergencyContacts.applicationId))
-      .innerJoin(registerations, eq(a.applicationId, registerations.applicationId))
-      .innerJoin(academicYears, eq(registerations.academicYearId, academicYears.academicYearId))
-      .innerJoin(departments, eq(registerations.departmentId, departments.departmentId))
-      .where(eq(a.applicationId, applicationId));
-
-    if (applicationList.length === 0) return null;
-
-    const attachmentsList = await db.query.attachments.findMany({
-      where: (f, { eq }) => eq(f.applicationId, applicationId),
-      columns: { applicationId: false },
-    });
-
-    const addressesList = await db.query.addresses.findMany({
-      where: (f, { eq }) => eq(f.applicationId, applicationId),
-      columns: { applicationId: false },
-    });
-
-    const { application, academicYear, registration, department, ...rest } = applicationList[0];
-
-    return {
-      ...application,
-      ...rest,
-      registration: {
-        registerationId: registration.registerationId,
-        academicDegree: department.type,
-        faculty: registration.faculty,
-        academicYearId: academicYear.academicYearId,
-        academicYear: formatAcademicYear(academicYear),
-        academicProgram: department.title,
-      },
-      attachments: attachmentsList,
-      addresses: addressesList,
-    };
-  };
-
-  const getStudent = async () =>
-    db.query.students.findFirst({
-      where: ({ studentId }, { eq }) =>
-        eq(
-          studentId,
-          db
-            .select({ studentId: applications.studentId })
-            .from(applications)
-            .where(eq(applications.applicationId, applicationId))
-        ),
-      columns: {
-        hashedPassword: false,
-        secQuestion: false,
-        secAnswer: false,
-        updatedAt: false,
-      },
-    });
+  let res: {
+    application?: ApplicationDetailsDTO;
+    student?: StudentDetailsDTO;
+  } = {};
 
   if (fetch === "student" || fetch == "all") {
-    const student = await getStudent();
+    const student = await adminApplicationService.getStudentDetails(applicationId);
     if (!student) {
       return c.json({ message: "Application Not found" }, HttpStatusCodes.NOT_FOUND);
     }
 
-    res["student"] = student;
+    res.student = student;
   }
 
   if (fetch === "application" || fetch == "all") {
-    const application = await getApplication();
+    const application = await adminApplicationService.getApplicationByApplicationId(applicationId);
 
     if (!application) {
       return c.json({ message: "Application Not found" }, HttpStatusCodes.NOT_FOUND);
     }
 
-    res["application"] = application;
+    res.application = application;
   }
 
   return c.json(res, HttpStatusCodes.OK);

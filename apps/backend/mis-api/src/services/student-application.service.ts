@@ -9,9 +9,9 @@ import {
 } from "@/db/schema";
 import { CreateApplicationDTO } from "@/dtos/create-application.dto";
 import { SaveAttachmentsDTO } from "@/dtos/save-attachment.dto";
-import { ApplicationService, IApplicationService } from "./application.service";
+import { ApplicationService } from "./application.service";
 
-interface IStudentApplicationService extends IApplicationService {
+export interface IStudentApplicationService {
   createApplication(studentId: number, application: CreateApplicationDTO): Promise<number>;
   saveApplicationAttachments(attachments: SaveAttachmentsDTO): Promise<void>;
 }

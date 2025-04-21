@@ -9,7 +9,7 @@
     "dev:tsc": "tsc -p tsconfig.build.json --watch",
     "build": "tsc -p tsconfig.build.json",
     "clean": "rm -rf dist",
-    "typecheck": "tsc --noemit",
+    "typecheck": "tsc --skipLibCheck --noEmit --project tsconfig.json",
     "lint": "eslint src/",
     "test": "LOG_LEVEL=silent vitest"
   },

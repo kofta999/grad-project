@@ -14,6 +14,9 @@ import {
 } from "stoker/openapi/schemas";
 import * as HttpStatusCodes from "stoker/http-status-codes";
 import { NotFoundSchema } from "@/lib/constants";
+import { AdminApplicationsListSchema } from "@/dtos/admin-applications-list.dto";
+import { StudentDetailsSchema } from "@/dtos/student-details.dto";
+import { ApplicationDetailsSchema } from "@/dtos/application-details.dto";
 
 const tags = ["Admin"];
 
@@ -23,7 +26,7 @@ export const acceptApplication = createRoute({
   tags,
   middleware: [isAuthenticated, requireRole("admin")],
   request: {
-    body: jsonContentRequired(acceptApplicationSchema, "Application schema"),
+    body: jsonContentRequired(z.object({ applicationId: z.number() }), "Application schema"),
   },
   responses: {
     [HttpStatusCodes.OK]: jsonContent(
@@ -39,7 +42,7 @@ export const acceptApplication = createRoute({
       "Application already accepted"
     ),
     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
-      createErrorSchema(acceptApplicationSchema),
+      createErrorSchema(z.object({ applicationId: z.number() })),
       "The validation error(s)"
     ),
   },
@@ -52,7 +55,7 @@ export const getAllApplications = createRoute({
   middleware: [isAuthenticated, requireRole("admin")] as const,
   responses: {
     [HttpStatusCodes.OK]: jsonContent(
-      adminApplicationsListSchema,
+      AdminApplicationsListSchema,
       "A list of all students with applications"
     ),
   },
@@ -71,7 +74,10 @@ export const getApplicationDetails = createRoute({
   middleware: [isAuthenticated, requireRole("admin")] as const,
   responses: {
     [HttpStatusCodes.OK]: jsonContent(
-      adminApplicationDetailsSchema,
+      z.object({
+        student: StudentDetailsSchema.optional(),
+        application: ApplicationDetailsSchema.optional(),
+      }),
       "A list of all students with applications"
     ),
     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(

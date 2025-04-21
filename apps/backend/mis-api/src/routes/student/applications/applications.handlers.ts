@@ -7,7 +7,7 @@ import {
   GetAvailableDepartmentsRoute,
 } from "./applications.routes";
 import * as HttpStatusCodes from "stoker/http-status-codes";
-import { StudentApplicationService } from "@/services/student-applications.service";
+import { StudentApplicationService } from "@/services/student-application.service";
 
 const studentApplicationService = new StudentApplicationService();
 
@@ -52,7 +52,7 @@ export const saveApplicationAttachments: AppRouteHandler<SaveApplicationAttachme
 export const getApplication: AppRouteHandler<GetApplicationRoute> = async (c) => {
   const studentId = c.var.session.get("id")!;
 
-  const application = await studentApplicationService.getApplication(studentId);
+  const application = await studentApplicationService.getApplicationByStudentId(studentId);
 
   if (!application) {
     return c.json({ message: "Application Not found" }, HttpStatusCodes.NOT_FOUND);
