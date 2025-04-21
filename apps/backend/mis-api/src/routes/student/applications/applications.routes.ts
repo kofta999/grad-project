@@ -12,7 +12,7 @@ import { createRoute, z } from "@hono/zod-openapi";
 import { jsonContent, jsonContentRequired } from "stoker/openapi/helpers";
 import * as HttpStatusCodes from "stoker/http-status-codes";
 import { createErrorSchema } from "stoker/openapi/schemas";
-import { notFoundSchema } from "@/lib/constants";
+import { NotFoundSchema } from "@/lib/constants";
 
 const tags = ["Student"];
 
@@ -92,7 +92,7 @@ export const getApplication = createRoute({
   tags,
   responses: {
     [HttpStatusCodes.OK]: jsonContent(studentApplicationDetailsSchema, "The application details"),
-    [HttpStatusCodes.NOT_FOUND]: jsonContent(notFoundSchema, "Application not found"),
+    [HttpStatusCodes.NOT_FOUND]: jsonContent(NotFoundSchema, "Application not found"),
   },
 });
 

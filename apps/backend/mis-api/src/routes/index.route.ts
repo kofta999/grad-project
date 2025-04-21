@@ -1,4 +1,4 @@
-import { unauthorizedSchema } from "@/lib/constants";
+import { UnauthorizedSchema } from "@/lib/constants";
 import { createRouter } from "@/lib/create-app";
 import { isAuthenticated } from "@/middlewares/isAuthenticated";
 import { createRoute } from "@hono/zod-openapi";
@@ -14,7 +14,7 @@ const router = createRouter().openapi(
     path: "/",
     responses: {
       [HttpStatusCodes.OK]: jsonContent(createMessageObjectSchema("MIS API"), "My API Index"),
-      [HttpStatusCodes.UNAUTHORIZED]: jsonContent(unauthorizedSchema, "The authentication errors"),
+      [HttpStatusCodes.UNAUTHORIZED]: jsonContent(UnauthorizedSchema, "The authentication errors"),
     },
   }),
   (c) => c.json({ message: "Hi" })

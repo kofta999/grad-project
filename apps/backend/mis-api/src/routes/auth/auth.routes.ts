@@ -1,20 +1,13 @@
-import { loginSchema, registerSchema } from "@/db/validators";
 import { createRoute, z } from "@hono/zod-openapi";
 import { jsonContent, jsonContentRequired } from "stoker/openapi/helpers";
 import * as HttpStatusCodes from "stoker/http-status-codes";
 import { createErrorSchema } from "stoker/openapi/schemas";
-import { ROLES, unauthorizedSchema } from "@/lib/constants";
+import { ROLES, UnauthorizedSchema } from "@/lib/constants";
 import { isAuthenticated } from "@/middlewares/isAuthenticated";
 import { uploadFile } from "@/middlewares/uploadFile";
-
-const FileRequestSchema = z.object({
-  file: z
-    .custom<File>((v) => v instanceof File)
-    .openapi({
-      type: "string",
-      format: "binary",
-    }),
-});
+import { RegisterStudentSchema } from "@/dtos/register-student.dto";
+import { LoginUserSchema } from "@/dtos/login-user.dto";
+import { FileUploadSchema } from "@/dtos/file-upload.dto";
 
 const tags = ["Authentication"];
 
@@ -23,15 +16,15 @@ export const register = createRoute({
   method: "post",
   tags,
   request: {
-    body: jsonContentRequired(registerSchema, "Register stage 1 data"),
+    body: jsonContentRequired(RegisterStudentSchema, "Student registration schema"),
   },
   responses: {
     [HttpStatusCodes.OK]: jsonContent(
       z.object({ studentId: z.number() }),
-      "Register stage 1 completed"
+      "Student successfully registered"
     ),
     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
-      createErrorSchema(registerSchema),
+      createErrorSchema(RegisterStudentSchema),
       "The validation error(s)"
     ),
   },
@@ -42,7 +35,7 @@ export const login = createRoute({
   method: "post",
   tags,
   request: {
-    body: jsonContentRequired(loginSchema, "The login credentials"),
+    body: jsonContentRequired(LoginUserSchema, "The login credentials"),
   },
   responses: {
     [HttpStatusCodes.OK]: jsonContent(
@@ -50,10 +43,10 @@ export const login = createRoute({
       "Successful login"
     ),
     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
-      createErrorSchema(loginSchema),
+      createErrorSchema(LoginUserSchema),
       "The validation error(s)"
     ),
-    [HttpStatusCodes.UNAUTHORIZED]: jsonContent(unauthorizedSchema, "The authentication errors"),
+    [HttpStatusCodes.UNAUTHORIZED]: jsonContent(UnauthorizedSchema, "The authentication errors"),
   },
 });
 
@@ -64,7 +57,7 @@ export const logout = createRoute({
   middleware: [isAuthenticated] as const,
   responses: {
     [HttpStatusCodes.OK]: jsonContent(z.object({}), "Successful logout"),
-    [HttpStatusCodes.UNAUTHORIZED]: jsonContent(unauthorizedSchema, "The authentication errors"),
+    [HttpStatusCodes.UNAUTHORIZED]: jsonContent(UnauthorizedSchema, "The authentication errors"),
   },
 });
 
@@ -77,7 +70,7 @@ export const upload = createRoute({
     body: {
       content: {
         "multipart/form-data": {
-          schema: FileRequestSchema,
+          schema: FileUploadSchema,
         },
       },
     },
@@ -90,10 +83,10 @@ export const upload = createRoute({
   },
 });
 
-export type RegisterStage1Route = typeof register;
+export type RegisterStudentRoute = typeof register;
 
-export type LoginRoute = typeof login;
+export type LoginUserRoute = typeof login;
 
-export type LogoutRoute = typeof logout;
+export type LogoutUserRoute = typeof logout;
 
-export type UploadRoute = typeof upload;
+export type UploadFileRoute = typeof upload;

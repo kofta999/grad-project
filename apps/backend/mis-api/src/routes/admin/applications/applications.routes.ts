@@ -13,7 +13,7 @@ import {
   IdParamsSchema,
 } from "stoker/openapi/schemas";
 import * as HttpStatusCodes from "stoker/http-status-codes";
-import { notFoundSchema } from "@/lib/constants";
+import { NotFoundSchema } from "@/lib/constants";
 
 const tags = ["Admin"];
 
@@ -78,7 +78,7 @@ export const getApplicationDetails = createRoute({
       createErrorSchema(IdParamsSchema),
       "Invalid id error"
     ),
-    [HttpStatusCodes.NOT_FOUND]: jsonContent(notFoundSchema, "Application not found"),
+    [HttpStatusCodes.NOT_FOUND]: jsonContent(NotFoundSchema, "Application not found"),
   },
 });
 
