@@ -7,6 +7,7 @@ import {
   adminApplicationsList,
   applications,
   attachments,
+  departments,
   emergencyContacts,
   registerations,
 } from "@/db/schema";
@@ -21,9 +22,7 @@ import { z } from "zod";
 import { adminApplicationDetailsSchema } from "@/db/validators";
 import { formatAcademicYear, removeApplicationId } from "@/lib/util";
 
-export const acceptApplication: AppRouteHandler<
-  AcceptApplicationRoute
-> = async (c) => {
+export const acceptApplication: AppRouteHandler<AcceptApplicationRoute> = async (c) => {
   const { applicationId } = c.req.valid("json");
 
   const maybeApplication = await db.query.applications.findFirst({
@@ -36,17 +35,11 @@ export const acceptApplication: AppRouteHandler<
   });
 
   if (!maybeApplication) {
-    return c.json(
-      { message: "Application not found" },
-      HttpStatusCodes.NOT_FOUND,
-    );
+    return c.json({ message: "Application not found" }, HttpStatusCodes.NOT_FOUND);
   }
 
   if (maybeApplication.isAdminAccepted === true) {
-    return c.json(
-      { message: "Application already accepted" },
-      HttpStatusCodes.CONFLICT,
-    );
+    return c.json({ message: "Application already accepted" }, HttpStatusCodes.CONFLICT);
   }
 
   await db
@@ -57,17 +50,13 @@ export const acceptApplication: AppRouteHandler<
   return c.json({ message: "Application accepted" }, HttpStatusCodes.OK);
 };
 
-export const getAllApplications: AppRouteHandler<
-  GetAllApplicationsRoute
-> = async (c) => {
+export const getAllApplications: AppRouteHandler<GetAllApplicationsRoute> = async (c) => {
   const results = await db.select().from(adminApplicationsList);
 
   return c.json(results, HttpStatusCodes.OK);
 };
 
-export const getApplicationDetails: AppRouteHandler<
-  GetApplicationDetailsRoute
-> = async (c) => {
+export const getApplicationDetails: AppRouteHandler<GetApplicationDetailsRoute> = async (c) => {
   const { id: applicationId } = c.req.valid("param");
   const { fetch } = c.req.valid("query");
   let res: z.infer<typeof adminApplicationDetailsSchema> = {};
@@ -86,25 +75,15 @@ export const getApplicationDetails: AppRouteHandler<
         emergencyContact: removeApplicationId(emergencyContacts),
         registration: removeApplicationId(registerations),
         academicYear: academicYears,
+        department: departments,
       })
       .from(a)
       .innerJoin(addresses, eq(a.applicationId, addresses.applicationId))
-      .innerJoin(
-        academicQualifications,
-        eq(a.applicationId, academicQualifications.applicationId),
-      )
-      .innerJoin(
-        emergencyContacts,
-        eq(a.applicationId, emergencyContacts.applicationId),
-      )
-      .innerJoin(
-        registerations,
-        eq(a.applicationId, registerations.applicationId),
-      )
-      .innerJoin(
-        academicYears,
-        eq(registerations.academicYearId, academicYears.academicYearId),
-      )
+      .innerJoin(academicQualifications, eq(a.applicationId, academicQualifications.applicationId))
+      .leftJoin(emergencyContacts, eq(a.applicationId, emergencyContacts.applicationId))
+      .innerJoin(registerations, eq(a.applicationId, registerations.applicationId))
+      .innerJoin(academicYears, eq(registerations.academicYearId, academicYears.academicYearId))
+      .innerJoin(departments, eq(registerations.departmentId, departments.departmentId))
       .where(eq(a.applicationId, applicationId));
 
     if (applicationList.length === 0) return null;
@@ -119,17 +98,18 @@ export const getApplicationDetails: AppRouteHandler<
       columns: { applicationId: false },
     });
 
-    const { application, academicYear, registration, ...rest } =
-      applicationList[0];
+    const { application, academicYear, registration, department, ...rest } = applicationList[0];
 
     return {
       ...application,
       ...rest,
       registration: {
         registerationId: registration.registerationId,
-        academicDegree: registration.academicDegree,
+        academicDegree: department.type,
         faculty: registration.faculty,
+        academicYearId: academicYear.academicYearId,
         academicYear: formatAcademicYear(academicYear),
+        academicProgram: department.title,
       },
       attachments: attachmentsList,
       addresses: addressesList,
@@ -144,7 +124,7 @@ export const getApplicationDetails: AppRouteHandler<
           db
             .select({ studentId: applications.studentId })
             .from(applications)
-            .where(eq(applications.applicationId, applicationId)),
+            .where(eq(applications.applicationId, applicationId))
         ),
       columns: {
         hashedPassword: false,
@@ -157,10 +137,7 @@ export const getApplicationDetails: AppRouteHandler<
   if (fetch === "student" || fetch == "all") {
     const student = await getStudent();
     if (!student) {
-      return c.json(
-        { message: "Application Not found" },
-        HttpStatusCodes.NOT_FOUND,
-      );
+      return c.json({ message: "Application Not found" }, HttpStatusCodes.NOT_FOUND);
     }
 
     res["student"] = student;
@@ -170,10 +147,7 @@ export const getApplicationDetails: AppRouteHandler<
     const application = await getApplication();
 
     if (!application) {
-      return c.json(
-        { message: "Application Not found" },
-        HttpStatusCodes.NOT_FOUND,
-      );
+      return c.json({ message: "Application Not found" }, HttpStatusCodes.NOT_FOUND);
     }
 
     res["application"] = application;

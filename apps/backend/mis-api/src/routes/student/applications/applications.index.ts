@@ -4,10 +4,7 @@ import * as routes from "./applications.routes";
 
 const router = createRouter()
   .openapi(routes.createApplication, handlers.createApplication)
-  .openapi(
-    routes.saveApplicationAttachments,
-    handlers.saveApplicationAttachments,
-  )
+  .openapi(routes.saveApplicationAttachments, handlers.saveApplicationAttachments)
   .openapi(routes.getApplication, handlers.getApplication)
   .openapi(routes.getCurrentAcademicYears, handlers.getCurrentAcademicYears)
   .openapi(routes.getAvailableDepartments, handlers.getAvailableDepartments);

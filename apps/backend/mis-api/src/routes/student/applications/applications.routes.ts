@@ -24,7 +24,7 @@ export const getCurrentAcademicYears = createRoute({
   responses: {
     [HttpStatusCodes.OK]: jsonContent(
       currentAcademicYearsSchema,
-      "An array of available academic years",
+      "An array of available academic years"
     ),
   },
 });
@@ -43,7 +43,7 @@ export const getAvailableDepartments = createRoute({
   responses: {
     [HttpStatusCodes.OK]: jsonContent(
       z.array(z.object({ departmentId: z.number(), title: z.string() })),
-      "An array of available departments for this type",
+      "An array of available departments for this type"
     ),
   },
 });
@@ -59,11 +59,11 @@ export const createApplication = createRoute({
   responses: {
     [HttpStatusCodes.OK]: jsonContent(
       z.object({ applicationId: z.number() }),
-      "Application completed",
+      "Application completed"
     ),
     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
       createErrorSchema(applicationSchema),
-      "The validation error(s)",
+      "The validation error(s)"
     ),
   },
 });
@@ -77,13 +77,10 @@ export const saveApplicationAttachments = createRoute({
     body: jsonContentRequired(attachmentsSchema, "Attachment links with types"),
   },
   responses: {
-    [HttpStatusCodes.OK]: jsonContent(
-      z.object({ applicationId: z.number() }),
-      "Attachments saved",
-    ),
+    [HttpStatusCodes.OK]: jsonContent(z.object({ applicationId: z.number() }), "Attachments saved"),
     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
       createErrorSchema(attachmentsSchema),
-      "The validation error(s)",
+      "The validation error(s)"
     ),
   },
 });
@@ -94,14 +91,8 @@ export const getApplication = createRoute({
   middleware: [isAuthenticated, requireRole("student")],
   tags,
   responses: {
-    [HttpStatusCodes.OK]: jsonContent(
-      studentApplicationDetailsSchema,
-      "The application details",
-    ),
-    [HttpStatusCodes.NOT_FOUND]: jsonContent(
-      notFoundSchema,
-      "Application not found",
-    ),
+    [HttpStatusCodes.OK]: jsonContent(studentApplicationDetailsSchema, "The application details"),
+    [HttpStatusCodes.NOT_FOUND]: jsonContent(notFoundSchema, "Application not found"),
   },
 });
 

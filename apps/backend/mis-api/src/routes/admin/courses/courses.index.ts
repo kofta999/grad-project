@@ -3,14 +3,8 @@ import * as handlers from "./courses.handlers";
 import * as routes from "./courses.routes";
 
 const router = createRouter()
-  .openapi(
-    routes.getApplicantRegisteredCourses,
-    handlers.getApplicantRegisteredCourses,
-  )
-  .openapi(
-    routes.getAvailableCoursesForApplication,
-    handlers.getAvailableCoursesForApplication,
-  )
+  .openapi(routes.getApplicantRegisteredCourses, handlers.getApplicantRegisteredCourses)
+  .openapi(routes.getAvailableCoursesForApplication, handlers.getAvailableCoursesForApplication)
   .openapi(routes.registerCourse, handlers.registerCourse)
   .openapi(routes.deleteCourse, handlers.deleteCourse);
 

@@ -18,15 +18,8 @@ import {
 import { sql } from "drizzle-orm";
 
 export const addressType = pgEnum("address_type", ["permanent", "current"]);
-export const departmentType = pgEnum("department_type", [
-  "diploma",
-  "master",
-  "phd",
-]);
-export const identificationType = pgEnum("identification_type", [
-  "national_id",
-  "passport",
-]);
+export const departmentType = pgEnum("department_type", ["diploma", "master", "phd"]);
+export const identificationType = pgEnum("identification_type", ["national_id", "passport"]);
 export const martialStatus = pgEnum("martial_status", [
   "single",
   "married",
@@ -35,11 +28,7 @@ export const martialStatus = pgEnum("martial_status", [
   "widow",
   "other",
 ]);
-export const semesterType = pgEnum("semester_type", [
-  "first",
-  "second",
-  "third",
-]);
+export const semesterType = pgEnum("semester_type", ["first", "second", "third"]);
 
 export const students = pgTable(
   "students",
@@ -73,7 +62,7 @@ export const students = pgTable(
       .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),
   },
-  (table) => [unique("students_email_key").on(table.email)],
+  (table) => [unique("students_email_key").on(table.email)]
 );
 
 export const applications = pgTable(
@@ -86,14 +75,14 @@ export const applications = pgTable(
   (table) => [
     index("applications_student_id_idx").using(
       "btree",
-      table.studentId.asc().nullsLast().op("int4_ops"),
+      table.studentId.asc().nullsLast().op("int4_ops")
     ),
     foreignKey({
       columns: [table.studentId],
       foreignColumns: [students.studentId],
       name: "applications_student_id_fkey",
     }),
-  ],
+  ]
 );
 
 export const registerations = pgTable(
@@ -103,21 +92,20 @@ export const registerations = pgTable(
     applicationId: integer("application_id").notNull(),
     academicYearId: integer("academic_year_id").notNull(),
     faculty: text().notNull(),
-    academicDegree: departmentType("academic_degree").notNull(),
     departmentId: integer("department_id").notNull(),
   },
   (table) => [
     index("idx_registerations_academic_year_id").using(
       "btree",
-      table.academicYearId.asc().nullsLast().op("int4_ops"),
+      table.academicYearId.asc().nullsLast().op("int4_ops")
     ),
     index("idx_registerations_application_id").using(
       "btree",
-      table.applicationId.asc().nullsLast().op("int4_ops"),
+      table.applicationId.asc().nullsLast().op("int4_ops")
     ),
     index("idx_registerations_department_id").using(
       "btree",
-      table.departmentId.asc().nullsLast().op("int4_ops"),
+      table.departmentId.asc().nullsLast().op("int4_ops")
     ),
     foreignKey({
       columns: [table.applicationId],
@@ -135,7 +123,7 @@ export const registerations = pgTable(
       name: "registerations_department_id_fkey",
     }),
     unique("registerations_application_id_key").on(table.applicationId),
-  ],
+  ]
 );
 
 export const academicYears = pgTable("academic_years", {
@@ -165,14 +153,14 @@ export const attachments = pgTable(
   (table) => [
     index("idx_attachments_application_id").using(
       "btree",
-      table.applicationId.asc().nullsLast().op("int4_ops"),
+      table.applicationId.asc().nullsLast().op("int4_ops")
     ),
     foreignKey({
       columns: [table.applicationId],
       foreignColumns: [applications.applicationId],
       name: "attachments_application_id_fkey",
     }),
-  ],
+  ]
 );
 
 export const addresses = pgTable(
@@ -188,14 +176,14 @@ export const addresses = pgTable(
   (table) => [
     index("idx_addresses_application_id").using(
       "btree",
-      table.applicationId.asc().nullsLast().op("int4_ops"),
+      table.applicationId.asc().nullsLast().op("int4_ops")
     ),
     foreignKey({
       columns: [table.applicationId],
       foreignColumns: [applications.applicationId],
       name: "addresses_application_id_fkey",
     }),
-  ],
+  ]
 );
 
 export const emergencyContacts = pgTable(
@@ -215,7 +203,7 @@ export const emergencyContacts = pgTable(
       name: "emergency_contacts_application_id_fkey",
     }),
     unique("emergency_contacts_application_id_key").on(table.applicationId),
-  ],
+  ]
 );
 
 export const academicQualifications = pgTable(
@@ -238,17 +226,15 @@ export const academicQualifications = pgTable(
   (table) => [
     index("academic_qualifications_application_id_idx").using(
       "btree",
-      table.applicationId.asc().nullsLast().op("int4_ops"),
+      table.applicationId.asc().nullsLast().op("int4_ops")
     ),
     foreignKey({
       columns: [table.applicationId],
       foreignColumns: [applications.applicationId],
       name: "academic_qualifications_application_id_fkey",
     }),
-    unique("academic_qualifications_application_id_key").on(
-      table.applicationId,
-    ),
-  ],
+    unique("academic_qualifications_application_id_key").on(table.applicationId),
+  ]
 );
 
 export const admins = pgTable(
@@ -266,7 +252,7 @@ export const admins = pgTable(
       .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),
   },
-  (table) => [unique("admins_email_key").on(table.email)],
+  (table) => [unique("admins_email_key").on(table.email)]
 );
 
 export const courses = pgTable(
@@ -281,18 +267,16 @@ export const courses = pgTable(
   (table) => [
     index("idx_courses_prerequisite").using(
       "btree",
-      table.prerequisite.asc().nullsLast().op("int4_ops"),
+      table.prerequisite.asc().nullsLast().op("int4_ops")
     ),
     unique("courses_code_key").on(table.code),
-  ],
+  ]
 );
 
 export const courseRegistrations = pgTable(
   "course_registrations",
   {
-    courseRegistrationId: serial("course_registration_id")
-      .primaryKey()
-      .notNull(),
+    courseRegistrationId: serial("course_registration_id").primaryKey().notNull(),
     courseId: integer("course_id").notNull(),
     applicationId: integer("application_id").notNull(),
     semester: semesterType().notNull(),
@@ -301,20 +285,20 @@ export const courseRegistrations = pgTable(
   (table) => [
     index("idx_course_registrations_academic_year_id").using(
       "btree",
-      table.academicYearId.asc().nullsLast().op("int4_ops"),
+      table.academicYearId.asc().nullsLast().op("int4_ops")
     ),
     index("idx_course_registrations_app_semester").using(
       "btree",
       table.applicationId.asc().nullsLast().op("int4_ops"),
-      table.semester.asc().nullsLast().op("int4_ops"),
+      table.semester.asc().nullsLast().op("int4_ops")
     ),
     index("idx_course_registrations_application_id").using(
       "btree",
-      table.applicationId.asc().nullsLast().op("int4_ops"),
+      table.applicationId.asc().nullsLast().op("int4_ops")
     ),
     index("idx_course_registrations_course_id").using(
       "btree",
-      table.courseId.asc().nullsLast().op("int4_ops"),
+      table.courseId.asc().nullsLast().op("int4_ops")
     ),
     foreignKey({
       columns: [table.courseId],
@@ -331,7 +315,7 @@ export const courseRegistrations = pgTable(
       foreignColumns: [academicYears.academicYearId],
       name: "course_registrations_academic_year_id_fkey",
     }),
-  ],
+  ]
 );
 
 export const courseResults = pgTable(
@@ -344,18 +328,15 @@ export const courseResults = pgTable(
   (table) => [
     index("idx_course_results_course_registration_id").using(
       "btree",
-      table.courseRegistrationId.asc().nullsLast().op("int4_ops"),
+      table.courseRegistrationId.asc().nullsLast().op("int4_ops")
     ),
-    index("idx_course_results_grade").using(
-      "btree",
-      table.grade.asc().nullsLast().op("int4_ops"),
-    ),
+    index("idx_course_results_grade").using("btree", table.grade.asc().nullsLast().op("int4_ops")),
     foreignKey({
       columns: [table.courseRegistrationId],
       foreignColumns: [courseRegistrations.courseRegistrationId],
       name: "course_results_course_registration_id_fkey",
     }),
-  ],
+  ]
 );
 
 export const theses = pgTable(
@@ -378,7 +359,7 @@ export const theses = pgTable(
       name: "theses_attachment_id_fkey",
     }),
     unique("theses_application_id_key").on(table.applicationId),
-  ],
+  ]
 );
 
 export const departmentCourses = pgTable(
@@ -403,9 +384,8 @@ export const departmentCourses = pgTable(
       columns: [table.courseId, table.departmentId],
       name: "department_courses_pkey",
     }),
-  ],
+  ]
 );
-
 export const adminApplicationsList = pgView("admin_applications_list", {
   applicationId: integer("application_id"),
   studentName: text("student_name"),
@@ -413,7 +393,7 @@ export const adminApplicationsList = pgView("admin_applications_list", {
   department: text(),
   isAdminAccepted: boolean("is_admin_accepted"),
 }).as(
-  sql`SELECT a.application_id, s.full_name_ar AS student_name, r.academic_degree, d.title AS department, a.is_admin_accepted FROM applications a JOIN students s USING (student_id) JOIN registerations r USING (application_id) JOIN departments d ON d.department_id = r.department_id`,
+  sql`SELECT a.application_id, s.full_name_ar AS student_name, d.type AS academic_degree, d.title AS department, a.is_admin_accepted FROM applications a JOIN students s USING (student_id) JOIN registerations r USING (application_id) JOIN departments d ON d.department_id = r.department_id`
 );
 
 export const acceptedApplications = pgView("accepted_applications", {
@@ -427,22 +407,20 @@ export const acceptedApplications = pgView("accepted_applications", {
     mode: "number",
   }),
 }).as(
-  sql`SELECT a.application_id, a.student_id, r.department_id, sum(c.total_hours) AS total_completed_hours, sum( CASE WHEN d_c.is_compulsory = true THEN c.total_hours ELSE 0 END) AS completed_compulsory_hours FROM applications a JOIN registerations r ON r.application_id = a.application_id JOIN course_registrations c_reg ON c_reg.application_id = a.application_id JOIN course_results c_res ON c_res.course_registration_id = c_reg.course_registration_id JOIN courses c ON c.course_id = c_reg.course_id JOIN department_courses d_c ON d_c.course_id = c_reg.course_id AND d_c.department_id = r.department_id WHERE a.is_admin_accepted = true AND c_res.grade >= 50 GROUP BY a.application_id, r.department_id`,
+  sql`SELECT a.application_id, a.student_id, r.department_id, COALESCE(sum( CASE WHEN c_res.grade >= 50 THEN c.total_hours ELSE 0 END), 0::bigint) AS total_completed_hours, COALESCE(sum( CASE WHEN d_c.is_compulsory = true AND c_res.grade >= 50 THEN c.total_hours ELSE 0 END), 0::bigint) AS completed_compulsory_hours FROM applications a JOIN registerations r ON r.application_id = a.application_id LEFT JOIN course_registrations c_reg ON c_reg.application_id = a.application_id LEFT JOIN course_results c_res ON c_res.course_registration_id = c_reg.course_registration_id LEFT JOIN courses c ON c.course_id = c_reg.course_id LEFT JOIN department_courses d_c ON d_c.course_id = c_reg.course_id AND d_c.department_id = r.department_id WHERE a.is_admin_accepted = true GROUP BY a.application_id, r.department_id`
 );
 
-export const detailedCourseRegistrationsView = pgView(
-  "detailed_course_registrations_view",
-  {
-    courseId: integer("course_id"),
-    code: text(),
-    title: text(),
-    prerequisite: integer(),
-    totalHours: integer("total_hours"),
-    academicYearId: integer("academic_year_id"),
-    semester: semesterType(),
-    applicationId: integer("application_id"),
-    courseRegistrationId: integer("course_registration_id"),
-  },
-).as(
-  sql`SELECT c.course_id, c.code, c.title, c.prerequisite, c.total_hours, c_r.academic_year_id, c_r.semester, c_r.application_id, c_r.course_registration_id FROM course_registrations c_r JOIN department_courses d_c ON d_c.course_id = c_r.course_id JOIN courses c ON c.course_id = c_r.course_id JOIN registerations r ON r.application_id = c_r.application_id WHERE d_c.department_id = r.department_id`,
+export const detailedCourseRegistrationsView = pgView("detailed_course_registrations_view", {
+  courseId: integer("course_id"),
+  code: text(),
+  title: text(),
+  prerequisite: integer(),
+  totalHours: integer("total_hours"),
+  academicYearId: integer("academic_year_id"),
+  semester: semesterType(),
+  grade: integer(),
+  applicationId: integer("application_id"),
+  courseRegistrationId: integer("course_registration_id"),
+}).as(
+  sql`SELECT c.course_id, c.code, c.title, c.prerequisite, c.total_hours, c_r.academic_year_id, c_r.semester, c_res.grade, c_r.application_id, c_r.course_registration_id FROM course_registrations c_r JOIN department_courses d_c ON d_c.course_id = c_r.course_id JOIN courses c ON c.course_id = c_r.course_id JOIN registerations r ON r.application_id = c_r.application_id LEFT JOIN course_results c_res ON c_res.course_registration_id = c_r.course_registration_id WHERE d_c.department_id = r.department_id`
 );

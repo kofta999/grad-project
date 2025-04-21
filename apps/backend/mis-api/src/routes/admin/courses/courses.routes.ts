@@ -7,9 +7,9 @@ import {
 import { isAuthenticated } from "@/middlewares/isAuthenticated";
 import { requireRole } from "@/middlewares/requireRole";
 import { createRoute, z } from "@hono/zod-openapi";
-import { jsonContent, jsonContentRequired } from "stoker/openapi/helpers";
 import * as HttpStatusCodes from "stoker/http-status-codes";
-import { createErrorSchema, IdParamsSchema } from "stoker/openapi/schemas";
+import { jsonContent, jsonContentRequired } from "stoker/openapi/helpers";
+import { IdParamsSchema, createErrorSchema } from "stoker/openapi/schemas";
 
 const tags = ["Admin"];
 
@@ -19,15 +19,12 @@ export const getApplicantRegisteredCourses = createRoute({
   tags,
   middleware: [isAuthenticated, requireRole("admin")] as const,
   request: {
-    body: jsonContentRequired(
-      applicantRegisteredCoursesRequestSchema,
-      "Params to get the courses",
-    ),
+    body: jsonContentRequired(applicantRegisteredCoursesRequestSchema, "Params to get the courses"),
   },
   responses: {
     [HttpStatusCodes.OK]: jsonContent(
       applicantRegisteredCoursesResponseSchema,
-      "A list of all applicant's courses",
+      "A list of all applicant's courses"
     ),
   },
 });
@@ -51,13 +48,10 @@ export const getAvailableCoursesForApplication = createRoute({
     }),
   },
   responses: {
-    [HttpStatusCodes.OK]: jsonContent(
-      availableCoursesSchema,
-      "Available courses",
-    ),
+    [HttpStatusCodes.OK]: jsonContent(availableCoursesSchema, "Available courses"),
     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
       createErrorSchema(z.object({ error: z.string() })),
-      "Validation error",
+      "Validation error"
     ),
     // [HttpStatusCodes.INTERNAL_SERVER_ERROR]: jsonContent(
     //   createErrorSchema(z.object({ error: z.string() })),
@@ -72,10 +66,7 @@ export const registerCourse = createRoute({
   tags,
   middleware: [isAuthenticated, requireRole("admin")],
   request: {
-    body: jsonContentRequired(
-      registerCourseSchema,
-      "Params to register a course",
-    ),
+    body: jsonContentRequired(registerCourseSchema, "Params to register a course"),
   },
   responses: {
     // @todo -> i will add more responses for later, first i will try to make it works🥲
@@ -124,7 +115,6 @@ export type RegisterCourseRoute = typeof registerCourse;
 
 export type GetAvailableCoursesRoute = typeof getAvailableCoursesForApplication;
 
-export type GetApplicantRegisteredCoursesRoute =
-  typeof getApplicantRegisteredCourses;
+export type GetApplicantRegisteredCoursesRoute = typeof getApplicantRegisteredCourses;
 
 export type DeleteCourseRoute = typeof deleteCourse;

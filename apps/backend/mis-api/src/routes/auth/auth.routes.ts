@@ -28,11 +28,11 @@ export const register = createRoute({
   responses: {
     [HttpStatusCodes.OK]: jsonContent(
       z.object({ studentId: z.number() }),
-      "Register stage 1 completed",
+      "Register stage 1 completed"
     ),
     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
       createErrorSchema(registerSchema),
-      "The validation error(s)",
+      "The validation error(s)"
     ),
   },
 });
@@ -47,16 +47,13 @@ export const login = createRoute({
   responses: {
     [HttpStatusCodes.OK]: jsonContent(
       z.object({ name: z.string(), role: z.enum(ROLES) }),
-      "Successful login",
+      "Successful login"
     ),
     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
       createErrorSchema(loginSchema),
-      "The validation error(s)",
+      "The validation error(s)"
     ),
-    [HttpStatusCodes.UNAUTHORIZED]: jsonContent(
-      unauthorizedSchema,
-      "The authentication errors",
-    ),
+    [HttpStatusCodes.UNAUTHORIZED]: jsonContent(unauthorizedSchema, "The authentication errors"),
   },
 });
 
@@ -67,10 +64,7 @@ export const logout = createRoute({
   middleware: [isAuthenticated] as const,
   responses: {
     [HttpStatusCodes.OK]: jsonContent(z.object({}), "Successful logout"),
-    [HttpStatusCodes.UNAUTHORIZED]: jsonContent(
-      unauthorizedSchema,
-      "The authentication errors",
-    ),
+    [HttpStatusCodes.UNAUTHORIZED]: jsonContent(unauthorizedSchema, "The authentication errors"),
   },
 });
 
@@ -91,7 +85,7 @@ export const upload = createRoute({
   responses: {
     [HttpStatusCodes.OK]: jsonContent(
       z.object({ uploadUrl: z.string() }),
-      "File uploaded successfully",
+      "File uploaded successfully"
     ),
   },
 });

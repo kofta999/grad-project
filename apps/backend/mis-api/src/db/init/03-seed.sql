@@ -121,13 +121,12 @@ INSERT INTO
 		"application_id",
 		"academic_year_id",
 		"faculty",
-		"academic_degree",
 		"department_id"
 	)
 VALUES
-	(1, 1, 'Engineering', 'diploma', 1),
-	(2, 1, 'Science', 'master', 3),
-	(3, 1, 'Arts', 'phd', 7);
+	(1, 1, 'Engineering', 1),
+	(2, 1, 'Science', 3),
+	(3, 1, 'Arts', 7);
 
 -- Insert sample attachments
 INSERT INTO
@@ -366,7 +365,6 @@ INSERT INTO
 VALUES
     (1, 85), -- Application 2 got 85 in ELEC 600
     (2, 88), -- Application 2 got 88 in ELEC 601
-    (3, 90), -- Application 2 got 90 in EMPE 603
     (5, 92), -- Application 3 got 92 in EMPE 701
     (7, 87); -- Application 3 got 87 in EMPE 704
 -- Application 2 got 88 in EMPE 506

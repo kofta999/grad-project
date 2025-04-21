@@ -77,10 +77,7 @@ export default function LoginForm() {
   };
 
   return (
-    <div
-      className="h-screen backImg flex items-center justify-center"
-      dir="rtl"
-    >
+    <div className="h-screen backImg flex items-center justify-center" dir="rtl">
       <div className="w-[80%] h-[80%] flex items-center justify-center">
         <div className="w-1/2 h-full flex items-center justify-center">
           <div className="w-full max-w-md space-y-2 bg-white rounded-2xl p-5 shadow-sm">
@@ -93,9 +90,7 @@ export default function LoginForm() {
                 height={120}
                 // className="w-auto h-auto"
               />
-              <h1 className="text-2xl font-bold text-gray-900 text-center">
-                مرحبا بك
-              </h1>
+              <h1 className="text-2xl font-bold text-gray-900 text-center">مرحبا بك</h1>
               <p className="text-gray-600 text-center text-sm">
                 الرجاء تسجيل الدخول للوصول إلى تجربتك التعليمية المخصصة
               </p>
@@ -187,10 +182,7 @@ export default function LoginForm() {
             </form>
             <p className="mt-4 text-center text-gray-500">
               غير مسجل على الموقع ؟
-              <a
-                href="/register"
-                className="text-mainColor hover:underline mr-1"
-              >
+              <a href="/register" className="text-mainColor hover:underline mr-1">
                 تسجيل حساب
               </a>
             </p>

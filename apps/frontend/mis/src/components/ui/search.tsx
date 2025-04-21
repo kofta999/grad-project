@@ -1,42 +1,42 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import { Search } from "lucide-react"
-import { cn } from "@/lib/utils"
+import * as React from "react";
+import { Search } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 const SearchBar = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement> & {
-    placeholder?: string
-    value?: string
-    onChange?: (value: string) => void
-    onSubmit?: (value: string) => void
+    placeholder?: string;
+    value?: string;
+    onChange?: (value: string) => void;
+    onSubmit?: (value: string) => void;
   }
 >(({ className, placeholder = "Search here...", value, onChange, onSubmit, ...props }, ref) => {
-  const [inputValue, setInputValue] = React.useState(value || "")
+  const [inputValue, setInputValue] = React.useState(value || "");
 
   React.useEffect(() => {
     if (value !== undefined) {
-      setInputValue(value)
+      setInputValue(value);
     }
-  }, [value])
+  }, [value]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInputValue(e.target.value)
-    onChange?.(e.target.value)
-  }
+    setInputValue(e.target.value);
+    onChange?.(e.target.value);
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    onSubmit?.(inputValue)
-  }
+    e.preventDefault();
+    onSubmit?.(inputValue);
+  };
 
   return (
     <div
       ref={ref}
       className={cn(
         "flex items-center w-full rounded-md border border-input bg-background ring-offset-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2",
-        className,
+        className
       )}
       {...props}
     >
@@ -56,8 +56,8 @@ const SearchBar = React.forwardRef<
         />
       </form>
     </div>
-  )
-})
-SearchBar.displayName = "SearchBar"
+  );
+});
+SearchBar.displayName = "SearchBar";
 
-export { SearchBar }
+export { SearchBar };

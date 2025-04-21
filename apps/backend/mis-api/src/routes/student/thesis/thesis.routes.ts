@@ -16,15 +16,15 @@ export const checkThesisAvailability = createRoute({
   responses: {
     [HttpStatusCodes.OK]: jsonContent(
       z.object({ available: z.literal(true) }),
-      "The thesis is available to upload",
+      "The thesis is available to upload"
     ),
     [HttpStatusCodes.FORBIDDEN]: jsonContent(
       z.object({ available: z.literal(false), reason: z.string() }),
-      "The application did not meet the requirements to upload thesis",
+      "The application did not meet the requirements to upload thesis"
     ),
     [HttpStatusCodes.NOT_FOUND]: jsonContent(
       createMessageObjectSchema("Application not found"),
-      "Application not found",
+      "Application not found"
     ),
   },
 });
@@ -38,17 +38,14 @@ export const submitThesis = createRoute({
     body: jsonContent(submitThesisSchema, "Submit thesis schema"),
   },
   responses: {
-    [HttpStatusCodes.OK]: jsonContent(
-      z.object({}),
-      "Thesis is successfully submitted",
-    ),
+    [HttpStatusCodes.OK]: jsonContent(z.object({}), "Thesis is successfully submitted"),
     [HttpStatusCodes.FORBIDDEN]: jsonContent(
       z.object({ message: z.string() }),
-      "The application did not meet the requirements to upload thesis",
+      "The application did not meet the requirements to upload thesis"
     ),
     [HttpStatusCodes.NOT_FOUND]: jsonContent(
       createMessageObjectSchema("Application not found"),
-      "Application not found",
+      "Application not found"
     ),
   },
 });

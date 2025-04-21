@@ -11,15 +11,12 @@ import {
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { CalendarIcon } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
-import { FormStep2Type, InitialFormDataType } from "../page";
+import { FormStep2Type } from "../validators";
+import { InitialFormDataType } from "./application-form";
 import { FormikProps } from "formik";
 
 interface Step2Props {
@@ -56,12 +53,9 @@ export default function Step2({ goPrevStep, formik, initialData }: Step2Props) {
                     <SelectItem value="region3">المنطقة 3</SelectItem>
                   </SelectContent>
                 </Select>
-                {formik.touched.qualification?.country &&
-                  formik.errors.qualification?.country && (
-                    <p className="text-red-500 text-sm">
-                      {formik.errors.qualification.country}
-                    </p>
-                  )}
+                {formik.touched.qualification?.country && formik.errors.qualification?.country && (
+                  <p className="text-red-500 text-sm">{formik.errors.qualification.country}</p>
+                )}
               </div>
 
               {/* University */}
@@ -86,9 +80,7 @@ export default function Step2({ goPrevStep, formik, initialData }: Step2Props) {
                 </Select>
                 {formik.touched.qualification?.university &&
                   formik.errors.qualification?.university && (
-                    <p className="text-red-500 text-sm">
-                      {formik.errors.qualification.university}
-                    </p>
+                    <p className="text-red-500 text-sm">{formik.errors.qualification.university}</p>
                   )}
               </div>
 
@@ -112,12 +104,9 @@ export default function Step2({ goPrevStep, formik, initialData }: Step2Props) {
                     <SelectItem value="region3">المنطقة 3</SelectItem>
                   </SelectContent>
                 </Select>
-                {formik.touched.qualification?.faculty &&
-                  formik.errors.qualification?.faculty && (
-                    <p className="text-red-500 text-sm">
-                      {formik.errors.qualification.faculty}
-                    </p>
-                  )}
+                {formik.touched.qualification?.faculty && formik.errors.qualification?.faculty && (
+                  <p className="text-red-500 text-sm">{formik.errors.qualification.faculty}</p>
+                )}
               </div>
 
               {/* Qualification Type */}
@@ -127,9 +116,7 @@ export default function Step2({ goPrevStep, formik, initialData }: Step2Props) {
                 </Label>
                 <Select
                   value={formik.values.qualification.type}
-                  onValueChange={(value: any) =>
-                    formik.setFieldValue("qualification.type", value)
-                  }
+                  onValueChange={(value: any) => formik.setFieldValue("qualification.type", value)}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="اختر نوع المؤهل" />
@@ -140,12 +127,9 @@ export default function Step2({ goPrevStep, formik, initialData }: Step2Props) {
                     <SelectItem value="region3">المنطقة 3</SelectItem>
                   </SelectContent>
                 </Select>
-                {formik.touched.qualification?.type &&
-                  formik.errors.qualification?.type && (
-                    <p className="text-red-500 text-sm">
-                      {formik.errors.qualification.type}
-                    </p>
-                  )}
+                {formik.touched.qualification?.type && formik.errors.qualification?.type && (
+                  <p className="text-red-500 text-sm">{formik.errors.qualification.type}</p>
+                )}
               </div>
 
               {/* Qualification */}
@@ -211,9 +195,7 @@ export default function Step2({ goPrevStep, formik, initialData }: Step2Props) {
                 </Label>
                 <Select
                   value={formik.values.qualification.year}
-                  onValueChange={(value: any) =>
-                    formik.setFieldValue("qualification.year", value)
-                  }
+                  onValueChange={(value: any) => formik.setFieldValue("qualification.year", value)}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="اختر سنة المؤهل" />
@@ -224,12 +206,9 @@ export default function Step2({ goPrevStep, formik, initialData }: Step2Props) {
                     <SelectItem value="region3">المنطقة 3</SelectItem>
                   </SelectContent>
                 </Select>
-                {formik.touched.qualification?.year &&
-                  formik.errors.qualification?.year && (
-                    <p className="text-red-500 text-sm">
-                      {formik.errors.qualification.year}
-                    </p>
-                  )}
+                {formik.touched.qualification?.year && formik.errors.qualification?.year && (
+                  <p className="text-red-500 text-sm">{formik.errors.qualification.year}</p>
+                )}
               </div>
 
               {/* Date */}
@@ -243,14 +222,11 @@ export default function Step2({ goPrevStep, formik, initialData }: Step2Props) {
                       variant={"outline"}
                       className={cn(
                         "w-full justify-start text-right font-normal",
-                        !formik.values.qualification.date &&
-                          "text-muted-foreground",
+                        !formik.values.qualification.date && "text-muted-foreground"
                       )}
                     >
                       {formik.values.qualification.date ? (
-                        new Date(
-                          formik.values.qualification.date,
-                        ).toLocaleDateString()
+                        new Date(formik.values.qualification.date).toLocaleDateString()
                       ) : (
                         <span>اختر التاريخ</span>
                       )}
@@ -268,7 +244,7 @@ export default function Step2({ goPrevStep, formik, initialData }: Step2Props) {
                       onSelect={(date) =>
                         formik.setFieldValue(
                           "qualification.date",
-                          date ? date.toLocaleDateString("en-US") : "",
+                          date ? date.toLocaleDateString("en-US") : ""
                         )
                       }
                       initialFocus
@@ -277,9 +253,7 @@ export default function Step2({ goPrevStep, formik, initialData }: Step2Props) {
                 </Popover>
                 {formik.touched.qualification?.date &&
                   typeof formik.errors.qualification?.date === "string" && (
-                    <p className="text-red-500 text-sm">
-                      {formik.errors.qualification?.date}
-                    </p>
+                    <p className="text-red-500 text-sm">{formik.errors.qualification?.date}</p>
                   )}
               </div>
 
@@ -287,16 +261,9 @@ export default function Step2({ goPrevStep, formik, initialData }: Step2Props) {
               <div className="space-y-2">
                 <Label>نوع الدراسة</Label>
                 <Select
-                  value={
-                    formik.values.qualification.creditHours
-                      ? "creditHours"
-                      : "classic"
-                  }
+                  value={formik.values.qualification.creditHours ? "creditHours" : "classic"}
                   onValueChange={(value: string) =>
-                    formik.setFieldValue(
-                      "qualification.creditHours",
-                      value === "creditHours",
-                    )
+                    formik.setFieldValue("qualification.creditHours", value === "creditHours")
                   }
                 >
                   <SelectTrigger>
@@ -340,12 +307,9 @@ export default function Step2({ goPrevStep, formik, initialData }: Step2Props) {
                     <SelectItem value="d">D</SelectItem>
                   </SelectContent>
                 </Select>
-                {formik.touched.qualification?.grade &&
-                  formik.errors.qualification?.grade && (
-                    <p className="text-red-500 text-sm">
-                      {formik.errors.qualification.grade}
-                    </p>
-                  )}
+                {formik.touched.qualification?.grade && formik.errors.qualification?.grade && (
+                  <p className="text-red-500 text-sm">{formik.errors.qualification.grade}</p>
+                )}
               </div>
 
               {/* GPA */}
@@ -355,17 +319,13 @@ export default function Step2({ goPrevStep, formik, initialData }: Step2Props) {
                   name="qualification.gpa"
                   value={formik.values.qualification.gpa}
                   onChange={(e: any) => {
-                    const value =
-                      e.target.value === "" ? 0 : parseFloat(e.target.value);
+                    const value = e.target.value === "" ? 0 : parseFloat(e.target.value);
                     formik.setFieldValue("qualification.gpa", value);
                   }}
                 />
-                {formik.touched.qualification?.gpa &&
-                  formik.errors.qualification?.gpa && (
-                    <p className="text-red-500 text-sm">
-                      {formik.errors.qualification.gpa}
-                    </p>
-                  )}
+                {formik.touched.qualification?.gpa && formik.errors.qualification?.gpa && (
+                  <p className="text-red-500 text-sm">{formik.errors.qualification.gpa}</p>
+                )}
               </div>
             </CardGrid>
           </CardContent>
@@ -388,26 +348,18 @@ export default function Step2({ goPrevStep, formik, initialData }: Step2Props) {
                       : formik.values.registration.academicYearId.toString()
                   }
                   onValueChange={(value: string) =>
-                    formik.setFieldValue(
-                      "registration.academicYearId",
-                      parseInt(value),
-                    )
+                    formik.setFieldValue("registration.academicYearId", parseInt(value))
                   }
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="اختر العام الأكاديمي" />
                   </SelectTrigger>
                   <SelectContent>
-                    {initialData.currentAcademicYears.map(
-                      ({ academicYearId, year }) => (
-                        <SelectItem
-                          key={academicYearId}
-                          value={academicYearId.toString()}
-                        >
-                          {year}
-                        </SelectItem>
-                      ),
-                    )}
+                    {initialData.currentAcademicYears.map(({ academicYearId, year }) => (
+                      <SelectItem key={academicYearId} value={academicYearId.toString()}>
+                        {year}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
                 {formik.touched.registration?.academicYearId &&
@@ -431,17 +383,12 @@ export default function Step2({ goPrevStep, formik, initialData }: Step2Props) {
                     <SelectValue placeholder="اختر الكلية" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="facultyOfEngineering">
-                      كلية الهندسة
-                    </SelectItem>
+                    <SelectItem value="facultyOfEngineering">كلية الهندسة</SelectItem>
                   </SelectContent>
                 </Select>
-                {formik.touched.registration?.faculty &&
-                  formik.errors.registration?.faculty && (
-                    <p className="text-red-500 text-sm">
-                      {formik.errors.registration.faculty}
-                    </p>
-                  )}
+                {formik.touched.registration?.faculty && formik.errors.registration?.faculty && (
+                  <p className="text-red-500 text-sm">{formik.errors.registration.faculty}</p>
+                )}
               </div>
 
               {/* Academic Degree */}
@@ -484,26 +431,18 @@ export default function Step2({ goPrevStep, formik, initialData }: Step2Props) {
                       : formik.values.registration.departmentId.toString()
                   }
                   onValueChange={(value: string) =>
-                    formik.setFieldValue(
-                      "registration.departmentId",
-                      parseInt(value),
-                    )
+                    formik.setFieldValue("registration.departmentId", parseInt(value))
                   }
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="اختر البرنامج / التخصص" />
                   </SelectTrigger>
                   <SelectContent>
-                    {initialData.availableDepartments.map(
-                      ({ title, departmentId }) => (
-                        <SelectItem
-                          key={departmentId}
-                          value={departmentId.toString()}
-                        >
-                          {title}
-                        </SelectItem>
-                      ),
-                    )}
+                    {initialData.availableDepartments.map(({ title, departmentId }) => (
+                      <SelectItem key={departmentId} value={departmentId.toString()}>
+                        {title}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
                 {formik.touched.registration?.departmentId &&
@@ -519,17 +458,10 @@ export default function Step2({ goPrevStep, formik, initialData }: Step2Props) {
 
         {/* Submit Buttons */}
         <div className="flex justify-center gap-16">
-          <Button
-            variant="outline"
-            className="border-[#BABABA]"
-            onClick={goPrevStep}
-          >
+          <Button variant="outline" className="border-[#BABABA]" onClick={goPrevStep}>
             السابق
           </Button>
-          <Button
-            type="submit"
-            className="bg-mainColor hover:bg-blue-700 text-white"
-          >
+          <Button type="submit" className="bg-mainColor hover:bg-blue-700 text-white">
             التسجيل
           </Button>
         </div>

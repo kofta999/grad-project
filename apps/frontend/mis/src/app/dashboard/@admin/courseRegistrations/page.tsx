@@ -23,43 +23,24 @@ import {
 } from "@/components/ui/table";
 import { apiClient } from "@/lib/client";
 import toast from "react-hot-toast";
-import { Button } from '@/components/ui/button';
-import logCourses from '../current-courses/log-courses/page';
+import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
+import RegisterCourseDialog from "../_components/register-course-dialog";
+import { InferResponseType } from "@repo/mis-api";
+import { StudentType, ApplicationType } from "@/lib/types";
 
-type Course = {
-  title: string;
-  code: string;
-  totalHours: number;
-  grade?: string;
-};
-
-type CoursesType = Course[];
-
-type StudentType = {
-  fullNameAr?: string;
-  dob?: string;
-  idNumber?: string;
-  phoneNoMain?: string;
-};
-
-type ApplicationType = {
-  registration?: {
-    academicYearId?: number;
-    academicDegree?: string;
-  };
-};
+type RegisteredCourse = InferResponseType<typeof apiClient.admin.courses.list.$post, 200>[number];
+type CoursesType = RegisteredCourse[];
 
 type SemesterType = "first" | "second" | "third";
 
-
 export default function currentCourses() {
-  const [student, setStudent] = useState<StudentType>({})
-  const [application, setApplication] = useState<ApplicationType>({})
+  const [student, setStudent] = useState<StudentType | null>(null);
+  const [application, setApplication] = useState<ApplicationType | null>(null);
 
   const [applicationId, setApplicationId] = useState<number | null>(null);
   const [academicYear, setAcademicYear] = useState<number | null>(null);
-  const [semester, setSemester] = useState<SemesterType | null>();
+  const [semester, setSemester] = useState<SemesterType | null>(null);
 
   const [courses, setCourses] = useState<CoursesType>([]);
 
@@ -69,17 +50,19 @@ export default function currentCourses() {
     // Check if id is null or invalid
     if (id === null || id === 0) {
       // Reset states if the search input is cleared
-      setStudent({});
-      setApplication({});
+      setStudent(null);
+      setApplication(null);
       setAcademicYear(null);
       return;
     }
 
     try {
-      const res = await apiClient.admin.applications[":id"].$get({param: { id: id.toString() }, query: {}});
+      const res = await apiClient.admin.applications[":id"].$get({
+        param: { id: id.toString() },
+        query: {},
+      });
       if (res.status === 200) {
         const data = await res.json();
-
         // Data WILL be there
         setStudent(data.student!);
         setApplication(data.application!);
@@ -87,22 +70,20 @@ export default function currentCourses() {
       } else {
         toast.error("مستخدم غير موجود");
 
-        setStudent({});
-        setApplication({});
+        setStudent(null);
+        setApplication(null);
         setAcademicYear(null);
       }
-
     } catch (error) {
       console.error("Error fetching application:", error);
       toast.error("فشل العثور علي المستخدم");
     }
   };
 
-
   const getCourses = async (
     applicationId: number,
     semester: SemesterType,
-    academicYearId: number,
+    academicYearId: number
   ) => {
     if (!applicationId || !semester || !academicYearId) {
       setCourses([]);
@@ -117,13 +98,12 @@ export default function currentCourses() {
         },
       });
 
-      if (res.status == 200) {
+      if (res.status === 200) {
         const data = await res.json();
         setCourses(data);
       } else {
         toast.error("فشل العثور علي المواد");
       }
-
     } catch (error) {
       console.error("Error fetching courses:", error);
       toast.error("فشل العثور علي المواد");
@@ -146,26 +126,28 @@ export default function currentCourses() {
 
   return (
     <Container>
-      <SearchBar placeholder="ابحث هنا..." onChange={(value) => handleSearch(value)} />
+      <SearchBar
+        placeholder="ابحث هنا..."
+        onChange={(value) => handleSearch(value as string)}
+        className="mt-10 lg:mt-0"
+      />
       <Card>
         <CardContent>
           <div className="flex flex-col mb-6 md:flex-row md:gap-6">
             <div className="image-Container border-2 border-mainColor rounded-lg overflow-hidden flex items-center justify-center">
-              <Image
-                src="/avatar.jpg"
-                alt="placeholder"
-                width={120}
-                height={120}
-              />
+              <Image src="/avatar.jpg" alt="placeholder" width={120} height={120} />
             </div>
             <CardGrid className="mt-6 md:mt-0">
               <p className="text-sm">الاسم / {student?.fullNameAr}</p>
               <p className="text-sm">تاريخ الميلاد / {student?.dob}</p>
               <p className="text-sm">الرقم القومي / {student?.idNumber}</p>
-              <p className="text-sm">الدرجة العلمية / {application.registration?.academicDegree}</p>
+              <p className="text-sm">
+                الدرجة العلمية / {application?.registration?.academicDegree}
+              </p>
               <p className="text-sm">رقم الهاتف / {student?.phoneNoMain}</p>
-              {/* Can't get academic year from response */}
-              {/* <p className="text-sm">العام الاكاديمي للتسجيل / </p> */}
+              <p className="text-sm">
+                العام الاكاديمي للتسجيل / {application?.registration.academicYear}
+              </p>
             </CardGrid>
           </div>
           <Select
@@ -217,9 +199,7 @@ export default function currentCourses() {
                   >
                     <TableCell className="text-right">{course.title}</TableCell>
                     <TableCell className="text-right">{course.code}</TableCell>
-                    <TableCell className="text-right">
-                      {course.totalHours}
-                    </TableCell>
+                    <TableCell className="text-right">{course.totalHours}</TableCell>
                     <TableCell className="text-right">
                       {course.grade ? course.grade : "مسجل على الفصل الحالي"}
                     </TableCell>
@@ -234,30 +214,40 @@ export default function currentCourses() {
       {/* Dialog */}
       <Container className="p-0">
         {/* Button to open the dialog */}
-        <Button onClick={() => setIsDialogOpen(true)}>صفحة تسجيل المواد</Button>
+        <Button onClick={() => setIsDialogOpen(true)} disabled={!applicationId || !semester}>
+          صفحة تسجيل المواد
+        </Button>
 
         {/* Dialog Overlay */}
         <div
-          className={`overlay bg-black/50 fixed inset-0 flex items-center justify-center z-50 ${isDialogOpen ? "block" : "hidden"
-            }`}
+          className={`overlay bg-black/55 fixed inset-0 flex items-center justify-center z-50 ${
+            isDialogOpen ? "block" : "hidden"
+          }`}
         >
           {/* Dialog Content */}
-          <div className="dialog-content bg-white p-6 rounded-lg w-full max-w-2xl h-[90%] overflow-y-scroll my-6">
+          <div className="dialog-content bg-white p-3 md:p-6 rounded-lg w-full max-w-2xl h-[90%] overflow-y-scroll m-6 md:m-0">
             {/* Dialog Header */}
             <div className="dialog-header flex justify-between items-center mb-4">
               <button
                 onClick={() => setIsDialogOpen(false)}
-                className="text-gray-500 hover:text-gray-700"
+                className="absolute top-3 right-5 lg:right-10 text-white"
               >
-                <X className="h-4 w-4" />
+                <X className="h-8 w-8" />
               </button>
             </div>
 
             {/* Render the logCourses component */}
-            {logCourses()}
+            {applicationId && semester && (
+              <RegisterCourseDialog
+                applicationId={applicationId}
+                semester={semester}
+                userRegisteredCourses={courses}
+                setUserRegisteredCourses={setCourses}
+              />
+            )}
           </div>
         </div>
       </Container>
-    </Container >
+    </Container>
   );
 }

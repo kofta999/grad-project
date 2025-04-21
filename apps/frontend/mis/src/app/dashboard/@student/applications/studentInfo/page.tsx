@@ -20,10 +20,7 @@ import { InferResponseType } from "@repo/mis-api";
 // Instead of re-creating the types, we can use this utility Type provided by Hono
 // This returns the response of GET /student/applications route
 // 200 is for the status code's response, and ["application"] because the response is like {application: {...}}
-type Student = InferResponseType<
-  typeof apiClient.student.applications.$get,
-  200
->["application"];
+type Student = InferResponseType<typeof apiClient.student.applications.$get, 200>["application"];
 
 export default function StudentInfo() {
   const [student, setStudent] = useState<Student | null>(null);
@@ -72,9 +69,7 @@ export default function StudentInfo() {
     <div className="min-h-screen bg-gray-50 p-6" dir="rtl">
       <div className="max-w-4xl mx-auto p-8">
         <div className="relative flex justify-center items-center">
-          <h1 className="text-3xl font-bold text-center text-blue-600 mb-5">
-            بيانات التقديم
-          </h1>
+          <h1 className="text-3xl font-bold text-center text-blue-600 mb-5">بيانات التقديم</h1>
           {/* <div className="rounded-md border border-gray-400 px-6 py-0.5 absolute top-0 left-0">
             <a className="text-gray-800" href="">قدم طلبك الان</a>
           </div> */}
@@ -179,13 +174,9 @@ export default function StudentInfo() {
             <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
               <h2 className="text-gray-600 mb-4 flex items-center">العنوان</h2>
               {student?.addresses?.map((address, index) => (
-                <p
-                  key={index}
-                  className="text-lg font-semibold text-gray-800 flex items-center"
-                >
+                <p key={index} className="text-lg font-semibold text-gray-800 flex items-center">
                   <Home className="ml-2" />
-                  {address.fullAddress}, {address.city}, {address.country} (
-                  {address.type})
+                  {address.fullAddress}, {address.city}, {address.country} ({address.type})
                 </p>
               ))}
             </div>

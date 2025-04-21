@@ -2,12 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import toast, { Toaster } from "react-hot-toast";
-import {
-  Card,
-  CardContent,
-  CardGrid,
-  CardHeader,
-} from "@/components/ui/card";
+import { Card, CardContent, CardGrid, CardHeader } from "@/components/ui/card";
 import {
   Select,
   SelectContent,
@@ -15,9 +10,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { MapPin, Phone,User, Mail } from "lucide-react";
+import { MapPin, Phone, User, Mail } from "lucide-react";
 import { Container, ContainerTitle } from "@/components/ui/container";
-import { FormStep1Type } from "../page";
+import { FormStep1Type } from "../validators";
 import { FormikProps } from "formik";
 
 interface Step1Props {
@@ -25,7 +20,6 @@ interface Step1Props {
 }
 
 export default function Step1({ formik }: Step1Props) {
-
   return (
     <Container>
       <ContainerTitle>بيانات التسجيل</ContainerTitle>
@@ -58,9 +52,7 @@ export default function Step1({ formik }: Step1Props) {
                 </Select>
                 {formik.touched.permanentAddress?.country &&
                   formik.errors.permanentAddress?.country && (
-                    <p className="text-red-500 text-sm">
-                      {formik.errors.permanentAddress.country}
-                    </p>
+                    <p className="text-red-500 text-sm">{formik.errors.permanentAddress.country}</p>
                   )}
               </div>
 
@@ -84,12 +76,9 @@ export default function Step1({ formik }: Step1Props) {
                     <SelectItem value="region3">المنطقة 3</SelectItem>
                   </SelectContent>
                 </Select>
-                {formik.touched.permanentAddress?.city &&
-                  formik.errors.permanentAddress?.city && (
-                    <p className="text-red-500 text-sm">
-                      {formik.errors.permanentAddress.city}
-                    </p>
-                  )}
+                {formik.touched.permanentAddress?.city && formik.errors.permanentAddress?.city && (
+                  <p className="text-red-500 text-sm">{formik.errors.permanentAddress.city}</p>
+                )}
               </div>
 
               {/* Full Address */}
@@ -141,9 +130,7 @@ export default function Step1({ formik }: Step1Props) {
                 </Select>
                 {formik.touched.currentAddress?.country &&
                   formik.errors.currentAddress?.country && (
-                    <p className="text-red-500 text-sm">
-                      {formik.errors.currentAddress.country}
-                    </p>
+                    <p className="text-red-500 text-sm">{formik.errors.currentAddress.country}</p>
                   )}
               </div>
 
@@ -154,9 +141,7 @@ export default function Step1({ formik }: Step1Props) {
                 </Label>
                 <Select
                   value={formik.values.currentAddress.city}
-                  onValueChange={(value: any) =>
-                    formik.setFieldValue("currentAddress.city", value)
-                  }
+                  onValueChange={(value: any) => formik.setFieldValue("currentAddress.city", value)}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="اختر المدينة" />
@@ -167,12 +152,9 @@ export default function Step1({ formik }: Step1Props) {
                     <SelectItem value="region3">المنطقة 3</SelectItem>
                   </SelectContent>
                 </Select>
-                {formik.touched.currentAddress?.city &&
-                  formik.errors.currentAddress?.city && (
-                    <p className="text-red-500 text-sm">
-                      {formik.errors.currentAddress.city}
-                    </p>
-                  )}
+                {formik.touched.currentAddress?.city && formik.errors.currentAddress?.city && (
+                  <p className="text-red-500 text-sm">{formik.errors.currentAddress.city}</p>
+                )}
               </div>
 
               {/* Full Address */}
@@ -211,12 +193,9 @@ export default function Step1({ formik }: Step1Props) {
                   onChange={formik.handleChange}
                   icon={<User className="h-4 w-4" />}
                 />
-                {formik.touched.emergencyContact?.name &&
-                  formik.errors.emergencyContact?.name && (
-                    <p className="text-red-500 text-sm">
-                      {formik.errors.emergencyContact.name}
-                    </p>
-                  )}
+                {formik.touched.emergencyContact?.name && formik.errors.emergencyContact?.name && (
+                  <p className="text-red-500 text-sm">{formik.errors.emergencyContact.name}</p>
+                )}
               </div>
 
               {/* Address */}
@@ -228,11 +207,12 @@ export default function Step1({ formik }: Step1Props) {
                   onChange={formik.handleChange}
                   icon={<MapPin className="h-4 w-4" />}
                 />
-                {formik.touched.emergencyContact?.address && formik.errors.emergencyContact?.address && (
-                  <p className="text-red-500 text-sm">
-                    {formik.errors.emergencyContact?.address}
-                  </p>
-                )}
+                {formik.touched.emergencyContact?.address &&
+                  formik.errors.emergencyContact?.address && (
+                    <p className="text-red-500 text-sm">
+                      {formik.errors.emergencyContact?.address}
+                    </p>
+                  )}
               </div>
 
               {/* Phone Number */}
@@ -245,11 +225,12 @@ export default function Step1({ formik }: Step1Props) {
                   onChange={formik.handleChange}
                   icon={<Phone className="h-4 w-4" />}
                 />
-                {formik.touched.emergencyContact?.phoneNumber && formik.errors.emergencyContact?.phoneNumber && (
-                  <p className="text-red-500 text-sm">
-                    {formik.errors.emergencyContact?.phoneNumber}
-                  </p>
-                )}
+                {formik.touched.emergencyContact?.phoneNumber &&
+                  formik.errors.emergencyContact?.phoneNumber && (
+                    <p className="text-red-500 text-sm">
+                      {formik.errors.emergencyContact?.phoneNumber}
+                    </p>
+                  )}
               </div>
 
               {/* Email */}
@@ -261,11 +242,10 @@ export default function Step1({ formik }: Step1Props) {
                   onChange={formik.handleChange}
                   icon={<Mail className="h-4 w-4" />}
                 />
-                {formik.touched.emergencyContact?.email && formik.errors.emergencyContact?.email && (
-                  <p className="text-red-500 text-sm">
-                    {formik.errors.emergencyContact?.email}
-                  </p>
-                )}
+                {formik.touched.emergencyContact?.email &&
+                  formik.errors.emergencyContact?.email && (
+                    <p className="text-red-500 text-sm">{formik.errors.emergencyContact?.email}</p>
+                  )}
               </div>
             </CardGrid>
           </CardContent>
@@ -278,7 +258,6 @@ export default function Step1({ formik }: Step1Props) {
           </Button>
         </div>
       </form>
-
     </Container>
   );
 }

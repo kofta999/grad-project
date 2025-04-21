@@ -14,11 +14,7 @@ export type UserContextType = {
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
-export const UserContextProvider = ({
-  children,
-}: {
-  children: React.ReactNode;
-}) => {
+export const UserContextProvider = ({ children }: { children: React.ReactNode }) => {
   const [loggedInUser, setLoggedInUser] = useState<UserType | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 

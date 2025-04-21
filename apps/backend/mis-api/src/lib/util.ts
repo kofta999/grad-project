@@ -1,11 +1,11 @@
-export function formatAcademicYear(year: {
-  startDate: string;
-  endDate: string;
-}) {
+export function formatAcademicYear(year: { startDate: string; endDate: string }) {
   return `${new Date(year.startDate).getFullYear()}-${new Date(year.endDate).getFullYear()}`;
 }
 
-export const removeApplicationId = ({ applicationId, ...rest }: any) => rest;
+export const removeApplicationId = <T extends { applicationId: unknown }>({
+  applicationId,
+  ...rest
+}: T) => rest;
 
 export function convertDegreeToGrade(degree: number) {
   const gradeScale = [
