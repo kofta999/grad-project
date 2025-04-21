@@ -6,3 +6,4 @@ export const NotFoundSchema = createMessageObjectSchema(HttpStatusPhrases.NOT_FO
 export const UnauthorizedSchema = createMessageObjectSchema(HttpStatusPhrases.UNAUTHORIZED);
 export const APP_URL = `http://localhost:${env.PORT}`;
 export const ROLES = ["student", "admin"] as const;
+export const DEPARTMENT_TYPES = ["diploma", "master", "phd"] as const;

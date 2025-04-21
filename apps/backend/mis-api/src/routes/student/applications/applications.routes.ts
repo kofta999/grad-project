@@ -1,18 +1,15 @@
-import {
-  attachmentsSchema,
-  applicationSchema,
-  studentApplicationDetailsSchema,
-  currentAcademicYearsSchema,
-  applicantRegisteredCoursesRequestSchemaForStudent,
-  applicantRegisteredCoursesResponseSchemaForStudent,
-} from "@/db/validators";
 import { isAuthenticated } from "@/middlewares/isAuthenticated";
 import { requireRole } from "@/middlewares/requireRole";
 import { createRoute, z } from "@hono/zod-openapi";
 import { jsonContent, jsonContentRequired } from "stoker/openapi/helpers";
 import * as HttpStatusCodes from "stoker/http-status-codes";
 import { createErrorSchema } from "stoker/openapi/schemas";
-import { NotFoundSchema } from "@/lib/constants";
+import { DEPARTMENT_TYPES, NotFoundSchema } from "@/lib/constants";
+import { AvailableDepartmentsSchema } from "@/dtos/available-departments.dto";
+import { CreateApplicationSchema } from "@/dtos/create-application.dto";
+import { AvailableAcademicYearsSchema } from "@/dtos/available-academic-years.dto";
+import { SaveAttachmentsSchema } from "@/dtos/save-attachment.dto";
+import { ApplicationDetailsSchema } from "@/dtos/application-details.dto";
 
 const tags = ["Student"];
 
@@ -23,7 +20,7 @@ export const getCurrentAcademicYears = createRoute({
   tags,
   responses: {
     [HttpStatusCodes.OK]: jsonContent(
-      currentAcademicYearsSchema,
+      AvailableAcademicYearsSchema,
       "An array of available academic years"
     ),
   },
@@ -35,14 +32,14 @@ export const getAvailableDepartments = createRoute({
   request: {
     query: z.object({
       // TODO: Abstract this enum across the app
-      type: z.enum(["diploma", "master", "phd"]),
+      type: z.enum(DEPARTMENT_TYPES),
     }),
   },
   middleware: [isAuthenticated, requireRole("student")],
   tags,
   responses: {
     [HttpStatusCodes.OK]: jsonContent(
-      z.array(z.object({ departmentId: z.number(), title: z.string() })),
+      AvailableDepartmentsSchema,
       "An array of available departments for this type"
     ),
   },
@@ -54,7 +51,7 @@ export const createApplication = createRoute({
   middleware: [isAuthenticated, requireRole("student")] as const,
   tags,
   request: {
-    body: jsonContentRequired(applicationSchema, "Application data"),
+    body: jsonContentRequired(CreateApplicationSchema, "Application data"),
   },
   responses: {
     [HttpStatusCodes.OK]: jsonContent(
@@ -62,7 +59,7 @@ export const createApplication = createRoute({
       "Application completed"
     ),
     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
-      createErrorSchema(applicationSchema),
+      createErrorSchema(CreateApplicationSchema),
       "The validation error(s)"
     ),
   },
@@ -74,12 +71,12 @@ export const saveApplicationAttachments = createRoute({
   middleware: [isAuthenticated, requireRole("student")] as const,
   tags,
   request: {
-    body: jsonContentRequired(attachmentsSchema, "Attachment links with types"),
+    body: jsonContentRequired(SaveAttachmentsSchema, "Attachment links with types"),
   },
   responses: {
     [HttpStatusCodes.OK]: jsonContent(z.object({ applicationId: z.number() }), "Attachments saved"),
     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
-      createErrorSchema(attachmentsSchema),
+      createErrorSchema(SaveAttachmentsSchema),
       "The validation error(s)"
     ),
   },
@@ -91,7 +88,10 @@ export const getApplication = createRoute({
   middleware: [isAuthenticated, requireRole("student")],
   tags,
   responses: {
-    [HttpStatusCodes.OK]: jsonContent(studentApplicationDetailsSchema, "The application details"),
+    [HttpStatusCodes.OK]: jsonContent(
+      z.object({ application: ApplicationDetailsSchema }),
+      "The application details"
+    ),
     [HttpStatusCodes.NOT_FOUND]: jsonContent(NotFoundSchema, "Application not found"),
   },
 });
