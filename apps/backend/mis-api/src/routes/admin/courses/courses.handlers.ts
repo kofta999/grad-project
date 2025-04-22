@@ -1,8 +1,4 @@
-import db from "@/db";
-import { courseRegistrations, courses, detailedCourseRegistrationsView as dcv } from "@/db/schema";
 import type { AppRouteHandler } from "@/lib/types";
-import { and, eq } from "drizzle-orm";
-import { sql } from "drizzle-orm";
 import * as HttpStatusCodes from "stoker/http-status-codes";
 import type {
   DeleteCourseRoute,
@@ -10,75 +6,62 @@ import type {
   GetAvailableCoursesRoute,
   RegisterCourseRoute,
 } from "./courses.routes";
+import { CourseService } from "@/services/course.service";
+
+// Create an instance of the service
+const courseService = new CourseService();
 
 export const getApplicantRegisteredCourses: AppRouteHandler<
   GetApplicantRegisteredCoursesRoute
 > = async (c) => {
   const { academicYearId, semester, applicationId } = c.req.valid("json");
 
-  const courses = await db
-    .select({
-      courseId: dcv.courseId,
-      code: dcv.code,
-      title: dcv.title,
-      prerequisite: dcv.prerequisite,
-      totalHours: dcv.totalHours,
-      grade: dcv.grade,
-      courseRegistrationId: dcv.courseRegistrationId,
-    })
-    .from(dcv)
-    .where(
-      and(
-        eq(dcv.academicYearId, academicYearId),
-        eq(dcv.semester, semester),
-        eq(dcv.applicationId, applicationId)
-      )
+  try {
+    const courses = await courseService.getApplicantRegisteredCourses(
+      applicationId,
+      academicYearId,
+      semester
     );
 
-  return c.json(courses, HttpStatusCodes.OK);
+    return c.json(courses, HttpStatusCodes.OK);
+  } catch (error) {
+    console.error("Error getting registered courses:", error);
+    const errorMessage =
+      error instanceof Error ? error.message : "Failed to get registered courses";
+    return c.json({ error: errorMessage }, HttpStatusCodes.BAD_REQUEST);
+  }
 };
 
 export const getAvailableCoursesForApplication: AppRouteHandler<GetAvailableCoursesRoute> = async (
   c
 ) => {
-  const applicationId = c.req.param("applicationId");
+  const applicationId = parseInt(c.req.param("applicationId"), 10);
 
-  const availableCourses = await db.execute(
-    sql`SELECT * FROM available_courses_for_application(${applicationId})`
-  );
+  try {
+    const availableCourses = await courseService.getAvailableCoursesForApplication(applicationId);
 
-  // Must manually convert as db.execute won't convert the columns
-  return c.json(
-    availableCourses.rows.map((c) => ({
-      courseId: c.course_id,
-      code: c.code,
-      title: c.title,
-      prerequisite: c.prerequisite,
-      totalHours: c.total_hours,
-      courseRegistrationId: c.course_registration_id,
-    })),
-    HttpStatusCodes.OK
-  );
+    return c.json(availableCourses, HttpStatusCodes.OK);
+  } catch (error) {
+    console.error("Error getting available courses:", error);
+    const errorMessage = error instanceof Error ? error.message : "Failed to get available courses";
+    return c.json({ error: errorMessage }, HttpStatusCodes.BAD_REQUEST);
+  }
 };
 
 export const registerCourse: AppRouteHandler<RegisterCourseRoute> = async (c) => {
   const { applicationId, courseId, semester } = c.req.valid("json");
+
   try {
-    const registeredCourse = await db
-      .insert(courseRegistrations)
-      .values({
-        courseId,
-        applicationId,
-        semester,
-        // The trigger will add it manually
-        academicYearId: 0,
-      })
-      .returning();
+    const courseRegistrationId = await courseService.registerCourse(
+      applicationId,
+      courseId,
+      semester
+    );
 
     return c.json(
       {
         message: "Course registered successfully",
-        courseRegistrationId: registeredCourse[0].courseRegistrationId,
+        courseRegistrationId: courseRegistrationId,
       },
       HttpStatusCodes.CREATED
     );
@@ -91,21 +74,15 @@ export const registerCourse: AppRouteHandler<RegisterCourseRoute> = async (c) =>
 
 export const deleteCourse: AppRouteHandler<DeleteCourseRoute> = async (c) => {
   const { id } = c.req.valid("param");
+
   try {
-    await db.delete(courseRegistrations).where(eq(courseRegistrations.courseRegistrationId, id));
+    await courseService.deleteCourseRegistration(id);
 
     c.status(HttpStatusCodes.NO_CONTENT);
-
     return c.json({});
   } catch (error) {
     console.error("Error deleting course:", error);
-    let errorMessage: string;
-    // @ts-ignore
-    if (error.code && error.code === "23503") {
-      errorMessage = "This course is already passed, mustn't be deleted";
-    } else {
-      errorMessage = error instanceof Error ? error.message : "Failed to delete course";
-    }
+    const errorMessage = error instanceof Error ? error.message : "Failed to delete course";
     return c.json({ error: errorMessage }, HttpStatusCodes.BAD_REQUEST);
   }
 };

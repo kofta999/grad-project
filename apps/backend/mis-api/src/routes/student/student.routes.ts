@@ -5,15 +5,8 @@ import { requireRole } from "@/middlewares/requireRole";
 import { createRoute, z } from "@hono/zod-openapi";
 import { jsonContent, jsonContentRequired } from "stoker/openapi/helpers";
 import { createErrorSchema, createMessageObjectSchema } from "stoker/openapi/schemas";
-import {
-  applicantRegisteredCoursesRequestSchemaForStudent,
-  applicantRegisteredCoursesResponseSchemaForStudent,
-  currentAcademicYearsSchema,
-  editStudentInfoSchema,
-  getStudentSchema as studentDetailsSchema,
-} from "@/db/validators";
 import { StudentDetailsSchema } from "@/dtos/student-details.dto";
-import { RegisteredCourseSchema } from "@/dtos/registered-course.dto";
+import { CourseSchema } from "@/dtos/registered-course.dto";
 import { SEMESTERS } from "@/lib/constants";
 import { AcademicYearSchema } from "@/dtos/academic-year.dto.";
 
@@ -32,7 +25,7 @@ export const getApplicantRegisteredCourses = createRoute({
   },
   responses: {
     [HttpStatusCodes.OK]: jsonContent(
-      z.array(RegisteredCourseSchema),
+      z.array(CourseSchema),
       "A list of all applicant's registered courses"
     ),
     [HttpStatusCodes.NOT_FOUND]: jsonContent(

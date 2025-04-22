@@ -1,8 +1,3 @@
-import {
-  acceptApplicationSchema,
-  adminApplicationDetailsSchema,
-  adminApplicationsListSchema,
-} from "@/db/validators";
 import { isAuthenticated } from "@/middlewares/isAuthenticated";
 import { requireRole } from "@/middlewares/requireRole";
 import { createRoute, z } from "@hono/zod-openapi";

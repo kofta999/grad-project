@@ -1,9 +1,5 @@
-import {
-  applicantRegisteredCoursesRequestSchema,
-  applicantRegisteredCoursesResponseSchema,
-  availableCoursesSchema,
-  registerCourseSchema,
-} from "@/db/validators";
+import { CourseSchema } from "@/dtos/registered-course.dto";
+import { SEMESTERS } from "@/lib/constants";
 import { isAuthenticated } from "@/middlewares/isAuthenticated";
 import { requireRole } from "@/middlewares/requireRole";
 import { createRoute, z } from "@hono/zod-openapi";
@@ -19,13 +15,23 @@ export const getApplicantRegisteredCourses = createRoute({
   tags,
   middleware: [isAuthenticated, requireRole("admin")] as const,
   request: {
-    body: jsonContentRequired(applicantRegisteredCoursesRequestSchema, "Params to get the courses"),
+    body: jsonContentRequired(
+      z.object({
+        applicationId: z.number(),
+        semester: z.enum(SEMESTERS),
+        academicYearId: z.number(),
+      }),
+      "Params to get the courses"
+    ),
   },
   responses: {
-    [HttpStatusCodes.OK]: jsonContent(
-      applicantRegisteredCoursesResponseSchema,
-      "A list of all applicant's courses"
-    ),
+    [HttpStatusCodes.OK]: jsonContent(z.array(CourseSchema), "A list of all applicant's courses"),
+    [HttpStatusCodes.BAD_REQUEST]: {
+      description: "Error getting courses",
+      content: {
+        "application/json": { schema: z.object({ error: z.string() }) },
+      },
+    },
   },
 });
 
@@ -48,15 +54,17 @@ export const getAvailableCoursesForApplication = createRoute({
     }),
   },
   responses: {
-    [HttpStatusCodes.OK]: jsonContent(availableCoursesSchema, "Available courses"),
+    [HttpStatusCodes.OK]: jsonContent(z.array(CourseSchema), "Available courses"),
     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
       createErrorSchema(z.object({ error: z.string() })),
       "Validation error"
     ),
-    // [HttpStatusCodes.INTERNAL_SERVER_ERROR]: jsonContent(
-    //   createErrorSchema(z.object({ error: z.string() })),
-    //   "Server error",
-    // ),
+    [HttpStatusCodes.BAD_REQUEST]: {
+      description: "Error getting courses",
+      content: {
+        "application/json": { schema: z.object({ error: z.string() }) },
+      },
+    },
   },
 });
 
@@ -66,21 +74,20 @@ export const registerCourse = createRoute({
   tags,
   middleware: [isAuthenticated, requireRole("admin")],
   request: {
-    body: jsonContentRequired(registerCourseSchema, "Params to register a course"),
+    body: jsonContentRequired(
+      z.object({
+        applicationId: z.number().int().positive(),
+        courseId: z.number().int().positive(),
+        semester: z.enum(SEMESTERS),
+      }),
+      "Params to register a course"
+    ),
   },
   responses: {
-    // @todo -> i will add more responses for later, first i will try to make it works🥲
-    [HttpStatusCodes.CREATED]: {
-      description: "Course registered successfully",
-      content: {
-        "application/json": {
-          schema: z.object({
-            message: z.string(),
-            courseRegistrationId: z.number(),
-          }),
-        },
-      },
-    },
+    [HttpStatusCodes.CREATED]: jsonContent(
+      z.object({ courseRegistrationId: z.number() }),
+      "Course registered successfully"
+    ),
     [HttpStatusCodes.BAD_REQUEST]: {
       description: "Error registering course",
       content: {

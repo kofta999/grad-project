@@ -5,8 +5,6 @@ import {
   GetAllApplicationsRoute,
   GetApplicationDetailsRoute,
 } from "./applications.routes";
-import { z } from "zod";
-import { adminApplicationDetailsSchema } from "@/db/validators";
 import { AdminApplicationService } from "@/services/admin-application.service";
 import { ApplicationDetailsDTO } from "@/dtos/application-details.dto";
 import { StudentDetailsDTO } from "@/dtos/student-details.dto";
