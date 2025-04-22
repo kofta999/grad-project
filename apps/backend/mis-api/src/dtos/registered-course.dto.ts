@@ -1,3 +1,4 @@
+import { GRADES } from "@/lib/constants";
 import { z } from "@hono/zod-openapi";
 
 export const CourseSchema = z.object({
@@ -6,7 +7,7 @@ export const CourseSchema = z.object({
   title: z.string(),
   prerequisite: z.number(),
   totalHours: z.number(),
-  grade: z.string().nullable(),
+  grade: z.enum(GRADES).nullable(),
   courseRegistrationId: z.number().nullable(),
 });
 

@@ -1,3 +1,5 @@
+import { GradeType } from "./types";
+
 export function formatAcademicYear(year: { startDate: string; endDate: string }) {
   return `${new Date(year.startDate).getFullYear()}-${new Date(year.endDate).getFullYear()}`;
 }
@@ -7,8 +9,8 @@ export const removeApplicationId = <T extends { applicationId: unknown }>({
   ...rest
 }: T) => rest;
 
-export function convertDegreeToGrade(degree: number) {
-  const gradeScale = [
+export function convertDegreeToGrade(degree: number): GradeType {
+  const gradeScale: Array<{ min: number; grade: GradeType }> = [
     { min: 97, grade: "A+" },
     { min: 93, grade: "A" },
     { min: 89, grade: "A-" },
