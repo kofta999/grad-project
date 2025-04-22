@@ -13,6 +13,7 @@ import { AcademicYearSchema } from "@/dtos/academic-year.dto.";
 import { CreateApplicationSchema } from "@/dtos/create-application.dto";
 import { SaveAttachmentsSchema } from "@/dtos/save-attachment.dto";
 import { ApplicationDetailsSchema } from "@/dtos/application-details.dto";
+import { GetThesisSchema } from "@/dtos/get-thesis.dto";
 
 const tags = ["Student"];
 
@@ -243,17 +244,7 @@ export const getThesis = createRoute({
   middleware: studentMiddleware,
   tags,
   responses: {
-    [HttpStatusCodes.OK]: jsonContent(
-      z.object({
-        thesisId: z.number(),
-        title: z.string(),
-        attachmentUrl: z.string().url(),
-        submittedAt: z.string().datetime(),
-        status: z.enum(["pending", "approved", "rejected"]),
-        feedback: z.string().nullable(),
-      }),
-      "Student's thesis information"
-    ),
+    [HttpStatusCodes.OK]: jsonContent(GetThesisSchema, "Student's thesis information"),
     [HttpStatusCodes.NOT_FOUND]: jsonContent(
       createMessageObjectSchema("Thesis not found"),
       "Thesis not found"

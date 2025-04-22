@@ -6,10 +6,8 @@ import {
   GetApplicationAvailableCoursesRoute,
   GetApplicationDetailsRoute,
   GetApplicationRegisteredCoursesRoute,
-  RejectApplicationRoute,
 } from "./applications.routes";
 import { AdminApplicationService } from "@/services/admin-application.service";
-import { StudentService } from "@/services/student.service";
 import { CourseService } from "@/services/course.service";
 
 const adminApplicationService = new AdminApplicationService();
@@ -86,25 +84,25 @@ export const acceptApplication: AppRouteHandler<AcceptApplicationRoute> = async 
   return c.json({ message: "Application accepted" }, HttpStatusCodes.OK);
 };
 
-export const rejectApplication: AppRouteHandler<RejectApplicationRoute> = async (c) => {
-  const { applicationId, reason } = c.req.valid("json");
+// export const rejectApplication: AppRouteHandler<RejectApplicationRoute> = async (c) => {
+//   const { applicationId, reason } = c.req.valid("json");
 
-  try {
-    // Assuming the service has a rejectApplication method
-    const operationStatus = await adminApplicationService.rejectApplication(applicationId, reason);
+//   try {
+//     // Assuming the service has a rejectApplication method
+//     const operationStatus = await adminApplicationService.rejectApplication(applicationId, reason);
 
-    if (operationStatus == null) {
-      return c.json({ message: "Application not found" }, HttpStatusCodes.NOT_FOUND);
-    }
+//     if (operationStatus == null) {
+//       return c.json({ message: "Application not found" }, HttpStatusCodes.NOT_FOUND);
+//     }
 
-    if (!operationStatus) {
-      return c.json({ message: "Application already rejected" }, HttpStatusCodes.CONFLICT);
-    }
+//     if (!operationStatus) {
+//       return c.json({ message: "Application already rejected" }, HttpStatusCodes.CONFLICT);
+//     }
 
-    return c.json({ message: "Application rejected" }, HttpStatusCodes.OK);
-  } catch (error) {
-    console.error("Error rejecting application:", error);
-    const errorMessage = error instanceof Error ? error.message : "Failed to reject application";
-    return c.json({ error: errorMessage }, HttpStatusCodes.INTERNAL_SERVER_ERROR);
-  }
-};
+//     return c.json({ message: "Application rejected" }, HttpStatusCodes.OK);
+//   } catch (error) {
+//     console.error("Error rejecting application:", error);
+//     const errorMessage = error instanceof Error ? error.message : "Failed to reject application";
+//     return c.json({ error: errorMessage }, HttpStatusCodes.INTERNAL_SERVER_ERROR);
+//   }
+// };

@@ -121,39 +121,39 @@ export const acceptApplication = createRoute({
   },
 });
 
-export const rejectApplication = createRoute({
-  path: "/reject",
-  method: "post",
-  tags,
-  middleware: adminMiddleware,
-  request: {
-    body: jsonContentRequired(
-      z.object({
-        applicationId: z.number(),
-        reason: z.string().min(1).optional(),
-      }),
-      "Application rejection data"
-    ),
-  },
-  responses: {
-    [HttpStatusCodes.OK]: jsonContent(
-      createMessageObjectSchema("Application rejected"),
-      "Application rejected"
-    ),
-    [HttpStatusCodes.NOT_FOUND]: jsonContent(
-      createMessageObjectSchema("Application not found"),
-      "Application not found"
-    ),
-    [HttpStatusCodes.CONFLICT]: jsonContent(
-      createMessageObjectSchema("Application already rejected"),
-      "Application already rejected"
-    ),
-    [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
-      createErrorSchema(z.object({ applicationId: z.number(), reason: z.string().optional() })),
-      "The validation error(s)"
-    ),
-  },
-});
+// export const rejectApplication = createRoute({
+//   path: "/reject",
+//   method: "post",
+//   tags,
+//   middleware: adminMiddleware,
+//   request: {
+//     body: jsonContentRequired(
+//       z.object({
+//         applicationId: z.number(),
+//         reason: z.string().min(1).optional(),
+//       }),
+//       "Application rejection data"
+//     ),
+//   },
+//   responses: {
+//     [HttpStatusCodes.OK]: jsonContent(
+//       createMessageObjectSchema("Application rejected"),
+//       "Application rejected"
+//     ),
+//     [HttpStatusCodes.NOT_FOUND]: jsonContent(
+//       createMessageObjectSchema("Application not found"),
+//       "Application not found"
+//     ),
+//     [HttpStatusCodes.CONFLICT]: jsonContent(
+//       createMessageObjectSchema("Application already rejected"),
+//       "Application already rejected"
+//     ),
+//     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
+//       createErrorSchema(z.object({ applicationId: z.number(), reason: z.string().optional() })),
+//       "The validation error(s)"
+//     ),
+//   },
+// });
 
 export type GetAllApplicationsRoute = typeof getAllApplications;
 export type GetApplicationDetailsRoute = typeof getApplicationDetails;
@@ -161,4 +161,4 @@ export type GetApplicationRegisteredCoursesRoute = typeof getApplicationRegister
 export type GetApplicationAvailableCoursesRoute = typeof getApplicationAvailableCourses;
 // TODO: Use PUT
 export type AcceptApplicationRoute = typeof acceptApplication;
-export type RejectApplicationRoute = typeof rejectApplication;
+// export type RejectApplicationRoute = typeof rejectApplication;

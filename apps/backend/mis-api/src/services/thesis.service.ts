@@ -1,20 +1,17 @@
 import db from "@/db";
 import { attachments, theses } from "@/db/schema";
-import { sql } from "drizzle-orm";
+import { GetThesisDTO } from "@/dtos/get-thesis.dto";
+import { sql, eq } from "drizzle-orm";
 
 type ThesisAvailability = { available: true } | { available: false; reason: string };
 
 export interface IThesisService {
   isThesisAvailable(studentId: number): Promise<ThesisAvailability>;
   submitThesis(studentId: number, title: string, attachmentUrl: string): Promise<boolean>;
+  getThesis(studentId: number): Promise<GetThesisDTO | null>;
 }
 
 export class ThesisService implements IThesisService {
-  /**
-   * Checks if a student can submit a thesis
-   * @param studentId The ID of the student
-   * @returns Object indicating availability status and reason if not available
-   */
   async isThesisAvailable(studentId: number): Promise<ThesisAvailability> {
     const applicationId = await this.getApplicationByStudentId(studentId);
 
@@ -33,13 +30,6 @@ export class ThesisService implements IThesisService {
     }
   }
 
-  /**
-   * Submits a thesis for a student
-   * @param studentId The ID of the student
-   * @param title The title of the thesis
-   * @param attachmentUrl The URL to the thesis document
-   * @returns True if submission was successful
-   */
   async submitThesis(studentId: number, title: string, attachmentUrl: string): Promise<boolean> {
     const applicationId = await this.getApplicationByStudentId(studentId);
 
@@ -69,11 +59,6 @@ export class ThesisService implements IThesisService {
     }
   }
 
-  /**
-   * Helper method to get application by student ID
-   * @param studentId The ID of the student
-   * @returns Application ID if found
-   */
   // TODO: Remove this
   private async getApplicationByStudentId(studentId: number): Promise<number | null> {
     const application = await db.query.applications.findFirst({
@@ -88,5 +73,30 @@ export class ThesisService implements IThesisService {
     }
 
     return application.applicationId;
+  }
+
+  async getThesis(studentId: number): Promise<GetThesisDTO | null> {
+    const applicationId = await this.getApplicationByStudentId(studentId);
+
+    if (!applicationId) {
+      return null;
+    }
+
+    const thesis = await db
+      .select()
+      .from(theses)
+      .innerJoin(attachments, eq(attachments.attachmentId, theses.attachmentId))
+      .where(eq(theses.applicationId, applicationId));
+
+    if (thesis.length === 0) {
+      return null;
+    }
+
+    return {
+      applicationId: thesis[0].theses.applicationId,
+      thesisId: thesis[0].theses.thesisId,
+      title: thesis[0].theses.title,
+      attachmentUrl: thesis[0].attachments.attachmentUrl,
+    };
   }
 }

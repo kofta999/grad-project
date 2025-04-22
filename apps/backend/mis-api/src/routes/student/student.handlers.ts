@@ -182,13 +182,15 @@ export const deleteApplicationAttachment: AppRouteHandler<
 };
 
 export const getThesis: AppRouteHandler<routes.GetThesisRoute> = async (c) => {
-  // This is a placeholder - you'll need to implement this
   const studentId = c.var.session.get("id")!;
 
-  // You would typically call something like:
-  // const thesis = await thesisService.getThesisByStudentId(studentId);
+  const thesis = await thesisService.getThesis(studentId);
 
-  return c.json({ message: "Not implemented" }, HttpStatusCodes.NOT_IMPLEMENTED);
+  if (!thesis) {
+    return c.json({ message: "Thesis Not found" }, HttpStatusCodes.NOT_FOUND);
+  }
+
+  return c.json(thesis, HttpStatusCodes.OK);
 };
 
 export const getStudentDetailsById: AppRouteHandler<routes.GetStudentDetailsById> = async (c) => {
