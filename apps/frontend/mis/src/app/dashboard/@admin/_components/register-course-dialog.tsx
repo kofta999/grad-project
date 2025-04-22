@@ -40,7 +40,7 @@ export default function RegisterCourseDialog({
 
         // Filter out courses that are already registered
         const registeredCourseIds = userRegisteredCourses
-          .filter((course) => course?.grade >= 60)
+          .filter((course) => course?.grade != "F")
           .map((course) => course.courseId);
 
         const filteredCourses = data.filter(
