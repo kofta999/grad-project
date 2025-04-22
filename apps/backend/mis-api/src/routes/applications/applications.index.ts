@@ -3,8 +3,9 @@ import * as handlers from "./applications.handlers";
 import * as routes from "./applications.routes";
 
 const router = createRouter()
-  .openapi(routes.acceptApplication, handlers.acceptApplication)
   .openapi(routes.getAllApplications, handlers.getAllApplications)
-  .openapi(routes.getApplicationDetails, handlers.getApplicationDetails);
+  .openapi(routes.getApplicationDetails, handlers.getApplicationDetails)
+  .openapi(routes.acceptApplication, handlers.acceptApplication)
+  .openapi(routes.rejectApplication, handlers.rejectApplication);
 
 export default router;

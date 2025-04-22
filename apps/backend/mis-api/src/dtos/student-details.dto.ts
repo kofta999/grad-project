@@ -21,6 +21,7 @@ export const StudentDetailsSchema = z.object({
   isWorking: z.boolean(),
   jobType: z.string().nullable(),
   militaryStatus: z.string(),
+  createdAt: z.string(),
   dob: z.string(),
 });
 

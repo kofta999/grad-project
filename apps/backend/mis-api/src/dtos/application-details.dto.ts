@@ -2,6 +2,7 @@ import { z } from "zod";
 
 export const ApplicationDetailsSchema = z.object({
   applicationId: z.number(),
+  studentId: z.number(),
   isAccepted: z.boolean(),
   addresses: z.array(
     z.object({

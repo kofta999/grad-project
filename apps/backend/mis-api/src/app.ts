@@ -1,8 +1,12 @@
 import createApp from "@/lib/create-app";
 import index from "@/routes/index.route";
+import academicYears from "@/routes/academic-years/academic-years.index";
+import applications from "@/routes/applications/applications.index";
 import auth from "@/routes/auth/auth.index";
-import admin from "@/routes/admin/admin.index";
+import departments from "@/routes/departments/departments.index";
+import enrollments from "@/routes/enrollments/enrollments.index";
 import student from "@/routes/student/student.index";
+
 import configureOpenAPI from "./lib/configure-open-api";
 
 const app = createApp();
@@ -17,8 +21,11 @@ configureOpenAPI(app);
 
 export const _app = app
   .route("", index)
+  .route("/academic-years", academicYears)
+  .route("/applications", applications)
   .route("/auth", auth)
-  .route("/student", student)
-  .route("/admin", admin);
+  .route("/departments", departments)
+  .route("/enrollments", enrollments)
+  .route("/student", student);
 
 export default app;

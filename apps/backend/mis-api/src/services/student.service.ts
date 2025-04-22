@@ -5,9 +5,7 @@ import { eq } from "drizzle-orm";
 
 export interface IStudentService {
   getStudentDetailsByStudentId(studentId: number): Promise<StudentDetailsDTO | null>;
-  getStudentDetailsByApplicationId(
-    applicationId: number
-  ): Promise<(StudentDetailsDTO & { createdAt: string }) | null>;
+  getStudentDetailsByApplicationId(applicationId: number): Promise<StudentDetailsDTO | null>;
   updateStudentInfo(studentId: number, data: Partial<StudentDetailsDTO>): Promise<boolean>;
 }
 
@@ -19,7 +17,6 @@ export class StudentService implements IStudentService {
         hashedPassword: false,
         secQuestion: false,
         secAnswer: false,
-        createdAt: false,
         updatedAt: false,
       },
     });
@@ -47,9 +44,7 @@ export class StudentService implements IStudentService {
     return true;
   }
 
-  async getStudentDetailsByApplicationId(
-    applicationId: number
-  ): Promise<(StudentDetailsDTO & { createdAt: string }) | null> {
+  async getStudentDetailsByApplicationId(applicationId: number): Promise<StudentDetailsDTO | null> {
     const student = await db.query.students.findFirst({
       where: ({ studentId }, { eq }) =>
         eq(
