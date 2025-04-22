@@ -9,7 +9,7 @@ export interface IAuthService {
   register(studentData: RegisterStudentDTO): Promise<number>;
   login(
     userCredentials: LoginUserDTO
-  ): Promise<{ userId: number; role: (typeof ROLES)[number]; nameAr: string }>;
+  ): Promise<{ userId: number; role: (typeof ROLES)[number]; nameAr: string } | null>;
 }
 
 export class AuthService implements IAuthService {
@@ -24,7 +24,11 @@ export class AuthService implements IAuthService {
     return newStudents[0].studentId;
   }
 
-  async login({ email, password, role }: LoginUserDTO): Promise<any> {
+  async login({ email, password, role }: LoginUserDTO): Promise<{
+    userId: number;
+    role: (typeof ROLES)[number];
+    nameAr: string;
+  } | null> {
     let user;
     let userId;
 
@@ -56,7 +60,7 @@ export class AuthService implements IAuthService {
       userId = user?.adminId;
     }
 
-    if (user && (await bcrypt.compare(password, user.hashedPassword))) {
+    if (userId && user && (await bcrypt.compare(password, user.hashedPassword))) {
       return { userId, role, nameAr: user.fullNameAr };
     } else {
       return null;
