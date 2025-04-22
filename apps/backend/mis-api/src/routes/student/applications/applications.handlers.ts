@@ -8,11 +8,13 @@ import {
 } from "./applications.routes";
 import * as HttpStatusCodes from "stoker/http-status-codes";
 import { StudentApplicationService } from "@/services/student-application.service";
+import { AcademicService } from "@/services/academic.service";
 
 const studentApplicationService = new StudentApplicationService();
+const academicService = new AcademicService();
 
 export const getCurrentAcademicYears: AppRouteHandler<GetCurrentAcademicYearsRoute> = async (c) => {
-  const years = await studentApplicationService.getAvailableAcademicYears();
+  const years = await academicService.getAvailableAcademicYears();
 
   return c.json(years, HttpStatusCodes.OK);
 };
@@ -20,7 +22,7 @@ export const getCurrentAcademicYears: AppRouteHandler<GetCurrentAcademicYearsRou
 export const getAvailableDepartments: AppRouteHandler<GetAvailableDepartmentsRoute> = async (c) => {
   const { type } = c.req.valid("query");
 
-  const departments = await studentApplicationService.getAvailableDepartments(type);
+  const departments = await academicService.getAvailableDepartments(type);
 
   return c.json(departments, HttpStatusCodes.OK);
 };

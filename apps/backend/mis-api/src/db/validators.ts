@@ -181,8 +181,3 @@ export const getStudentSchema = createSelectSchema(students).omit({
   createdAt: true,
   updatedAt: true,
 });
-
-export const submitThesisSchema = z.object({
-  title: z.string().min(1),
-  attachmentUrl: z.string().url(),
-});

@@ -4,7 +4,6 @@ import { createRoute, z } from "@hono/zod-openapi";
 import { jsonContent } from "stoker/openapi/helpers";
 import * as HttpStatusCodes from "stoker/http-status-codes";
 import { createMessageObjectSchema } from "stoker/openapi/schemas";
-import { submitThesisSchema } from "@/db/validators";
 
 const tags = ["Student"];
 
@@ -35,7 +34,13 @@ export const submitThesis = createRoute({
   middleware: [isAuthenticated, requireRole("student")],
   tags,
   request: {
-    body: jsonContent(submitThesisSchema, "Submit thesis schema"),
+    body: jsonContent(
+      z.object({
+        title: z.string().min(1),
+        attachmentUrl: z.string().url(),
+      }),
+      "Submit thesis schema"
+    ),
   },
   responses: {
     [HttpStatusCodes.OK]: jsonContent(z.object({}), "Thesis is successfully submitted"),

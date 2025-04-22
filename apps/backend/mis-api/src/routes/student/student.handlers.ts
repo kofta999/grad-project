@@ -1,8 +1,4 @@
-import db from "@/db";
-import { academicYears, courseRegistrations, courseResults, students } from "@/db/schema";
 import { AppRouteHandler } from "@/lib/types";
-import { detailedCourseRegistrationsView as dcv } from "@/db/schema";
-import { eq, and } from "drizzle-orm";
 import {
   EditStudentInfoRoute,
   GetApplicantRegisteredCourses,
@@ -10,7 +6,13 @@ import {
   GetStudentDetailsRoute,
 } from "./student.routes";
 import * as HttpStatusCodes from "stoker/http-status-codes";
-import { convertDegreeToGrade } from "@/lib/util";
+import { StudentService } from "@/services/student.service";
+import { AcademicService } from "@/services/academic.service";
+import { CourseService } from "@/services/course.service";
+
+const studentService = new StudentService();
+const academicService = new AcademicService();
+const courseService = new CourseService();
 
 export const getApplicantRegisteredCourses: AppRouteHandler<GetApplicantRegisteredCourses> = async (
   c
@@ -22,68 +24,13 @@ export const getApplicantRegisteredCourses: AppRouteHandler<GetApplicantRegister
     return c.json({ message: "Unauthorized" }, HttpStatusCodes.UNAUTHORIZED);
   }
 
-  const application = await db.query.applications.findFirst({
-    where(f, { eq }) {
-      return eq(f.studentId, studentId);
-    },
-    columns: { applicationId: true },
-  });
-
-  if (!application) {
-    return c.json({ message: "Application(Student) not found" }, HttpStatusCodes.NOT_FOUND);
-  }
-
-  const courses = await db
-    .select({
-      courseId: dcv.courseId,
-      code: dcv.code,
-      title: dcv.title,
-      prerequisite: dcv.prerequisite,
-      totalHours: dcv.totalHours,
-      grade: courseResults.grade,
-    })
-    .from(dcv)
-    .leftJoin(courseResults, eq(dcv.courseRegistrationId, courseResults.courseRegistrationId))
-    .where(
-      and(
-        eq(dcv.academicYearId, academicYearId),
-        eq(dcv.semester, semester),
-        eq(dcv.applicationId, application.applicationId)
-      )
-    );
-
-  return c.json(
-    courses.map((c) => ({
-      ...c,
-      grade: c.grade ? convertDegreeToGrade(c.grade) : null,
-    })),
-    HttpStatusCodes.OK
+  const courses = await courseService.getStudentRegisteredCourses(
+    studentId,
+    academicYearId,
+    semester
   );
-};
 
-export const editStudentInfo: AppRouteHandler<EditStudentInfoRoute> = async (c) => {
-  const studentId = c.var.session.get("id");
-
-  if (!studentId) {
-    return c.json({ message: "Unauthorized" }, HttpStatusCodes.UNAUTHORIZED);
-  }
-
-  const updatedData = c.req.valid("json");
-
-  const existingStudent = await db.query.students.findFirst({
-    where(fields, operators) {
-      return operators.eq(fields.studentId, studentId);
-    },
-    columns: { studentId: true },
-  });
-
-  if (!existingStudent) {
-    return c.json({ message: "Student not found" }, HttpStatusCodes.NOT_FOUND);
-  }
-
-  await db.update(students).set(updatedData).where(eq(students.studentId, studentId));
-
-  return c.json({ message: "Student info updated successfully" }, HttpStatusCodes.OK);
+  return c.json(courses, HttpStatusCodes.OK);
 };
 
 export const getRegisteredAcademicYears: AppRouteHandler<GetRegisteredAcademicYearsRoute> = async (
@@ -95,38 +42,27 @@ export const getRegisteredAcademicYears: AppRouteHandler<GetRegisteredAcademicYe
     return c.json({ message: "Unauthorized" }, HttpStatusCodes.UNAUTHORIZED);
   }
 
-  const application = await db.query.applications.findFirst({
-    where(f, { eq }) {
-      return eq(f.studentId, studentId);
-    },
-    columns: { applicationId: true },
-  });
+  const academicYears = await academicService.getStudentRegisteredAcademicYears(studentId);
 
-  if (!application) {
-    return c.json({ message: "Application(Student) not found" }, HttpStatusCodes.NOT_FOUND);
+  return c.json(academicYears, HttpStatusCodes.OK);
+};
+
+export const editStudentInfo: AppRouteHandler<EditStudentInfoRoute> = async (c) => {
+  const studentId = c.var.session.get("id");
+
+  if (!studentId) {
+    return c.json({ message: "Unauthorized" }, HttpStatusCodes.UNAUTHORIZED);
   }
 
-  const years = await db
-    .select({
-      academicYear: academicYears,
-    })
-    .from(academicYears)
-    .innerJoin(
-      courseRegistrations,
-      and(
-        eq(courseRegistrations.academicYearId, academicYears.academicYearId),
-        eq(courseRegistrations.applicationId, application.applicationId)
-      )
-    )
-    .groupBy(academicYears.academicYearId);
+  const updatedData = c.req.valid("json");
 
-  return c.json(
-    years.map(({ academicYear: year }) => ({
-      academicYearId: year.academicYearId,
-      year: `${new Date(year.startDate).getFullYear()}-${new Date(year.endDate).getFullYear()}`,
-    })),
-    HttpStatusCodes.OK
-  );
+  const success = await studentService.updateStudentInfo(studentId, updatedData);
+
+  if (!success) {
+    return c.json({ message: "Student not found" }, HttpStatusCodes.NOT_FOUND);
+  }
+
+  return c.json({ message: "Student info updated successfully" }, HttpStatusCodes.OK);
 };
 
 export const getStudentDetails: AppRouteHandler<GetStudentDetailsRoute> = async (c) => {
@@ -136,16 +72,7 @@ export const getStudentDetails: AppRouteHandler<GetStudentDetailsRoute> = async 
     return c.json({ message: "Unauthorized" }, HttpStatusCodes.UNAUTHORIZED);
   }
 
-  const student = await db.query.students.findFirst({
-    where: (f, { eq }) => eq(f.studentId, studentId),
-    columns: {
-      hashedPassword: false,
-      secQuestion: false,
-      secAnswer: false,
-      createdAt: false,
-      updatedAt: false,
-    },
-  });
+  const student = await studentService.getStudentDetailsByStudentId(studentId);
 
   if (!student) {
     return c.json({ message: "Student not found" }, HttpStatusCodes.NOT_FOUND);

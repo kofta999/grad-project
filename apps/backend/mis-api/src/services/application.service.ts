@@ -9,45 +9,15 @@ import {
   addresses,
 } from "@/db/schema";
 import { ApplicationDetailsDTO } from "@/dtos/application-details.dto";
-import { AvailableAcademicYearsDTO } from "@/dtos/available-academic-years.dto";
-import { AvailableDepartmentsDTO } from "@/dtos/available-departments.dto";
-import { DepartmentTypes } from "@/lib/types";
 import { formatAcademicYear, removeApplicationId } from "@/lib/util";
 import { eq } from "drizzle-orm";
 
 export interface IApplicationService {
-  getAvailableAcademicYears(): Promise<AvailableAcademicYearsDTO>;
-  getAvailableDepartments(type: DepartmentTypes): Promise<AvailableDepartmentsDTO>;
   getApplicationByStudentId(studentId: number): Promise<ApplicationDetailsDTO | null>;
   getApplicationByApplicationId(applicationId: number): Promise<ApplicationDetailsDTO | null>;
 }
 
 export abstract class ApplicationService implements IApplicationService {
-  async getAvailableAcademicYears(): Promise<AvailableAcademicYearsDTO> {
-    const years = await db.query.academicYears.findMany({
-      where(f, { gte }) {
-        return gte(f.startDate, new Date().toDateString());
-      },
-    });
-
-    return years.map((year) => ({
-      academicYearId: year.academicYearId,
-      year: formatAcademicYear(year),
-    }));
-  }
-
-  async getAvailableDepartments(type: DepartmentTypes): Promise<AvailableDepartmentsDTO> {
-    const departments = await db.query.departments.findMany({
-      columns: {
-        departmentId: true,
-        title: true,
-      },
-      where: (f, { eq }) => eq(f.type, type),
-    });
-
-    return departments;
-  }
-
   async getApplicationByStudentId(studentId: number): Promise<ApplicationDetailsDTO | null> {
     const a = applications;
 

@@ -7,3 +7,4 @@ export const UnauthorizedSchema = createMessageObjectSchema(HttpStatusPhrases.UN
 export const APP_URL = `http://localhost:${env.PORT}`;
 export const ROLES = ["student", "admin"] as const;
 export const DEPARTMENT_TYPES = ["diploma", "master", "phd"] as const;
+export const SEMESTERS = ["first", "second", "third"] as const;

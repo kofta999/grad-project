@@ -75,7 +75,7 @@ export const getApplicationDetails = createRoute({
   responses: {
     [HttpStatusCodes.OK]: jsonContent(
       z.object({
-        student: StudentDetailsSchema.optional(),
+        student: StudentDetailsSchema.extend({ createdAt: z.string() }).optional(),
         application: ApplicationDetailsSchema.optional(),
       }),
       "A list of all students with applications"

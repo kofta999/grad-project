@@ -22,7 +22,6 @@ export const StudentDetailsSchema = z.object({
   jobType: z.string().nullable(),
   militaryStatus: z.string(),
   dob: z.string(),
-  createdAt: z.string(),
 });
 
 export type StudentDetailsDTO = z.infer<typeof StudentDetailsSchema>;

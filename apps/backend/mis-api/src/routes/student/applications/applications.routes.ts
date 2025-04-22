@@ -7,7 +7,7 @@ import { createErrorSchema } from "stoker/openapi/schemas";
 import { DEPARTMENT_TYPES, NotFoundSchema } from "@/lib/constants";
 import { AvailableDepartmentsSchema } from "@/dtos/available-departments.dto";
 import { CreateApplicationSchema } from "@/dtos/create-application.dto";
-import { AvailableAcademicYearsSchema } from "@/dtos/available-academic-years.dto";
+import { AcademicYearSchema } from "@/dtos/academic-year.dto.";
 import { SaveAttachmentsSchema } from "@/dtos/save-attachment.dto";
 import { ApplicationDetailsSchema } from "@/dtos/application-details.dto";
 
@@ -20,7 +20,7 @@ export const getCurrentAcademicYears = createRoute({
   tags,
   responses: {
     [HttpStatusCodes.OK]: jsonContent(
-      AvailableAcademicYearsSchema,
+      z.array(AcademicYearSchema),
       "An array of available academic years"
     ),
   },
@@ -31,7 +31,6 @@ export const getAvailableDepartments = createRoute({
   method: "get",
   request: {
     query: z.object({
-      // TODO: Abstract this enum across the app
       type: z.enum(DEPARTMENT_TYPES),
     }),
   },

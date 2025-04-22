@@ -10,8 +10,10 @@ import { adminApplicationDetailsSchema } from "@/db/validators";
 import { AdminApplicationService } from "@/services/admin-application.service";
 import { ApplicationDetailsDTO } from "@/dtos/application-details.dto";
 import { StudentDetailsDTO } from "@/dtos/student-details.dto";
+import { StudentService } from "@/services/student.service";
 
 const adminApplicationService = new AdminApplicationService();
+const studentService = new StudentService();
 
 export const acceptApplication: AppRouteHandler<AcceptApplicationRoute> = async (c) => {
   const { applicationId } = c.req.valid("json");
@@ -40,11 +42,11 @@ export const getApplicationDetails: AppRouteHandler<GetApplicationDetailsRoute> 
   const { fetch } = c.req.valid("query");
   let res: {
     application?: ApplicationDetailsDTO;
-    student?: StudentDetailsDTO;
+    student?: StudentDetailsDTO & { createdAt: string };
   } = {};
 
   if (fetch === "student" || fetch == "all") {
-    const student = await adminApplicationService.getStudentDetails(applicationId);
+    const student = await studentService.getStudentDetailsByApplicationId(applicationId);
     if (!student) {
       return c.json({ message: "Application Not found" }, HttpStatusCodes.NOT_FOUND);
     }
