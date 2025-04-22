@@ -105,25 +105,27 @@ export default function RegisterCourseDialog({
       const res = await apiClient.admin.courses[":id"].$delete({
         param: { id: course.courseRegistrationId.toString() },
       });
-      const status = await res.json();
 
-      if (status === 204) {
+      if (res.status === 204) {
         setUserRegisteredCourses((prev) =>
           prev.filter((rc) => rc.courseRegistrationId !== course.courseRegistrationId)
         );
 
-        setAvailableCourses((prev) => [...prev, { ...course, courseRegistrationId: null }]);
+        setAvailableCourses((prev) => [...prev, { ...course, courseRegistrationId: undefined }]);
 
-        await getAvailableCourses(applicationId);
+        //await getAvailableCourses(applicationId);
 
         toast.success("تم حذف المادة بنجاح");
-      } else if (status.error === "This course is already passed, mustn't be deleted") {
-        toast.error("لا يمكن حذف المادة المكتملة");
       } else {
-        toast.error("فشل حذف المادة");
+        const data = await res.json();
+
+        if (data.error === "This course is already passed, mustn't be deleted") {
+          toast.error("لا يمكن حذف المادة المكتملة");
+        } else {
+          toast.error("فشل حذف المادة");
+        }
       }
     } catch (error) {
-      console.log("Deletion error:", error);
       toast.error("حدث خطأ أثناء حذف المادة");
     }
   };
@@ -131,6 +133,8 @@ export default function RegisterCourseDialog({
   const handleCourseAction = async (e: React.FormEvent, course: AvailableCourse) => {
     e.preventDefault();
     const isRegistered = userRegisteredCourses.some((rc) => rc.courseId === course.courseId);
+
+    console.log(userRegisteredCourses);
 
     if (isRegistered) {
       removeCourse(course);
@@ -143,7 +147,7 @@ export default function RegisterCourseDialog({
     if (applicationId) {
       getAvailableCourses(applicationId);
     }
-  }, [applicationId, userRegisteredCourses, availableCourses]);
+  }, [applicationId]);
 
   return (
     <Card className="w-full max-w-2xl">

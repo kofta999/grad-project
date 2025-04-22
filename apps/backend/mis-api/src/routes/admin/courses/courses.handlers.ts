@@ -94,7 +94,9 @@ export const deleteCourse: AppRouteHandler<DeleteCourseRoute> = async (c) => {
   try {
     await db.delete(courseRegistrations).where(eq(courseRegistrations.courseRegistrationId, id));
 
-    return c.json(HttpStatusCodes.NO_CONTENT);
+    c.status(HttpStatusCodes.NO_CONTENT);
+
+    return c.json({});
   } catch (error) {
     console.error("Error deleting course:", error);
     let errorMessage: string;
