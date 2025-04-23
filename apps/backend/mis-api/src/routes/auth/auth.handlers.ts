@@ -1,85 +1,49 @@
 import { AppRouteHandler } from "@/lib/types";
-import { LoginRoute, LogoutRoute, RegisterStage1Route, UploadRoute } from "./auth.routes";
+import {
+  LoginUserRoute,
+  LogoutUserRoute,
+  RegisterStudentRoute,
+  UploadFileRoute,
+} from "./auth.routes";
 import * as HttpStatusCodes from "stoker/http-status-codes";
 import * as HttpStatusPhrases from "stoker/http-status-phrases";
-import db from "@/db";
-import { students } from "@/db/schema";
-import bcrypt from "bcryptjs";
 import { deleteCookie, setCookie } from "hono/cookie";
+import { AuthService } from "@/services/auth.service";
 
-export const register: AppRouteHandler<RegisterStage1Route> = async (c) => {
-  let { confirmPassword, ...studentData } = c.req.valid("json");
+const authService = new AuthService();
 
-  if (studentData.hashedPassword !== confirmPassword) {
-    throw new Error("TODO: FIXME");
-  }
+export const register: AppRouteHandler<RegisterStudentRoute> = async (c) => {
+  let studentData = c.req.valid("json");
 
-  studentData.hashedPassword = await bcrypt.hash(studentData.hashedPassword, 10);
+  const studentId = await authService.register(studentData);
 
-  const newStudents = await db
-    .insert(students)
-    .values(studentData)
-    .returning({ studentId: students.studentId });
-
-  return c.json({ success: true, studentId: newStudents[0].studentId }, HttpStatusCodes.OK);
+  return c.json({ success: true, studentId }, HttpStatusCodes.OK);
 };
 
-export const login: AppRouteHandler<LoginRoute> = async (c) => {
-  const { email, password, role } = c.req.valid("json");
-  let user;
-  let userId;
+export const login: AppRouteHandler<LoginUserRoute> = async (c) => {
+  const userCredentials = c.req.valid("json");
 
-  if (role === "student") {
-    user = await db.query.students.findFirst({
-      where(fields, operators) {
-        return operators.eq(fields.email, email);
-      },
-      columns: {
-        studentId: true,
-        fullNameAr: true,
-        hashedPassword: true,
-      },
-    });
+  const maybeUser = await authService.login(userCredentials);
 
-    userId = user?.studentId;
-  } else if (role === "admin") {
-    user = await db.query.admins.findFirst({
-      where(fields, operators) {
-        return operators.eq(fields.email, email);
-      },
-      columns: {
-        adminId: true,
-        fullNameAr: true,
-        hashedPassword: true,
-      },
-    });
-
-    userId = user?.adminId;
-  }
-
-  if (!user) {
+  if (!maybeUser) {
     return c.json({ message: HttpStatusPhrases.UNAUTHORIZED }, HttpStatusCodes.UNAUTHORIZED);
   }
 
-  if (!(await bcrypt.compare(password, user.hashedPassword))) {
-    return c.json({ message: HttpStatusPhrases.UNAUTHORIZED }, HttpStatusCodes.UNAUTHORIZED);
-  }
+  c.var.session.set("id", maybeUser.userId);
+  c.var.session.set("role", maybeUser.role);
+  setCookie(c, "userRole", maybeUser.role);
 
-  c.var.session.set("id", userId!);
-  c.var.session.set("role", role);
-  setCookie(c, "userRole", role);
-
-  return c.json({ name: user.fullNameAr, role }, HttpStatusCodes.OK);
+  return c.json({ name: maybeUser.nameAr, role: maybeUser.role }, HttpStatusCodes.OK);
 };
 
-export const logout: AppRouteHandler<LogoutRoute> = async (c) => {
+export const logout: AppRouteHandler<LogoutUserRoute> = async (c) => {
   c.var.session.deleteSession();
   deleteCookie(c, "sessionId");
   deleteCookie(c, "userRole");
   return c.json({}, HttpStatusCodes.OK);
 };
 
-export const upload: AppRouteHandler<UploadRoute> = async (c) => {
+export const upload: AppRouteHandler<UploadFileRoute> = async (c) => {
   const file = c.var.file;
 
   return c.json({ uploadUrl: file! }, HttpStatusCodes.OK);

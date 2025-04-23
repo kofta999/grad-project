@@ -20,15 +20,11 @@ import {
   step3Schema,
 } from "../validators";
 
-export type FormType = InferRequestType<typeof apiClient.student.applications.$post>["json"];
+export type FormType = InferRequestType<typeof apiClient.students.me.applications.$post>["json"];
 
 export type InitialFormDataType = {
-  currentAcademicYears: InferResponseType<
-    typeof apiClient.student.applications.currentAcademicYears.$get
-  >;
-  availableDepartments: InferResponseType<
-    typeof apiClient.student.applications.availableDepartments.$get
-  >;
+  currentAcademicYears: InferResponseType<(typeof apiClient)["academic-years"]["$get"]>;
+  availableDepartments: InferResponseType<(typeof apiClient)["departments"]["$get"]>;
 };
 
 export default function ApplicationForm() {
@@ -59,7 +55,7 @@ export default function ApplicationForm() {
     try {
       await formikStep2.validateForm();
       if (Object.keys(formikStep2.errors).length === 0) {
-        const response = await apiClient.student.applications.$post({
+        const response = await apiClient.students.me.applications.$post({
           json: {
             ...values,
             ...formikStep1.values,
@@ -103,7 +99,12 @@ export default function ApplicationForm() {
           throw new Error("Application id not found");
         }
 
-        const response = await apiClient.student.applications.attachments.$post({
+        const response = await apiClient.students.me.applications[":applicationId"][
+          "attachments"
+        ].$post({
+          param: {
+            applicationId: applicationId.toString(),
+          },
           json: {
             applicationId,
             attachments: values.attachments,
@@ -189,7 +190,7 @@ export default function ApplicationForm() {
 
   useEffect(() => {
     const getAcademicYears = async () => {
-      const res = await apiClient.student.applications.currentAcademicYears.$get();
+      const res = await apiClient["academic-years"].$get();
 
       const data = await res.json();
       console.log(data);
@@ -202,7 +203,7 @@ export default function ApplicationForm() {
 
   useEffect(() => {
     const getAvailableDepartments = async (type: "diploma" | "master" | "phd") => {
-      const res = await apiClient.student.applications.availableDepartments.$get({
+      const res = await apiClient.departments.$get({
         query: { type },
       });
 

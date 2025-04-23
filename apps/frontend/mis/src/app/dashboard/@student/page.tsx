@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 
 export default async function Page() {
   const apiClient = await getServerApiClient();
-  const response = await apiClient.student.applications.$get();
+  const response = await apiClient.students.me.applications.$get();
 
   if (!response.ok) {
     return (
