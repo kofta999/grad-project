@@ -5,7 +5,7 @@ import applications from "@/routes/applications/applications.index";
 import auth from "@/routes/auth/auth.index";
 import departments from "@/routes/departments/departments.index";
 import enrollments from "@/routes/enrollments/enrollments.index";
-import student from "@/routes/student/student.index";
+import students from "@/routes/students/students.index";
 
 import configureOpenAPI from "./lib/configure-open-api";
 
@@ -26,6 +26,6 @@ export const _app = app
   .route("/auth", auth)
   .route("/departments", departments)
   .route("/enrollments", enrollments)
-  .route("/student", student);
+  .route("/students", students);
 
 export default app;

@@ -5,7 +5,7 @@ import { AcademicService } from "@/services/academic.service";
 import { CourseService } from "@/services/course.service";
 import { ThesisService } from "@/services/thesis.service";
 import { StudentApplicationService } from "@/services/student-application.service";
-import * as routes from "./student.routes";
+import * as routes from "./students.routes";
 
 // Initialize services
 const studentService = new StudentService();

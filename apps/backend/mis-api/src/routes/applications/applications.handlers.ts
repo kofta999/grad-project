@@ -52,7 +52,7 @@ export const getApplicationRegisteredCourses: AppRouteHandler<
   }
 };
 
-export const getAvailableCoursesForApplication: AppRouteHandler<
+export const getApplicationAvailableCourses: AppRouteHandler<
   GetApplicationAvailableCoursesRoute
 > = async (c) => {
   const applicationId = parseInt(c.req.param("id"), 10);

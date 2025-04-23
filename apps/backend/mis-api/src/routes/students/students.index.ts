@@ -1,6 +1,6 @@
 import { createRouter } from "@/lib/create-app";
-import * as routes from "./student.routes";
-import * as handlers from "./student.handlers";
+import * as routes from "./students.routes";
+import * as handlers from "./students.handlers";
 
 const router = createRouter()
   // Profile routes
