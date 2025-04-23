@@ -61,7 +61,7 @@ export default function currentCourses() {
 
     try {
       const applicationRes = await apiClient.applications[":id"].$get({
-        param: { id: applicationId?.toString()! },
+        param: { id: id.toString() },
       });
 
       if (!applicationRes.ok) {

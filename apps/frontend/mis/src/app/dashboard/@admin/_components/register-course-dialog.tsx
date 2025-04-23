@@ -43,15 +43,15 @@ export default function RegisterCourseDialog({
         const data = await res.json();
 
         // Filter out courses that are already registered
-        const registeredCourseIds = userRegisteredCourses
-          .filter((course) => course?.grade != "F")
-          .map((course) => course.courseId);
+        // const registeredCourseIds = userRegisteredCourses
+        //   .filter((course) => course.grade != "F")
+        //   .map((course) => course.courseId);
 
-        const filteredCourses = data.filter(
-          (course) => !registeredCourseIds.includes(course.courseId)
-        );
+        // const filteredCourses = data.filter(
+        //   (course) => !registeredCourseIds.includes(course.courseId)
+        // );
 
-        setAvailableCourses(filteredCourses);
+        setAvailableCourses(data);
       } else {
         toast.error("فشل العثور علي المواد");
       }
@@ -88,6 +88,7 @@ export default function RegisterCourseDialog({
         };
 
         setUserRegisteredCourses((prev) => [...prev, registeredCourse]);
+        await getAvailableCourses(applicationId);
 
         toast.success("تم تسجيل المادة بنجاح");
       } else {
@@ -115,9 +116,7 @@ export default function RegisterCourseDialog({
           prev.filter((rc) => rc.courseRegistrationId !== course.courseRegistrationId)
         );
 
-        setAvailableCourses((prev) => [...prev, { ...course, courseRegistrationId: null }]);
-
-        //await getAvailableCourses(applicationId);
+        await getAvailableCourses(applicationId);
 
         toast.success("تم حذف المادة بنجاح");
       } else {
@@ -137,8 +136,6 @@ export default function RegisterCourseDialog({
   const handleCourseAction = async (e: React.FormEvent, course: AvailableCourse) => {
     e.preventDefault();
     const isRegistered = userRegisteredCourses.some((rc) => rc.courseId === course.courseId);
-
-    console.log(userRegisteredCourses);
 
     if (isRegistered) {
       removeCourse(course);
