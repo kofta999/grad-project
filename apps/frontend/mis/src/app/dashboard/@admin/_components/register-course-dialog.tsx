@@ -1,4 +1,3 @@
-"use client";
 import React, { useEffect, useState } from "react";
 import { LucideClipboardList } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/card";
@@ -8,31 +7,36 @@ import toast from "react-hot-toast";
 import { InferResponseType } from "@repo/mis-api";
 
 type AvailableCourse = InferResponseType<
-  (typeof apiClient.admin.courses.available)[":applicationId"]["$get"],
+  (typeof apiClient.applications)[":id"]["available-courses"]["$get"],
   200
 >[number];
 
-type RegisteredCourse = InferResponseType<typeof apiClient.admin.courses.list.$post, 200>[number];
+type RegisteredCourse = InferResponseType<
+  (typeof apiClient.applications)[":id"]["courses"]["$get"],
+  200
+>[number];
 
 type SemesterType = "first" | "second" | "third";
+
+type RegisterCourseDialogProps = {
+  applicationId: number;
+  semester: SemesterType;
+  userRegisteredCourses: RegisteredCourse[];
+  setUserRegisteredCourses: React.Dispatch<React.SetStateAction<RegisteredCourse[]>>;
+};
 
 export default function RegisterCourseDialog({
   applicationId,
   semester,
   userRegisteredCourses,
   setUserRegisteredCourses,
-}: {
-  applicationId: number;
-  semester: SemesterType;
-  userRegisteredCourses: RegisteredCourse[];
-  setUserRegisteredCourses: (courses: RegisteredCourse[]) => void;
-}) {
+}: RegisterCourseDialogProps) {
   const [availableCourses, setAvailableCourses] = useState<AvailableCourse[]>([]);
 
   const getAvailableCourses = async (applicationId: number) => {
     try {
-      const res = await apiClient.admin.courses.available[":applicationId"].$get({
-        param: { applicationId: applicationId.toString() },
+      const res = await apiClient.applications[":id"]["available-courses"].$get({
+        param: { id: applicationId.toString() },
       });
 
       if (res.status === 200) {
@@ -66,7 +70,7 @@ export default function RegisterCourseDialog({
         return;
       }
 
-      const res = await apiClient.admin.courses.register.$post({
+      const res = await apiClient.enrollments.$post({
         json: {
           applicationId,
           courseId: course.courseId,
@@ -102,7 +106,7 @@ export default function RegisterCourseDialog({
         return;
       }
 
-      const res = await apiClient.admin.courses[":id"].$delete({
+      const res = await apiClient.enrollments[":id"].$delete({
         param: { id: course.courseRegistrationId.toString() },
       });
 
@@ -111,7 +115,7 @@ export default function RegisterCourseDialog({
           prev.filter((rc) => rc.courseRegistrationId !== course.courseRegistrationId)
         );
 
-        setAvailableCourses((prev) => [...prev, { ...course, courseRegistrationId: undefined }]);
+        setAvailableCourses((prev) => [...prev, { ...course, courseRegistrationId: null }]);
 
         //await getAvailableCourses(applicationId);
 

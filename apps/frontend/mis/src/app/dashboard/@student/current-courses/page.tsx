@@ -22,7 +22,7 @@ import { apiClient } from "@/lib/client";
 import { InferResponseType } from "@repo/mis-api";
 import toast from "react-hot-toast";
 
-type CoursesType = InferResponseType<typeof apiClient.student.courses.$get, 200>;
+type CoursesType = InferResponseType<typeof apiClient.students.me.courses.$get, 200>;
 
 interface AcademicYear {
   academicYearId: number;
@@ -30,12 +30,12 @@ interface AcademicYear {
 }
 type SemesterType = "first" | "second" | "third";
 
-export default function currentCourses() {
+export default function CurrentCourses() {
   const [academicYear, setAcademicYear] = useState<AcademicYear | null>(null);
   const [courses, setCourses] = useState<CoursesType>([]);
 
   const getCurrentAcademicYear = async () => {
-    const res = await apiClient.student.courses.registeredAcademicYears.$get();
+    const res = await apiClient.students.me.courses["registered-academic-years"].$get();
     if (res.status === 200) {
       const data = await res.json();
       setAcademicYear(data[0]);
@@ -48,7 +48,7 @@ export default function currentCourses() {
 
   const getCourses = async (semester: SemesterType, academicYear: AcademicYear | null) => {
     try {
-      const res = await apiClient.student.courses.$get({
+      const res = await apiClient.students.me.courses.$get({
         query: {
           semester: semester,
           academicYearId: academicYear?.academicYearId.toString() || "",
@@ -74,10 +74,7 @@ export default function currentCourses() {
     <Container>
       <Card>
         <CardContent>
-          <Select
-            className="w-full md:w-1/2"
-            onValueChange={(value: SemesterType) => getCourses(value, academicYear)}
-          >
+          <Select onValueChange={(value: SemesterType) => getCourses(value, academicYear)}>
             <SelectTrigger className="w-full md:w-1/2">
               <SelectValue placeholder="اختر الترم" />
             </SelectTrigger>

@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 
 export default async function Page() {
   const apiClient = await getServerApiClient();
-  const res = await apiClient.admin.applications.$get();
+  const res = await apiClient.applications.$get();
   console.log(res.status);
 
   if (!res.ok) {

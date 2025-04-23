@@ -5,16 +5,25 @@ import { getServerApiClient } from "@/lib/client";
 export default async function AdminPage({ params: { id } }: { params: { id: string } }) {
   const apiClient = await getServerApiClient();
   try {
-    const response = await apiClient.admin.applications[":id"].$get({
+    const applicationRes = await apiClient.applications[":id"].$get({
       param: { id },
-      query: {},
     });
 
-    if (!response.ok) {
+    if (!applicationRes.ok) {
       throw new Error("التقديم غير موجود");
     }
 
-    const { student, application } = await response.json();
+    const application = await applicationRes.json();
+
+    const studentRes = await apiClient.students[":id"].$get({
+      param: { id: application.studentId.toString() },
+    });
+
+    if (!studentRes.ok) {
+      throw new Error("الطالب غير موجود");
+    }
+
+    const student = await studentRes.json();
 
     return (
       <>

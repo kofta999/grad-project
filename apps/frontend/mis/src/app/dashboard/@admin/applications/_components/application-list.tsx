@@ -15,7 +15,7 @@ import { InferResponseType } from "@repo/mis-api";
 import toast from "react-hot-toast";
 import Link from "next/link";
 
-type ApplicationsList = InferResponseType<typeof apiClient.admin.applications.$get>;
+type ApplicationsList = InferResponseType<typeof apiClient.applications.$get>;
 
 export default function ApplicationsList({
   applicationsList,
@@ -34,7 +34,7 @@ export default function ApplicationsList({
   const handleAcceptApplication = async (applicationId: number) => {
     try {
       // Send the applicationId to the API
-      const res = await apiClient.admin.applications.accept.$post({
+      const res = await apiClient.applications.accept.$post({
         json: { applicationId },
       });
 

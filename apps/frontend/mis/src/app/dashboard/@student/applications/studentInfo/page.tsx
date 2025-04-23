@@ -20,7 +20,10 @@ import { InferResponseType } from "@repo/mis-api";
 // Instead of re-creating the types, we can use this utility Type provided by Hono
 // This returns the response of GET /student/applications route
 // 200 is for the status code's response, and ["application"] because the response is like {application: {...}}
-type Student = InferResponseType<typeof apiClient.student.applications.$get, 200>["application"];
+type Student = InferResponseType<
+  typeof apiClient.students.me.applications.$get,
+  200
+>["application"];
 
 export default function StudentInfo() {
   const [student, setStudent] = useState<Student | null>(null);
@@ -34,7 +37,7 @@ export default function StudentInfo() {
 
     const fetchData = async () => {
       try {
-        const response = await apiClient.student.applications.$get();
+        const response = await apiClient.students.me.applications.$get();
         if (!response.ok) {
           // So TypeScript detects it's an error JSON
           const data = await response.json();

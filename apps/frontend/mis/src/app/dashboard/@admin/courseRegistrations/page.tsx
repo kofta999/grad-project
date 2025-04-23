@@ -29,7 +29,10 @@ import RegisterCourseDialog from "../_components/register-course-dialog";
 import { InferResponseType } from "@repo/mis-api";
 import { StudentType, ApplicationType } from "@/lib/types";
 
-type RegisteredCourse = InferResponseType<typeof apiClient.admin.courses.list.$post, 200>[number];
+type RegisteredCourse = InferResponseType<
+  (typeof apiClient.applications)[":id"]["courses"]["$get"],
+  200
+>[number];
 type CoursesType = RegisteredCourse[];
 
 type SemesterType = "first" | "second" | "third";
@@ -57,16 +60,36 @@ export default function currentCourses() {
     }
 
     try {
-      const res = await apiClient.admin.applications[":id"].$get({
-        param: { id: id.toString() },
-        query: {},
+      const applicationRes = await apiClient.applications[":id"].$get({
+        param: { id: applicationId?.toString()! },
       });
+
+      if (!applicationRes.ok) {
+        throw new Error("التقديم غير موجود");
+      }
+
+      const application = await applicationRes.json();
+
+      const studentRes = await apiClient.students[":id"].$get({
+        param: { id: application.studentId.toString() },
+      });
+
+      if (!studentRes.ok) {
+        throw new Error("الطالب غير موجود");
+      }
+
+      const student = await studentRes.json();
+
+      const res = await apiClient.applications[":id"].$get({
+        param: { id: id.toString() },
+      });
+
       if (res.status === 200) {
         const data = await res.json();
         // Data WILL be there
-        setStudent(data.student!);
-        setApplication(data.application!);
-        setAcademicYear(data.application?.registration?.academicYearId!);
+        setStudent(student);
+        setApplication(application);
+        setAcademicYear(application.registration.academicYearId);
       } else {
         toast.error("مستخدم غير موجود");
 
@@ -90,11 +113,11 @@ export default function currentCourses() {
       return;
     }
     try {
-      const res = await apiClient.admin.courses.list.$post({
-        json: {
-          applicationId: applicationId,
+      const res = await apiClient.applications[":id"]["courses"].$get({
+        param: { id: applicationId.toString() },
+        query: {
           semester: semester,
-          academicYearId: academicYearId,
+          academicYearId: academicYearId.toString(),
         },
       });
 
@@ -151,7 +174,6 @@ export default function currentCourses() {
             </CardGrid>
           </div>
           <Select
-            className="w-full md:w-1/2"
             onValueChange={(value: "first" | "second" | "third") => {
               setSemester(value);
             }}
