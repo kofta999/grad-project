@@ -25,5 +25,4 @@ const router = createRouter()
 
   // Admin Routes
   .openapi(routes.getStudentDetailsById, handlers.getStudentDetailsById);
-
 export default router;

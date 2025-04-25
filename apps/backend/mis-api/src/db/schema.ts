@@ -461,3 +461,15 @@ export const detailedCourseRegistrationsView = pgView("detailed_course_registrat
 }).as(
   sql`SELECT c.course_id, c.code, c.title, c.prerequisite, c.total_hours, c_r.academic_year_id, c_r.semester, c_res.grade, c_r.application_id, c_r.course_registration_id FROM course_registrations c_r JOIN department_courses d_c ON d_c.course_id = c_r.course_id JOIN courses c ON c.course_id = c_r.course_id JOIN registerations r ON r.application_id = c_r.application_id LEFT JOIN course_results c_res ON c_res.course_registration_id = c_r.course_registration_id WHERE d_c.department_id = r.department_id`
 );
+
+export const reports = pgTable("reports", {
+  reportId: serial("report_id").primaryKey(),
+  applicationId: integer("application_id")
+    .notNull()
+    .references(() => applications.applicationId),
+  title: text("title").notNull(),
+  attachmentId: integer("attachment_id")
+    .notNull()
+    .references(() => attachments.attachmentId),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
