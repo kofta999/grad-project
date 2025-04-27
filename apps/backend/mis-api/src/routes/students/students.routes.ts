@@ -15,7 +15,7 @@ import { SaveAttachmentsSchema } from "@/dtos/save-attachment.dto";
 import { ApplicationDetailsSchema } from "@/dtos/application-details.dto";
 import { GetThesisSchema } from "@/dtos/get-thesis.dto";
 
-const tags = ["Student"];
+const tags = ["Students"];
 
 // Profile Routes
 export const getStudentDetails = createRoute({
@@ -32,34 +32,6 @@ export const getStudentDetails = createRoute({
     [HttpStatusCodes.UNAUTHORIZED]: jsonContent(
       createMessageObjectSchema("Unauthorized"),
       "Unauthorized"
-    ),
-  },
-});
-
-export const editStudentInfo = createRoute({
-  path: "/me",
-  method: "put",
-  middleware: studentMiddleware,
-  tags,
-  request: {
-    body: jsonContentRequired(StudentDetailsSchema.partial(), "Updated student information"),
-  },
-  responses: {
-    [HttpStatusCodes.OK]: jsonContent(
-      createMessageObjectSchema("Student info updated successfully"),
-      "Success response"
-    ),
-    [HttpStatusCodes.NOT_FOUND]: jsonContent(
-      createMessageObjectSchema("Student not found"),
-      "Student not found"
-    ),
-    [HttpStatusCodes.UNAUTHORIZED]: jsonContent(
-      createMessageObjectSchema("Unauthorized"),
-      "Unauthorized"
-    ),
-    [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
-      createErrorSchema(StudentDetailsSchema.partial()),
-      "Validation error"
     ),
   },
 });
@@ -304,9 +276,37 @@ export const getStudentDetailsById = createRoute({
   },
 });
 
+export const editStudentInfo = createRoute({
+  path: "/{id}",
+  method: "put",
+  middleware: adminMiddleware,
+  tags,
+  request: {
+    body: jsonContentRequired(StudentDetailsSchema.partial(), "Updated student information"),
+    params: IdParamsSchema,
+  },
+  responses: {
+    [HttpStatusCodes.OK]: jsonContent(
+      createMessageObjectSchema("Student info updated successfully"),
+      "Success response"
+    ),
+    [HttpStatusCodes.NOT_FOUND]: jsonContent(
+      createMessageObjectSchema("Student not found"),
+      "Student not found"
+    ),
+    [HttpStatusCodes.UNAUTHORIZED]: jsonContent(
+      createMessageObjectSchema("Unauthorized"),
+      "Unauthorized"
+    ),
+    [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
+      createErrorSchema(StudentDetailsSchema.partial()),
+      "Validation error"
+    ),
+  },
+});
+
 // Export types for handlers
 export type GetStudentDetailsRoute = typeof getStudentDetails;
-export type EditStudentInfoRoute = typeof editStudentInfo;
 export type GetRegisteredCourses = typeof getRegisteredCourses;
 export type GetRegisteredAcademicYearsRoute = typeof getRegisteredAcademicYears;
 export type CreateApplicationRoute = typeof createApplication;
@@ -318,3 +318,4 @@ export type CheckThesisAvailabilityRoute = typeof checkThesisAvailability;
 export type GetThesisRoute = typeof getThesis;
 export type SubmitThesisRoute = typeof submitThesis;
 export type GetStudentDetailsById = typeof getStudentDetailsById;
+export type EditStudentInfoRoute = typeof editStudentInfo;

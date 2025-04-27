@@ -5,7 +5,6 @@ import * as handlers from "./students.handlers";
 const router = createRouter()
   // Profile routes
   .openapi(routes.getStudentDetails, handlers.getStudentDetails)
-  .openapi(routes.editStudentInfo, handlers.editStudentInfo)
 
   // Course routes
   .openapi(routes.getRegisteredCourses, handlers.getRegisteredCourses)
@@ -24,6 +23,7 @@ const router = createRouter()
   .openapi(routes.submitThesis, handlers.submitThesis)
 
   // Admin Routes
-  .openapi(routes.getStudentDetailsById, handlers.getStudentDetailsById);
+  .openapi(routes.getStudentDetailsById, handlers.getStudentDetailsById)
+  .openapi(routes.editStudentInfo, handlers.editStudentInfo);
 
 export default router;
