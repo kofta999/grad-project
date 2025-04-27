@@ -77,6 +77,24 @@ export const createApplication: AppRouteHandler<routes.CreateApplicationRoute> =
   return c.json({ success: true, applicationId }, HttpStatusCodes.OK);
 };
 
+export const updateApplication: AppRouteHandler<routes.UpdateApplicationRoute> = async (c) => {
+  let updatedApplicationData = c.req.valid("json");
+
+  // Should be there because of middleware
+  let applicationId = c.req.valid("param")["id"];
+
+  const res = await studentApplicationService.updateApplication(
+    applicationId,
+    updatedApplicationData
+  );
+
+  if (res == null) {
+    return c.json({ message: "Application not found" }, HttpStatusCodes.NOT_FOUND);
+  }
+
+  return c.json({ success: true, applicationId }, HttpStatusCodes.OK);
+};
+
 export const saveApplicationAttachments: AppRouteHandler<
   routes.SaveApplicationAttachmentsRoute
 > = async (c) => {
