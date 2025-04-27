@@ -13,6 +13,7 @@ const router = createRouter()
   // Application routes
   .openapi(routes.getApplication, handlers.getApplication)
   .openapi(routes.createApplication, handlers.createApplication)
+  .openapi(routes.updateApplication, handlers.updateApplication)
   // .openapi(routes.getApplicationById, handlers.getApplicationById) // To be implemented
   .openapi(routes.saveApplicationAttachments, handlers.saveApplicationAttachments)
   .openapi(routes.deleteApplicationAttachment, handlers.deleteApplicationAttachment) // To be implemented

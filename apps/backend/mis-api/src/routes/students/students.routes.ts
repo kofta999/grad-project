@@ -14,6 +14,7 @@ import { CreateApplicationSchema } from "@/dtos/create-application.dto";
 import { SaveAttachmentsSchema } from "@/dtos/save-attachment.dto";
 import { ApplicationDetailsSchema } from "@/dtos/application-details.dto";
 import { GetThesisSchema } from "@/dtos/get-thesis.dto";
+import { UpdateApplicationSchema } from "@/dtos/update-application.dto";
 
 const tags = ["Students"];
 
@@ -109,6 +110,7 @@ export const createApplication = createRoute({
     body: jsonContentRequired(CreateApplicationSchema, "Application data"),
   },
   responses: {
+    // TODO: Make this return 201
     [HttpStatusCodes.OK]: jsonContent(
       z.object({ success: z.boolean(), applicationId: z.number() }),
       "Application completed"
@@ -116,6 +118,31 @@ export const createApplication = createRoute({
     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
       createErrorSchema(CreateApplicationSchema),
       "The validation error(s)"
+    ),
+  },
+});
+
+export const updateApplication = createRoute({
+  path: "/me/applications/{id}",
+  method: "patch",
+  middleware: studentMiddleware,
+  tags,
+  request: {
+    body: jsonContentRequired(UpdateApplicationSchema, "Application data"),
+    params: IdParamsSchema,
+  },
+  responses: {
+    [HttpStatusCodes.OK]: jsonContent(
+      z.object({ success: z.boolean(), applicationId: z.number() }),
+      "Application Updated"
+    ),
+    [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
+      createErrorSchema(UpdateApplicationSchema),
+      "The validation error(s)"
+    ),
+    [HttpStatusCodes.NOT_FOUND]: jsonContent(
+      createMessageObjectSchema("Application not found"),
+      "Application not found"
     ),
   },
 });
@@ -278,7 +305,7 @@ export const getStudentDetailsById = createRoute({
 
 export const editStudentInfo = createRoute({
   path: "/{id}",
-  method: "put",
+  method: "patch",
   middleware: adminMiddleware,
   tags,
   request: {
@@ -313,6 +340,7 @@ export type CreateApplicationRoute = typeof createApplication;
 export type SaveApplicationAttachmentsRoute = typeof saveApplicationAttachments;
 export type DeleteApplicationAttachmentRoute = typeof deleteApplicationAttachment;
 export type GetApplicationRoute = typeof getApplication;
+export type UpdateApplicationRoute = typeof updateApplication;
 // export type GetApplicationByIdRoute = typeof getApplicationById;
 export type CheckThesisAvailabilityRoute = typeof checkThesisAvailability;
 export type GetThesisRoute = typeof getThesis;

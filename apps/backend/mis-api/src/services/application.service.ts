@@ -10,11 +10,12 @@ import {
 } from "@/db/schema";
 import { ApplicationDetailsDTO } from "@/dtos/application-details.dto";
 import { formatAcademicYear, removeApplicationId } from "@/lib/util";
-import { eq } from "drizzle-orm";
+import { count, eq, exists } from "drizzle-orm";
 
 export interface IApplicationService {
   getApplicationByStudentId(studentId: number): Promise<ApplicationDetailsDTO | null>;
   getApplicationByApplicationId(applicationId: number): Promise<ApplicationDetailsDTO | null>;
+  exists(applicationId: number): Promise<boolean>;
 }
 
 export abstract class ApplicationService implements IApplicationService {
@@ -128,5 +129,14 @@ export abstract class ApplicationService implements IApplicationService {
       attachments: attachmentsList,
       addresses: addressesList,
     };
+  }
+
+  async exists(applicationId: number): Promise<boolean> {
+    const res = await db
+      .select({ count: count() })
+      .from(applications)
+      .where(eq(applications.applicationId, applicationId));
+
+    return res[0].count !== 0;
   }
 }
