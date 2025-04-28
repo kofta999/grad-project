@@ -1,16 +1,15 @@
-"use client";
-import { useState } from "react";
-import Step1 from "../../_components/register/step1";
-import Step2 from "../../_components/register/step2";
-import { InferRequestType } from "@repo/mis-api";
-import { Progress } from "@/components/ui/progress";
-import { apiClient } from "@/lib/client";
+"use client"
+import React, { useEffect, useState } from "react";
+import { useFormik } from "formik";
+import { useParams } from "next/navigation";
+import useApplicationDataForAdmin from "@/Hooks/useApplicationDataForAdmin";
+import { useRouter } from "next/navigation";
+import Step2 from "@/app/_components/register/step2";
+import Step1 from "@/app/_components/register/step1";
+import { Progress } from "@radix-ui/react-progress";
 import toast, { Toaster } from "react-hot-toast";
 import * as Yup from "yup";
-import { useFormik } from "formik";
-import { useRouter } from "next/navigation";
-
-export type FormType = InferRequestType<typeof apiClient.auth.register.$post>["json"];
+import { apiClient } from "@/lib/client";
 
 export type FormStep1Type = Yup.InferType<typeof step1Schema>;
 export type FormStep2Type = Yup.InferType<typeof step2Schema>;
@@ -54,20 +53,24 @@ const step2Schema = Yup.object().shape({
   militaryStatus: Yup.string().required("حالة الخدمة العسكرية مطلوبة"),
 });
 
-export default function RegistrationForm() {
-  const [step, setStep] = useState(1);
+export default function update() {
   const router = useRouter();
+  const { id } = useParams();
+  const { student } = useApplicationDataForAdmin(id as string);
+
+  const [step, setStep] = useState(1);
 
   const handleStep1Submit = async () => {
     try {
       await formikStep1.validateForm();
       if (Object.keys(formikStep1.errors).length === 0) {
-        toast.success("تم التسجيل بنجاح!");
+        toast.success("تم تعديل النموذج الاول بنجاح!");
         setStep(2);
+        window.scrollTo(0, 0);
       } else {
         toast.error("الرجاء تصحيح الأخطاء قبل المتابعة.");
       }
-    } catch (err) {
+    } catch {
       toast.error("حدث خطأ غير متوقع. الرجاء المحاولة مرة أخرى.");
     }
   };
@@ -76,25 +79,29 @@ export default function RegistrationForm() {
     try {
       await formikStep2.validateForm();
       if (Object.keys(formikStep2.errors).length === 0) {
-        const res = await apiClient.auth.register.$post({
+        const res = await apiClient.students[":id"].$patch({
+          param: { id },
           json: {
-            ...values,
             ...formikStep1.values,
+            ...values,
             dob: formikStep1.values.dob.toLocaleDateString("en-US"),
             idIssuanceDate: formikStep2.values.idIssuanceDate.toLocaleDateString("en-US"),
           },
         });
 
-        const result = await res.json();
-        console.log("Registration successful:", result);
-        toast.success("تم التسجيل بنجاح!");
-        router.push("/login");
+        if (res.status === 200) {
+          const result = await res.json();
+          console.log("Update successful:", result);
+          toast.success("تم التعديل بنجاح!");
+          await apiClient.auth.logout.$post();
+          router.push("/login");
+        }
       } else {
         toast.error("الرجاء تصحيح الأخطاء قبل المتابعة.");
       }
     } catch (err) {
       console.error("Registration failed:", err);
-      toast.error("فشل التسجيل. الرجاء المحاولة مرة أخرى.");
+      toast.error("فشل التعديل. الرجاء المحاولة مرة أخرى.");
     }
   };
 
@@ -115,8 +122,8 @@ export default function RegistrationForm() {
       secQuestion: "",
       secAnswer: "",
     },
-    validationSchema: step1Schema,
-    onSubmit: handleStep1Submit,
+    // validationSchema: step1Schema,
+    onSubmit: handleStep1Submit
   });
 
   let formikStep2 = useFormik<FormStep2Type>({
@@ -132,9 +139,44 @@ export default function RegistrationForm() {
       jobType: "",
       martialStatus: "single",
     },
-    validationSchema: step2Schema,
-    onSubmit: handleStep2Submit,
+    // validationSchema: step2Schema,
+    onSubmit: handleStep2Submit
   });
+
+  useEffect(() => {
+    if (student) {
+      formikStep1.setValues({
+        fullNameAr: student.fullNameAr || "",
+        fullNameEn: student.fullNameEn || "",
+        gender: student.gender || false,
+        nationality: student.nationality || "",
+        // @ts-ignore
+        dob: student.dob ? new Date(student.dob) : null,
+        email: student.email || "",
+        fax: student.fax || "",
+        phoneNoMain: student.phoneNoMain || "",
+        phoneNoSec: student.phoneNoSec || "",
+        hashedPassword: "",
+        confirmPassword: "",
+        secQuestion: "",
+        secAnswer: "",
+      });
+
+      formikStep2.setValues({
+        idAuthority: student.idAuthority || "",
+        // @ts-ignore
+        idIssuanceDate: student.idIssuanceDate ? new Date(student.idIssuanceDate) : null,
+        idNumber: student.idNumber || "",
+        idType: student.idType || "national_id",
+        imageUrl: student.imageUrl || "",
+        isWorking: student.isWorking || false,
+        militaryStatus: student.militaryStatus || "",
+        jobType: student.jobType || "",
+        martialStatus: student.martialStatus || "single",
+      });
+    }
+  }, [student]);
+
 
   return (
     <>

@@ -1,5 +1,4 @@
-import { apiClient } from "@/lib/client";
-import { InferResponseType } from "@repo/mis-api";
+"use client"
 import Image from "next/image";
 import {
   GraduationCap,

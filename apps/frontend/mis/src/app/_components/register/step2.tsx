@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/select";
 import Image from "next/image";
 import { Container, ContainerTitle } from "@/components/ui/container";
-import { FormStep2Type, FormType } from "../page";
+import { FormStep2Type, FormType } from "../../(auth)/register/page";
 import { cn } from "@/lib/utils";
 import { apiClient } from "@/lib/client";
 import { FormikProps } from "formik";

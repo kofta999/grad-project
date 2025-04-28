@@ -3,12 +3,12 @@
 import { useEffect, useState } from "react";
 import { InferRequestType, InferResponseType } from "@repo/mis-api";
 import { apiClient } from "@/lib/client";
-import Step1 from "./step1";
-import Step2 from "./step2";
+import Step1 from "../../../../_components/application/step1";
+import Step2 from "../../../../_components/application/step2";
 import { Progress } from "@/components/ui/progress";
 import toast, { Toaster } from "react-hot-toast";
 import { useFormik } from "formik";
-import Step3 from "./step3";
+import Step3 from "../../../../_components/application/step3";
 import { useRouter } from "next/navigation";
 import { useApplicationIdContext } from "@/context/application-id-context";
 import {

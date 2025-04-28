@@ -24,7 +24,7 @@ import { cn } from "@/lib/utils";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Container, ContainerTitle } from "@/components/ui/container";
-import { FormStep1Type } from "../page";
+import { FormStep1Type } from "../../(auth)/register/page";
 import { FormikProps } from "formik";
 
 interface Step1Props {

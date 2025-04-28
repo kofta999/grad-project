@@ -55,8 +55,8 @@ const STUDENT_SIDEBAR_ITEMS = [
     icon: <Settings />,
     submenu: true,
     subMenuItems: [
-      { title: "Account", path: "/dashboard/settings" },
-      // { title: "Privacy", path: "/settings/privacy" },
+      { title: "الحساب", path: "/dashboard/settings/account" },
+      { title: "التسجيل", path: "/dashboard/settings/application" },
     ],
   },
 ];
@@ -114,9 +114,8 @@ export default function SideNav({ role }: SideNavProps) {
           <>
             <button
               onClick={() => setSubMenuOpen(!subMenuOpen)}
-              className={`flex items-center p-2 rounded-sm w-full justify-between ${
-                pathname.includes(item.path) ? "bg-blue-600 text-white hover:bg-blue-700" : ""
-              }`}
+              className={`flex items-center p-2 rounded-sm w-full justify-between ${pathname.includes(item.path) ? "bg-blue-600 text-white hover:bg-blue-700" : ""
+                }`}
             >
               <div className="flex gap-3 items-center">
                 {item.icon}
@@ -134,11 +133,10 @@ export default function SideNav({ role }: SideNavProps) {
                     key={idx}
                     href={subItem.path}
                     onClick={() => setIsOpen(false)}
-                    className={`mt-3 block p-2 rounded-sm ${
-                      pathname.includes(subItem.path)
-                        ? "bg-blue-600 text-white hover:bg-blue-700"
-                        : ""
-                    }`}
+                    className={`mt-3 block p-2 rounded-sm ${pathname.includes(subItem.path)
+                      ? "bg-blue-600 text-white hover:bg-blue-700"
+                      : ""
+                      }`}
                   >
                     <span>{subItem.title}</span>
                   </Link>
@@ -150,9 +148,8 @@ export default function SideNav({ role }: SideNavProps) {
           <Link
             href={item.path}
             onClick={() => setIsOpen(false)}
-            className={`flex gap-3 p-2 items-center rounded-sm ${
-              pathname === item.path ? "bg-blue-600 text-white hover:bg-blue-700" : ""
-            }`}
+            className={`flex gap-3 p-2 items-center rounded-sm ${pathname === item.path ? "bg-blue-600 text-white hover:bg-blue-700" : ""
+              }`}
           >
             {item.icon}
             <span className="text-md flex">{item.title}</span>

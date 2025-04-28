@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/select";
 import { MapPin, Phone, User, Mail } from "lucide-react";
 import { Container, ContainerTitle } from "@/components/ui/container";
-import { FormStep1Type } from "../validators";
+import { FormStep1Type } from "../../dashboard/@student/applications/validators";
 import { FormikProps } from "formik";
 
 interface Step1Props {
