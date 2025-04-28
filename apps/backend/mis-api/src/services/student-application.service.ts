@@ -18,7 +18,7 @@ export interface IStudentApplicationService {
   updateApplication(
     applicationId: number,
     updatedApplicationDetails: UpdateApplicationDTO
-  ): Promise<number | null>;
+  ): Promise<number>;
   saveApplicationAttachments(attachments: SaveAttachmentsDTO): Promise<void>;
 }
 
@@ -78,13 +78,7 @@ export class StudentApplicationService
       qualification,
       registration,
     }: UpdateApplicationDTO
-  ): Promise<number | null> {
-    const isApplicationExists = await this.exists(applicationId);
-
-    if (!isApplicationExists) {
-      return null;
-    }
-
+  ): Promise<number> {
     if (currentAddress) {
       await db
         .update(addresses)

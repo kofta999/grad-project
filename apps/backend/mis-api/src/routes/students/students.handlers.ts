@@ -79,20 +79,25 @@ export const createApplication: AppRouteHandler<routes.CreateApplicationRoute> =
 
 export const updateApplication: AppRouteHandler<routes.UpdateApplicationRoute> = async (c) => {
   let updatedApplicationData = c.req.valid("json");
-
   // Should be there because of middleware
-  let applicationId = c.req.valid("param")["id"];
+  let studentId = c.var.session.get("id")!;
 
-  const res = await studentApplicationService.updateApplication(
-    applicationId,
-    updatedApplicationData
-  );
+  const application = await studentApplicationService.getApplicationByStudentId(studentId);
 
-  if (res == null) {
+  if (!application) {
     return c.json({ message: "Application not found" }, HttpStatusCodes.NOT_FOUND);
   }
 
-  return c.json({ success: true, applicationId }, HttpStatusCodes.OK);
+  if (application.isAccepted) {
+    return c.json({ message: "Application already accepted" }, HttpStatusCodes.FORBIDDEN);
+  }
+
+  await studentApplicationService.updateApplication(
+    application.applicationId,
+    updatedApplicationData
+  );
+
+  return c.json({ success: true, applicationId: application.applicationId }, HttpStatusCodes.OK);
 };
 
 export const saveApplicationAttachments: AppRouteHandler<
