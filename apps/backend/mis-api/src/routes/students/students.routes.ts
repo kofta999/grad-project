@@ -123,13 +123,12 @@ export const createApplication = createRoute({
 });
 
 export const updateApplication = createRoute({
-  path: "/me/applications/{id}",
+  path: "/me/applications",
   method: "patch",
   middleware: studentMiddleware,
   tags,
   request: {
     body: jsonContentRequired(UpdateApplicationSchema, "Application data"),
-    params: IdParamsSchema,
   },
   responses: {
     [HttpStatusCodes.OK]: jsonContent(
@@ -143,6 +142,10 @@ export const updateApplication = createRoute({
     [HttpStatusCodes.NOT_FOUND]: jsonContent(
       createMessageObjectSchema("Application not found"),
       "Application not found"
+    ),
+    [HttpStatusCodes.FORBIDDEN]: jsonContent(
+      createMessageObjectSchema("Application already accepted"),
+      "Application already accepted"
     ),
   },
 });
