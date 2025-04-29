@@ -7,23 +7,22 @@ import { AvailableDepartmentsSchema } from "@/dtos/available-departments.dto";
 const tags = ["Departments"];
 
 export const getAvailableDepartments = createRoute({
-    path: "/",
-    method: "get",
-    request: {
-        query: z.object({
-            type: z.enum(DEPARTMENT_TYPES),
-        }),
-    },
-    middleware: studentMiddleware,
-    tags,
-    summary: "List Departments", // ملخص: قائمة الأقسام
-    responses: {
-        [HttpStatusCodes.OK]: jsonContent(
-            AvailableDepartmentsSchema,
-            "An array of available departments for this type"
-        ),
-    },
+  path: "/",
+  method: "get",
+  request: {
+    query: z.object({
+      type: z.enum(DEPARTMENT_TYPES),
+    }),
+  },
+  middleware: studentMiddleware,
+  tags,
+  summary: "List Departments", // ملخص: قائمة الأقسام
+  responses: {
+    [HttpStatusCodes.OK]: jsonContent(
+      AvailableDepartmentsSchema,
+      "An array of available departments for this type"
+    ),
+  },
 });
 
 export type GetAvailableDepartmentsRoute = typeof getAvailableDepartments;
-
