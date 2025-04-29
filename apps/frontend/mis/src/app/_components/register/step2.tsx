@@ -19,6 +19,7 @@ import { FormStep2Type, FormType } from "../../(auth)/register/page";
 import { cn } from "@/lib/utils";
 import { apiClient } from "@/lib/client";
 import { FormikProps } from "formik";
+import DatePicker from "@/components/ui/date-picker";
 
 interface Step2Props {
   goPrevStep: () => void;
@@ -26,6 +27,8 @@ interface Step2Props {
 }
 
 export default function Step2({ goPrevStep, formik }: Step2Props) {
+  const { role } = JSON.parse(localStorage.getItem("loggedInUser") || "{}");
+
   const handlePhotoUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
@@ -41,7 +44,7 @@ export default function Step2({ goPrevStep, formik }: Step2Props) {
 
   return (
     <Container>
-      <ContainerTitle>تابع إنشاء حسابك</ContainerTitle>
+      <ContainerTitle>{role === "admin" ? "تعديل بيانات الطالب" : "تابع انشاء الحساب"}</ContainerTitle>
       <form onSubmit={formik.handleSubmit}>
         {/* Identity Information */}
         <Card>
@@ -50,7 +53,8 @@ export default function Step2({ goPrevStep, formik }: Step2Props) {
             <CardGrid>
               <div className="space-y-2">
                 <Label>
-                  نوع الهوية<span className="text-red-500">*</span>
+                  نوع الهوية
+                  {role === "student" && <span className="text-red-500">*</span>}
                 </Label>
                 <Select
                   name="idType"
@@ -71,7 +75,8 @@ export default function Step2({ goPrevStep, formik }: Step2Props) {
               </div>
               <div className="space-y-2">
                 <Label>
-                  رقم الهوية<span className="text-red-500">*</span>
+                  رقم الهوية
+                  {role === "student" && <span className="text-red-500">*</span>}
                 </Label>
                 <Input
                   name="idNumber"
@@ -85,48 +90,24 @@ export default function Step2({ goPrevStep, formik }: Step2Props) {
               </div>
               <div className="space-y-2">
                 <Label>
-                  تاريخ اصدار الهوية<span className="text-red-500">*</span>
+                  تاريخ اصدار الهوية
+                  {role === "student" && <span className="text-red-500">*</span>}
                 </Label>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant={"outline"}
-                      className={cn(
-                        "w-full justify-start text-right font-normal",
-                        !formik.values.idIssuanceDate && "text-muted-foreground"
-                      )}
-                    >
-                      {formik.values.idIssuanceDate ? (
-                        // Format the date for display
-                        formik.values.idIssuanceDate.toLocaleDateString("en-US")
-                      ) : (
-                        <span>اختر التاريخ</span>
-                      )}
-                      <CalendarIcon className="mr-auto h-4 w-4 text-mainColor" />
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0">
-                    <Calendar
-                      mode="single"
-                      selected={formik.values.idIssuanceDate}
-                      onSelect={(date) => {
-                        if (date) {
-                          formik.setFieldValue("idIssuanceDate", date);
-                        }
-                      }}
-                      initialFocus
-                    />
-                  </PopoverContent>
-                </Popover>
+                <DatePicker
+                  value={formik.values.idIssuanceDate ? new Date(formik.values.idIssuanceDate) : undefined}
+                  onChange={(date) => formik.setFieldValue('idIssuanceDate', date)}
+                  placeholder="اختر تاريخ اصدار الهوية"
+                />
                 {formik.touched.idIssuanceDate && formik.errors.idIssuanceDate && (
                   <p className="text-red-500 text-sm">
-                    <>{formik.errors.idIssuanceDate}</>
+                    {formik.errors.idIssuanceDate as string}
                   </p>
                 )}
               </div>
               <div className="space-y-2">
                 <Label>
-                  جهة الاصدار<span className="text-red-500">*</span>
+                  جهة الاصدار
+                  {role === "student" && <span className="text-red-500">*</span>}
                 </Label>
                 <Input
                   name="idAuthority"
@@ -149,12 +130,13 @@ export default function Step2({ goPrevStep, formik }: Step2Props) {
             <CardGrid>
               <div className="space-y-2">
                 <Label>
-                  الحالة الاجتماعية<span className="text-red-500">*</span>
+                  الحالة الاجتماعية
+                  {role === "student" && <span className="text-red-500">*</span>}
                 </Label>
                 <Select
                   name="maritalStatus"
-                  value={formik.values.martialStatus} // Bind Formik state
-                  onValueChange={(value: string) => formik.setFieldValue("martialStatus", value)} // Update Formik state
+                  value={formik.values.martialStatus}
+                  onValueChange={(value: string) => formik.setFieldValue("martialStatus", value)}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="اختر الحالة" />
@@ -175,21 +157,33 @@ export default function Step2({ goPrevStep, formik }: Step2Props) {
               </div>
               <div className="space-y-2">
                 <Label>
-                  الحالة العسكرية<span className="text-red-500">*</span>
+                  الحالة العسكرية
+                  {role === "student" && <span className="text-red-500">*</span>}
                 </Label>
-                <Input
-                  name="militaryStatus"
+                <Select
                   value={formik.values.militaryStatus}
-                  onChange={formik.handleChange}
-                  icon={<Shield className="h-4 w-4" />}
-                />
+                  onValueChange={(value: string) => formik.setFieldValue("militaryStatus", value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="اختر الحالة العسكرية" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="أدى الخدمة">أدى الخدمة</SelectItem>
+                    <SelectItem value="مؤجل">مؤجل</SelectItem>
+                    <SelectItem value="معفي نهائي">معفي نهائي</SelectItem>
+                    <SelectItem value="معفي مؤقت">معفي مؤقت</SelectItem>
+                    <SelectItem value="مطلوب للتجنيد">مطلوب للتجنيد</SelectItem>
+                    <SelectItem value="لم يصدر له طلب">لم يصدر له طلب</SelectItem>
+                  </SelectContent>
+                </Select>
                 {formik.touched.militaryStatus && formik.errors.militaryStatus && (
                   <p className="text-red-500 text-sm">{formik.errors.militaryStatus}</p>
                 )}
               </div>
               <div className="space-y-2">
                 <Label>
-                  الطالب يعمل؟<span className="text-red-500">*</span>
+                  الطالب يعمل؟
+                  {role === "student" && <span className="text-red-500">*</span>}
                 </Label>
                 <RadioGroup
                   name="isWorking"
@@ -277,7 +271,7 @@ export default function Step2({ goPrevStep, formik }: Step2Props) {
             السابق
           </Button>
           <Button className="bg-mainColor hover:bg-blue-700 text-white" type="submit">
-            التسجيل
+            {role === "admin" ? "تعديل" : "التسجيل"}
           </Button>
         </div>
       </form>

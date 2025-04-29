@@ -1,9 +1,8 @@
-"use client"
+"use client";
 import React, { useEffect, useState } from "react";
 import { useFormik } from "formik";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import useApplicationDataForAdmin from "@/Hooks/useApplicationDataForAdmin";
-import { useRouter } from "next/navigation";
 import Step2 from "@/app/_components/register/step2";
 import Step1 from "@/app/_components/register/step1";
 import { Progress } from "@radix-ui/react-progress";
@@ -15,42 +14,35 @@ export type FormStep1Type = Yup.InferType<typeof step1Schema>;
 export type FormStep2Type = Yup.InferType<typeof step2Schema>;
 
 const step1Schema = Yup.object().shape({
-  fullNameAr: Yup.string().required("الاسم الكامل بالعربية مطلوب"),
-  fullNameEn: Yup.string().required("الاسم الكامل بالإنجليزية مطلوب"),
+  fullNameAr: Yup.string(),
+  fullNameEn: Yup.string(),
   gender: Yup.boolean().required(),
-  nationality: Yup.string().required("الجنسية مطلوبة"),
-  dob: Yup.date().typeError("تاريخ الميلاد غير صالح").required("تاريخ الميلاد مطلوب"),
-  email: Yup.string().email("البريد الإلكتروني غير صالح").required("البريد الإلكتروني غير صالح"),
+  nationality: Yup.string(),
+  dob: Yup.date().typeError("تاريخ الميلاد غير صالح"),
+  email: Yup.string().email("البريد الإلكتروني غير صالح"),
   fax: Yup.string().optional(),
-  phoneNoMain: Yup.string().required("رقم الهاتف الرئيسي مطلوب"),
-  phoneNoSec: Yup.string().optional(),
-  hashedPassword: Yup.string()
-    .min(8, "كلمة المرور يجب أن تكون 8 أحرف على الأقل")
-    .required("كلمة المرور مطلوبة"),
+  phoneNoMain: Yup.string(),
+  phoneNoSec: Yup.string(),
+  hashedPassword: Yup.string().min(8, "كلمة المرور يجب أن تكون 8 أحرف على الأقل"),
   confirmPassword: Yup.string()
     .min(8, "تأكيد كلمة المرور يجب أن يكون 8 أحرف على الأقل")
-    .required("تأكيد كلمة المرور مطلوب")
     .oneOf([Yup.ref("hashedPassword")], "كلمة المرور وتأكيدها غير متطابقين"),
-  secQuestion: Yup.string().required("سؤال الأمان مطلوب"),
-  secAnswer: Yup.string().required("إجابة سؤال الأمان مطلوبة"),
+  secQuestion: Yup.string(),
+  secAnswer: Yup.string(),
 });
 
 const step2Schema = Yup.object().shape({
-  // Will not use url() because its too strict the errors even if the link is correct
-  // Trust me on this one lil bro
-  imageUrl: Yup.string().required("الصورة الشخصية مطلوبة"),
-  idType: Yup.string().oneOf(["national_id", "passport"]).required("نوع الهوية مطلوب"),
-  idIssuanceDate: Yup.date()
-    .typeError("تاريخ إصدار الهوية غير صالح")
-    .required("تاريخ إصدار الهوية مطلوب"),
-  idNumber: Yup.string().required("رقم الهوية مطلوب"),
-  idAuthority: Yup.string().required("جهة إصدار الهوية مطلوبة"),
+  imageUrl: Yup.string(),
+  idType: Yup.string().oneOf(["national_id", "passport"]),
+  idIssuanceDate: Yup.date().typeError("تاريخ إصدار الهوية غير صالح"),
+  idNumber: Yup.string(),
+  idAuthority: Yup.string(),
   martialStatus: Yup.string()
     .oneOf(["single", "married", "married_with_dependents", "divorced", "widow", "other"])
     .optional(),
-  isWorking: Yup.boolean().required(),
-  jobType: Yup.string().optional(),
-  militaryStatus: Yup.string().required("حالة الخدمة العسكرية مطلوبة"),
+  isWorking: Yup.boolean(),
+  jobType: Yup.string(),
+  militaryStatus: Yup.string(),
 });
 
 export default function update() {
@@ -60,49 +52,60 @@ export default function update() {
 
   const [step, setStep] = useState(1);
 
-  const handleStep1Submit = async () => {
+  const handleSubmit = async (formik: any, extraData: object = {}, onSuccess?: () => void) => {
     try {
-      await formikStep1.validateForm();
-      if (Object.keys(formikStep1.errors).length === 0) {
-        toast.success("تم تعديل النموذج الاول بنجاح!");
-        setStep(2);
-        window.scrollTo(0, 0);
-      } else {
-        toast.error("الرجاء تصحيح الأخطاء قبل المتابعة.");
-      }
-    } catch {
-      toast.error("حدث خطأ غير متوقع. الرجاء المحاولة مرة أخرى.");
-    }
-  };
-
-  const handleStep2Submit = async (values: FormStep2Type) => {
-    try {
-      await formikStep2.validateForm();
-      if (Object.keys(formikStep2.errors).length === 0) {
+      const errors = await formik.validateForm();
+      if (Object.keys(errors).length === 0) {
         const res = await apiClient.students[":id"].$patch({
-          param: { id },
+          param: { id: id.toString() },
           json: {
-            ...formikStep1.values,
-            ...values,
-            dob: formikStep1.values.dob.toLocaleDateString("en-US"),
-            idIssuanceDate: formikStep2.values.idIssuanceDate.toLocaleDateString("en-US"),
+            ...formik.values,
+            ...extraData,
           },
         });
+        const result = await res.json();
+
+        {
+          /* for testing */
+        }
+        // if (result.message === `duplicate key value violates unique constraint "students_email_key"`) {
+        //   toast.error("الايميل مستخدم من قبل");
+        //   return;
+        // }
 
         if (res.status === 200) {
-          const result = await res.json();
-          console.log("Update successful:", result);
           toast.success("تم التعديل بنجاح!");
-          await apiClient.auth.logout.$post();
-          router.push("/login");
+          onSuccess?.();
+          window.scrollTo(0, 0);
         }
       } else {
         toast.error("الرجاء تصحيح الأخطاء قبل المتابعة.");
       }
-    } catch (err) {
-      console.error("Registration failed:", err);
+    } catch (error) {
+      console.log("Registration failed:", error);
       toast.error("فشل التعديل. الرجاء المحاولة مرة أخرى.");
     }
+  };
+
+  const handleStep1Submit = async (values: FormStep1Type) => {
+    await handleSubmit(
+      formikStep1,
+      {
+        dob: formikStep1.values.dob.toLocaleDateString("en-US"),
+      },
+      () => setStep(2)
+    );
+  };
+
+  const handleStep2Submit = async (values: FormStep2Type) => {
+    await handleSubmit(
+      formikStep2,
+      {
+        idIssuanceDate: formikStep2.values.idIssuanceDate.toLocaleDateString("en-US"),
+        ...formikStep1.values,
+      },
+      () => router.push("/dashboard/applications")
+    );
   };
 
   let formikStep1 = useFormik<FormStep1Type>({
@@ -123,7 +126,7 @@ export default function update() {
       secAnswer: "",
     },
     // validationSchema: step1Schema,
-    onSubmit: handleStep1Submit
+    onSubmit: handleStep1Submit,
   });
 
   let formikStep2 = useFormik<FormStep2Type>({
@@ -140,7 +143,7 @@ export default function update() {
       martialStatus: "single",
     },
     // validationSchema: step2Schema,
-    onSubmit: handleStep2Submit
+    onSubmit: handleStep2Submit,
   });
 
   useEffect(() => {
@@ -152,7 +155,6 @@ export default function update() {
         nationality: student.nationality || "",
         // @ts-ignore
         dob: student.dob ? new Date(student.dob) : null,
-        email: student.email || "",
         fax: student.fax || "",
         phoneNoMain: student.phoneNoMain || "",
         phoneNoSec: student.phoneNoSec || "",
@@ -176,7 +178,6 @@ export default function update() {
       });
     }
   }, [student]);
-
 
   return (
     <>

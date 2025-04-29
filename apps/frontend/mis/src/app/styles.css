@@ -180,7 +180,7 @@ body {
 }
 
 .backImg {
-  background-image: url('../../public/pic.png');
+  background-image: url("../../public/pic.png");
   background-size: cover;
   height: 100vh;
   width: 100%;
