@@ -11,53 +11,55 @@ const tags = ["Enrollments"];
 const adminMiddleware = [isAuthenticated, requireRole("admin")];
 
 export const enrollCourse = createRoute({
-  path: "/",
-  method: "post",
-  tags,
-  middleware: adminMiddleware,
-  request: {
-    body: jsonContentRequired(
-      z.object({
-        applicationId: z.number().int().positive(),
-        courseId: z.number().int().positive(),
-        semester: z.enum(SEMESTERS),
-      }),
-      "Params to register a course"
-    ),
-  },
-  responses: {
-    [HttpStatusCodes.CREATED]: jsonContent(
-      z.object({ courseRegistrationId: z.number() }),
-      "Course registered successfully"
-    ),
-    [HttpStatusCodes.BAD_REQUEST]: {
-      description: "Error registering course",
-      content: {
-        "application/json": { schema: z.object({ error: z.string() }) },
-      },
+    path: "/",
+    method: "post",
+    tags,
+    middleware: adminMiddleware,
+    summary: "Enroll Course",  // الملخص: تسجيل مقرر
+    request: {
+        body: jsonContentRequired(
+            z.object({
+                applicationId: z.number().int().positive(),
+                courseId: z.number().int().positive(),
+                semester: z.enum(SEMESTERS),
+            }),
+            "Params to register a course"
+        ),
     },
-  },
+    responses: {
+        [HttpStatusCodes.CREATED]: jsonContent(
+            z.object({ courseRegistrationId: z.number() }),
+            "Course registered successfully"
+        ),
+        [HttpStatusCodes.BAD_REQUEST]: {
+            description: "Error registering course",
+            content: {
+                "application/json": { schema: z.object({ error: z.string() }) },
+            },
+        },
+    },
 });
 
 export const withdrawCourse = createRoute({
-  path: "/{id}",
-  method: "delete",
-  tags,
-  request: {
-    params: IdParamsSchema,
-  },
-  middleware: [isAuthenticated, requireRole("admin")],
-  responses: {
-    [HttpStatusCodes.NO_CONTENT]: {
-      description: "Course deleted successfully",
+    path: "/{id}",
+    method: "delete",
+    tags,
+    summary: "Withdraw Course",  // الملخص: سحب مقرر
+    request: {
+        params: IdParamsSchema,
     },
-    [HttpStatusCodes.BAD_REQUEST]: {
-      description: "Error deleting course",
-      content: {
-        "application/json": { schema: z.object({ error: z.string() }) },
-      },
+    middleware: [isAuthenticated, requireRole("admin")],
+    responses: {
+        [HttpStatusCodes.NO_CONTENT]: {
+            description: "Course deleted successfully",
+        },
+        [HttpStatusCodes.BAD_REQUEST]: {
+            description: "Error deleting course",
+            content: {
+                "application/json": { schema: z.object({ error: z.string() }) },
+            },
+        },
     },
-  },
 });
 
 export type EnrollCourseRoute = typeof enrollCourse;
