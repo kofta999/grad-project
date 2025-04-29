@@ -48,6 +48,7 @@ const step2Schema = Yup.object().shape({
 export default function update() {
   const router = useRouter();
   const { id } = useParams();
+
   const { student } = useApplicationDataForAdmin(id as string);
 
   const [step, setStep] = useState(1);
@@ -57,7 +58,7 @@ export default function update() {
       const errors = await formik.validateForm();
       if (Object.keys(errors).length === 0) {
         const res = await apiClient.students[":id"].$patch({
-          param: { id: id.toString() },
+          param: { id: student.studentId },
           json: {
             ...formik.values,
             ...extraData,
@@ -153,6 +154,7 @@ export default function update() {
         fullNameEn: student.fullNameEn || "",
         gender: student.gender || false,
         nationality: student.nationality || "",
+        email: student.email || "",
         // @ts-ignore
         dob: student.dob ? new Date(student.dob) : null,
         fax: student.fax || "",

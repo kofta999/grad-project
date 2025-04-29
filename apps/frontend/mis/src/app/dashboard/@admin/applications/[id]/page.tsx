@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { useParams } from "next/navigation";
 import StudentDetails from "@/app/_components/student-details";
 import ApplicationDetails from "@/app/_components/application-details";
@@ -12,9 +12,11 @@ export default function dataPage() {
     <div className="min-h-screen bg-gray-50 p-6" dir="rtl">
       <div className="max-w-4xl mx-auto p-8">
         <div className="relative flex justify-center items-center">
-          <h1 className="text-3xl font-bold text-center text-blue-600 mb-5">
-            بيانات التقديم ({application?.isAccepted ? "مقبول" : "تحت المراجعة"})
-          </h1>
+          {application && (
+            <h1 className="text-3xl font-bold text-center text-blue-600 mb-5">
+              بيانات التقديم ({application.isAccepted ? "مقبول" : "تحت المراجعة"})
+            </h1>
+          )}
         </div>
 
         {student && <StudentDetails student={student} />}

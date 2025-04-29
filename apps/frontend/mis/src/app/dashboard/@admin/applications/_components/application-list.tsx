@@ -19,7 +19,7 @@ type ApplicationsList = InferResponseType<typeof apiClient.applications.$get>;
 
 export default function ApplicationsList({
   applicationsList,
-  setApplicationsList
+  setApplicationsList,
 }: {
   applicationsList: ApplicationsList;
   setApplicationsList: (applications: ApplicationsList) => void;
@@ -46,9 +46,7 @@ export default function ApplicationsList({
       // Update the application status in the UI
       setApplicationsList((prevApplications: ApplicationsList) =>
         prevApplications.map((app) => {
-          return app.applicationId === applicationId
-            ? { ...app, isAdminAccepted: true }
-            : app;
+          return app.applicationId === applicationId ? { ...app, isAdminAccepted: true } : app;
         })
       );
 
@@ -63,7 +61,6 @@ export default function ApplicationsList({
   const handleEditStudent = (applicationId: number) => {
     router.push(`/dashboard/update/${applicationId}`);
   };
-
 
   return (
     <div className="w-full max-w-6xl mx-auto p-4 bg-white">
@@ -91,6 +88,13 @@ export default function ApplicationsList({
             </TableRow>
           </TableHeader>
           <TableBody>
+            {applicationsList.length === 0 && (
+              <TableRow className="border-b h-12">
+                <TableCell colSpan={4} className="text-center">
+                  لا يوجد طلاب
+                </TableCell>
+              </TableRow>
+            )}
             {applicationsList.map((application) => (
               <TableRow key={application.applicationId} className="border-b h-12">
                 <TableCell>
@@ -117,12 +121,12 @@ export default function ApplicationsList({
                   )}
                 </TableCell>
                 <TableCell>
-                  <Button onClick={() => handleEditStudent(application.applicationId)}
+                  <Button
+                    onClick={() => handleEditStudent(application.applicationId)}
                     className="bg-mainColor/95 py-1 px-2 text-sm rounded w-full text-center text-white hover:bg-mainColor transition-colors duration-200"
                   >
                     تعديل بيانات الطالب
                   </Button>
-
                 </TableCell>
                 <TableCell>
                   {application.studentName ? (
