@@ -15,6 +15,7 @@ export const register = createRoute({
   path: "/register",
   method: "post",
   tags,
+  summary: "Register Student", // ملخص: تسجيل الطالب
   request: {
     body: jsonContentRequired(RegisterStudentSchema, "Student registration schema"),
   },
@@ -34,6 +35,7 @@ export const login = createRoute({
   path: "/login",
   method: "post",
   tags,
+  summary: "Login User", // ملخص: دخول المستخدم
   request: {
     body: jsonContentRequired(LoginUserSchema, "The login credentials"),
   },
@@ -55,6 +57,7 @@ export const logout = createRoute({
   method: "post",
   tags,
   middleware: [isAuthenticated] as const,
+  summary: "Logout User", // الملخص: خروج المستخدم
   responses: {
     [HttpStatusCodes.OK]: jsonContent(z.object({}), "Successful logout"),
     [HttpStatusCodes.UNAUTHORIZED]: jsonContent(UnauthorizedSchema, "The authentication errors"),
@@ -65,6 +68,7 @@ export const upload = createRoute({
   path: "/upload",
   method: "post",
   tags,
+  summary: "Upload File", // ملخص: رفع ملف
   middleware: [uploadFile] as const,
   request: {
     body: {

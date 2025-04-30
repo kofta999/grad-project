@@ -16,6 +16,7 @@ export const getAvailableDepartments = createRoute({
   },
   middleware: studentMiddleware,
   tags,
+  summary: "List Departments", // ملخص: قائمة الأقسام
   responses: {
     [HttpStatusCodes.OK]: jsonContent(
       AvailableDepartmentsSchema,

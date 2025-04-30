@@ -11,6 +11,7 @@ export const getCurrentAcademicYears = createRoute({
   method: "get",
   middleware: studentMiddleware,
   tags,
+  summary: "List Academic Years", // ملخص: قائمة السنوات الدراسية
   responses: {
     [HttpStatusCodes.OK]: jsonContent(
       z.array(AcademicYearSchema),

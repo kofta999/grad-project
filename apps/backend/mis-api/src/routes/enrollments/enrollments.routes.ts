@@ -15,6 +15,7 @@ export const enrollCourse = createRoute({
   method: "post",
   tags,
   middleware: adminMiddleware,
+  summary: "Enroll Course", // الملخص: تسجيل مقرر
   request: {
     body: jsonContentRequired(
       z.object({
@@ -43,6 +44,7 @@ export const withdrawCourse = createRoute({
   path: "/{id}",
   method: "delete",
   tags,
+  summary: "Withdraw Course", // الملخص: سحب مقرر
   request: {
     params: IdParamsSchema,
   },

@@ -24,6 +24,7 @@ export const getStudentDetails = createRoute({
   method: "get",
   middleware: studentMiddleware,
   tags,
+  summary: "View Profile", // ملخص: عرض الملف الشخصي
   responses: {
     [HttpStatusCodes.OK]: jsonContent(StudentDetailsSchema, "Student details"),
     [HttpStatusCodes.NOT_FOUND]: jsonContent(
@@ -49,6 +50,7 @@ export const getRegisteredCourses = createRoute({
       academicYearId: z.coerce.number(),
     }),
   },
+  summary: "List Courses", // ملخص: قائمة المقررات
   responses: {
     [HttpStatusCodes.OK]: jsonContent(
       z.array(CourseSchema),
@@ -70,6 +72,7 @@ export const getRegisteredAcademicYears = createRoute({
   method: "get",
   middleware: studentMiddleware,
   tags,
+  summary: "List Years", // ملخص: قائمة السنوات
   responses: {
     [HttpStatusCodes.OK]: jsonContent(
       z.array(AcademicYearSchema),
@@ -92,6 +95,7 @@ export const getApplication = createRoute({
   method: "get",
   middleware: studentMiddleware,
   tags,
+  summary: "View Application", // ملخص: عرض الطلب
   responses: {
     [HttpStatusCodes.OK]: jsonContent(
       z.object({ application: ApplicationDetailsSchema }),
@@ -106,6 +110,7 @@ export const createApplication = createRoute({
   method: "post",
   middleware: studentMiddleware,
   tags,
+  summary: "Create Application", // ملخص: إنشاء طلب
   request: {
     body: jsonContentRequired(CreateApplicationSchema, "Application data"),
   },
@@ -127,6 +132,7 @@ export const updateApplication = createRoute({
   method: "patch",
   middleware: studentMiddleware,
   tags,
+  summary: "Update Application", // ملخص: تحديث الطلب
   request: {
     body: jsonContentRequired(UpdateApplicationSchema, "Application data"),
   },
@@ -150,30 +156,12 @@ export const updateApplication = createRoute({
   },
 });
 
-// export const getApplicationById = createRoute({
-//   path: "/me/applications/{applicationId}",
-//   method: "get",
-//   middleware: studentMiddleware,
-//   tags,
-//   request: {
-//     params: z.object({
-//       applicationId: z.string().transform(Number),
-//     }),
-//   },
-//   responses: {
-//     [HttpStatusCodes.OK]: jsonContent(
-//       z.object({ application: ApplicationDetailsSchema }),
-//       "The application details"
-//     ),
-//     [HttpStatusCodes.NOT_FOUND]: jsonContent(NotFoundSchema, "Application not found"),
-//   },
-// });
-
 export const saveApplicationAttachments = createRoute({
   path: "/me/applications/{applicationId}/attachments",
   method: "post",
   middleware: studentMiddleware,
   tags,
+  summary: "Save Attachments", // ملخص: حفظ المرفقات
   request: {
     params: z.object({
       applicationId: z.string().transform(Number),
@@ -197,6 +185,7 @@ export const deleteApplicationAttachment = createRoute({
   method: "delete",
   middleware: studentMiddleware,
   tags,
+  summary: "Delete Attachment", // ملخص: حذف المرفق
   request: {
     params: z.object({
       applicationId: z.string().transform(Number),
@@ -224,6 +213,7 @@ export const checkThesisAvailability = createRoute({
   method: "get",
   middleware: studentMiddleware,
   tags,
+  summary: "Check Thesis Status", // ملخص: تحقق من حالة الرسالة
   responses: {
     [HttpStatusCodes.OK]: jsonContent(
       z.object({ available: z.literal(true) }),
@@ -245,6 +235,7 @@ export const getThesis = createRoute({
   method: "get",
   middleware: studentMiddleware,
   tags,
+  summary: "View Thesis", // ملخص: عرض الرسالة
   responses: {
     [HttpStatusCodes.OK]: jsonContent(GetThesisSchema, "Student's thesis information"),
     [HttpStatusCodes.NOT_FOUND]: jsonContent(
@@ -259,6 +250,7 @@ export const submitThesis = createRoute({
   method: "post",
   middleware: studentMiddleware,
   tags,
+  summary: "Submit Thesis", // ملخص: تسليم الرسالة
   request: {
     body: jsonContent(
       z.object({
@@ -290,6 +282,7 @@ export const getStudentDetailsById = createRoute({
     params: IdParamsSchema,
   },
   tags,
+  summary: "Get Student", // ملخص: جلب الطالب
   responses: {
     [HttpStatusCodes.OK]: jsonContent(
       StudentDetailsSchema.extend({ createdAt: z.string() }),
@@ -311,6 +304,7 @@ export const editStudentInfo = createRoute({
   method: "patch",
   middleware: adminMiddleware,
   tags,
+  summary: "Edit Student", // ملخص: تعديل الطالب
   request: {
     body: jsonContentRequired(
       StudentDetailsSchema.partial().omit({ studentId: true }),

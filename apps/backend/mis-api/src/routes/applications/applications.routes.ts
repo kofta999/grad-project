@@ -21,6 +21,13 @@ export const getAllApplications = createRoute({
   method: "get",
   tags,
   middleware: adminMiddleware,
+  request: {
+    query: z.object({
+      nameAr: z.string().optional(),
+      page: z.coerce.number().min(1).default(1),
+    }),
+  },
+  summary: "List Applications", // ملخص: قائمة الطلبات
   responses: {
     [HttpStatusCodes.OK]: jsonContent(
       AdminApplicationsListSchema,
@@ -37,6 +44,7 @@ export const getApplicationDetails = createRoute({
   },
   tags,
   middleware: adminMiddleware,
+  summary: "View Application Details", // ملخص: عرض تفاصيل الطلب
   responses: {
     [HttpStatusCodes.OK]: jsonContent(ApplicationDetailsSchema, "Application details"),
     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
@@ -59,6 +67,7 @@ export const getApplicationRegisteredCourses = createRoute({
       academicYearId: z.coerce.number(),
     }),
   },
+  summary: "List Registered Courses", // ملخص: عرض المقررات المسجلة
   responses: {
     [HttpStatusCodes.OK]: jsonContent(z.array(CourseSchema), "A list of all applicant's courses"),
     [HttpStatusCodes.BAD_REQUEST]: {
@@ -75,6 +84,7 @@ export const getApplicationAvailableCourses = createRoute({
   method: "get",
   middleware: [isAuthenticated, requireRole("admin")],
   tags,
+  summary: "List Available Courses", // ملخص: عرض المقررات المتاحة
   request: {
     params: IdParamsSchema,
   },
@@ -98,6 +108,7 @@ export const acceptApplication = createRoute({
   method: "post",
   tags,
   middleware: adminMiddleware,
+  summary: "Accept Application", // ملخص: قبول الطلب
   request: {
     body: jsonContentRequired(z.object({ applicationId: z.number() }), "Application ID"),
   },
@@ -122,37 +133,37 @@ export const acceptApplication = createRoute({
 });
 
 // export const rejectApplication = createRoute({
-//   path: "/reject",
-//   method: "post",
-//   tags,
-//   middleware: adminMiddleware,
-//   request: {
-//     body: jsonContentRequired(
-//       z.object({
-//         applicationId: z.number(),
-//         reason: z.string().min(1).optional(),
-//       }),
-//       "Application rejection data"
-//     ),
-//   },
-//   responses: {
-//     [HttpStatusCodes.OK]: jsonContent(
-//       createMessageObjectSchema("Application rejected"),
-//       "Application rejected"
-//     ),
-//     [HttpStatusCodes.NOT_FOUND]: jsonContent(
-//       createMessageObjectSchema("Application not found"),
-//       "Application not found"
-//     ),
-//     [HttpStatusCodes.CONFLICT]: jsonContent(
-//       createMessageObjectSchema("Application already rejected"),
-//       "Application already rejected"
-//     ),
-//     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
-//       createErrorSchema(z.object({ applicationId: z.number(), reason: z.string().optional() })),
-//       "The validation error(s)"
-//     ),
-//   },
+//  path: "/reject",
+//  method: "post",
+//  tags,
+//  middleware: adminMiddleware,
+//  request: {
+//  body: jsonContentRequired(
+//  z.object({
+//  applicationId: z.number(),
+//  reason: z.string().min(1).optional(),
+//  }),
+//  "Application rejection data"
+//  ),
+//  },
+//  responses: {
+//  [HttpStatusCodes.OK]: jsonContent(
+//  createMessageObjectSchema("Application rejected"),
+//  "Application rejected"
+//  ),
+//  [HttpStatusCodes.NOT_FOUND]: jsonContent(
+//  createMessageObjectSchema("Application not found"),
+//  "Application not found"
+//  ),
+//  [HttpStatusCodes.CONFLICT]: jsonContent(
+//  createMessageObjectSchema("Application already rejected"),
+//  "Application already rejected"
+//  ),
+//  [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
+//  createErrorSchema(z.object({ applicationId: z.number(), reason: z.string().optional() })),
+//  "The validation error(s)"
+//  ),
+//  },
 // });
 
 export type GetAllApplicationsRoute = typeof getAllApplications;
