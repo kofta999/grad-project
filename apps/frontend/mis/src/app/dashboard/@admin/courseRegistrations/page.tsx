@@ -149,11 +149,14 @@ export default function currentCourses() {
 
   return (
     <Container>
-      <SearchBar
-        placeholder="ابحث هنا..."
-        onChange={(value) => handleSearch(value as string)}
-        className="mt-10 lg:mt-0"
-      />
+      <Card>
+        <SearchBar
+          placeholder="ابحث هنا..."
+          onChange={(value) => handleSearch(value as string)}
+          className=""
+        />
+      </Card>
+
       <Card>
         <CardContent>
           <div className="flex flex-col mb-6 md:flex-row md:gap-6">

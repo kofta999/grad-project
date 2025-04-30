@@ -48,9 +48,7 @@ const step2Schema = Yup.object().shape({
 export default function update() {
   const router = useRouter();
   const { id } = useParams();
-
   const { student } = useApplicationDataForAdmin(id as string);
-
   const [step, setStep] = useState(1);
 
   const handleSubmit = async (formik: any, extraData: object = {}, onSuccess?: () => void) => {
@@ -69,10 +67,12 @@ export default function update() {
         {
           /* for testing */
         }
-        // if (result.message === `duplicate key value violates unique constraint "students_email_key"`) {
-        //   toast.error("الايميل مستخدم من قبل");
-        //   return;
-        // }
+        if (
+          result.message === `duplicate key value violates unique constraint "students_email_key"`
+        ) {
+          toast.error("الايميل مستخدم من قبل");
+          return;
+        }
 
         if (res.status === 200) {
           toast.success("تم التعديل بنجاح!");
