@@ -312,7 +312,10 @@ export const editStudentInfo = createRoute({
   middleware: adminMiddleware,
   tags,
   request: {
-    body: jsonContentRequired(StudentDetailsSchema.partial(), "Updated student information"),
+    body: jsonContentRequired(
+      StudentDetailsSchema.partial().omit({ studentId: true }),
+      "Updated student information"
+    ),
     params: IdParamsSchema,
   },
   responses: {
@@ -329,7 +332,7 @@ export const editStudentInfo = createRoute({
       "Unauthorized"
     ),
     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
-      createErrorSchema(StudentDetailsSchema.partial()),
+      createErrorSchema(StudentDetailsSchema.partial().omit({ studentId: true })),
       "Validation error"
     ),
   },
