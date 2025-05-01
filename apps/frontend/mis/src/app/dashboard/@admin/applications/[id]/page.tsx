@@ -17,25 +17,26 @@ export default function dataPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6" dir="rtl">
-      <div className="max-w-4xl mx-auto">
-        <div className="flex justify-end">
-          <Button
-            onClick={() => handleEditStudent(application?.applicationId)}
-            className="bg-mainColor/95 py-1 px-2 text-sm rounded w-[200px] right-full text-center text-white hover:bg-mainColor transition-colors duration-200"
-          >
-            تعديل بيانات الطالب
-          </Button>
-        </div>
-        {application && (
+    application && (
+      <div className="min-h-screen bg-gray-50 p-6" dir="rtl">
+        <div className="max-w-4xl mx-auto">
+          <div className="flex justify-end">
+            <Button
+              onClick={() => handleEditStudent(application?.applicationId)}
+              className="bg-mainColor/95 py-1 px-2 text-sm rounded w-[200px] right-full text-center text-white hover:bg-mainColor transition-colors duration-200"
+            >
+              تعديل بيانات الطالب
+            </Button>
+          </div>
+
           <h1 className="text-3xl font-bold text-center text-blue-600 mt-8">
             بيانات التقديم ({application.isAccepted ? "مقبول" : "تحت المراجعة"})
           </h1>
-        )}
 
-        {student && <StudentDetails student={student} />}
-        {application && <ApplicationDetails application={application} />}
+          {student && <StudentDetails student={student} />}
+          <ApplicationDetails application={application} />
+        </div>
       </div>
-    </div>
+    )
   );
 }

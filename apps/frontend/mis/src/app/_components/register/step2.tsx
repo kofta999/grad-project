@@ -4,8 +4,6 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardGrid, CardHeader } from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Briefcase, Building, CalendarIcon, CreditCard, Shield, Upload } from "lucide-react";
-import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import {
   Select,
   SelectContent,
@@ -15,11 +13,10 @@ import {
 } from "@/components/ui/select";
 import Image from "next/image";
 import { Container, ContainerTitle } from "@/components/ui/container";
-import { FormStep2Type, FormType } from "../../(auth)/register/page";
-import { cn } from "@/lib/utils";
 import { apiClient } from "@/lib/client";
 import { FormikProps } from "formik";
 import DatePicker from "@/components/ui/date-picker";
+import { FormStep2Type } from "@/lib/types";
 
 interface Step2Props {
   goPrevStep: () => void;
@@ -44,7 +41,9 @@ export default function Step2({ goPrevStep, formik }: Step2Props) {
 
   return (
     <Container>
-      <ContainerTitle>{role === "admin" ? "تعديل بيانات الطالب" : "تابع انشاء الحساب"}</ContainerTitle>
+      <ContainerTitle>
+        {role === "admin" ? "تعديل بيانات الطالب" : "تابع انشاء الحساب"}
+      </ContainerTitle>
       <form onSubmit={formik.handleSubmit}>
         {/* Identity Information */}
         <Card>
@@ -70,7 +69,9 @@ export default function Step2({ goPrevStep, formik }: Step2Props) {
                   </SelectContent>
                 </Select>
                 {formik.touched.idType && formik.errors.idType && (
-                  <p className="text-red-500 text-sm">{formik.errors.idType}</p>
+                  <p className="text-red-500 text-sm">
+                    <>{formik.errors.idType}</>
+                  </p>
                 )}
               </div>
               <div className="space-y-2">
@@ -85,7 +86,9 @@ export default function Step2({ goPrevStep, formik }: Step2Props) {
                   icon={<CreditCard className="h-4 w-4" />}
                 />
                 {formik.touched.idNumber && formik.errors.idNumber && (
-                  <p className="text-red-500 text-sm">{formik.errors.idNumber}</p>
+                  <p className="text-red-500 text-sm">
+                    <>{formik.errors.idNumber}</>
+                  </p>
                 )}
               </div>
               <div className="space-y-2">
@@ -94,13 +97,17 @@ export default function Step2({ goPrevStep, formik }: Step2Props) {
                   {role === "student" && <span className="text-red-500">*</span>}
                 </Label>
                 <DatePicker
-                  value={formik.values.idIssuanceDate ? new Date(formik.values.idIssuanceDate) : undefined}
-                  onChange={(date) => formik.setFieldValue('idIssuanceDate', date)}
+                  value={
+                    formik.values.idIssuanceDate
+                      ? new Date(formik.values.idIssuanceDate)
+                      : undefined
+                  }
+                  onChange={(date) => formik.setFieldValue("idIssuanceDate", date)}
                   placeholder="اختر تاريخ اصدار الهوية"
                 />
                 {formik.touched.idIssuanceDate && formik.errors.idIssuanceDate && (
                   <p className="text-red-500 text-sm">
-                    {formik.errors.idIssuanceDate as string}
+                    <>{formik.errors.idIssuanceDate as string}</>
                   </p>
                 )}
               </div>
@@ -116,7 +123,9 @@ export default function Step2({ goPrevStep, formik }: Step2Props) {
                   icon={<Building className="h-4 w-4" />}
                 />
                 {formik.touched.idAuthority && formik.errors.idAuthority && (
-                  <p className="text-red-500 text-sm">{formik.errors.idAuthority}</p>
+                  <p className="text-red-500 text-sm">
+                    <>{formik.errors.idAuthority}</>
+                  </p>
                 )}
               </div>
             </CardGrid>
@@ -152,7 +161,9 @@ export default function Step2({ goPrevStep, formik }: Step2Props) {
                 </Select>
 
                 {formik.touched.martialStatus && formik.errors.martialStatus && (
-                  <p className="text-red-500 text-sm">{formik.errors.martialStatus}</p>
+                  <p className="text-red-500 text-sm">
+                    <>{formik.errors.martialStatus}</>
+                  </p>
                 )}
               </div>
               <div className="space-y-2">
@@ -177,7 +188,9 @@ export default function Step2({ goPrevStep, formik }: Step2Props) {
                   </SelectContent>
                 </Select>
                 {formik.touched.militaryStatus && formik.errors.militaryStatus && (
-                  <p className="text-red-500 text-sm">{formik.errors.militaryStatus}</p>
+                  <p className="text-red-500 text-sm">
+                    <>{formik.errors.militaryStatus}</>
+                  </p>
                 )}
               </div>
               <div className="space-y-2">
@@ -203,7 +216,9 @@ export default function Step2({ goPrevStep, formik }: Step2Props) {
                   </div>
                 </RadioGroup>
                 {formik.touched.isWorking && formik.errors.isWorking && (
-                  <p className="text-red-500 text-sm">{formik.errors.isWorking}</p>
+                  <p className="text-red-500 text-sm">
+                    <>{formik.errors.isWorking}</>
+                  </p>
                 )}
               </div>
               <div className="space-y-2">
@@ -218,7 +233,9 @@ export default function Step2({ goPrevStep, formik }: Step2Props) {
                 />
               </div>
               {formik.touched.jobType && formik.errors.jobType && (
-                <p className="text-red-500 text-sm">{formik.errors.jobType}</p>
+                <p className="text-red-500 text-sm">
+                  <>{formik.errors.jobType}</>
+                </p>
               )}
             </CardGrid>
           </CardContent>
@@ -260,7 +277,9 @@ export default function Step2({ goPrevStep, formik }: Step2Props) {
               </div>
             </div>
             {formik.touched.imageUrl && formik.errors.imageUrl && (
-              <p className="text-red-500 text-sm">{formik.errors.imageUrl}</p>
+              <p className="text-red-500 text-sm">
+                <>{formik.errors.imageUrl}</>
+              </p>
             )}
           </CardContent>
         </Card>

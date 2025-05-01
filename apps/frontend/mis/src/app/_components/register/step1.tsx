@@ -21,14 +21,12 @@ import {
   Shield,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Container, ContainerTitle } from "@/components/ui/container";
-import { FormStep1Type } from "../../(auth)/register/page";
 import { FormikProps } from "formik";
-import { useState } from "react"
+import { useState } from "react";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 import DatePicker from "@/components/ui/date-picker";
+import { FormStep1Type } from "@/lib/types";
 
 interface Step1Props {
   formik: FormikProps<FormStep1Type>;
@@ -41,7 +39,9 @@ export default function Step1({ formik }: Step1Props) {
 
   return (
     <Container>
-      <ContainerTitle>{role === "admin" ? "تعديل بيانات الطالب" : "انشاء حساب جديد"}</ContainerTitle>
+      <ContainerTitle>
+        {role === "admin" ? "تعديل بيانات الطالب" : "انشاء حساب جديد"}
+      </ContainerTitle>
       <form onSubmit={formik.handleSubmit}>
         {/* Basic Information */}
         <Card>
@@ -61,7 +61,9 @@ export default function Step1({ formik }: Step1Props) {
                   icon={<User className="h-4 w-4" />}
                 />
                 {formik.touched.fullNameAr && formik.errors.fullNameAr && (
-                  <p className="text-red-500 text-sm">{formik.errors.fullNameAr}</p>
+                  <p className="text-red-500 text-sm">
+                    <>{formik.errors.fullNameAr}</>
+                  </p>
                 )}
               </div>
               <div className="space-y-2">
@@ -77,7 +79,9 @@ export default function Step1({ formik }: Step1Props) {
                   icon={<User className="h-4 w-4" />}
                 />
                 {formik.touched.fullNameEn && formik.errors.fullNameEn && (
-                  <p className="text-red-500 text-sm">{formik.errors.fullNameEn}</p>
+                  <p className="text-red-500 text-sm">
+                    <>{formik.errors.fullNameEn}</>
+                  </p>
                 )}
               </div>
               <div className="space-y-2">
@@ -100,7 +104,9 @@ export default function Step1({ formik }: Step1Props) {
                   </SelectContent>
                 </Select>
                 {formik.touched.gender && formik.errors.gender && (
-                  <p className="text-red-500 text-sm">{formik.errors.gender}</p>
+                  <p className="text-red-500 text-sm">
+                    <>{formik.errors.gender}</>
+                  </p>
                 )}
               </div>
               <div className="space-y-2">
@@ -116,7 +122,9 @@ export default function Step1({ formik }: Step1Props) {
                   icon={<Flag className="h-4 w-4" />}
                 />
                 {formik.touched.nationality && formik.errors.nationality && (
-                  <p className="text-red-500 text-sm">{formik.errors.nationality}</p>
+                  <p className="text-red-500 text-sm">
+                    <>{formik.errors.nationality}</>
+                  </p>
                 )}
               </div>
               <div className="space-y-2 md:col-span-2 md:justify-self-center md:w-full md:max-w-[calc(100%/2)]">
@@ -126,7 +134,7 @@ export default function Step1({ formik }: Step1Props) {
                 </Label>
                 <DatePicker
                   value={formik.values.dob ? new Date(formik.values.dob) : undefined}
-                  onChange={(date) => formik.setFieldValue('dob', date)}
+                  onChange={(date) => formik.setFieldValue("dob", date)}
                   placeholder="اختر تاريخ الميلاد"
                 />
                 {formik.touched.dob && formik.errors.dob && (
@@ -158,7 +166,9 @@ export default function Step1({ formik }: Step1Props) {
                   icon={<Mail className="h-4 w-4" />}
                 />
                 {formik.touched.email && formik.errors.email && (
-                  <p className="text-red-500 text-sm">{formik.errors.email}</p>
+                  <p className="text-red-500 text-sm">
+                    <>{formik.errors.email}</>
+                  </p>
                 )}
               </div>
               <div className="space-y-2">
@@ -172,7 +182,9 @@ export default function Step1({ formik }: Step1Props) {
                   icon={<Printer className="h-4 w-4" />}
                 />
                 {formik.touched.fax && formik.errors.fax && (
-                  <p className="text-red-500 text-sm">{formik.errors.fax}</p>
+                  <p className="text-red-500 text-sm">
+                    <>{formik.errors.fax}</>
+                  </p>
                 )}
               </div>
               <div className="space-y-2">
@@ -189,7 +201,9 @@ export default function Step1({ formik }: Step1Props) {
                   icon={<Phone className="h-4 w-4" />}
                 />
                 {formik.touched.phoneNoMain && formik.errors.phoneNoMain && (
-                  <p className="text-red-500 text-sm">{formik.errors.phoneNoMain}</p>
+                  <p className="text-red-500 text-sm">
+                    <>{formik.errors.phoneNoMain}</>
+                  </p>
                 )}
               </div>
               <div className="space-y-2">
@@ -203,7 +217,9 @@ export default function Step1({ formik }: Step1Props) {
                   icon={<Phone className="h-4 w-4" />}
                 />
                 {formik.touched.phoneNoSec && formik.errors.phoneNoSec && (
-                  <p className="text-red-500 text-sm">{formik.errors.phoneNoSec}</p>
+                  <p className="text-red-500 text-sm">
+                    <>{formik.errors.phoneNoSec}</>
+                  </p>
                 )}
               </div>
             </CardGrid>
@@ -228,12 +244,18 @@ export default function Step1({ formik }: Step1Props) {
                   onBlur={formik.handleBlur}
                   icon={
                     <button type="button" onClick={() => setShowPassword(!showPassword)}>
-                      {showPassword ? <EyeIcon className="h-4 w-4" /> : <EyeOffIcon className="h-4 w-4" />}
+                      {showPassword ? (
+                        <EyeIcon className="h-4 w-4" />
+                      ) : (
+                        <EyeOffIcon className="h-4 w-4" />
+                      )}
                     </button>
                   }
                 />
                 {formik.touched.hashedPassword && formik.errors.hashedPassword && (
-                  <p className="text-red-500 text-sm">{formik.errors.hashedPassword}</p>
+                  <p className="text-red-500 text-sm">
+                    <>{formik.errors.hashedPassword}</>
+                  </p>
                 )}
               </div>
 
@@ -249,13 +271,22 @@ export default function Step1({ formik }: Step1Props) {
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                   icon={
-                    <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
-                      {showConfirmPassword ? <EyeIcon className="h-4 w-4" /> : <EyeOffIcon className="h-4 w-4" />}
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    >
+                      {showConfirmPassword ? (
+                        <EyeIcon className="h-4 w-4" />
+                      ) : (
+                        <EyeOffIcon className="h-4 w-4" />
+                      )}
                     </button>
                   }
                 />
                 {formik.touched.confirmPassword && formik.errors.confirmPassword && (
-                  <p className="text-red-500 text-sm">{formik.errors.confirmPassword}</p>
+                  <p className="text-red-500 text-sm">
+                    <>{formik.errors.confirmPassword}</>
+                  </p>
                 )}
               </div>
               <div className={cn("space-y-2", { hidden: role === "admin" })}>
@@ -271,7 +302,9 @@ export default function Step1({ formik }: Step1Props) {
                   icon={<Shield className="h-4 w-4" />}
                 />
                 {formik.touched.secQuestion && formik.errors.secQuestion && (
-                  <p className="text-red-500 text-sm">{formik.errors.secQuestion}</p>
+                  <p className="text-red-500 text-sm">
+                    <>{formik.errors.secQuestion}</>
+                  </p>
                 )}
               </div>
               <div className={cn("space-y-2", { hidden: role === "admin" })}>
@@ -287,7 +320,9 @@ export default function Step1({ formik }: Step1Props) {
                   icon={<UserCheck className="h-4 w-4" />}
                 />
                 {formik.touched.secAnswer && formik.errors.secAnswer && (
-                  <p className="text-red-500 text-sm">{formik.errors.secAnswer}</p>
+                  <p className="text-red-500 text-sm">
+                    <>{formik.errors.secAnswer}</>
+                  </p>
                 )}
               </div>
             </CardGrid>

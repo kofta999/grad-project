@@ -9,41 +9,7 @@ import { Progress } from "@radix-ui/react-progress";
 import toast, { Toaster } from "react-hot-toast";
 import * as Yup from "yup";
 import { apiClient } from "@/lib/client";
-
-export type FormStep1Type = Yup.InferType<typeof step1Schema>;
-export type FormStep2Type = Yup.InferType<typeof step2Schema>;
-
-const step1Schema = Yup.object().shape({
-  fullNameAr: Yup.string(),
-  fullNameEn: Yup.string(),
-  gender: Yup.boolean().required(),
-  nationality: Yup.string(),
-  dob: Yup.date().typeError("تاريخ الميلاد غير صالح"),
-  email: Yup.string().email("البريد الإلكتروني غير صالح"),
-  fax: Yup.string().optional(),
-  phoneNoMain: Yup.string(),
-  phoneNoSec: Yup.string(),
-  hashedPassword: Yup.string().min(8, "كلمة المرور يجب أن تكون 8 أحرف على الأقل"),
-  confirmPassword: Yup.string()
-    .min(8, "تأكيد كلمة المرور يجب أن يكون 8 أحرف على الأقل")
-    .oneOf([Yup.ref("hashedPassword")], "كلمة المرور وتأكيدها غير متطابقين"),
-  secQuestion: Yup.string(),
-  secAnswer: Yup.string(),
-});
-
-const step2Schema = Yup.object().shape({
-  imageUrl: Yup.string(),
-  idType: Yup.string().oneOf(["national_id", "passport"]),
-  idIssuanceDate: Yup.date().typeError("تاريخ إصدار الهوية غير صالح"),
-  idNumber: Yup.string(),
-  idAuthority: Yup.string(),
-  martialStatus: Yup.string()
-    .oneOf(["single", "married", "married_with_dependents", "divorced", "widow", "other"])
-    .optional(),
-  isWorking: Yup.boolean(),
-  jobType: Yup.string(),
-  militaryStatus: Yup.string(),
-});
+import { FormStep1Type, FormStep2Type } from "@/lib/types";
 
 export default function update() {
   const router = useRouter();
@@ -54,25 +20,15 @@ export default function update() {
   const handleSubmit = async (formik: any, extraData: object = {}, onSuccess?: () => void) => {
     try {
       const errors = await formik.validateForm();
-      if (Object.keys(errors).length === 0) {
+      if (Object.keys(errors).length === 0 && student) {
         const res = await apiClient.students[":id"].$patch({
-          param: { id: student.studentId },
+          param: { id: student.studentId.toString() },
           json: {
             ...formik.values,
             ...extraData,
           },
         });
         const result = await res.json();
-
-        {
-          /* for testing */
-        }
-        if (
-          result.message === `duplicate key value violates unique constraint "students_email_key"`
-        ) {
-          toast.error("الايميل مستخدم من قبل");
-          return;
-        }
 
         if (res.status === 200) {
           toast.success("تم التعديل بنجاح!");
@@ -92,7 +48,7 @@ export default function update() {
     await handleSubmit(
       formikStep1,
       {
-        dob: formikStep1.values.dob.toLocaleDateString("en-US"),
+        dob: formikStep1.values.dob?.toLocaleDateString("en-US"),
       },
       () => setStep(2)
     );
@@ -102,7 +58,7 @@ export default function update() {
     await handleSubmit(
       formikStep2,
       {
-        idIssuanceDate: formikStep2.values.idIssuanceDate.toLocaleDateString("en-US"),
+        idIssuanceDate: formikStep2.values.idIssuanceDate?.toLocaleDateString("en-US"),
         ...formikStep1.values,
       },
       () => router.push("/dashboard/applications")

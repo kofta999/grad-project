@@ -2,22 +2,10 @@
 import { apiClient } from "@/lib/client";
 import { useState } from "react";
 import ApplicationsList from "./_components/application-list";
+import { InferResponseType } from "@repo/mis-api";
 
-type Application = {
-  applicationId: number;
-  studentName: string;
-  academicDegree: "diploma" | "master" | "phd";
-  department: string;
-  isAdminAccepted: boolean;
-};
-
-type Pagination = {
-  currentPage: number;
-  totalPages: number;
-  totalItems: number;
-  hasNextPage: boolean;
-  hasPreviousPage: boolean;
-};
+type Application = InferResponseType<typeof apiClient.applications.$get>["data"][number];
+type Pagination = InferResponseType<typeof apiClient.applications.$get>["pagination"];
 
 type ApplicationsListType = {
   data: Application[];
