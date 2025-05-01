@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import {
   GraduationCap,
   School,
@@ -13,11 +13,7 @@ import {
 } from "lucide-react";
 import { ApplicationType } from "@/lib/types";
 
-export default function ApplicationDetails({
-  application,
-}: {
-  application: ApplicationType;
-}) {
+export default function ApplicationDetails({ application }: { application: ApplicationType }) {
   return (
     <>
       {/* نظرة عامة */}

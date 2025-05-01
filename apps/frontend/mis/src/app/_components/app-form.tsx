@@ -33,7 +33,6 @@ const validationSchema = Yup.object().shape({
     .required("الشعبة مطلوبة"),
 });
 
-
 export default function AppForm() {
   const formik = useFormik<InitialValues>({
     initialValues: {

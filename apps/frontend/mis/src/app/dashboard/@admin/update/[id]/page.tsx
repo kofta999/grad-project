@@ -7,7 +7,6 @@ import Step2 from "@/app/_components/register/step2";
 import Step1 from "@/app/_components/register/step1";
 import { Progress } from "@radix-ui/react-progress";
 import toast, { Toaster } from "react-hot-toast";
-import * as Yup from "yup";
 import { apiClient } from "@/lib/client";
 import { FormStep1Type, FormStep2Type } from "@/lib/types";
 

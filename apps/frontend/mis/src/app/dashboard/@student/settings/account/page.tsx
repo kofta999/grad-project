@@ -16,7 +16,10 @@ const validationSchema = Yup.object().shape({
     .min(6, "كلمة المرور يجب أن تكون 6 أحرف على الأقل")
     .required("كلمة المرور مطلوبة"),
   email: Yup.string()
-    .matches(/^[\w.-]+@scu\.edu\.org$/, "يجب أن يكون البريد الالكتروني الجامعي ينتهي بـ scu.edu.org@")
+    .matches(
+      /^[\w.-]+@scu\.edu\.org$/,
+      "يجب أن يكون البريد الالكتروني الجامعي ينتهي بـ scu.edu.org@"
+    )
     .required("البريد الالكتروني مطلوب"),
   phoneNoMain: Yup.string()
     .matches(/^(010|011|012|015)[0-9]{8}$/, "يجب إدخال رقم هاتف صحيح")

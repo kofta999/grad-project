@@ -1,4 +1,4 @@
-import React from 'react'
+import React from "react";
 import AppForm from "../../../../_components/app-form";
 
 export default function application() {
@@ -6,5 +6,5 @@ export default function application() {
     <>
       <AppForm />
     </>
-  )
+  );
 }

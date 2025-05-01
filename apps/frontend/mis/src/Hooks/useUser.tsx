@@ -1,5 +1,5 @@
-import { apiClient } from '@/lib/client'
-import React, { useEffect, useState } from 'react'
+import { apiClient } from "@/lib/client";
+import React, { useEffect, useState } from "react";
 
 export default function useUser() {
   const [personalData, setPersonalData] = useState<any>(null);
@@ -10,14 +10,14 @@ export default function useUser() {
     const data = await res.json();
     setPersonalData(data);
     return data;
-  }
+  };
 
   const getUserApplicationData = async () => {
     const res = await apiClient.students.me.applications.$get();
     const data = await res.json();
     setApplicationData(data);
     return data;
-  }
+  };
 
   useEffect(() => {
     getUserPersonalData();
@@ -27,5 +27,5 @@ export default function useUser() {
   return {
     personalData,
     applicationData,
-  }
+  };
 }
