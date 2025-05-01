@@ -1,30 +1,61 @@
 "use client";
 import { apiClient } from "@/lib/client";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import ApplicationsList from "./_components/application-list";
-import { InferResponseType } from "@repo/mis-api";
 
-type ApplicationsListType = InferResponseType<typeof apiClient.applications.$get>;
+type Application = {
+  applicationId: number;
+  studentName: string;
+  academicDegree: "diploma" | "master" | "phd";
+  department: string;
+  isAdminAccepted: boolean;
+};
+
+type Pagination = {
+  currentPage: number;
+  totalPages: number;
+  totalItems: number;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+};
+
+type ApplicationsListType = {
+  data: Application[];
+  pagination: Pagination;
+};
 
 export default function ApplicationsPage() {
-  const [applicationsList, setApplicationsList] = useState<ApplicationsListType>([]);
+  const [applicationsResponse, setApplicationsResponse] = useState<ApplicationsListType>({
+    data: [],
+    pagination: {
+      currentPage: 1,
+      totalPages: 1,
+      totalItems: 0,
+      hasNextPage: false,
+      hasPreviousPage: false,
+    },
+  });
 
-  const getApplicationsList = async () => {
+  const getApplicationsList = async (nameAr: string, page: number) => {
     try {
-      const res = await apiClient.applications.$get();
+      const res = await apiClient.applications.$get({
+        query: { nameAr, page: page.toString() },
+      });
 
       if (res.status === 200) {
-        const applications = await res.json();
-        setApplicationsList(applications);
+        const result: ApplicationsListType = await res.json();
+        setApplicationsResponse(result);
       }
     } catch (error) {
-      console.error(error);
+      console.error("Error fetching applications:", error);
     }
   };
 
-  useEffect(() => {
-    getApplicationsList();
-  }, []);
-
-  return <ApplicationsList applicationsList={applicationsList} setApplicationsList={setApplicationsList} />;
+  return (
+    <ApplicationsList
+      applicationsResponse={applicationsResponse}
+      setApplicationsResponse={setApplicationsResponse}
+      getApplicationsList={getApplicationsList}
+    />
+  );
 }

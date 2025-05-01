@@ -188,7 +188,6 @@ body {
 
 /* HTML: <div class="loader"></div> */
 .loader {
-  width: 30px;
   aspect-ratio: 1;
   border-radius: 50%;
   border: 8px solid lightblue;
