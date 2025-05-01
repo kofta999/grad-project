@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { useFormik } from "formik";
 import { useParams, useRouter } from "next/navigation";
-import useApplicationDataForAdmin from "@/hooks/useApplicationDataForAdmin";
+import useApplicationDataForAdmin from "@/hooks/use-application-data-for-admin";
 import { Progress } from "@radix-ui/react-progress";
 import toast, { Toaster } from "react-hot-toast";
 import { apiClient } from "@/lib/client";
@@ -11,7 +11,7 @@ import { RegisterStep1Schema, RegisterStep2Schema } from "@/lib/schemas";
 import RegisterStep1Form from "@/components/register/register-step1-form";
 import RegisterStep2Form from "@/components/register/register-step2-form";
 
-export default function update() {
+export default function Page() {
   const router = useRouter();
   const { id } = useParams();
   const { student } = useApplicationDataForAdmin(id as string);

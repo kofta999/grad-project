@@ -1,5 +1,5 @@
 import Link from "next/link";
-import ApplicationDetails from "@/components/application-details";
+import ApplicationDetails from "@/components/application/application-details";
 import { getServerApiClient } from "@/lib/client";
 import { Button } from "@/components/ui/button";
 

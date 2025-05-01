@@ -1,4 +1,3 @@
-"use client";
 import { Filter, ChevronRight, ChevronLeft, Check } from "lucide-react";
 import {
   Table,

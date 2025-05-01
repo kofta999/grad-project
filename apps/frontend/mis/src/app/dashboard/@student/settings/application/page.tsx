@@ -1,10 +1,10 @@
 import React from "react";
-import AppForm from "@/components/app-form";
+import StudentApplicationSettingsForm from "@/components/student/student-application-settings-form";
 
-export default function application() {
+export default function Page() {
   return (
     <>
-      <AppForm />
+      <StudentApplicationSettingsForm />
     </>
   );
 }

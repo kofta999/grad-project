@@ -11,7 +11,7 @@ import { InferRequestType } from "@repo/mis-api";
 import { apiClient } from "@/lib/client";
 import toast, { Toaster } from "react-hot-toast";
 import { useRouter } from "next/navigation";
-import { useUserContext } from "@/context/UserContext";
+import { useUserContext } from "@/context/user-context";
 import { Loader } from "@/components/ui/loader";
 
 type FormState = InferRequestType<typeof apiClient.auth.login.$post>["json"];
