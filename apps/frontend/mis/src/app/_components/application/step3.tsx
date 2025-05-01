@@ -6,7 +6,7 @@ import { Upload, File, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { FormikProps } from "formik";
-import { FormStep3Type } from "../validators";
+import { FormStep3Type } from "../../dashboard/@student/applications/validators";
 import { apiClient } from "@/lib/client";
 
 interface Step3Props {

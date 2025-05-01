@@ -1,58 +1,17 @@
 "use client";
 import { useState } from "react";
-import Step1 from "./_components/step1";
-import Step2 from "./_components/step2";
+import Step1 from "../../_components/register/step1";
+import Step2 from "../../_components/register/step2";
 import { InferRequestType } from "@repo/mis-api";
 import { Progress } from "@/components/ui/progress";
 import { apiClient } from "@/lib/client";
 import toast, { Toaster } from "react-hot-toast";
-import * as Yup from "yup";
 import { useFormik } from "formik";
 import { useRouter } from "next/navigation";
+import { RegisterStep1Schema, RegisterStep2Schema } from "@/lib/schemas";
+import { FormStep2Type, FormStep1Type } from "@/lib/types";
 
 export type FormType = InferRequestType<typeof apiClient.auth.register.$post>["json"];
-
-export type FormStep1Type = Yup.InferType<typeof step1Schema>;
-export type FormStep2Type = Yup.InferType<typeof step2Schema>;
-
-const step1Schema = Yup.object().shape({
-  fullNameAr: Yup.string().required("الاسم الكامل بالعربية مطلوب"),
-  fullNameEn: Yup.string().required("الاسم الكامل بالإنجليزية مطلوب"),
-  gender: Yup.boolean().required(),
-  nationality: Yup.string().required("الجنسية مطلوبة"),
-  dob: Yup.date().typeError("تاريخ الميلاد غير صالح").required("تاريخ الميلاد مطلوب"),
-  email: Yup.string().email("البريد الإلكتروني غير صالح").required("البريد الإلكتروني غير صالح"),
-  fax: Yup.string().optional(),
-  phoneNoMain: Yup.string().required("رقم الهاتف الرئيسي مطلوب"),
-  phoneNoSec: Yup.string().optional(),
-  hashedPassword: Yup.string()
-    .min(8, "كلمة المرور يجب أن تكون 8 أحرف على الأقل")
-    .required("كلمة المرور مطلوبة"),
-  confirmPassword: Yup.string()
-    .min(8, "تأكيد كلمة المرور يجب أن يكون 8 أحرف على الأقل")
-    .required("تأكيد كلمة المرور مطلوب")
-    .oneOf([Yup.ref("hashedPassword")], "كلمة المرور وتأكيدها غير متطابقين"),
-  secQuestion: Yup.string().required("سؤال الأمان مطلوب"),
-  secAnswer: Yup.string().required("إجابة سؤال الأمان مطلوبة"),
-});
-
-const step2Schema = Yup.object().shape({
-  // Will not use url() because its too strict the errors even if the link is correct
-  // Trust me on this one lil bro
-  imageUrl: Yup.string().required("الصورة الشخصية مطلوبة"),
-  idType: Yup.string().oneOf(["national_id", "passport"]).required("نوع الهوية مطلوب"),
-  idIssuanceDate: Yup.date()
-    .typeError("تاريخ إصدار الهوية غير صالح")
-    .required("تاريخ إصدار الهوية مطلوب"),
-  idNumber: Yup.string().required("رقم الهوية مطلوب"),
-  idAuthority: Yup.string().required("جهة إصدار الهوية مطلوبة"),
-  martialStatus: Yup.string()
-    .oneOf(["single", "married", "married_with_dependents", "divorced", "widow", "other"])
-    .optional(),
-  isWorking: Yup.boolean().required(),
-  jobType: Yup.string().optional(),
-  militaryStatus: Yup.string().required("حالة الخدمة العسكرية مطلوبة"),
-});
 
 export default function RegistrationForm() {
   const [step, setStep] = useState(1);
@@ -115,7 +74,7 @@ export default function RegistrationForm() {
       secQuestion: "",
       secAnswer: "",
     },
-    validationSchema: step1Schema,
+    validationSchema: RegisterStep1Schema,
     onSubmit: handleStep1Submit,
   });
 
@@ -132,7 +91,7 @@ export default function RegistrationForm() {
       jobType: "",
       martialStatus: "single",
     },
-    validationSchema: step2Schema,
+    validationSchema: RegisterStep2Schema,
     onSubmit: handleStep2Submit,
   });
 

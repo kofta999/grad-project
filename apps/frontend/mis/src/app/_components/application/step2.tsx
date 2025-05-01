@@ -15,8 +15,8 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { CalendarIcon } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
-import { FormStep2Type } from "../validators";
-import { InitialFormDataType } from "./application-form";
+import { FormStep2Type } from "../../dashboard/@student/applications/validators";
+import { InitialFormDataType } from "../../dashboard/@student/applications/_components/application-form";
 import { FormikProps } from "formik";
 
 interface Step2Props {

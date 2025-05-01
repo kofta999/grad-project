@@ -1,53 +1,42 @@
-import ApplicationDetails from "@/app/dashboard/_components/application-details";
-import StudentDetails from "@/app/dashboard/_components/student-details";
-import { getServerApiClient } from "@/lib/client";
+"use client";
+import { useParams } from "next/navigation";
+import StudentDetails from "@/app/_components/student-details";
+import ApplicationDetails from "@/app/_components/application-details";
+import useApplicationDataForAdmin from "@/Hooks/useApplicationDataForAdmin";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
 
-export default async function AdminPage({ params: { id } }: { params: { id: string } }) {
-  const apiClient = await getServerApiClient();
-  try {
-    const applicationRes = await apiClient.applications[":id"].$get({
-      param: { id },
-    });
+export default function dataPage() {
+  const { id } = useParams();
+  const { application, student } = useApplicationDataForAdmin(id as string);
 
-    if (!applicationRes.ok) {
-      throw new Error("التقديم غير موجود");
-    }
+  const router = useRouter();
 
-    const application = await applicationRes.json();
+  const handleEditStudent = (applicationId: number) => {
+    router.push(`/dashboard/update/${applicationId}`);
+  };
 
-    const studentRes = await apiClient.students[":id"].$get({
-      param: { id: application.studentId.toString() },
-    });
-
-    if (!studentRes.ok) {
-      throw new Error("الطالب غير موجود");
-    }
-
-    const student = await studentRes.json();
-
-    return (
-      <>
-        <div className="min-h-screen bg-gray-50 p-6" dir="rtl">
-          <div className="max-w-4xl mx-auto p-8">
-            <div className="relative flex justify-center items-center">
-              <h1 className="text-3xl font-bold text-center text-blue-600 mb-5">
-                بيانات التقديم ({application?.isAccepted ? "مقبول" : "تحت المراجعة"})
-              </h1>
-            </div>
-
-            <StudentDetails student={student!} />
-            <ApplicationDetails application={application!} />
+  return (
+    application && (
+      <div className="min-h-screen bg-gray-50 p-6" dir="rtl">
+        <div className="max-w-4xl mx-auto">
+          <div className="flex justify-end">
+            <Button
+              onClick={() => handleEditStudent(application?.applicationId)}
+              className="bg-mainColor/95 py-1 px-2 text-sm rounded w-[200px] right-full text-center text-white hover:bg-mainColor transition-colors duration-200"
+            >
+              تعديل بيانات الطالب
+            </Button>
           </div>
-        </div>
-      </>
-    );
-  } catch (error) {
-    if (error instanceof Error) {
-      console.error("حدث خطأ أثناء جلب البيانات:", error.message);
-    } else {
-      console.error("حدث خطأ غير متوقع:", error);
-    }
 
-    return <div>لا توجد بيانات للطالب.</div>;
-  }
+          <h1 className="text-3xl font-bold text-center text-blue-600 mt-8">
+            بيانات التقديم ({application.isAccepted ? "مقبول" : "تحت المراجعة"})
+          </h1>
+
+          {student && <StudentDetails student={student} />}
+          <ApplicationDetails application={application} />
+        </div>
+      </div>
+    )
+  );
 }

@@ -177,7 +177,7 @@ export default function LoginForm() {
                 className="w-full bg-mainColor hover:bg-blue-600 text-white"
                 disabled={loading}
               >
-                {loading ? <Loader /> : "تسجيل الدخول"}
+                {loading ? <Loader className="w-6 h-6" /> : "تسجيل الدخول"}
               </Button>
             </form>
             <p className="mt-4 text-center text-gray-500">

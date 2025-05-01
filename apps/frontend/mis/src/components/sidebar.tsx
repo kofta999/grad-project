@@ -55,8 +55,8 @@ const STUDENT_SIDEBAR_ITEMS = [
     icon: <Settings />,
     submenu: true,
     subMenuItems: [
-      { title: "Account", path: "/dashboard/settings" },
-      // { title: "Privacy", path: "/settings/privacy" },
+      { title: "الحساب", path: "/dashboard/settings/account" },
+      { title: "التسجيل", path: "/dashboard/settings/application" },
     ],
   },
 ];
