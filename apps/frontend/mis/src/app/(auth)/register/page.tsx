@@ -1,17 +1,14 @@
 "use client";
 import { useState } from "react";
-import Step1 from "../../_components/register/step1";
-import Step2 from "../../_components/register/step2";
-import { InferRequestType } from "@repo/mis-api";
 import { Progress } from "@/components/ui/progress";
 import { apiClient } from "@/lib/client";
 import toast, { Toaster } from "react-hot-toast";
 import { useFormik } from "formik";
 import { useRouter } from "next/navigation";
 import { RegisterStep1Schema, RegisterStep2Schema } from "@/lib/schemas";
-import { FormStep2Type, FormStep1Type } from "@/lib/types";
-
-export type FormType = InferRequestType<typeof apiClient.auth.register.$post>["json"];
+import { RegisterStep2Type, RegisterStep1Type } from "@/lib/types";
+import RegisterStep1Form from "@/components/register/register-step1-form";
+import RegisterStep2Form from "@/components/register/register-step2-form";
 
 export default function RegistrationForm() {
   const [step, setStep] = useState(1);
@@ -31,7 +28,7 @@ export default function RegistrationForm() {
     }
   };
 
-  const handleStep2Submit = async (values: FormStep2Type) => {
+  const handleStep2Submit = async (values: RegisterStep2Type) => {
     try {
       await formikStep2.validateForm();
       if (Object.keys(formikStep2.errors).length === 0) {
@@ -57,7 +54,7 @@ export default function RegistrationForm() {
     }
   };
 
-  let formikStep1 = useFormik<FormStep1Type>({
+  let formikStep1 = useFormik<RegisterStep1Type>({
     initialValues: {
       fullNameAr: "",
       fullNameEn: "",
@@ -78,7 +75,7 @@ export default function RegistrationForm() {
     onSubmit: handleStep1Submit,
   });
 
-  let formikStep2 = useFormik<FormStep2Type>({
+  let formikStep2 = useFormik<RegisterStep2Type>({
     initialValues: {
       idAuthority: "",
       // @ts-ignore
@@ -99,9 +96,9 @@ export default function RegistrationForm() {
     <>
       <Progress value={step === 1 ? 0 : 50} className="sticky top-0 z-40" />
 
-      {step === 1 && <Step1 formik={formikStep1} />}
+      {step === 1 && <RegisterStep1Form formik={formikStep1} />}
 
-      {step !== 1 && <Step2 goPrevStep={() => setStep(1)} formik={formikStep2} />}
+      {step !== 1 && <RegisterStep2Form goPrevStep={() => setStep(1)} formik={formikStep2} />}
 
       <Toaster />
     </>

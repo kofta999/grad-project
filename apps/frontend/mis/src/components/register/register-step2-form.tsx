@@ -16,14 +16,14 @@ import { Container, ContainerTitle } from "@/components/ui/container";
 import { apiClient } from "@/lib/client";
 import { FormikProps } from "formik";
 import DatePicker from "@/components/ui/date-picker";
-import { FormStep2Type } from "@/lib/types";
+import { RegisterStep2Type } from "@/lib/types";
 
 interface Step2Props {
   goPrevStep: () => void;
-  formik: FormikProps<FormStep2Type>;
+  formik: FormikProps<RegisterStep2Type>;
 }
 
-export default function Step2({ goPrevStep, formik }: Step2Props) {
+export default function RegisterStep2Form({ goPrevStep, formik }: Step2Props) {
   const { role } = JSON.parse(localStorage.getItem("loggedInUser") || "{}");
 
   const handlePhotoUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {

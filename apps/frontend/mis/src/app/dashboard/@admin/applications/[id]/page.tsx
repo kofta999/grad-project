@@ -1,10 +1,10 @@
 "use client";
 import { useParams } from "next/navigation";
-import StudentDetails from "@/app/_components/student-details";
-import ApplicationDetails from "@/app/_components/application-details";
-import useApplicationDataForAdmin from "@/Hooks/useApplicationDataForAdmin";
+import useApplicationDataForAdmin from "@/hooks/useApplicationDataForAdmin";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import ApplicationDetails from "@/components/application-details";
+import StudentDetails from "@/components/student-details";
 
 export default function dataPage() {
   const { id } = useParams();

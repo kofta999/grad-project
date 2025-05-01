@@ -2,11 +2,11 @@
 import React, { useEffect } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import AccountForm from "../../../../_components/account-form";
+import AccountForm from "@/components/account-form";
 import { apiClient } from "@/lib/client";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
-import useUser from "@/Hooks/useUser";
+import useUser from "@/hooks/useUser";
 
 const validationSchema = Yup.object().shape({
   fullNameAr: Yup.string()

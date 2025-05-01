@@ -1,11 +1,11 @@
 "use client";
+
 import {
   GraduationCap,
   School,
   User,
   Home,
   Phone,
-  IdCard,
   Info,
   File,
   FileText,
@@ -13,7 +13,6 @@ import {
   Mail,
 } from "lucide-react";
 import React, { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
 import { apiClient } from "@/lib/client";
 import { InferResponseType } from "@repo/mis-api";
 

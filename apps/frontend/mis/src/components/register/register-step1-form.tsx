@@ -26,13 +26,13 @@ import { FormikProps } from "formik";
 import { useState } from "react";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 import DatePicker from "@/components/ui/date-picker";
-import { FormStep1Type } from "@/lib/types";
+import { RegisterStep1Type } from "@/lib/types";
 
 interface Step1Props {
-  formik: FormikProps<FormStep1Type>;
+  formik: FormikProps<RegisterStep1Type>;
 }
 
-export default function Step1({ formik }: Step1Props) {
+export default function RegisterStep1Form({ formik }: Step1Props) {
   const { role } = JSON.parse(localStorage.getItem("loggedInUser") || "{}");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);

@@ -1,5 +1,5 @@
 import React from "react";
-import AppForm from "../../../../_components/app-form";
+import AppForm from "@/components/app-form";
 
 export default function application() {
   return (
