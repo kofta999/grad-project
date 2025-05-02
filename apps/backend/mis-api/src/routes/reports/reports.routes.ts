@@ -9,15 +9,15 @@ import { GetReportSchema } from "@/dtos/get-report.dto";
 
 const tags = ["Reports"];
 
-export const submitStudentReport = createRoute({
-  path: "/addStudentReport",
+export const submitReport = createRoute({
+  path: "/reports",
   method: "post",
   middleware: adminMiddleware,
   tags,
   request: {
     body: jsonContentRequired(
       z.object({
-        studentId: z.number(),
+        type: z.string(),
         title: z.string(),
         attachmentUrl: z.string()
       }),
@@ -26,7 +26,7 @@ export const submitStudentReport = createRoute({
   },
   responses: {
     [HttpStatusCodes.OK]: jsonContent(
-      z.object({ message: z.string() }),
+      z.object({ success: z.boolean() }),
       "Report submitted successfully"
     ),
     [HttpStatusCodes.FORBIDDEN]: jsonContent(
@@ -36,17 +36,19 @@ export const submitStudentReport = createRoute({
   }
 });
 
-export const getStudentReport = createRoute({
-  path: "/getStudentReport",
+export const getReport = createRoute({
+  path: "/reports",
   method: "get",
   middleware: adminMiddleware,
   tags,
-  request: {
-    body: jsonContentRequired(
-      z.object({
-        studentId: z.number()
+  request: { 
+    body: jsonContentRequired( 
+      z.object({ 
+        type: z.string(),
+        title: z.string(),
+        attachmentUrl: z.string()
       }),
-      "Student ID"
+      "Report retrieval data"
     )
   },
   responses: {
@@ -61,5 +63,5 @@ export const getStudentReport = createRoute({
   }
 });
 
-export type SubmitReportRoute = typeof submitStudentReport;
-export type GetReportRoute = typeof getStudentReport;
+export type SubmitReportRoute = typeof submitReport;
+export type GetReportRoute = typeof getReport;

@@ -204,3 +204,6 @@ export const getStudentDetailsById: AppRouteHandler<routes.GetStudentDetailsById
 
   return c.json(student, HttpStatusCodes.OK);
 };
+
+
+// Remove the report-related handlers (submitReport and getReport)

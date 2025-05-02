@@ -5,24 +5,26 @@ import * as routes from "./reports.routes";
 
 const reportsService = new ReportsService();
 
-export const submitStudentReport: AppRouteHandler<routes.SubmitReportRoute> = async (c) => {
-  const { studentId, attachmentUrl, title } = c.req.valid("json");
-
+export const submitReport: AppRouteHandler<routes.SubmitReportRoute> = async (c) => {
+  const { type, attachmentUrl, title } = c.req.valid("json");
+  
   try {
-    await reportsService.submitReport(studentId, title, attachmentUrl);
-    return c.json({ message: "Report submitted successfully" }, HttpStatusCodes.OK);
+    const result = await reportsService.submitReport(type, title, attachmentUrl);
+    if (result) {
+      return c.json({ success: true, message: "Report submitted successfully" }, HttpStatusCodes.OK);
+    }
+    return c.json({ message: "Failed to submit report" }, HttpStatusCodes.FORBIDDEN);
   } catch (error) {
     console.error("Error submitting report:", error);
-    const errorMessage = error instanceof Error ? error.message : "Failed to submit report";
-
-    return c.json({ message: errorMessage }, HttpStatusCodes.FORBIDDEN);
+    return c.json({ message: "Failed to submit report" }, HttpStatusCodes.FORBIDDEN);
   }
 };
 
-export const getStudentReport: AppRouteHandler<routes.GetReportRoute> = async (c) => {
-  const { studentId } = c.req.valid("json");
 
-  const report = await reportsService.getReport(studentId);
+export const getReport: AppRouteHandler<routes.GetReportRoute> = async (c) => {
+  const { type } = c.req.valid("json");
+
+  const report = await reportsService.getReport(type);
 
   if (!report) {
     return c.json({ message: "Report Not found" }, HttpStatusCodes.NOT_FOUND);

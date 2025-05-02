@@ -464,12 +464,7 @@ export const detailedCourseRegistrationsView = pgView("detailed_course_registrat
 
 export const reports = pgTable("reports", {
   reportId: serial("report_id").primaryKey(),
-  applicationId: integer("application_id")
-    .notNull()
-    .references(() => applications.applicationId),
+  type: text("type").notNull(),
   title: text("title").notNull(),
-  attachmentId: integer("attachment_id")
-    .notNull()
-    .references(() => attachments.attachmentId),
-  createdAt: timestamp("created_at").notNull().defaultNow(),
+  attachmentUrl: text("attachment_url").notNull()
 });

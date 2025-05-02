@@ -1,8 +1,9 @@
 import { createRouter } from "@/lib/create-app";
-import * as routes from "./reports.routes";
 import * as handlers from "./reports.handlers";
+import * as routes from "./reports.routes";
 
 const router = createRouter()
-  .openapi(routes.getStudentReport, handlers.getStudentReport).openapi(routes.submitStudentReport, handlers.submitStudentReport);
+  .openapi(routes.getReport, handlers.getReport)
+  .openapi(routes.submitReport, handlers.submitReport);
 
 export default router;

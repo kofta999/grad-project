@@ -1,79 +1,39 @@
 import db from "@/db";
-import { attachments, reports } from "@/db/schema";
+import { reports } from "@/db/schema";
 import { GetReportDTO } from "@/dtos/get-report.dto";
 import { eq } from "drizzle-orm";
 
 export interface IReportsService {
-  submitReport(studentId: number, title: string, attachmentUrl: string): Promise<boolean>;
-  getReport(studentId: number): Promise<GetReportDTO | null>;
+  submitReport(type: string, title: string, attachmentUrl: string): Promise<boolean>;
+  getReport(type: string): Promise<GetReportDTO | null>;
 }
 
-export class ReportsService implements IReportsService {
-  async submitReport(studentId: number, title: string, attachmentUrl: string): Promise<boolean> {
-    const applicationId = await this.getApplicationByStudentId(studentId);
-
-    if (!applicationId) {
-      throw new Error("Application not found");
-    }
-
+export class ReportsService implements IReportsService { 
+  async submitReport(type: string, title: string, attachmentUrl: string): Promise<boolean> {
     try {
-      return await db.transaction(async (tx) => {
-        const result = await tx
-          .insert(attachments)
-          .values({ applicationId, type: "report", attachmentUrl })
-          .returning();
-
-        const attachment = result[0];
-
-        await tx
-          .insert(reports)
-          .values({ applicationId, title, attachmentId: attachment.attachmentId });
-
-        return true;
-      });
+      await db
+        .insert(reports)
+        .values({ type, title, attachmentUrl });
+      return true;
     } catch (error) {
       console.error("Error submitting report:", error);
       throw error;
     }
   }
 
-  async getReport(studentId: number): Promise<GetReportDTO | null> {
-    const applicationId = await this.getApplicationByStudentId(studentId);
-
-    if (!applicationId) {
-      return null;
-    }
-
+  async getReport(type: string): Promise<GetReportDTO | null> {
     const report = await db
       .select()
       .from(reports)
-      .innerJoin(attachments, eq(attachments.attachmentId, reports.attachmentId))
-      .where(eq(reports.applicationId, applicationId));
-
+      .where(eq(reports.type, type));
     if (report.length === 0) {
       return null;
     }
-
     return {
-      applicationId: report[0].reports.applicationId,
-      reportId: report[0].reports.reportId,
-      title: report[0].reports.title,
-      attachmentUrl: report[0].attachments.attachmentUrl,
+      reportId: report[0].reportId,
+      type: report[0].type,
+      title: report[0].title,
+      attachmentUrl: report[0].attachmentUrl,
     };
-  }
-
-  private async getApplicationByStudentId(studentId: number): Promise<number | null> {
-    const application = await db.query.applications.findFirst({
-      where(f, { eq }) {
-        return eq(f.studentId, studentId);
-      },
-      columns: { applicationId: true },
-    });
-
-    if (!application) {
-      return null;
-    }
-
-    return application.applicationId;
   }
 }
