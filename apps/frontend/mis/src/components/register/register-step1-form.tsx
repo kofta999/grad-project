@@ -18,6 +18,7 @@ import { EyeIcon, EyeOffIcon } from "lucide-react";
 import DatePicker from "@/components/ui/date-picker";
 import { RegisterStep1Type } from "@/lib/types";
 import { usePathname } from "next/navigation";
+import { SpacingWrapper } from "../ui/spacing-wrapper";
 
 interface Step1Props {
   formik: FormikProps<RegisterStep1Type>;
@@ -39,7 +40,7 @@ export default function RegisterStep1Form({ formik }: Step1Props) {
           <CardContent>
             <CardHeader>المعلومات الأساسية</CardHeader>
             <CardGrid>
-              <div className="space-y-2">
+              <SpacingWrapper>
                 <Label>
                   الاسم الرباعي (بالعربية)
                   {pathname === "/register" && <span className="text-red-500">*</span>}
@@ -56,8 +57,8 @@ export default function RegisterStep1Form({ formik }: Step1Props) {
                     <>{formik.errors.fullNameAr}</>
                   </p>
                 )}
-              </div>
-              <div className="space-y-2">
+              </SpacingWrapper>
+              <SpacingWrapper>
                 <Label>
                   الاسم الرباعي (بالانجليزية)
                   {pathname === "/register" && <span className="text-red-500">*</span>}
@@ -74,8 +75,8 @@ export default function RegisterStep1Form({ formik }: Step1Props) {
                     <>{formik.errors.fullNameEn}</>
                   </p>
                 )}
-              </div>
-              <div className="space-y-2">
+              </SpacingWrapper>
+              <SpacingWrapper>
                 <Label>
                   النوع (الجنس)
                   {pathname === "/register" && <span className="text-red-500">*</span>}
@@ -99,8 +100,8 @@ export default function RegisterStep1Form({ formik }: Step1Props) {
                     <>{formik.errors.gender}</>
                   </p>
                 )}
-              </div>
-              <div className="space-y-2">
+              </SpacingWrapper>
+              <SpacingWrapper>
                 <Label>
                   الجنسية
                   {pathname === "/register" && <span className="text-red-500">*</span>}
@@ -117,8 +118,8 @@ export default function RegisterStep1Form({ formik }: Step1Props) {
                     <>{formik.errors.nationality}</>
                   </p>
                 )}
-              </div>
-              <div className="space-y-2 md:col-span-2 md:justify-self-center md:w-full md:max-w-[calc(100%/2)]">
+              </SpacingWrapper>
+              <SpacingWrapper className="md:col-span-2 md:justify-self-center md:w-full md:max-w-[calc(100%/2)]">
                 <Label>
                   تاريخ الميلاد
                   {pathname === "/register" && <span className="text-red-500">*</span>}
@@ -133,7 +134,7 @@ export default function RegisterStep1Form({ formik }: Step1Props) {
                     <>{formik.errors.dob}</>
                   </p>
                 )}
-              </div>
+              </SpacingWrapper>
             </CardGrid>
           </CardContent>
         </Card>
@@ -143,7 +144,7 @@ export default function RegisterStep1Form({ formik }: Step1Props) {
           <CardContent className="pt-6">
             <CardHeader className="text-lg font-semibold mb-4">معلومات الاتصال</CardHeader>
             <CardGrid>
-              <div className="space-y-2">
+              <SpacingWrapper className="space-y-2">
                 <Label>
                   البريد الإلكتروني
                   {pathname === "/register" && <span className="text-red-500">*</span>}
@@ -161,8 +162,8 @@ export default function RegisterStep1Form({ formik }: Step1Props) {
                     <>{formik.errors.email}</>
                   </p>
                 )}
-              </div>
-              <div className="space-y-2">
+              </SpacingWrapper>
+              <SpacingWrapper>
                 <Label>فاكس</Label>
                 <Input
                   type="tel"
@@ -177,8 +178,8 @@ export default function RegisterStep1Form({ formik }: Step1Props) {
                     <>{formik.errors.fax}</>
                   </p>
                 )}
-              </div>
-              <div className="space-y-2">
+              </SpacingWrapper>
+              <SpacingWrapper>
                 <Label>
                   رقم الهاتف
                   {pathname === "/register" && <span className="text-red-500">*</span>}
@@ -196,8 +197,8 @@ export default function RegisterStep1Form({ formik }: Step1Props) {
                     <>{formik.errors.phoneNoMain}</>
                   </p>
                 )}
-              </div>
-              <div className="space-y-2">
+              </SpacingWrapper>
+              <SpacingWrapper>
                 <Label>رقم هاتف آخر</Label>
                 <Input
                   type="tel"
@@ -212,7 +213,7 @@ export default function RegisterStep1Form({ formik }: Step1Props) {
                     <>{formik.errors.phoneNoSec}</>
                   </p>
                 )}
-              </div>
+              </SpacingWrapper>
             </CardGrid>
           </CardContent>
         </Card>
@@ -222,7 +223,7 @@ export default function RegisterStep1Form({ formik }: Step1Props) {
           <CardContent className="pt-6">
             <CardHeader className="text-lg font-semibold mb-4">الأمان</CardHeader>
             <CardGrid>
-              <div className="space-y-2">
+              <SpacingWrapper>
                 <Label>
                   كلمة المرور
                   {pathname === "/register" && <span className="text-red-500">*</span>}
@@ -248,9 +249,8 @@ export default function RegisterStep1Form({ formik }: Step1Props) {
                     <>{formik.errors.hashedPassword}</>
                   </p>
                 )}
-              </div>
-
-              <div className="space-y-2">
+              </SpacingWrapper>
+              <SpacingWrapper>
                 <Label>
                   تأكيد كلمة المرور
                   {pathname === "/register" && <span className="text-red-500">*</span>}
@@ -279,8 +279,8 @@ export default function RegisterStep1Form({ formik }: Step1Props) {
                     <>{formik.errors.confirmPassword}</>
                   </p>
                 )}
-              </div>
-              <div className={cn("space-y-2", { hidden: pathname !== "/register" })}>
+              </SpacingWrapper>
+              <SpacingWrapper className={cn({ hidden: pathname !== "/register" })}>
                 <Label>
                   سؤال الأمان
                   {pathname === "/register" && <span className="text-red-500">*</span>}
@@ -297,8 +297,8 @@ export default function RegisterStep1Form({ formik }: Step1Props) {
                     <>{formik.errors.secQuestion}</>
                   </p>
                 )}
-              </div>
-              <div className={cn("space-y-2", { hidden: pathname !== "/register" })}>
+              </SpacingWrapper>
+              <SpacingWrapper className={cn({ hidden: pathname !== "/register" })}>
                 <Label>
                   إجابة سؤال الأمان
                   {pathname === "/register" && <span className="text-red-500">*</span>}
@@ -315,7 +315,7 @@ export default function RegisterStep1Form({ formik }: Step1Props) {
                     <>{formik.errors.secAnswer}</>
                   </p>
                 )}
-              </div>
+              </SpacingWrapper>
             </CardGrid>
           </CardContent>
         </Card>
