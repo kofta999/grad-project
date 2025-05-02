@@ -1,16 +1,14 @@
 import { createRoute, z } from "@hono/zod-openapi";
 import { jsonContent, jsonContentRequired } from "stoker/openapi/helpers";
 import * as HttpStatusCodes from "stoker/http-status-codes";
-import {
-  createMessageObjectSchema,
-} from "stoker/openapi/schemas";
+import { createMessageObjectSchema } from "stoker/openapi/schemas";
 import { NotFoundSchema, adminMiddleware } from "@/lib/constants";
-import { GetReportSchema } from "@/dtos/get-report.dto";
+import { GetReportsSchema } from "@/dtos/get-reports.dto";
 
 const tags = ["Reports"];
 
 export const submitReport = createRoute({
-  path: "/reports",
+  path: "/",
   method: "post",
   middleware: adminMiddleware,
   tags,
@@ -19,10 +17,10 @@ export const submitReport = createRoute({
       z.object({
         type: z.string(),
         title: z.string(),
-        attachmentUrl: z.string()
+        attachmentUrl: z.string(),
       }),
       "Report submission data"
-    )
+    ),
   },
   responses: {
     [HttpStatusCodes.OK]: jsonContent(
@@ -32,35 +30,24 @@ export const submitReport = createRoute({
     [HttpStatusCodes.FORBIDDEN]: jsonContent(
       createMessageObjectSchema("Failed to submit report"),
       "Failed to submit report"
-    )
-  }
+    ),
+  },
 });
 
 export const getReport = createRoute({
-  path: "/reports",
+  path: "/",
   method: "get",
   middleware: adminMiddleware,
-  tags,
-  request: { 
-    body: jsonContentRequired( 
-      z.object({ 
-        type: z.string(),
-        title: z.string(),
-        attachmentUrl: z.string()
-      }),
-      "Report retrieval data"
-    )
+  request: {
+    query: z.object({
+      type: z.string().optional(),
+    }),
   },
+  tags,
   responses: {
-    [HttpStatusCodes.OK]: jsonContent(
-      GetReportSchema,
-      "Report details"
-    ),
-    [HttpStatusCodes.NOT_FOUND]: jsonContent(
-      NotFoundSchema,
-      "Report not found"
-    )
-  }
+    [HttpStatusCodes.OK]: jsonContent(GetReportsSchema, "Report details"),
+    [HttpStatusCodes.NOT_FOUND]: jsonContent(NotFoundSchema, "Report not found"),
+  },
 });
 
 export type SubmitReportRoute = typeof submitReport;
