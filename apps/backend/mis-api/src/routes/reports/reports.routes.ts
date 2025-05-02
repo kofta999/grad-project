@@ -10,6 +10,7 @@ const tags = ["Reports"];
 export const submitReport = createRoute({
   path: "/",
   method: "post",
+  summary: "Submit Report",
   middleware: adminMiddleware,
   tags,
   request: {
@@ -37,6 +38,7 @@ export const submitReport = createRoute({
 export const getReport = createRoute({
   path: "/",
   method: "get",
+  summary: "Get Reports",
   middleware: adminMiddleware,
   request: {
     query: z.object({
