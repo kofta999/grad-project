@@ -17,20 +17,21 @@ import { useState } from "react";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 import DatePicker from "@/components/ui/date-picker";
 import { RegisterStep1Type } from "@/lib/types";
+import { usePathname } from "next/navigation";
 
 interface Step1Props {
   formik: FormikProps<RegisterStep1Type>;
 }
 
 export default function RegisterStep1Form({ formik }: Step1Props) {
-  const { role } = JSON.parse(localStorage.getItem("loggedInUser") || "{}");
+  const pathname = usePathname();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   return (
     <Container>
       <ContainerTitle>
-        {role === "admin" ? "تعديل بيانات الطالب" : "انشاء حساب جديد"}
+        {pathname === "/register" ? "انشاء حساب جديد" : "تعديل بيانات الطالب"}
       </ContainerTitle>
       <form onSubmit={formik.handleSubmit}>
         {/* Basic Information */}
@@ -41,7 +42,7 @@ export default function RegisterStep1Form({ formik }: Step1Props) {
               <div className="space-y-2">
                 <Label>
                   الاسم الرباعي (بالعربية)
-                  {role === "student" && <span className="text-red-500">*</span>}
+                  {pathname === "/register" && <span className="text-red-500">*</span>}
                 </Label>
                 <Input
                   name="fullNameAr"
@@ -59,7 +60,7 @@ export default function RegisterStep1Form({ formik }: Step1Props) {
               <div className="space-y-2">
                 <Label>
                   الاسم الرباعي (بالانجليزية)
-                  {role === "student" && <span className="text-red-500">*</span>}
+                  {pathname === "/register" && <span className="text-red-500">*</span>}
                 </Label>
                 <Input
                   name="fullNameEn"
@@ -77,7 +78,7 @@ export default function RegisterStep1Form({ formik }: Step1Props) {
               <div className="space-y-2">
                 <Label>
                   النوع (الجنس)
-                  {role === "student" && <span className="text-red-500">*</span>}
+                  {pathname === "/register" && <span className="text-red-500">*</span>}
                 </Label>
                 <Select
                   value={formik.values.gender ? "male" : "female"}
@@ -102,7 +103,7 @@ export default function RegisterStep1Form({ formik }: Step1Props) {
               <div className="space-y-2">
                 <Label>
                   الجنسية
-                  {role === "student" && <span className="text-red-500">*</span>}
+                  {pathname === "/register" && <span className="text-red-500">*</span>}
                 </Label>
                 <Input
                   name="nationality"
@@ -120,7 +121,7 @@ export default function RegisterStep1Form({ formik }: Step1Props) {
               <div className="space-y-2 md:col-span-2 md:justify-self-center md:w-full md:max-w-[calc(100%/2)]">
                 <Label>
                   تاريخ الميلاد
-                  {role === "student" && <span className="text-red-500">*</span>}
+                  {pathname === "/register" && <span className="text-red-500">*</span>}
                 </Label>
                 <DatePicker
                   value={formik.values.dob ? new Date(formik.values.dob) : undefined}
@@ -145,7 +146,7 @@ export default function RegisterStep1Form({ formik }: Step1Props) {
               <div className="space-y-2">
                 <Label>
                   البريد الإلكتروني
-                  {role === "student" && <span className="text-red-500">*</span>}
+                  {pathname === "/register" && <span className="text-red-500">*</span>}
                 </Label>
                 <Input
                   type="email"
@@ -180,7 +181,7 @@ export default function RegisterStep1Form({ formik }: Step1Props) {
               <div className="space-y-2">
                 <Label>
                   رقم الهاتف
-                  {role === "student" && <span className="text-red-500">*</span>}
+                  {pathname === "/register" && <span className="text-red-500">*</span>}
                 </Label>
                 <Input
                   type="tel"
@@ -224,7 +225,7 @@ export default function RegisterStep1Form({ formik }: Step1Props) {
               <div className="space-y-2">
                 <Label>
                   كلمة المرور
-                  {role === "student" && <span className="text-red-500">*</span>}
+                  {pathname === "/register" && <span className="text-red-500">*</span>}
                 </Label>
                 <Input
                   type={showPassword ? "text" : "password"}
@@ -252,7 +253,7 @@ export default function RegisterStep1Form({ formik }: Step1Props) {
               <div className="space-y-2">
                 <Label>
                   تأكيد كلمة المرور
-                  {role === "student" && <span className="text-red-500">*</span>}
+                  {pathname === "/register" && <span className="text-red-500">*</span>}
                 </Label>
                 <Input
                   type={showConfirmPassword ? "text" : "password"}
@@ -279,10 +280,10 @@ export default function RegisterStep1Form({ formik }: Step1Props) {
                   </p>
                 )}
               </div>
-              <div className={cn("space-y-2", { hidden: role === "admin" })}>
+              <div className={cn("space-y-2", { hidden: pathname !== "/register" })}>
                 <Label>
                   سؤال الأمان
-                  {role === "student" && <span className="text-red-500">*</span>}
+                  {pathname === "/register" && <span className="text-red-500">*</span>}
                 </Label>
                 <Input
                   name="secQuestion"
@@ -297,10 +298,10 @@ export default function RegisterStep1Form({ formik }: Step1Props) {
                   </p>
                 )}
               </div>
-              <div className={cn("space-y-2", { hidden: role === "admin" })}>
+              <div className={cn("space-y-2", { hidden: pathname !== "/register" })}>
                 <Label>
                   إجابة سؤال الأمان
-                  {role === "student" && <span className="text-red-500">*</span>}
+                  {pathname === "/register" && <span className="text-red-500">*</span>}
                 </Label>
                 <Input
                   name="secAnswer"
@@ -321,7 +322,7 @@ export default function RegisterStep1Form({ formik }: Step1Props) {
 
         <div className="flex justify-center items-center">
           <Button className="px-8 py-2 bg-mainColor hover:bg-blue-700 text-white" type="submit">
-            {role === "admin" ? "تعديل" : "التالي"}
+            {pathname === "/register" ? "التالي" : "تعديل"}
           </Button>
         </div>
       </form>
