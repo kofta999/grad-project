@@ -641,3 +641,10 @@ $$;
 
 CREATE TRIGGER register_course_trigger before insert ON course_registrations FOR each ROW
 EXECUTE function check_course_availability ();
+
+CREATE TABLE "reports" ( 
+    "report_id" serial PRIMARY KEY, 
+    "type" TEXT NOT NULL,
+    "title" TEXT NOT NULL,
+    "attachment_url" TEXT NOT NULL
+);
