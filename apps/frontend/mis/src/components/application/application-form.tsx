@@ -3,24 +3,20 @@
 import { useEffect, useState } from "react";
 import { InferRequestType, InferResponseType } from "@repo/mis-api";
 import { apiClient } from "@/lib/client";
-import Step1 from "./step1";
-import Step2 from "./step2";
 import { Progress } from "@/components/ui/progress";
 import toast, { Toaster } from "react-hot-toast";
 import { useFormik } from "formik";
-import Step3 from "./step3";
 import { useRouter } from "next/navigation";
 import { useApplicationIdContext } from "@/context/application-id-context";
+import ApplicationStep1Form from "./application-step1-form";
+import ApplicationStep2Form from "./application-step2-form";
+import ApplicationStep3Form from "./application-step3-form";
 import {
-  FormStep2Type,
-  FormStep3Type,
-  FormStep1Type,
-  step1Schema,
-  step2Schema,
-  step3Schema,
-} from "../validators";
-
-export type FormType = InferRequestType<typeof apiClient.students.me.applications.$post>["json"];
+  ApplicationStep1Schema,
+  ApplicationStep2Schema,
+  ApplicationStep3Schema,
+} from "@/lib/schemas";
+import { ApplicationStep2Type, ApplicationStep3Type, ApplicationStep1Type } from "@/lib/types";
 
 export type InitialFormDataType = {
   currentAcademicYears: InferResponseType<(typeof apiClient)["academic-years"]["$get"]>;
@@ -51,7 +47,7 @@ export default function ApplicationForm() {
     }
   };
 
-  const handleStep2Submit = async (values: FormStep2Type) => {
+  const handleStep2Submit = async (values: ApplicationStep2Type) => {
     try {
       await formikStep2.validateForm();
       if (Object.keys(formikStep2.errors).length === 0) {
@@ -91,7 +87,7 @@ export default function ApplicationForm() {
     }
   };
 
-  const handleStep3Submit = async (values: FormStep3Type) => {
+  const handleStep3Submit = async (values: ApplicationStep3Type) => {
     try {
       await formikStep3.validateForm();
       if (Object.keys(formikStep3.errors).length === 0) {
@@ -128,7 +124,7 @@ export default function ApplicationForm() {
     }
   };
 
-  let formikStep1 = useFormik<FormStep1Type>({
+  let formikStep1 = useFormik<ApplicationStep1Type>({
     initialValues: {
       permanentAddress: {
         city: "",
@@ -147,11 +143,11 @@ export default function ApplicationForm() {
         address: "",
       },
     },
-    validationSchema: step1Schema,
+    validationSchema: ApplicationStep1Schema,
     onSubmit: handleStep1Submit,
   });
 
-  let formikStep2 = useFormik<FormStep2Type>({
+  let formikStep2 = useFormik<ApplicationStep2Type>({
     initialValues: {
       qualification: {
         country: "",
@@ -173,18 +169,18 @@ export default function ApplicationForm() {
         departmentId: 0,
       },
     },
-    validationSchema: step2Schema,
+    validationSchema: ApplicationStep2Schema,
     onSubmit: handleStep2Submit,
   });
 
-  let formikStep3 = useFormik<FormStep3Type>({
+  let formikStep3 = useFormik<ApplicationStep3Type>({
     initialValues: {
       attachmentType: "",
       // @ts-ignore idk
       attachmentFile: null as File | null,
       attachments: [] as { type: string; attachmentUrl: string }[],
     },
-    validationSchema: step3Schema,
+    validationSchema: ApplicationStep3Schema,
     onSubmit: handleStep3Submit,
   });
 
@@ -220,13 +216,17 @@ export default function ApplicationForm() {
     <>
       <Progress value={((step - 1) / 3) * 100} className="sticky top-0 z-40" />
 
-      {step === 1 && <Step1 formik={formikStep1} />}
+      {step === 1 && <ApplicationStep1Form formik={formikStep1} />}
 
       {step === 2 && (
-        <Step2 goPrevStep={() => setStep(1)} formik={formikStep2} initialData={initialData} />
+        <ApplicationStep2Form
+          goPrevStep={() => setStep(1)}
+          formik={formikStep2}
+          initialData={initialData}
+        />
       )}
 
-      {step === 3 && <Step3 goPrevStep={() => setStep(2)} formik={formikStep3} />}
+      {step === 3 && <ApplicationStep3Form goPrevStep={() => setStep(2)} formik={formikStep3} />}
 
       <Toaster />
     </>

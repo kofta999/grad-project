@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import toast, { Toaster } from "react-hot-toast";
 import { Card, CardContent, CardGrid, CardHeader } from "@/components/ui/card";
 import {
   Select,
@@ -12,14 +11,14 @@ import {
 } from "@/components/ui/select";
 import { MapPin, Phone, User, Mail } from "lucide-react";
 import { Container, ContainerTitle } from "@/components/ui/container";
-import { FormStep1Type } from "../validators";
 import { FormikProps } from "formik";
+import { ApplicationStep1Type } from "@/lib/types";
 
 interface Step1Props {
-  formik: FormikProps<FormStep1Type>;
+  formik: FormikProps<ApplicationStep1Type>;
 }
 
-export default function Step1({ formik }: Step1Props) {
+export default function ApplicationStep1Form({ formik }: Step1Props) {
   return (
     <Container>
       <ContainerTitle>بيانات التسجيل</ContainerTitle>

@@ -16,7 +16,7 @@ export default function NotFound() {
 
         {/* Action button */}
         <Button asChild variant="default" className="bg-blue-600 hover:bg-blue-700 text-white">
-          <Link href="/">
+          <Link href="/dashboard">
             <ArrowLeft className="mr-2 h-4 w-4 transform rotate-180" />
             العودة إلى الصفحة الرئيسية
           </Link>

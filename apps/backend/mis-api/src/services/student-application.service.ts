@@ -10,9 +10,15 @@ import {
 import { CreateApplicationDTO } from "@/dtos/create-application.dto";
 import { SaveAttachmentsDTO } from "@/dtos/save-attachment.dto";
 import { ApplicationService } from "./application.service";
+import { and, eq } from "drizzle-orm";
+import { UpdateApplicationDTO } from "@/dtos/update-application.dto";
 
 export interface IStudentApplicationService {
   createApplication(studentId: number, application: CreateApplicationDTO): Promise<number>;
+  updateApplication(
+    applicationId: number,
+    updatedApplicationDetails: UpdateApplicationDTO
+  ): Promise<number>;
   saveApplicationAttachments(attachments: SaveAttachmentsDTO): Promise<void>;
 }
 
@@ -61,5 +67,53 @@ export class StudentApplicationService
     );
 
     await Promise.all(promises);
+  }
+
+  async updateApplication(
+    applicationId: number,
+    {
+      currentAddress,
+      emergencyContact,
+      permanentAddress,
+      qualification,
+      registration,
+    }: UpdateApplicationDTO
+  ): Promise<number> {
+    if (currentAddress) {
+      await db
+        .update(addresses)
+        .set({ ...currentAddress, type: "current" })
+        .where(and(eq(addresses.applicationId, applicationId), eq(addresses.type, "current")));
+    }
+
+    if (permanentAddress) {
+      await db
+        .update(addresses)
+        .set({ ...permanentAddress, type: "permanent" })
+        .where(and(eq(addresses.applicationId, applicationId), eq(addresses.type, "permanent")));
+    }
+
+    if (qualification) {
+      await db
+        .update(academicQualifications)
+        .set({ ...qualification })
+        .where(eq(academicQualifications.applicationId, applicationId));
+    }
+
+    if (registration) {
+      await db
+        .update(registerations)
+        .set({ ...registration })
+        .where(eq(registerations.applicationId, applicationId));
+    }
+
+    if (emergencyContact) {
+      await db
+        .update(emergencyContacts)
+        .set({ ...emergencyContact })
+        .where(eq(emergencyContacts.applicationId, applicationId));
+    }
+
+    return applicationId;
   }
 }

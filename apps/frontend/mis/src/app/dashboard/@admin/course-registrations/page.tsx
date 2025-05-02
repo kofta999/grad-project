@@ -25,7 +25,7 @@ import { apiClient } from "@/lib/client";
 import toast from "react-hot-toast";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
-import RegisterCourseDialog from "../_components/register-course-dialog";
+import RegisterCourseDialog from "@/components/register-course-dialog";
 import { InferResponseType } from "@repo/mis-api";
 import { StudentType, ApplicationType } from "@/lib/types";
 
@@ -37,7 +37,7 @@ type CoursesType = RegisteredCourse[];
 
 type SemesterType = "first" | "second" | "third";
 
-export default function currentCourses() {
+export default function Page() {
   const [student, setStudent] = useState<StudentType | null>(null);
   const [application, setApplication] = useState<ApplicationType | null>(null);
 
@@ -149,11 +149,14 @@ export default function currentCourses() {
 
   return (
     <Container>
-      <SearchBar
-        placeholder="ابحث هنا..."
-        onChange={(value) => handleSearch(value as string)}
-        className="mt-10 lg:mt-0"
-      />
+      <Card>
+        <SearchBar
+          placeholder="ابحث هنا..."
+          onChange={(value) => handleSearch(value as string)}
+          className=""
+        />
+      </Card>
+
       <Card>
         <CardContent>
           <div className="flex flex-col mb-6 md:flex-row md:gap-6">

@@ -31,23 +31,6 @@ export const getStudentDetails: AppRouteHandler<routes.GetStudentDetailsRoute> =
   return c.json(student, HttpStatusCodes.OK);
 };
 
-export const editStudentInfo: AppRouteHandler<routes.EditStudentInfoRoute> = async (c) => {
-  const studentId = c.var.session.get("id");
-
-  if (!studentId) {
-    return c.json({ message: "Unauthorized" }, HttpStatusCodes.UNAUTHORIZED);
-  }
-
-  const updatedData = c.req.valid("json");
-  const success = await studentService.updateStudentInfo(studentId, updatedData);
-
-  if (!success) {
-    return c.json({ message: "Student not found" }, HttpStatusCodes.NOT_FOUND);
-  }
-
-  return c.json({ message: "Student info updated successfully" }, HttpStatusCodes.OK);
-};
-
 // Course handlers
 export const getRegisteredCourses: AppRouteHandler<routes.GetRegisteredCourses> = async (c) => {
   const { academicYearId, semester } = c.req.valid("query");
@@ -92,6 +75,29 @@ export const createApplication: AppRouteHandler<routes.CreateApplicationRoute> =
   );
 
   return c.json({ success: true, applicationId }, HttpStatusCodes.OK);
+};
+
+export const updateApplication: AppRouteHandler<routes.UpdateApplicationRoute> = async (c) => {
+  let updatedApplicationData = c.req.valid("json");
+  // Should be there because of middleware
+  let studentId = c.var.session.get("id")!;
+
+  const application = await studentApplicationService.getApplicationByStudentId(studentId);
+
+  if (!application) {
+    return c.json({ message: "Application not found" }, HttpStatusCodes.NOT_FOUND);
+  }
+
+  if (application.isAccepted) {
+    return c.json({ message: "Application already accepted" }, HttpStatusCodes.FORBIDDEN);
+  }
+
+  await studentApplicationService.updateApplication(
+    application.applicationId,
+    updatedApplicationData
+  );
+
+  return c.json({ success: true, applicationId: application.applicationId }, HttpStatusCodes.OK);
 };
 
 export const saveApplicationAttachments: AppRouteHandler<
@@ -194,9 +200,9 @@ export const getThesis: AppRouteHandler<routes.GetThesisRoute> = async (c) => {
 };
 
 export const getStudentDetailsById: AppRouteHandler<routes.GetStudentDetailsById> = async (c) => {
-  const studentId = c.req.param("id");
+  const studentId = c.req.valid("param")["id"];
 
-  const student = await studentService.getStudentDetailsByStudentId(parseInt(studentId, 10));
+  const student = await studentService.getStudentDetailsByStudentId(studentId);
 
   if (!student) {
     return c.json({ message: "Student not found" }, HttpStatusCodes.NOT_FOUND);
@@ -205,5 +211,19 @@ export const getStudentDetailsById: AppRouteHandler<routes.GetStudentDetailsById
   return c.json(student, HttpStatusCodes.OK);
 };
 
+export const editStudentInfo: AppRouteHandler<routes.EditStudentInfoRoute> = async (c) => {
+  const studentId = c.req.valid("param")["id"];
 
-// Remove the report-related handlers (submitReport and getReport)
+  if (!studentId) {
+    return c.json({ message: "Unauthorized" }, HttpStatusCodes.UNAUTHORIZED);
+  }
+
+  const updatedData = c.req.valid("json");
+  const success = await studentService.updateStudentInfo(studentId, updatedData);
+
+  if (!success) {
+    return c.json({ message: "Student not found" }, HttpStatusCodes.NOT_FOUND);
+  }
+
+  return c.json({ message: "Student info updated successfully" }, HttpStatusCodes.OK);
+};

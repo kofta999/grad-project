@@ -1,3 +1,4 @@
+"use client";
 import {
   GraduationCap,
   School,
@@ -10,15 +11,9 @@ import {
   MapPin,
   Mail,
 } from "lucide-react";
-import { apiClient } from "@/lib/client";
-import { InferResponseType } from "@repo/mis-api";
 import { ApplicationType } from "@/lib/types";
 
-export default async function ApplicationDetails({
-  application,
-}: {
-  application: ApplicationType;
-}) {
+export default function ApplicationDetails({ application }: { application: ApplicationType }) {
   return (
     <>
       {/* نظرة عامة */}

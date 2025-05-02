@@ -113,7 +113,7 @@ INSERT INTO
 VALUES
 	(2, TRUE),
 	(1, TRUE),
-	(3, TRUE);
+	(3, FALSE);
 
 -- Insert sample registrations
 INSERT INTO
@@ -332,39 +332,39 @@ VALUES
     ); -- Master's student registered for EMPE 604 (master's level course)
 
 -- Register PhD student (application 3) for PhD level courses
-INSERT INTO
-    course_registrations (
-        course_id,
-        application_id,
-        semester,
-        academic_year_id
-    )
-VALUES
-    (
-        (SELECT course_id FROM courses WHERE code = 'EMPE 701'),
-        3,
-        'first',
-        1
-    ), -- PhD student registered for EMPE 701 (required PhD course)
-    (
-        (SELECT course_id FROM courses WHERE code = 'EMPE 702'),
-        3,
-        'first',
-        1
-    ), -- PhD student registered for EMPE 702 (required PhD course)
-    (
-        (SELECT course_id FROM courses WHERE code = 'EMPE 704'),
-        3,
-        'second',
-        1
-    ); -- PhD student registered for EMPE 704 (PhD elective course)
+-- INSERT INTO
+--     course_registrations (
+--         course_id,
+--         application_id,
+--         semester,
+--         academic_year_id
+--     )
+-- VALUES
+--     (
+--         (SELECT course_id FROM courses WHERE code = 'EMPE 701'),
+--         3,
+--         'first',
+--         1
+--     ), -- PhD student registered for EMPE 701 (required PhD course)
+--     (
+--         (SELECT course_id FROM courses WHERE code = 'EMPE 702'),
+--         3,
+--         'first',
+--         1
+--     ), -- PhD student registered for EMPE 702 (required PhD course)
+--     (
+--         (SELECT course_id FROM courses WHERE code = 'EMPE 704'),
+--         3,
+--         'second',
+--         1
+--     ); -- PhD student registered for EMPE 704 (PhD elective course)
 
 -- Insert grades for the registered courses
 INSERT INTO
     course_results (course_registration_id, grade)
 VALUES
     (1, 85), -- Application 2 got 85 in ELEC 600
-    (2, 88), -- Application 2 got 88 in ELEC 601
-    (5, 92), -- Application 3 got 92 in EMPE 701
-    (7, 87); -- Application 3 got 87 in EMPE 704
+    (2, 88); -- Application 2 got 88 in ELEC 601
+    -- (5, 92), -- Application 3 got 92 in EMPE 701
+    -- (7, 87); -- Application 3 got 87 in EMPE 704
 -- Application 2 got 88 in EMPE 506
