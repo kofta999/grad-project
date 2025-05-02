@@ -17,7 +17,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useUserContext } from "@/context/UserContext";
+import { useUserContext } from "@/context/user-context";
 import { useRouter } from "next/navigation";
 import { apiClient } from "@/lib/client";
 import toast, { Toaster } from "react-hot-toast";
@@ -69,7 +69,7 @@ const ADMIN_SIDEBAR_ITEMS = [
   },
   {
     title: "تسجيل المواد",
-    path: "/dashboard/courseRegistrations",
+    path: "/dashboard/course-registrations",
     icon: <ChartLine />,
   },
   {

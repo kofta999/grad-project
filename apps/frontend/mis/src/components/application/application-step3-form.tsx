@@ -3,18 +3,17 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Upload, File, Trash2 } from "lucide-react";
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { FormikProps } from "formik";
-import { FormStep3Type } from "../../dashboard/@student/applications/validators";
 import { apiClient } from "@/lib/client";
+import { ApplicationStep3Type } from "@/lib/types";
 
 interface Step3Props {
   goPrevStep: () => void;
-  formik: FormikProps<FormStep3Type>;
+  formik: FormikProps<ApplicationStep3Type>;
 }
 
-export default function Step3({ goPrevStep, formik }: Step3Props) {
+export default function ApplicationStep3Form({ goPrevStep, formik }: Step3Props) {
   const { values, setFieldValue } = formik;
 
   const handleAttachmentUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {

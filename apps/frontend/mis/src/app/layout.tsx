@@ -1,7 +1,7 @@
 import "./styles.css";
 import { Cairo } from "next/font/google";
 import { cn } from "@/lib/utils";
-import { UserContextProvider } from "@/context/UserContext";
+import { UserContextProvider } from "@/context/user-context";
 
 const cairo = Cairo({
   subsets: ["arabic", "latin"],

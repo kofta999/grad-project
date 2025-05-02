@@ -1,3 +1,5 @@
+import { redirect } from "next/navigation";
+
 export default async function Page() {
-  return <div>Welcome to admin dashboard</div>;
+  return redirect("/dashboard/applications");
 }

@@ -1,19 +1,19 @@
 "use client";
 import { useParams } from "next/navigation";
-import StudentDetails from "@/app/_components/student-details";
-import ApplicationDetails from "@/app/_components/application-details";
-import useApplicationDataForAdmin from "@/Hooks/useApplicationDataForAdmin";
+import useApplicationDataForAdmin from "@/hooks/use-application-data-for-admin";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import ApplicationDetails from "@/components/application/application-details";
+import StudentDetails from "@/components/student/student-details";
 
-export default function dataPage() {
+export default function Page() {
   const { id } = useParams();
   const { application, student } = useApplicationDataForAdmin(id as string);
 
   const router = useRouter();
 
   const handleEditStudent = (applicationId: number) => {
-    router.push(`/dashboard/update/${applicationId}`);
+    router.push(`/dashboard/edit-student/${applicationId}`);
   };
 
   return (

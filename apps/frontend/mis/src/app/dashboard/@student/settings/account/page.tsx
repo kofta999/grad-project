@@ -2,11 +2,11 @@
 import React, { useEffect } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import AccountForm from "../../../../_components/account-form";
+import StudentAccountSettingsForm from "@/components/student/student-account-settings-form";
 import { apiClient } from "@/lib/client";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
-import useUser from "@/Hooks/useUser";
+import useUser from "@/hooks/use-user";
 
 const validationSchema = Yup.object().shape({
   fullNameAr: Yup.string()
@@ -26,7 +26,7 @@ const validationSchema = Yup.object().shape({
     .required("رقم الهاتف الرئيسي مطلوب"),
 });
 
-export default function AccountPage() {
+export default function Page() {
   const router = useRouter();
   const { personalData } = useUser();
   const id = personalData?.studentId;
@@ -78,5 +78,5 @@ export default function AccountPage() {
     }
   }, [personalData]);
 
-  return <AccountForm formik={formik} />;
+  return <StudentAccountSettingsForm formik={formik} />;
 }

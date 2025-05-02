@@ -1,5 +1,5 @@
 import { getServerApiClient } from "@/lib/client";
-import ApplicationForm from "./_components/application-form";
+import ApplicationForm from "@/components/application/application-form";
 import { redirect } from "next/navigation";
 
 // async function getInitialData() {

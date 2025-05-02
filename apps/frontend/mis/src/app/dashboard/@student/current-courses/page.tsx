@@ -30,7 +30,7 @@ interface AcademicYear {
 }
 type SemesterType = "first" | "second" | "third";
 
-export default function CurrentCourses() {
+export default function Page() {
   const [academicYear, setAcademicYear] = useState<AcademicYear | null>(null);
   const [courses, setCourses] = useState<CoursesType>([]);
 
