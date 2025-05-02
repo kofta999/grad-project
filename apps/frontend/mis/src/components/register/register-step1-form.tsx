@@ -19,6 +19,7 @@ import DatePicker from "@/components/ui/date-picker";
 import { RegisterStep1Type } from "@/lib/types";
 import { usePathname } from "next/navigation";
 import { SpacingWrapper } from "../ui/spacing-wrapper";
+import { ErrorMessage } from "../ui/error-message";
 
 interface Step1Props {
   formik: FormikProps<RegisterStep1Type>;
@@ -53,9 +54,7 @@ export default function RegisterStep1Form({ formik }: Step1Props) {
                   icon={<User className="h-4 w-4" />}
                 />
                 {formik.touched.fullNameAr && formik.errors.fullNameAr && (
-                  <p className="text-red-500 text-sm">
-                    <>{formik.errors.fullNameAr}</>
-                  </p>
+                  <ErrorMessage message={formik.errors.fullNameAr} />
                 )}
               </SpacingWrapper>
               <SpacingWrapper>
@@ -71,9 +70,7 @@ export default function RegisterStep1Form({ formik }: Step1Props) {
                   icon={<User className="h-4 w-4" />}
                 />
                 {formik.touched.fullNameEn && formik.errors.fullNameEn && (
-                  <p className="text-red-500 text-sm">
-                    <>{formik.errors.fullNameEn}</>
-                  </p>
+                  <ErrorMessage message={formik.errors.fullNameEn} />
                 )}
               </SpacingWrapper>
               <SpacingWrapper>
@@ -96,9 +93,7 @@ export default function RegisterStep1Form({ formik }: Step1Props) {
                   </SelectContent>
                 </Select>
                 {formik.touched.gender && formik.errors.gender && (
-                  <p className="text-red-500 text-sm">
-                    <>{formik.errors.gender}</>
-                  </p>
+                  <ErrorMessage message={formik.errors.gender} />
                 )}
               </SpacingWrapper>
               <SpacingWrapper>
@@ -114,9 +109,7 @@ export default function RegisterStep1Form({ formik }: Step1Props) {
                   icon={<Flag className="h-4 w-4" />}
                 />
                 {formik.touched.nationality && formik.errors.nationality && (
-                  <p className="text-red-500 text-sm">
-                    <>{formik.errors.nationality}</>
-                  </p>
+                  <ErrorMessage message={formik.errors.nationality} />
                 )}
               </SpacingWrapper>
               <SpacingWrapper className="md:col-span-2 md:justify-self-center md:w-full md:max-w-[calc(100%/2)]">
@@ -130,9 +123,7 @@ export default function RegisterStep1Form({ formik }: Step1Props) {
                   placeholder="اختر تاريخ الميلاد"
                 />
                 {formik.touched.dob && formik.errors.dob && (
-                  <p className="text-red-500 text-sm">
-                    <>{formik.errors.dob}</>
-                  </p>
+                  <ErrorMessage message={formik.errors.dob as string} />
                 )}
               </SpacingWrapper>
             </CardGrid>
@@ -158,9 +149,7 @@ export default function RegisterStep1Form({ formik }: Step1Props) {
                   icon={<Mail className="h-4 w-4" />}
                 />
                 {formik.touched.email && formik.errors.email && (
-                  <p className="text-red-500 text-sm">
-                    <>{formik.errors.email}</>
-                  </p>
+                  <ErrorMessage message={formik.errors.email} />
                 )}
               </SpacingWrapper>
               <SpacingWrapper>
@@ -174,9 +163,7 @@ export default function RegisterStep1Form({ formik }: Step1Props) {
                   icon={<Printer className="h-4 w-4" />}
                 />
                 {formik.touched.fax && formik.errors.fax && (
-                  <p className="text-red-500 text-sm">
-                    <>{formik.errors.fax}</>
-                  </p>
+                  <ErrorMessage message={formik.errors.fax} />
                 )}
               </SpacingWrapper>
               <SpacingWrapper>
@@ -193,9 +180,7 @@ export default function RegisterStep1Form({ formik }: Step1Props) {
                   icon={<Phone className="h-4 w-4" />}
                 />
                 {formik.touched.phoneNoMain && formik.errors.phoneNoMain && (
-                  <p className="text-red-500 text-sm">
-                    <>{formik.errors.phoneNoMain}</>
-                  </p>
+                  <ErrorMessage message={formik.errors.phoneNoMain} />
                 )}
               </SpacingWrapper>
               <SpacingWrapper>
@@ -209,9 +194,7 @@ export default function RegisterStep1Form({ formik }: Step1Props) {
                   icon={<Phone className="h-4 w-4" />}
                 />
                 {formik.touched.phoneNoSec && formik.errors.phoneNoSec && (
-                  <p className="text-red-500 text-sm">
-                    <>{formik.errors.phoneNoSec}</>
-                  </p>
+                  <ErrorMessage message={formik.errors.phoneNoSec} />
                 )}
               </SpacingWrapper>
             </CardGrid>
@@ -245,9 +228,7 @@ export default function RegisterStep1Form({ formik }: Step1Props) {
                   }
                 />
                 {formik.touched.hashedPassword && formik.errors.hashedPassword && (
-                  <p className="text-red-500 text-sm">
-                    <>{formik.errors.hashedPassword}</>
-                  </p>
+                  <ErrorMessage message={formik.errors.hashedPassword} />
                 )}
               </SpacingWrapper>
               <SpacingWrapper>
@@ -275,9 +256,7 @@ export default function RegisterStep1Form({ formik }: Step1Props) {
                   }
                 />
                 {formik.touched.confirmPassword && formik.errors.confirmPassword && (
-                  <p className="text-red-500 text-sm">
-                    <>{formik.errors.confirmPassword}</>
-                  </p>
+                  <ErrorMessage message={formik.errors.confirmPassword} />
                 )}
               </SpacingWrapper>
               <SpacingWrapper className={cn({ hidden: pathname !== "/register" })}>
@@ -293,9 +272,7 @@ export default function RegisterStep1Form({ formik }: Step1Props) {
                   icon={<Shield className="h-4 w-4" />}
                 />
                 {formik.touched.secQuestion && formik.errors.secQuestion && (
-                  <p className="text-red-500 text-sm">
-                    <>{formik.errors.secQuestion}</>
-                  </p>
+                  <ErrorMessage message={formik.errors.secQuestion} />
                 )}
               </SpacingWrapper>
               <SpacingWrapper className={cn({ hidden: pathname !== "/register" })}>
@@ -311,9 +288,7 @@ export default function RegisterStep1Form({ formik }: Step1Props) {
                   icon={<UserCheck className="h-4 w-4" />}
                 />
                 {formik.touched.secAnswer && formik.errors.secAnswer && (
-                  <p className="text-red-500 text-sm">
-                    <>{formik.errors.secAnswer}</>
-                  </p>
+                  <ErrorMessage message={formik.errors.secAnswer} />
                 )}
               </SpacingWrapper>
             </CardGrid>
