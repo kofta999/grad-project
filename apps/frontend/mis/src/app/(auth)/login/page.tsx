@@ -13,6 +13,8 @@ import toast, { Toaster } from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { useUserContext } from "@/context/user-context";
 import { Loader } from "@/components/ui/loader";
+import { Container } from "@/components/ui/container";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 type FormState = InferRequestType<typeof apiClient.auth.login.$post>["json"];
 
@@ -77,32 +79,31 @@ export default function LoginForm() {
   };
 
   return (
-    <div className="h-screen backImg flex items-center justify-center" dir="rtl">
-      <div className="w-[80%] h-[80%] flex items-center justify-center">
-        <div className="w-1/2 h-full flex items-center justify-center">
-          <div className="w-full max-w-md space-y-2 bg-white rounded-2xl p-5 shadow-sm">
-            <div className="flex flex-col space-y-4">
-              {/* You don't need /public  */}
-              <Image
-                src="/920658.jpg"
-                alt="Faculty of Engineering Logo"
-                width={120}
-                height={120}
-                // className="w-auto h-auto"
-              />
-              <h1 className="text-2xl font-bold text-gray-900 text-center">مرحبا بك</h1>
-              <p className="text-gray-600 text-center text-sm">
-                الرجاء تسجيل الدخول للوصول إلى تجربتك التعليمية المخصصة
-              </p>
-            </div>
+    <div className="backImg">
+      <Container className="flex items-center justify-center h-screen max-w-xl">
+        <Card>
+          <CardContent>
+            <CardHeader>
+              <CardTitle>
+                <Image
+                  src="/920658.jpg"
+                  alt="Faculty of Engineering Logo"
+                  width={120}
+                  height={120}
+                />
+                <h1 className="text-2xl font-bold text-gray-900 text-center">مرحبا بك</h1>
+                <p className="text-gray-600 text-center text-sm mt-2">
+                  الرجاء تسجيل الدخول للوصول إلى تجربتك التعليمية المخصصة
+                </p>
+              </CardTitle>
+            </CardHeader>
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
-                <Label className="text-gray-700">إسم المستخدم</Label>
+                <Label className="text-gray-700">البريد الالكتروني</Label>
                 <Input
                   type="text"
-                  // placeholder="مثل: أحمد خالد"
-                  placeholder="أدخل اسم المستخدم"
+                  placeholder="أدخل البريد الالكتروني"
                   className="text-right"
                   value={formState.email}
                   name="email"
@@ -149,7 +150,6 @@ export default function LoginForm() {
                     onChange={handleInputChange}
                     value={formState.password}
                     name="password"
-                    // placeholder="7442#23"
                     placeholder="أدخل كلمة السر"
                   />
                   <button
@@ -158,9 +158,9 @@ export default function LoginForm() {
                     className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
                   >
                     {showPassword ? (
-                      <EyeIcon className="h-4 w-4" />
+                      <EyeIcon className="h-4 w-4 text-mainColor" />
                     ) : (
-                      <EyeOffIcon className="h-4 w-4" />
+                      <EyeOffIcon className="h-4 w-4 text-mainColor" />
                     )}
                   </button>
                 </div>
@@ -182,14 +182,15 @@ export default function LoginForm() {
             </form>
             <p className="mt-4 text-center text-gray-500">
               غير مسجل على الموقع ؟
-              <a href="/register" className="text-mainColor hover:underline mr-1">
+              <Link href="/register" className="text-mainColor hover:underline mr-1">
                 تسجيل حساب
-              </a>
+              </Link>
             </p>
-          </div>
-        </div>
-      </div>
-      <Toaster />
+          </CardContent>
+        </Card>
+
+        <Toaster />
+      </Container>
     </div>
   );
 }
