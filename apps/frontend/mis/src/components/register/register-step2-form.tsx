@@ -17,6 +17,10 @@ import { apiClient } from "@/lib/client";
 import { FormikProps } from "formik";
 import DatePicker from "@/components/ui/date-picker";
 import { RegisterStep2Type } from "@/lib/types";
+import { usePathname } from "next/navigation";
+import { SpacingWrapper } from "../ui/spacing-wrapper";
+import { ErrorMessage } from "../ui/error-message";
+import toast from "react-hot-toast";
 
 type Step2Props = {
   goPrevStep: () => void;
@@ -24,25 +28,34 @@ type Step2Props = {
 };
 
 export default function RegisterStep2Form({ goPrevStep, formik }: Step2Props) {
-  const { role } = JSON.parse(localStorage.getItem("loggedInUser") || "{}");
+  const pathname = usePathname();
 
   const handlePhotoUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      const res = await apiClient.auth.upload.$post({ form: { file } });
+    try {
+      const file = event.target.files?.[0];
+      if (file) {
+        const maxSizeInBytes = 2 * 1024 * 1024;
 
-      if (res.ok) {
-        const { uploadUrl } = await res.json();
-        console.log(uploadUrl);
-        formik.setFieldValue("imageUrl", uploadUrl);
+        if (file.size > maxSizeInBytes) {
+          toast.error("حجم الصورة الشخصية يجب ان لا يتجاوز 2 ميجا بايت");
+          return;
+        }
+        const res = await apiClient.auth.upload.$post({ form: { file } });
+
+        if (res.ok) {
+          const { uploadUrl } = await res.json();
+          formik.setFieldValue("imageUrl", uploadUrl);
+        }
       }
+    } catch (error) {
+      toast.error("فشل في تحميل الصورة الشخصية");
     }
   };
 
   return (
     <Container>
       <ContainerTitle>
-        {role === "admin" ? "تعديل بيانات الطالب" : "تابع انشاء الحساب"}
+        {pathname === "/register" ? "تابع انشاء الحساب" : "تعديل بيانات الطالب"}
       </ContainerTitle>
       <form onSubmit={formik.handleSubmit}>
         {/* Identity Information */}
@@ -50,10 +63,10 @@ export default function RegisterStep2Form({ goPrevStep, formik }: Step2Props) {
           <CardContent>
             <CardHeader>الهوية</CardHeader>
             <CardGrid>
-              <div className="space-y-2">
+              <SpacingWrapper>
                 <Label>
                   نوع الهوية
-                  {role === "student" && <span className="text-red-500">*</span>}
+                  {pathname === "/register" && <span className="text-red-500">*</span>}
                 </Label>
                 <Select
                   name="idType"
@@ -69,15 +82,13 @@ export default function RegisterStep2Form({ goPrevStep, formik }: Step2Props) {
                   </SelectContent>
                 </Select>
                 {formik.touched.idType && formik.errors.idType && (
-                  <p className="text-red-500 text-sm">
-                    <>{formik.errors.idType}</>
-                  </p>
+                  <ErrorMessage message={formik.errors.idType} />
                 )}
-              </div>
-              <div className="space-y-2">
+              </SpacingWrapper>
+              <SpacingWrapper>
                 <Label>
                   رقم الهوية
-                  {role === "student" && <span className="text-red-500">*</span>}
+                  {pathname === "/register" && <span className="text-red-500">*</span>}
                 </Label>
                 <Input
                   name="idNumber"
@@ -86,15 +97,13 @@ export default function RegisterStep2Form({ goPrevStep, formik }: Step2Props) {
                   icon={<CreditCard className="h-4 w-4" />}
                 />
                 {formik.touched.idNumber && formik.errors.idNumber && (
-                  <p className="text-red-500 text-sm">
-                    <>{formik.errors.idNumber}</>
-                  </p>
+                  <ErrorMessage message={formik.errors.idNumber} />
                 )}
-              </div>
-              <div className="space-y-2">
+              </SpacingWrapper>
+              <SpacingWrapper>
                 <Label>
                   تاريخ اصدار الهوية
-                  {role === "student" && <span className="text-red-500">*</span>}
+                  {pathname === "/register" && <span className="text-red-500">*</span>}
                 </Label>
                 <DatePicker
                   value={
@@ -106,15 +115,13 @@ export default function RegisterStep2Form({ goPrevStep, formik }: Step2Props) {
                   placeholder="اختر تاريخ اصدار الهوية"
                 />
                 {formik.touched.idIssuanceDate && formik.errors.idIssuanceDate && (
-                  <p className="text-red-500 text-sm">
-                    <>{formik.errors.idIssuanceDate as string}</>
-                  </p>
+                  <ErrorMessage message={formik.errors.idIssuanceDate as string} />
                 )}
-              </div>
-              <div className="space-y-2">
+              </SpacingWrapper>
+              <SpacingWrapper>
                 <Label>
                   جهة الاصدار
-                  {role === "student" && <span className="text-red-500">*</span>}
+                  {pathname === "/register" && <span className="text-red-500">*</span>}
                 </Label>
                 <Input
                   name="idAuthority"
@@ -123,11 +130,9 @@ export default function RegisterStep2Form({ goPrevStep, formik }: Step2Props) {
                   icon={<Building className="h-4 w-4" />}
                 />
                 {formik.touched.idAuthority && formik.errors.idAuthority && (
-                  <p className="text-red-500 text-sm">
-                    <>{formik.errors.idAuthority}</>
-                  </p>
+                  <ErrorMessage message={formik.errors.idAuthority} />
                 )}
-              </div>
+              </SpacingWrapper>
             </CardGrid>
           </CardContent>
         </Card>
@@ -137,10 +142,10 @@ export default function RegisterStep2Form({ goPrevStep, formik }: Step2Props) {
           <CardContent>
             <CardHeader>معلومات إضافية</CardHeader>
             <CardGrid>
-              <div className="space-y-2">
+              <SpacingWrapper>
                 <Label>
                   الحالة الاجتماعية
-                  {role === "student" && <span className="text-red-500">*</span>}
+                  {pathname === "/register" && <span className="text-red-500">*</span>}
                 </Label>
                 <Select
                   name="maritalStatus"
@@ -148,7 +153,7 @@ export default function RegisterStep2Form({ goPrevStep, formik }: Step2Props) {
                   onValueChange={(value: string) => formik.setFieldValue("martialStatus", value)}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="اختر الحالة" />
+                    <SelectValue placeholder="اختر الحالة الاجتماعية" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="single">أعزب</SelectItem>
@@ -161,17 +166,16 @@ export default function RegisterStep2Form({ goPrevStep, formik }: Step2Props) {
                 </Select>
 
                 {formik.touched.martialStatus && formik.errors.martialStatus && (
-                  <p className="text-red-500 text-sm">
-                    <>{formik.errors.martialStatus}</>
-                  </p>
+                  <ErrorMessage message={formik.errors.martialStatus} />
                 )}
-              </div>
-              <div className="space-y-2">
+              </SpacingWrapper>
+              <SpacingWrapper>
                 <Label>
                   الحالة العسكرية
-                  {role === "student" && <span className="text-red-500">*</span>}
+                  {pathname === "/register" && <span className="text-red-500">*</span>}
                 </Label>
                 <Select
+                  name="militaryStatus"
                   value={formik.values.militaryStatus}
                   onValueChange={(value: string) => formik.setFieldValue("militaryStatus", value)}
                 >
@@ -179,24 +183,22 @@ export default function RegisterStep2Form({ goPrevStep, formik }: Step2Props) {
                     <SelectValue placeholder="اختر الحالة العسكرية" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="أدى الخدمة">أدى الخدمة</SelectItem>
-                    <SelectItem value="مؤجل">مؤجل</SelectItem>
-                    <SelectItem value="معفي نهائي">معفي نهائي</SelectItem>
-                    <SelectItem value="معفي مؤقت">معفي مؤقت</SelectItem>
-                    <SelectItem value="مطلوب للتجنيد">مطلوب للتجنيد</SelectItem>
-                    <SelectItem value="لم يصدر له طلب">لم يصدر له طلب</SelectItem>
+                    <SelectItem value="completed">أدى الخدمة</SelectItem>
+                    <SelectItem value="postponed">مؤجل</SelectItem>
+                    <SelectItem value="permanent-exempt">معفي نهائي</SelectItem>
+                    <SelectItem value="temporary-exempt">معفي مؤقت</SelectItem>
+                    <SelectItem value="required">مطلوب للتجنيد</SelectItem>
+                    <SelectItem value="not-requested">لم يصدر له طلب</SelectItem>
                   </SelectContent>
                 </Select>
                 {formik.touched.militaryStatus && formik.errors.militaryStatus && (
-                  <p className="text-red-500 text-sm">
-                    <>{formik.errors.militaryStatus}</>
-                  </p>
+                  <ErrorMessage message={formik.errors.militaryStatus} />
                 )}
-              </div>
-              <div className="space-y-2">
+              </SpacingWrapper>
+              <SpacingWrapper>
                 <Label>
                   الطالب يعمل؟
-                  {role === "student" && <span className="text-red-500">*</span>}
+                  {pathname === "/register" && <span className="text-red-500">*</span>}
                 </Label>
                 <RadioGroup
                   name="isWorking"
@@ -216,12 +218,10 @@ export default function RegisterStep2Form({ goPrevStep, formik }: Step2Props) {
                   </div>
                 </RadioGroup>
                 {formik.touched.isWorking && formik.errors.isWorking && (
-                  <p className="text-red-500 text-sm">
-                    <>{formik.errors.isWorking}</>
-                  </p>
+                  <ErrorMessage message={formik.errors.isWorking} />
                 )}
-              </div>
-              <div className="space-y-2">
+              </SpacingWrapper>
+              <SpacingWrapper>
                 <Label>جهة العمل</Label>
                 <Input
                   type="text"
@@ -231,11 +231,9 @@ export default function RegisterStep2Form({ goPrevStep, formik }: Step2Props) {
                   disabled={!formik.values.isWorking}
                   icon={<Briefcase className="h-4 w-4" />}
                 />
-              </div>
+              </SpacingWrapper>
               {formik.touched.jobType && formik.errors.jobType && (
-                <p className="text-red-500 text-sm">
-                  <>{formik.errors.jobType}</>
-                </p>
+                <ErrorMessage message={formik.errors.jobType} />
               )}
             </CardGrid>
           </CardContent>
@@ -271,26 +269,25 @@ export default function RegisterStep2Form({ goPrevStep, formik }: Step2Props) {
                     onChange={handlePhotoUpload}
                   />
                 </Label>
-                <p className="text-sm text-red-500 text-center mt-2">
-                  * يجب أن لا يزيد الملف عن 2 ميجا بايت
-                </p>
+                <ErrorMessage
+                  message="* يجب أن لا يزيد الملف عن 2 ميجا بايت"
+                  className="mt-2 text-center"
+                />
               </div>
             </div>
             {formik.touched.imageUrl && formik.errors.imageUrl && (
-              <p className="text-red-500 text-sm">
-                <>{formik.errors.imageUrl}</>
-              </p>
+              <ErrorMessage message={formik.errors.imageUrl} />
             )}
           </CardContent>
         </Card>
 
         {/* Submit Buttons */}
-        <div className="flex justify-center gap-16">
+        <div className="flex justify-center items-center gap-16">
           <Button variant="outline" className="border-[#BABABA]" onClick={goPrevStep}>
             السابق
           </Button>
           <Button className="bg-mainColor hover:bg-blue-700 text-white" type="submit">
-            {role === "admin" ? "تعديل" : "التسجيل"}
+            {pathname === "/register" ? "التسجيل" : "تعديل"}
           </Button>
         </div>
       </form>

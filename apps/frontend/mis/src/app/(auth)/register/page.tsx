@@ -41,15 +41,14 @@ export default function RegistrationForm() {
           },
         });
 
-        const result = await res.json();
-        console.log("Registration successful:", result);
-        toast.success("تم التسجيل بنجاح!");
-        router.push("/login");
+        if (res.ok) {
+          toast.success("تم التسجيل بنجاح!");
+          router.push("/login");
+        }
       } else {
         toast.error("الرجاء تصحيح الأخطاء قبل المتابعة.");
       }
     } catch (err) {
-      console.error("Registration failed:", err);
       toast.error("فشل التسجيل. الرجاء المحاولة مرة أخرى.");
     }
   };
@@ -81,12 +80,13 @@ export default function RegistrationForm() {
       // @ts-ignore
       idIssuanceDate: null,
       idNumber: "",
-      idType: "national_id",
+      // @ts-ignore
+      idType: undefined,
       imageUrl: "",
       isWorking: false,
       militaryStatus: "",
       jobType: "",
-      martialStatus: "single",
+      martialStatus: undefined,
     },
     validationSchema: RegisterStep2Schema,
     onSubmit: handleStep2Submit,
