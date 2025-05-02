@@ -10,9 +10,6 @@ import toast, { Toaster } from "react-hot-toast";
 import * as Yup from "yup";
 import { apiClient } from "@/lib/client";
 
-export type FormStep1Type = Yup.InferType<typeof step1Schema>;
-export type FormStep2Type = Yup.InferType<typeof step2Schema>;
-
 const step1Schema = Yup.object().shape({
   fullNameAr: Yup.string(),
   fullNameEn: Yup.string(),
@@ -45,10 +42,13 @@ const step2Schema = Yup.object().shape({
   militaryStatus: Yup.string(),
 });
 
+export type FormStep1Type = Yup.InferType<typeof step1Schema>;
+export type FormStep2Type = Yup.InferType<typeof step2Schema>;
+
 export default function update() {
   const router = useRouter();
-  const { id } = useParams();
-  const { student } = useApplicationDataForAdmin(id as string);
+  const { id } = useParams<{ id: string }>();
+  const { student } = useApplicationDataForAdmin(id);
   const [step, setStep] = useState(1);
 
   const handleSubmit = async (formik: any, extraData: object = {}, onSuccess?: () => void) => {
@@ -56,23 +56,13 @@ export default function update() {
       const errors = await formik.validateForm();
       if (Object.keys(errors).length === 0) {
         const res = await apiClient.students[":id"].$patch({
-          param: { id: student.studentId },
+          param: { id: student?.studentId?.toString() },
           json: {
             ...formik.values,
             ...extraData,
           },
         });
         const result = await res.json();
-
-        {
-          /* for testing */
-        }
-        if (
-          result.message === `duplicate key value violates unique constraint "students_email_key"`
-        ) {
-          toast.error("الايميل مستخدم من قبل");
-          return;
-        }
 
         if (res.status === 200) {
           toast.success("تم التعديل بنجاح!");
@@ -92,7 +82,7 @@ export default function update() {
     await handleSubmit(
       formikStep1,
       {
-        dob: formikStep1.values.dob.toLocaleDateString("en-US"),
+        dob: values.dob?.toLocaleDateString("en-US"),
       },
       () => setStep(2)
     );
@@ -102,7 +92,7 @@ export default function update() {
     await handleSubmit(
       formikStep2,
       {
-        idIssuanceDate: formikStep2.values.idIssuanceDate.toLocaleDateString("en-US"),
+        idIssuanceDate: values.idIssuanceDate?.toLocaleDateString("en-US"),
         ...formikStep1.values,
       },
       () => router.push("/dashboard/applications")

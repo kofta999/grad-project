@@ -4,8 +4,6 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardGrid, CardHeader } from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Briefcase, Building, CalendarIcon, CreditCard, Shield, Upload } from "lucide-react";
-import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import {
   Select,
   SelectContent,
@@ -15,16 +13,15 @@ import {
 } from "@/components/ui/select";
 import Image from "next/image";
 import { Container, ContainerTitle } from "@/components/ui/container";
-import { FormStep2Type, FormType } from "../../(auth)/register/page";
-import { cn } from "@/lib/utils";
+import { FormStep2Type } from "../../(auth)/register/page";
 import { apiClient } from "@/lib/client";
 import { FormikProps } from "formik";
 import DatePicker from "@/components/ui/date-picker";
 
-interface Step2Props {
+type Step2Props = {
   goPrevStep: () => void;
   formik: FormikProps<FormStep2Type>;
-}
+};
 
 export default function Step2({ goPrevStep, formik }: Step2Props) {
   const { role } = JSON.parse(localStorage.getItem("loggedInUser") || "{}");
@@ -44,7 +41,9 @@ export default function Step2({ goPrevStep, formik }: Step2Props) {
 
   return (
     <Container>
-      <ContainerTitle>{role === "admin" ? "تعديل بيانات الطالب" : "تابع انشاء الحساب"}</ContainerTitle>
+      <ContainerTitle>
+        {role === "admin" ? "تعديل بيانات الطالب" : "تابع انشاء الحساب"}
+      </ContainerTitle>
       <form onSubmit={formik.handleSubmit}>
         {/* Identity Information */}
         <Card>
@@ -94,14 +93,16 @@ export default function Step2({ goPrevStep, formik }: Step2Props) {
                   {role === "student" && <span className="text-red-500">*</span>}
                 </Label>
                 <DatePicker
-                  value={formik.values.idIssuanceDate ? new Date(formik.values.idIssuanceDate) : undefined}
-                  onChange={(date) => formik.setFieldValue('idIssuanceDate', date)}
+                  value={
+                    formik.values.idIssuanceDate
+                      ? new Date(formik.values.idIssuanceDate)
+                      : undefined
+                  }
+                  onChange={(date) => formik.setFieldValue("idIssuanceDate", date)}
                   placeholder="اختر تاريخ اصدار الهوية"
                 />
                 {formik.touched.idIssuanceDate && formik.errors.idIssuanceDate && (
-                  <p className="text-red-500 text-sm">
-                    {formik.errors.idIssuanceDate as string}
-                  </p>
+                  <p className="text-red-500 text-sm">{formik.errors.idIssuanceDate as string}</p>
                 )}
               </div>
               <div className="space-y-2">

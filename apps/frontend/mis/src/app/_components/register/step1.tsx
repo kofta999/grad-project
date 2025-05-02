@@ -9,30 +9,18 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardGrid } from "@/components/ui/card";
-import {
-  CalendarIcon,
-  Flag,
-  User,
-  Mail,
-  Printer,
-  UserCheck,
-  Eye,
-  Phone,
-  Shield,
-} from "lucide-react";
+import { Flag, User, Mail, Printer, UserCheck, Phone, Shield } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Container, ContainerTitle } from "@/components/ui/container";
 import { FormStep1Type } from "../../(auth)/register/page";
 import { FormikProps } from "formik";
-import { useState } from "react"
+import { useState } from "react";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 import DatePicker from "@/components/ui/date-picker";
 
-interface Step1Props {
+type Step1Props = {
   formik: FormikProps<FormStep1Type>;
-}
+};
 
 export default function Step1({ formik }: Step1Props) {
   const { role } = JSON.parse(localStorage.getItem("loggedInUser") || "{}");
@@ -41,7 +29,9 @@ export default function Step1({ formik }: Step1Props) {
 
   return (
     <Container>
-      <ContainerTitle>{role === "admin" ? "تعديل بيانات الطالب" : "انشاء حساب جديد"}</ContainerTitle>
+      <ContainerTitle>
+        {role === "admin" ? "تعديل بيانات الطالب" : "انشاء حساب جديد"}
+      </ContainerTitle>
       <form onSubmit={formik.handleSubmit}>
         {/* Basic Information */}
         <Card>
@@ -126,7 +116,7 @@ export default function Step1({ formik }: Step1Props) {
                 </Label>
                 <DatePicker
                   value={formik.values.dob ? new Date(formik.values.dob) : undefined}
-                  onChange={(date) => formik.setFieldValue('dob', date)}
+                  onChange={(date) => formik.setFieldValue("dob", date)}
                   placeholder="اختر تاريخ الميلاد"
                 />
                 {formik.touched.dob && formik.errors.dob && (
@@ -228,7 +218,11 @@ export default function Step1({ formik }: Step1Props) {
                   onBlur={formik.handleBlur}
                   icon={
                     <button type="button" onClick={() => setShowPassword(!showPassword)}>
-                      {showPassword ? <EyeIcon className="h-4 w-4" /> : <EyeOffIcon className="h-4 w-4" />}
+                      {showPassword ? (
+                        <EyeIcon className="h-4 w-4" />
+                      ) : (
+                        <EyeOffIcon className="h-4 w-4" />
+                      )}
                     </button>
                   }
                 />
@@ -249,8 +243,15 @@ export default function Step1({ formik }: Step1Props) {
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                   icon={
-                    <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
-                      {showConfirmPassword ? <EyeIcon className="h-4 w-4" /> : <EyeOffIcon className="h-4 w-4" />}
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    >
+                      {showConfirmPassword ? (
+                        <EyeIcon className="h-4 w-4" />
+                      ) : (
+                        <EyeOffIcon className="h-4 w-4" />
+                      )}
                     </button>
                   }
                 />
