@@ -16,7 +16,7 @@ type FormProps = {
   }>;
 };
 
-export default function AccountForm({ formik }: FormProps) {
+export default function StudentAccountSettingsForm({ formik }: FormProps) {
   return (
     <Container>
       <div className="mb-6">

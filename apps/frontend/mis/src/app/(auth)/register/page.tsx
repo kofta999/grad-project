@@ -1,58 +1,14 @@
 "use client";
 import { useState } from "react";
-import Step1 from "../../_components/register/step1";
-import Step2 from "../../_components/register/step2";
-import { InferRequestType } from "@repo/mis-api";
 import { Progress } from "@/components/ui/progress";
 import { apiClient } from "@/lib/client";
 import toast, { Toaster } from "react-hot-toast";
-import * as Yup from "yup";
 import { useFormik } from "formik";
 import { useRouter } from "next/navigation";
-
-export type FormType = InferRequestType<typeof apiClient.auth.register.$post>["json"];
-
-export type FormStep1Type = Yup.InferType<typeof step1Schema>;
-export type FormStep2Type = Yup.InferType<typeof step2Schema>;
-
-const step1Schema = Yup.object().shape({
-  fullNameAr: Yup.string().required("الاسم الكامل بالعربية مطلوب"),
-  fullNameEn: Yup.string().required("الاسم الكامل بالإنجليزية مطلوب"),
-  gender: Yup.boolean().required(),
-  nationality: Yup.string().required("الجنسية مطلوبة"),
-  dob: Yup.date().typeError("تاريخ الميلاد غير صالح").required("تاريخ الميلاد مطلوب"),
-  email: Yup.string().email("البريد الإلكتروني غير صالح").required("البريد الإلكتروني غير صالح"),
-  fax: Yup.string().optional(),
-  phoneNoMain: Yup.string().required("رقم الهاتف الرئيسي مطلوب"),
-  phoneNoSec: Yup.string().optional(),
-  hashedPassword: Yup.string()
-    .min(8, "كلمة المرور يجب أن تكون 8 أحرف على الأقل")
-    .required("كلمة المرور مطلوبة"),
-  confirmPassword: Yup.string()
-    .min(8, "تأكيد كلمة المرور يجب أن يكون 8 أحرف على الأقل")
-    .required("تأكيد كلمة المرور مطلوب")
-    .oneOf([Yup.ref("hashedPassword")], "كلمة المرور وتأكيدها غير متطابقين"),
-  secQuestion: Yup.string().required("سؤال الأمان مطلوب"),
-  secAnswer: Yup.string().required("إجابة سؤال الأمان مطلوبة"),
-});
-
-const step2Schema = Yup.object().shape({
-  // Will not use url() because its too strict the errors even if the link is correct
-  // Trust me on this one lil bro
-  imageUrl: Yup.string().required("الصورة الشخصية مطلوبة"),
-  idType: Yup.string().oneOf(["national_id", "passport"]).required("نوع الهوية مطلوب"),
-  idIssuanceDate: Yup.date()
-    .typeError("تاريخ إصدار الهوية غير صالح")
-    .required("تاريخ إصدار الهوية مطلوب"),
-  idNumber: Yup.string().required("رقم الهوية مطلوب"),
-  idAuthority: Yup.string().required("جهة إصدار الهوية مطلوبة"),
-  martialStatus: Yup.string()
-    .oneOf(["single", "married", "married_with_dependents", "divorced", "widow", "other"])
-    .optional(),
-  isWorking: Yup.boolean().required(),
-  jobType: Yup.string().optional(),
-  militaryStatus: Yup.string().required("حالة الخدمة العسكرية مطلوبة"),
-});
+import { RegisterStep1Schema, RegisterStep2Schema } from "@/lib/schemas";
+import { RegisterStep2Type, RegisterStep1Type } from "@/lib/types";
+import RegisterStep1Form from "@/components/register/register-step1-form";
+import RegisterStep2Form from "@/components/register/register-step2-form";
 
 export default function RegistrationForm() {
   const [step, setStep] = useState(1);
@@ -72,7 +28,7 @@ export default function RegistrationForm() {
     }
   };
 
-  const handleStep2Submit = async (values: FormStep2Type) => {
+  const handleStep2Submit = async (values: RegisterStep2Type) => {
     try {
       await formikStep2.validateForm();
       if (Object.keys(formikStep2.errors).length === 0) {
@@ -98,7 +54,7 @@ export default function RegistrationForm() {
     }
   };
 
-  let formikStep1 = useFormik<FormStep1Type>({
+  let formikStep1 = useFormik<RegisterStep1Type>({
     initialValues: {
       fullNameAr: "",
       fullNameEn: "",
@@ -115,11 +71,11 @@ export default function RegistrationForm() {
       secQuestion: "",
       secAnswer: "",
     },
-    validationSchema: step1Schema,
+    validationSchema: RegisterStep1Schema,
     onSubmit: handleStep1Submit,
   });
 
-  let formikStep2 = useFormik<FormStep2Type>({
+  let formikStep2 = useFormik<RegisterStep2Type>({
     initialValues: {
       idAuthority: "",
       // @ts-ignore
@@ -132,7 +88,7 @@ export default function RegistrationForm() {
       jobType: "",
       martialStatus: "single",
     },
-    validationSchema: step2Schema,
+    validationSchema: RegisterStep2Schema,
     onSubmit: handleStep2Submit,
   });
 
@@ -140,9 +96,9 @@ export default function RegistrationForm() {
     <>
       <Progress value={step === 1 ? 0 : 50} className="sticky top-0 z-40" />
 
-      {step === 1 && <Step1 formik={formikStep1} />}
+      {step === 1 && <RegisterStep1Form formik={formikStep1} />}
 
-      {step !== 1 && <Step2 goPrevStep={() => setStep(1)} formik={formikStep2} />}
+      {step !== 1 && <RegisterStep2Form goPrevStep={() => setStep(1)} formik={formikStep2} />}
 
       <Toaster />
     </>

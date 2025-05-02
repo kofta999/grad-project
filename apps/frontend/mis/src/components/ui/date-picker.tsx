@@ -4,7 +4,13 @@ import { format, getMonth, getYear, setMonth, setYear } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -14,14 +20,28 @@ interface DatePickerProps {
   placeholder?: string;
 }
 
-export default function DatePicker({ value, onChange, placeholder = "اختر التاريخ" }: DatePickerProps) {
+export default function DatePicker({
+  value,
+  onChange,
+  placeholder = "اختر التاريخ",
+}: DatePickerProps) {
   const [date, setDate] = useState<Date>(value || new Date());
 
   const startYear = getYear(new Date()) - 100;
   const endYear = getYear(new Date());
   const months = [
-    "January", "February", "March", "April", "May", "June",
-    "July", "August", "September", "October", "November", "December"
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
   ];
   const years = Array.from({ length: endYear - startYear + 1 }, (_, i) => startYear + i);
 
@@ -88,7 +108,7 @@ export default function DatePicker({ value, onChange, placeholder = "اختر ا
           month={date}
           onMonthChange={setDate}
           components={{
-            Caption: () => null
+            Caption: () => null,
           }}
         />
       </PopoverContent>

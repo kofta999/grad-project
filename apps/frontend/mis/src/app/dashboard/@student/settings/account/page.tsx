@@ -2,11 +2,11 @@
 import React, { useEffect } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import AccountForm from "../../../../_components/account-form";
+import StudentAccountSettingsForm from "@/components/student/student-account-settings-form";
 import { apiClient } from "@/lib/client";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
-import useUser from "@/Hooks/useUser";
+import useUser from "@/hooks/use-user";
 
 const validationSchema = Yup.object().shape({
   fullNameAr: Yup.string()
@@ -16,14 +16,17 @@ const validationSchema = Yup.object().shape({
     .min(6, "كلمة المرور يجب أن تكون 6 أحرف على الأقل")
     .required("كلمة المرور مطلوبة"),
   email: Yup.string()
-    .matches(/^[\w.-]+@scu\.edu\.org$/, "يجب أن يكون البريد الالكتروني الجامعي ينتهي بـ scu.edu.org@")
+    .matches(
+      /^[\w.-]+@scu\.edu\.org$/,
+      "يجب أن يكون البريد الالكتروني الجامعي ينتهي بـ scu.edu.org@"
+    )
     .required("البريد الالكتروني مطلوب"),
   phoneNoMain: Yup.string()
     .matches(/^(010|011|012|015)[0-9]{8}$/, "يجب إدخال رقم هاتف صحيح")
     .required("رقم الهاتف الرئيسي مطلوب"),
 });
 
-export default function AccountPage() {
+export default function Page() {
   const router = useRouter();
   const { personalData } = useUser();
   const id = personalData?.studentId;
@@ -75,5 +78,5 @@ export default function AccountPage() {
     }
   }, [personalData]);
 
-  return <AccountForm formik={formik} />;
+  return <StudentAccountSettingsForm formik={formik} />;
 }

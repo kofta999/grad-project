@@ -2,50 +2,16 @@
 import React, { useEffect, useState } from "react";
 import { useFormik } from "formik";
 import { useParams, useRouter } from "next/navigation";
-import useApplicationDataForAdmin from "@/Hooks/useApplicationDataForAdmin";
-import Step2 from "@/app/_components/register/step2";
-import Step1 from "@/app/_components/register/step1";
+import useApplicationDataForAdmin from "@/hooks/use-application-data-for-admin";
 import { Progress } from "@radix-ui/react-progress";
 import toast, { Toaster } from "react-hot-toast";
-import * as Yup from "yup";
 import { apiClient } from "@/lib/client";
+import { RegisterStep1Type, RegisterStep2Type } from "@/lib/types";
+import { RegisterStep1Schema, RegisterStep2Schema } from "@/lib/schemas";
+import RegisterStep1Form from "@/components/register/register-step1-form";
+import RegisterStep2Form from "@/components/register/register-step2-form";
 
-const step1Schema = Yup.object().shape({
-  fullNameAr: Yup.string(),
-  fullNameEn: Yup.string(),
-  gender: Yup.boolean().required(),
-  nationality: Yup.string(),
-  dob: Yup.date().typeError("تاريخ الميلاد غير صالح"),
-  email: Yup.string().email("البريد الإلكتروني غير صالح"),
-  fax: Yup.string().optional(),
-  phoneNoMain: Yup.string(),
-  phoneNoSec: Yup.string(),
-  hashedPassword: Yup.string().min(8, "كلمة المرور يجب أن تكون 8 أحرف على الأقل"),
-  confirmPassword: Yup.string()
-    .min(8, "تأكيد كلمة المرور يجب أن يكون 8 أحرف على الأقل")
-    .oneOf([Yup.ref("hashedPassword")], "كلمة المرور وتأكيدها غير متطابقين"),
-  secQuestion: Yup.string(),
-  secAnswer: Yup.string(),
-});
-
-const step2Schema = Yup.object().shape({
-  imageUrl: Yup.string(),
-  idType: Yup.string().oneOf(["national_id", "passport"]),
-  idIssuanceDate: Yup.date().typeError("تاريخ إصدار الهوية غير صالح"),
-  idNumber: Yup.string(),
-  idAuthority: Yup.string(),
-  martialStatus: Yup.string()
-    .oneOf(["single", "married", "married_with_dependents", "divorced", "widow", "other"])
-    .optional(),
-  isWorking: Yup.boolean(),
-  jobType: Yup.string(),
-  militaryStatus: Yup.string(),
-});
-
-export type FormStep1Type = Yup.InferType<typeof step1Schema>;
-export type FormStep2Type = Yup.InferType<typeof step2Schema>;
-
-export default function update() {
+export default function Page() {
   const router = useRouter();
   const { id } = useParams<{ id: string }>();
   const { student } = useApplicationDataForAdmin(id);
@@ -54,9 +20,9 @@ export default function update() {
   const handleSubmit = async (formik: any, extraData: object = {}, onSuccess?: () => void) => {
     try {
       const errors = await formik.validateForm();
-      if (Object.keys(errors).length === 0) {
+      if (Object.keys(errors).length === 0 && student) {
         const res = await apiClient.students[":id"].$patch({
-          param: { id: student?.studentId?.toString() },
+          param: { id: student.studentId.toString() },
           json: {
             ...formik.values,
             ...extraData,
@@ -78,28 +44,28 @@ export default function update() {
     }
   };
 
-  const handleStep1Submit = async (values: FormStep1Type) => {
+  const handleStep1Submit = async (values: RegisterStep1Type) => {
     await handleSubmit(
       formikStep1,
       {
-        dob: values.dob?.toLocaleDateString("en-US"),
+        dob: formikStep1.values.dob?.toLocaleDateString("en-US"),
       },
       () => setStep(2)
     );
   };
 
-  const handleStep2Submit = async (values: FormStep2Type) => {
+  const handleStep2Submit = async (values: RegisterStep2Type) => {
     await handleSubmit(
       formikStep2,
       {
-        idIssuanceDate: values.idIssuanceDate?.toLocaleDateString("en-US"),
+        idIssuanceDate: formikStep2.values.idIssuanceDate?.toLocaleDateString("en-US"),
         ...formikStep1.values,
       },
       () => router.push("/dashboard/applications")
     );
   };
 
-  let formikStep1 = useFormik<FormStep1Type>({
+  let formikStep1 = useFormik<RegisterStep1Type>({
     initialValues: {
       fullNameAr: "",
       fullNameEn: "",
@@ -116,11 +82,11 @@ export default function update() {
       secQuestion: "",
       secAnswer: "",
     },
-    // validationSchema: step1Schema,
+    validationSchema: RegisterStep1Schema.partial(),
     onSubmit: handleStep1Submit,
   });
 
-  let formikStep2 = useFormik<FormStep2Type>({
+  let formikStep2 = useFormik<RegisterStep2Type>({
     initialValues: {
       idAuthority: "",
       // @ts-ignore
@@ -133,7 +99,7 @@ export default function update() {
       jobType: "",
       martialStatus: "single",
     },
-    // validationSchema: step2Schema,
+    validationSchema: RegisterStep2Schema.partial(),
     onSubmit: handleStep2Submit,
   });
 
@@ -175,9 +141,9 @@ export default function update() {
     <>
       <Progress value={step === 1 ? 0 : 50} className="sticky top-0 z-40" />
 
-      {step === 1 && <Step1 formik={formikStep1} />}
+      {step === 1 && <RegisterStep1Form formik={formikStep1} />}
 
-      {step !== 1 && <Step2 goPrevStep={() => setStep(1)} formik={formikStep2} />}
+      {step !== 1 && <RegisterStep2Form goPrevStep={() => setStep(1)} formik={formikStep2} />}
 
       <Toaster />
     </>
