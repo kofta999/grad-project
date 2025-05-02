@@ -15,6 +15,8 @@ import { useUserContext } from "@/context/user-context";
 import { Loader } from "@/components/ui/loader";
 import { Container } from "@/components/ui/container";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import facultyLogo from "../../../../public/facultyLogo.jpg";
+import universityLogo from "../../../../public/universityLogo.jpg";
 
 type FormState = InferRequestType<typeof apiClient.auth.login.$post>["json"];
 
@@ -85,12 +87,15 @@ export default function LoginForm() {
           <CardContent>
             <CardHeader>
               <CardTitle>
-                <Image
-                  src="/920658.jpg"
-                  alt="Faculty of Engineering Logo"
-                  width={120}
-                  height={120}
-                />
+                <div className="flex items-center justify-between">
+                  <Image
+                    src={facultyLogo}
+                    alt="Faculty of Engineering Logo"
+                    width={120}
+                    height={120}
+                  />
+                  <Image src={universityLogo} alt="University Logo" width={95} height={95} />
+                </div>
                 <h1 className="text-2xl font-bold text-gray-900 text-center">مرحبا بك</h1>
                 <p className="text-gray-600 text-center text-sm mt-2">
                   الرجاء تسجيل الدخول للوصول إلى تجربتك التعليمية المخصصة
