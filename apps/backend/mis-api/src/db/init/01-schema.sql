@@ -206,6 +206,7 @@ CREATE TABLE theses (
 	application_id INT NOT NULL UNIQUE,
 	attachment_id INT NOT NULL,
 	title TEXT NOT NULL,
+	created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	FOREIGN key (application_id) REFERENCES applications (application_id),
 	FOREIGN key (attachment_id) REFERENCES attachments (attachment_id)
 );
