@@ -21,13 +21,15 @@ import { usePathname } from "next/navigation";
 import { SpacingWrapper } from "../ui/spacing-wrapper";
 import { ErrorMessage } from "../ui/error-message";
 import toast from "react-hot-toast";
+import { Loader } from "@/components/ui/loader";
 
 type Step2Props = {
   goPrevStep: () => void;
   formik: FormikProps<RegisterStep2Type>;
+  loading: boolean;
 };
 
-export default function RegisterStep2Form({ goPrevStep, formik }: Step2Props) {
+export default function RegisterStep2Form({ goPrevStep, formik, loading }: Step2Props) {
   const pathname = usePathname();
 
   const handlePhotoUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -286,8 +288,18 @@ export default function RegisterStep2Form({ goPrevStep, formik }: Step2Props) {
           <Button variant="outline" className="border-[#BABABA]" onClick={goPrevStep}>
             السابق
           </Button>
-          <Button className="bg-mainColor hover:bg-blue-700 text-white" type="submit">
-            {pathname === "/register" ? "التسجيل" : "تعديل"}
+          <Button
+            disabled={loading}
+            className="bg-mainColor hover:bg-blue-700 text-white"
+            type="submit"
+          >
+            {loading ? (
+              <Loader className="w-6 h-6" />
+            ) : pathname === "/register" ? (
+              "التسجيل"
+            ) : (
+              "تعديل"
+            )}
           </Button>
         </div>
       </form>

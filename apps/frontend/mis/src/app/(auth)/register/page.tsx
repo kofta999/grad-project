@@ -11,6 +11,7 @@ import RegisterStep1Form from "@/components/register/register-step1-form";
 import RegisterStep2Form from "@/components/register/register-step2-form";
 
 export default function RegistrationForm() {
+  const [loading, setLoading] = useState(false);
   const [step, setStep] = useState(1);
   const router = useRouter();
 
@@ -32,6 +33,7 @@ export default function RegistrationForm() {
     try {
       await formikStep2.validateForm();
       if (Object.keys(formikStep2.errors).length === 0) {
+        setLoading(true);
         const res = await apiClient.auth.register.$post({
           json: {
             ...values,
@@ -42,13 +44,16 @@ export default function RegistrationForm() {
         });
 
         if (res.ok) {
+          setLoading(false);
           toast.success("تم التسجيل بنجاح!");
           router.push("/login");
         }
       } else {
+        setLoading(false);
         toast.error("الرجاء تصحيح الأخطاء قبل المتابعة.");
       }
     } catch (err) {
+      setLoading(false);
       toast.error("فشل التسجيل. الرجاء المحاولة مرة أخرى.");
     }
   };
@@ -98,7 +103,9 @@ export default function RegistrationForm() {
 
       {step === 1 && <RegisterStep1Form formik={formikStep1} />}
 
-      {step !== 1 && <RegisterStep2Form goPrevStep={() => setStep(1)} formik={formikStep2} />}
+      {step !== 1 && (
+        <RegisterStep2Form goPrevStep={() => setStep(1)} formik={formikStep2} loading={loading} />
+      )}
 
       <Toaster />
     </>
