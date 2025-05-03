@@ -21,6 +21,28 @@ export type ApplicationType = InferResponseType<
   200
 >;
 
+//nour
+// shared base
+type ThesisCore = {
+  thesisId: number;
+  applicationId: number;
+  title: string;
+  attachmentUrl: string;
+};
+
+export type SubmitThesisResponse = InferResponseType<typeof apiClient.students.me.thesis.$post> & ThesisCore;
+export type ThesisResponse = InferResponseType<typeof apiClient.students.me.thesis.$get> & ThesisCore;
+export type ThesisStatusResponse = InferResponseType<typeof apiClient.students.me.thesis.status.$get> &  {
+  available: boolean; 
+  reason?: string; 
+};
+
+export type SubmitThesisRequest = {
+  title: string;
+  attachmentUrl: string;
+};
+
+  
 export type RegisterStep1Type = Yup.InferType<typeof RegisterStep1Schema>;
 export type RegisterStep2Type = Yup.InferType<typeof RegisterStep2Schema>;
 export type ApplicationStep1Type = Yup.InferType<typeof ApplicationStep1Schema>;
