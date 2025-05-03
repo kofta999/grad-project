@@ -1,58 +1,58 @@
-'use client';
-import { useEffect, useState } from 'react';
-import { apiClient } from '@/lib/client';
-import { ThesisStudentView } from '@/components/student/thesis-student-view';
-import { ThesisSubmitForm } from '@/components/student/thesis-submit-form';
-import type { ThesisStatusResponse, ThesisResponse } from '@/lib/types';
+"use client";
+import { useEffect, useState } from "react";
+import { apiClient } from "@/lib/client";
+import { ThesisStudentView } from "@/components/student/thesis-student-view";
+import { ThesisSubmitForm } from "@/components/student/thesis-submit-form";
+import type { ThesisStatusResponse, ThesisResponse } from "@/lib/types";
 
 export default function ThesisPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [thesisData, setThesisData] = useState<ThesisResponse | null>(null);
   const [status, setStatus] = useState<ThesisStatusResponse | null>(null);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   const extractErrorMessage = (data: unknown): string => {
-    if (typeof data === 'string') return data;
-    if (data && typeof data === 'object') {
-      if ('reason' in data && typeof data.reason === 'string') return data.reason;
-      if ('message' in data && typeof data.message === 'string') return data.message;
-      if ('error' in data && typeof data.error === 'string') return data.error;
+    if (typeof data === "string") return data;
+    if (data && typeof data === "object") {
+      if ("reason" in data && typeof data.reason === "string") return data.reason;
+      if ("message" in data && typeof data.message === "string") return data.message;
+      if ("error" in data && typeof data.error === "string") return data.error;
     }
-    return 'حدث خطأ غير متوقع';
+    return "حدث خطأ غير متوقع";
   };
 
   const fetchThesisData = async () => {
     try {
       setIsLoading(true);
-      setError('');
+      setError("");
 
       // thesis status
       const statusResponse = await apiClient.students.me.thesis.status.$get();
-      
+
       if (!statusResponse.ok) {
         const errorData = await statusResponse.json();
         throw new Error(extractErrorMessage(errorData));
       }
 
-      const statusData = await statusResponse.json() as ThesisStatusResponse;
+      const statusData = await statusResponse.json();
       setStatus(statusData);
 
       if (statusData.available) {
         const thesisResponse = await apiClient.students.me.thesis.$get();
-        
-        if (!thesisResponse.ok) {
-          const errorData = await thesisResponse.json();
-          throw new Error(extractErrorMessage(errorData));
+        // This route returns 404 when the thesis is not yet submitted
+        // so we set thesis data to null instead
+        if (thesisResponse.status === 404) {
+          setThesisData(null);
+        } else {
+          const thesis = await thesisResponse.json();
+          setThesisData(thesis);
         }
-
-        const thesis = await thesisResponse.json() as ThesisResponse;
-        setThesisData(thesis);
       } else {
         setError(extractErrorMessage(statusData));
       }
     } catch (err) {
       setError(extractErrorMessage(err));
-      console.error('Error:', err);
+      console.error("Error:", err);
     } finally {
       setIsLoading(false);
     }
@@ -64,7 +64,7 @@ export default function ThesisPage() {
 
   const handleSubmissionSuccess = (newThesis: ThesisResponse) => {
     setThesisData(newThesis);
-    setError('');
+    setError("");
   };
 
   if (isLoading) {
@@ -80,9 +80,11 @@ export default function ThesisPage() {
     );
   }
 
+  console.log(thesisData);
+
   return (
     <div className="max-w-3xl mx-auto">
-      {thesisData ? (
+      {thesisData != null ? (
         <ThesisStudentView thesis={thesisData} />
       ) : (
         <ThesisSubmitForm onSubmissionSuccess={handleSubmissionSuccess} />
@@ -90,4 +92,3 @@ export default function ThesisPage() {
     </div>
   );
 }
-

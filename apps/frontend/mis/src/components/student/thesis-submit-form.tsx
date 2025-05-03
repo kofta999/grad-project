@@ -1,4 +1,4 @@
-'use client';
+"use client";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -7,10 +7,10 @@ import { apiClient } from "@/lib/client";
 import { useState, ChangeEvent } from "react";
 import toast from "react-hot-toast";
 import { BookmarkCheck, UploadCloud, CheckCircle2, Loader2, Send } from "lucide-react";
-import type { SubmitThesisRequest, SubmitThesisResponse ,ThesisResponse } from "@/lib/types";
+import type { SubmitThesisRequest, SubmitThesisResponse, ThesisResponse } from "@/lib/types";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
-const ACCEPTED_FILE_TYPES = ['application/pdf'];
+const ACCEPTED_FILE_TYPES = ["application/pdf"];
 
 interface ThesisSubmitFormProps {
   onSubmissionSuccess?: (response: ThesisResponse) => void;
@@ -21,7 +21,7 @@ export function ThesisSubmitForm({ onSubmissionSuccess }: ThesisSubmitFormProps)
   const [isUploading, setIsUploading] = useState(false);
   const [formValues, setFormValues] = useState<SubmitThesisRequest>({
     title: "",
-    attachmentUrl: ""
+    attachmentUrl: "",
   });
 
   const validateForm = (): boolean => {
@@ -40,24 +40,26 @@ export function ThesisSubmitForm({ onSubmissionSuccess }: ThesisSubmitFormProps)
 
   const submitForm = async (): Promise<void> => {
     if (!validateForm()) return;
-    
+
     setIsSubmitting(true);
     const toastId = toast.loading("جاري تقديم الرسالة...");
 
     try {
       const response = await apiClient.students.me.thesis.$post({
-        json: formValues
+        json: formValues,
       });
-      
+
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || 'فشل في تقديم الرسالة');
+        throw new Error(errorData.message || "فشل في تقديم الرسالة");
       }
 
-      const result = await response.json() as SubmitThesisResponse;
+      // Here the create endpoint returns {} instead of the created thesis
+      // So we need to either refresh the page or query the api for the thesis
+      const result = await response.json();
       toast.success("تم تقديم الرسالة بنجاح", { id: toastId });
       setFormValues({ title: "", attachmentUrl: "" });
-      
+
       onSubmissionSuccess?.(result);
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "حدث خطأ غير متوقع";
@@ -71,22 +73,18 @@ export function ThesisSubmitForm({ onSubmissionSuccess }: ThesisSubmitFormProps)
   const uploadFile = async (file: File): Promise<void> => {
     setIsUploading(true);
     const toastId = toast.loading("جاري رفع الملف...");
-    
+
     try {
-      const formData = new FormData();
-      formData.append('file', file);
-      
-      const uploadResponse = await fetch('https://your-api-endpoint/upload', {
-        method: 'POST',
-        body: formData
+      const uploadResponse = await apiClient.auth.upload.$post({
+        form: { file },
       });
-      
+
       if (!uploadResponse.ok) {
-        throw new Error('فشل في رفع الملف');
+        throw new Error("فشل في رفع الملف");
       }
 
-      const { url } = await uploadResponse.json();
-      setFormValues(prev => ({ ...prev, attachmentUrl: url }));
+      const { uploadUrl } = await uploadResponse.json();
+      setFormValues((prev) => ({ ...prev, attachmentUrl: uploadUrl }));
       toast.success("تم رفع الملف بنجاح", { id: toastId });
     } catch (error) {
       toast.error("فشل في رفع الملف", { id: toastId });
@@ -157,7 +155,7 @@ export function ThesisSubmitForm({ onSubmissionSuccess }: ThesisSubmitFormProps)
               <Label className="text-gray-700 font-medium block text-right">
                 ملف الرسالة (PDF) <span className="text-yellow-500">*</span>
               </Label>
-              
+
               <label
                 htmlFor="attachment"
                 className={`relative cursor-pointer flex flex-col items-center justify-center border-2 border-dashed rounded-xl p-8 hover:border-blue-500 transition-colors ${
@@ -172,7 +170,7 @@ export function ThesisSubmitForm({ onSubmissionSuccess }: ThesisSubmitFormProps)
                       <CheckCircle2 className="h-10 w-10 text-green-500 mb-3" />
                       <p className="font-medium text-green-600">✓ تم اختيار الملف</p>
                       <p className="text-sm text-gray-600 mt-1 truncate max-w-xs">
-                        {formValues.attachmentUrl.split('/').pop()}
+                        {formValues.attachmentUrl.split("/").pop()}
                       </p>
                     </>
                   ) : (
@@ -202,7 +200,9 @@ export function ThesisSubmitForm({ onSubmissionSuccess }: ThesisSubmitFormProps)
               <Button
                 onClick={submitForm}
                 className="w-full py-3 px-6 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-medium rounded-lg shadow-md transition-all transform hover:scale-[1.02]"
-                disabled={isSubmitting || isUploading || !formValues.title || !formValues.attachmentUrl}
+                disabled={
+                  isSubmitting || isUploading || !formValues.title || !formValues.attachmentUrl
+                }
               >
                 {isSubmitting ? (
                   <span className="flex items-center justify-center gap-2">
