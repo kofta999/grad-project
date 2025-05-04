@@ -3,15 +3,15 @@ import { z } from "@hono/zod-openapi";
 export const CreateApplicationSchema = z.object({
   permanentAddress: z.object({
     fullAddress: z.string(),
-    country: z.string(),
-    city: z.string(),
+    countryId: z.number(),
+    cityId: z.number(),
     // Note: type is omitted as specified in the original schema
   }),
 
   currentAddress: z.object({
     fullAddress: z.string(),
-    country: z.string(),
-    city: z.string(),
+    countryId: z.number(),
+    cityId: z.number(),
     // Note: type is omitted as specified in the original schema
   }),
 

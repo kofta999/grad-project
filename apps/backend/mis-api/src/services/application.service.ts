@@ -70,7 +70,12 @@ export abstract class ApplicationService implements IApplicationService {
         academicProgram: department.title,
       },
       attachments: attachmentsList,
-      addresses: addressesList,
+      addresses: addressesList.map((addr) => ({
+        ...addr,
+        // TODO: FIX
+        country: addr.countryId.toString(),
+        city: addr.cityId.toString(),
+      })),
     };
   }
 
@@ -127,7 +132,12 @@ export abstract class ApplicationService implements IApplicationService {
         academicProgram: department.title,
       },
       attachments: attachmentsList,
-      addresses: addressesList,
+      addresses: addressesList.map((addr) => ({
+        ...addr,
+        // TODO: FIX
+        country: addr.countryId.toString(),
+        city: addr.cityId.toString(),
+      })),
     };
   }
 
