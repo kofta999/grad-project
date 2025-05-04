@@ -104,10 +104,12 @@ CREATE TABLE "addresses" (
 	"address_id" serial PRIMARY KEY,
 	"application_id" INTEGER NOT NULL,
 	"full_address" TEXT NOT NULL,
-	"country" TEXT NOT NULL,
-	"city" TEXT NOT NULL,
+	"country_id" INT NOT NULL,
+	"city_id" INT NOT NULL,
 	"type" address_type NOT NULL,
-	FOREIGN key ("application_id") REFERENCES "applications" ("application_id")
+	FOREIGN key ("application_id") REFERENCES "applications" ("application_id"),
+	FOREIGN key ("country_id") REFERENCES "countries" ("country_id"),
+	FOREIGN key ("city_id") REFERENCES "cities" ("city_id")
 );
 
 CREATE TABLE "emergency_contacts" (
@@ -641,3 +643,10 @@ $$;
 
 CREATE TRIGGER register_course_trigger before insert ON course_registrations FOR each ROW
 EXECUTE function check_course_availability ();
+
+CREATE TABLE "reports" (
+    "report_id" serial PRIMARY KEY,
+    "type" TEXT NOT NULL,
+    "title" TEXT NOT NULL,
+    "attachment_url" TEXT NOT NULL
+);
