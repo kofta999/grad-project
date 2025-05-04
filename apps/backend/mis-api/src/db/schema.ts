@@ -15,6 +15,7 @@ import {
   text,
   timestamp,
   unique,
+  varchar,
 } from "drizzle-orm/pg-core";
 
 export const addressType = pgEnum("address_type", ["permanent", "current"]);
@@ -29,6 +30,31 @@ export const martialStatus = pgEnum("martial_status", [
   "other",
 ]);
 export const semesterType = pgEnum("semester_type", ["first", "second", "third"]);
+
+export const countries = pgTable("countries", {
+  countryId: serial("country_id").primaryKey().notNull(),
+  nameAr: varchar("name_ar", { length: 255 }).notNull(),
+  nameEn: varchar("name_en", { length: 255 }).notNull(),
+  code: varchar({ length: 10 }).notNull(),
+});
+
+export const cities = pgTable(
+  "cities",
+  {
+    cityId: serial("city_id").primaryKey().notNull(),
+    nameEn: varchar("name_en", { length: 255 }).notNull(),
+    nameAr: varchar("name_ar", { length: 255 }).notNull(),
+    code: varchar({ length: 10 }).notNull(),
+    countryId: integer("country_id").notNull(),
+  },
+  (table) => [
+    foreignKey({
+      columns: [table.countryId],
+      foreignColumns: [countries.countryId],
+      name: "cities_country_id_fkey",
+    }),
+  ]
+);
 
 export const students = pgTable(
   "students",
@@ -181,8 +207,8 @@ export const addresses = pgTable(
     addressId: serial("address_id").primaryKey().notNull(),
     applicationId: integer("application_id").notNull(),
     fullAddress: text("full_address").notNull(),
-    country: text().notNull(),
-    city: text().notNull(),
+    countryId: integer("country_id").notNull(),
+    cityId: integer("city_id").notNull(),
     type: addressType().notNull(),
   },
   (table) => {
@@ -466,5 +492,5 @@ export const reports = pgTable("reports", {
   reportId: serial("report_id").primaryKey(),
   type: text("type").notNull(),
   title: text("title").notNull(),
-  attachmentUrl: text("attachment_url").notNull()
+  attachmentUrl: text("attachment_url").notNull(),
 });
