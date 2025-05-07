@@ -9,6 +9,13 @@
 SET
 	client_encoding = 'UTF8';
 
+CREATE EXTENSION IF NOT EXISTS unaccent;
+
+CREATE TEXT SEARCH DICTIONARY arabic_unaccent (
+    TEMPLATE = unaccent,
+    RULES = 'arabic'
+);
+
 -- Create ENUMs
 CREATE TYPE "identification_type" AS ENUM('national_id', 'passport');
 
