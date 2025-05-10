@@ -5,6 +5,7 @@ export const GetThesisSchema = z.object({
   applicationId: z.number(),
   title: z.string(),
   attachmentUrl: z.string(),
+  createdAt: z.string(),
 });
 
 export type GetThesisDTO = z.infer<typeof GetThesisSchema>;

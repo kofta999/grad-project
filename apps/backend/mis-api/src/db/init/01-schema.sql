@@ -213,6 +213,7 @@ CREATE TABLE theses (
 	application_id INT NOT NULL UNIQUE,
 	attachment_id INT NOT NULL,
 	title TEXT NOT NULL,
+	created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	FOREIGN key (application_id) REFERENCES applications (application_id),
 	FOREIGN key (attachment_id) REFERENCES attachments (attachment_id)
 );
@@ -593,7 +594,7 @@ BEGIN
     WHERE course_id = NEW.course_id;
 
     IF (COALESCE(v_total_hours, 0) + v_course_hours) > v_max_hours THEN
-        RAISE EXCEPTION 'Total hours exceed the maximum allowed hours for this semester';
+        RAISE EXCEPTION 'Total hours (%) exceed the maximum allowed hours for this semester (%)', COALESCE(v_total_hours, 0) + v_course_hours, v_max_hours;
     END IF;
 
 
