@@ -319,15 +319,57 @@ VALUES
         1
     ), -- Master's student registered for ELEC 601 (required master's course)
     (
+        (SELECT course_id FROM courses WHERE code = 'ELEC 602'),
+        2,
+        'first',
+        1
+    ), -- Master's student registered for ELEC 601 (required master's course)
+    (
         (SELECT course_id FROM courses WHERE code = 'EMPE 603'),
         2,
-        'second',
+        'first',
         1
     ), -- Master's student registered for EMPE 603 (master's level course)
     (
         (SELECT course_id FROM courses WHERE code = 'EMPE 604'),
         2,
         'second',
+        1
+    ), -- Master's student registered for EMPE 603 (master's level course)
+    (
+        (SELECT course_id FROM courses WHERE code = 'EMPE 605'),
+        2,
+        'second',
+        1
+    ), -- Master's student registered for EMPE 603 (master's level course)
+    (
+        (SELECT course_id FROM courses WHERE code = 'EMPE 606'),
+        2,
+        'second',
+        1
+    ), -- Master's student registered for EMPE 603 (master's level course)
+    (
+        (SELECT course_id FROM courses WHERE code = 'EMPE 607'),
+        2,
+        'first',
+        1
+    ), -- Master's student registered for EMPE 603 (master's level course)
+    (
+        (SELECT course_id FROM courses WHERE code = 'EMPE 608'),
+        2,
+        'third',
+        1
+    ), -- Master's student registered for EMPE 603 (master's level course)
+    (
+        (SELECT course_id FROM courses WHERE code = 'EMPE 609'),
+        2,
+        'third',
+        1
+    ), -- Master's student registered for EMPE 603 (master's level course)
+    (
+        (SELECT course_id FROM courses WHERE code = 'EMPE 610'),
+        2,
+        'third',
         1
     ); -- Master's student registered for EMPE 604 (master's level course)
 
@@ -364,7 +406,15 @@ INSERT INTO
     course_results (course_registration_id, grade)
 VALUES
     (1, 85), -- Application 2 got 85 in ELEC 600
-    (2, 88); -- Application 2 got 88 in ELEC 601
+    (2, 88), -- Application 2 got 88 in ELEC 601
+    (3, 78), -- Application 2 got 88 in ELEC 602
+    (4, 78), -- Application 2 got 88 in ELEC 602
+    (5, 78), -- Application 2 got 88 in ELEC 602
+    (6, 78), -- Application 2 got 88 in ELEC 602
+    (7, 78), -- Application 2 got 88 in ELEC 602
+    (8, 78), -- Application 2 got 88 in ELEC 602
+    (9, 78), -- Application 2 got 88 in ELEC 602
+    (10, 98); -- Application 2 got 88 in ELEC 603
     -- (5, 92), -- Application 3 got 92 in EMPE 701
     -- (7, 87); -- Application 3 got 87 in EMPE 704
 -- Application 2 got 88 in EMPE 506

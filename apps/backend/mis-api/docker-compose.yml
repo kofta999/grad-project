@@ -12,6 +12,7 @@ services:
       - postgres_data:/var/lib/postgresql/data
       # Add this line to mount the init scripts
       - ./src/db/init:/docker-entrypoint-initdb.d
+      - ./src/db/init/arabic.rules:/usr/local/share/postgresql/tsearch_data/arabic.rules
     ports:
       # Try using this IP to connect in pgadmin4 172.26.0.2
       - "5432:5432"
