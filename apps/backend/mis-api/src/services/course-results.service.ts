@@ -1,0 +1,90 @@
+import db from "@/db";
+import { courseResults, courseRegistrations } from "@/db/schema";
+import { eq } from "drizzle-orm";
+
+export interface ICourseResultsService {
+  setCourseResult(courseRegistrationId: number, grade: number): Promise<boolean>;
+  deleteCourseResult(resultId: number): Promise<boolean>;
+  getCourseResults(courseRegistrationId?: number): Promise<typeof courseResults.$inferSelect[]>;
+}
+
+export class CourseResultsService implements ICourseResultsService {
+  async setCourseResult(courseRegistrationId: number, grade: number): Promise<boolean> {
+    try {
+      if (grade < 0 || grade > 100) {
+        throw new Error("Grade must be between 0 and 100");
+      }
+
+      //finding existing record first
+      const existingResult = await db
+        .select()
+        .from(courseResults)
+        .where(eq(courseResults.courseRegistrationId, courseRegistrationId));
+
+      if (existingResult.length > 0) {
+        // update existing record
+        await db
+          .update(courseResults)
+          .set({ grade })
+          .where(eq(courseResults.courseRegistrationId, courseRegistrationId));
+      } else {
+        // iinsert new record
+        await db
+          .insert(courseResults)
+          .values({
+            courseRegistrationId,
+            grade,
+          });
+      }
+
+      return true;
+    } catch (error) {
+      console.error("Error setting course result:", error);
+      throw error;
+    }
+  }
+
+  async deleteCourseResult(resultId: number): Promise<boolean> {
+    try {
+      const result = await db
+        .select({
+          courseRegistrationId: courseResults.courseRegistrationId
+        })
+        .from(courseResults)
+        .where(eq(courseResults.resultId, resultId));
+
+      if (result.length === 0) {
+        throw new Error("Course result not found");
+      }
+
+      await db.delete(courseResults).where(eq(courseResults.resultId, resultId));
+      await db
+        .delete(courseRegistrations)
+        .where(eq(courseRegistrations.courseRegistrationId, result[0].courseRegistrationId));
+
+      return true;
+    } catch (error) {
+      console.error("Error deleting course result:", error);
+      throw error;
+    }
+  }
+
+  async getCourseResults(courseRegistrationId?: number): Promise<typeof courseResults.$inferSelect[]> {
+    try {
+      const query = db.select({
+        resultId: courseResults.resultId,
+        courseRegistrationId: courseResults.courseRegistrationId,
+        grade: courseResults.grade
+      }).from(courseResults);
+      
+      if (courseRegistrationId) {
+        return await query.where(eq(courseResults.courseRegistrationId, courseRegistrationId));
+      }
+  
+      return await query;
+    } catch (error) {
+      console.error("Error getting course results:", error);
+      throw error;
+    }
+  }
+}
