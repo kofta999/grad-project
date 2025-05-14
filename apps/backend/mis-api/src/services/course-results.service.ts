@@ -5,7 +5,7 @@ import { eq } from "drizzle-orm";
 export interface ICourseResultsService {
   setCourseResult(courseRegistrationId: number, grade: number): Promise<boolean>;
   deleteCourseResult(resultId: number): Promise<boolean>;
-  getCourseResults(courseRegistrationId?: number): Promise<typeof courseResults.$inferSelect[]>;
+  getCourseResults(courseRegistrationId?: number): Promise<{ resultId: number | null; courseRegistrationId: number; grade: number | null; }[]>;
 }
 
 export class CourseResultsService implements ICourseResultsService {
@@ -58,7 +58,7 @@ export class CourseResultsService implements ICourseResultsService {
       }
 
       await db.delete(courseResults).where(eq(courseResults.resultId, resultId));
-      //Now the courrse doesn't deleted
+      //Now the courrse doesn't delete
       /*
       await db
         .delete(courseRegistrations)
@@ -72,16 +72,19 @@ export class CourseResultsService implements ICourseResultsService {
     }
   }
 
-  async getCourseResults(courseRegistrationId?: number): Promise<typeof courseResults.$inferSelect[]> {
+  async getCourseResults(courseRegistrationId?: number) {
     try {
-      const query = db.select({
-        resultId: courseResults.resultId,
-        courseRegistrationId: courseResults.courseRegistrationId,
-        grade: courseResults.grade
-      }).from(courseResults);
+      const query = db
+        .select({
+          resultId: courseResults.resultId,
+          courseRegistrationId: courseRegistrations.courseRegistrationId,
+          grade: courseResults.grade
+        })
+        .from(courseRegistrations)
+        .leftJoin(courseResults, eq(courseResults.courseRegistrationId, courseRegistrations.courseRegistrationId));
       
       if (courseRegistrationId) {
-        return await query.where(eq(courseResults.courseRegistrationId, courseRegistrationId));
+        return await query.where(eq(courseRegistrations.courseRegistrationId, courseRegistrationId));
       }
   
       return await query;
