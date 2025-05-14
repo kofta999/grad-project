@@ -27,9 +27,9 @@ export default function StudentDetails({ student }: { student: StudentType }) {
           <div className="flex flex-row items-center justify-center p-2">
             <div className="w-20 h-20 rounded-full overflow-hidden ml-6 border-2 border-gray-300">
               <Image
-                src="/avatar.jpg"
-                // src={student.imageUrl}
-                alt=""
+                // src="/avatar.jpg"
+                src={student.imageUrl}
+                alt="image"
                 width={200}
                 height={200}
               />

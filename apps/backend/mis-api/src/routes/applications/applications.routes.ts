@@ -20,7 +20,7 @@ export const getAllApplications = createRoute({
   path: "/",
   method: "get",
   tags,
-  middleware: adminMiddleware,
+  // middleware: adminMiddleware,
   request: {
     query: z.object({
       nameAr: z.string().optional(),
