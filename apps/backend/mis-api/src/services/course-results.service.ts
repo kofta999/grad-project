@@ -58,9 +58,12 @@ export class CourseResultsService implements ICourseResultsService {
       }
 
       await db.delete(courseResults).where(eq(courseResults.resultId, resultId));
+      //Now the courrse doesn't deleted
+      /*
       await db
         .delete(courseRegistrations)
         .where(eq(courseRegistrations.courseRegistrationId, result[0].courseRegistrationId));
+        */
 
       return true;
     } catch (error) {

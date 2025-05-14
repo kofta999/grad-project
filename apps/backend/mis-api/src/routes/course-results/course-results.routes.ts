@@ -6,7 +6,7 @@ import { adminMiddleware } from "@/lib/constants";
 const tags = ["Course Results"];
 
 export const setResult = createRoute({
-  path: "/set-result",
+  path: "/",
   method: "post",
   middleware: adminMiddleware,
   tags,
