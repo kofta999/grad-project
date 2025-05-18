@@ -6,7 +6,7 @@ import auth from "@/routes/auth/auth.index";
 import departments from "@/routes/departments/departments.index";
 import enrollments from "@/routes/enrollments/enrollments.index";
 import students from "@/routes/students/students.index";
-import reports from "@/routes/reports/index";
+import reports from "@/routes/reports/reports.index";
 import courseResults from "@/routes/course-results/index";
 
 import configureOpenAPI from "./lib/configure-open-api";
