@@ -21,6 +21,29 @@ export type ApplicationType = InferResponseType<
   200
 >;
 
+//nour
+// shared base
+// type ThesisCore = {
+//   thesisId: number;
+//   applicationId: number;
+//   title: string;
+//   attachmentUrl: string;
+// };
+
+// No need for custom Types, InferResponseType gets both success and failure types
+export type SubmitThesisResponse = InferResponseType<typeof apiClient.students.me.thesis.$post>;
+// If you had to create custom types because this type also had the {message: string} type
+// You can specify the needed HTTP status code here like so
+export type ThesisResponse = InferResponseType<typeof apiClient.students.me.thesis.$get, 200>;
+export type ThesisStatusResponse = InferResponseType<
+  typeof apiClient.students.me.thesis.status.$get
+>;
+
+export type SubmitThesisRequest = {
+  title: string;
+  attachmentUrl: string;
+};
+
 export type RegisterStep1Type = Yup.InferType<typeof RegisterStep1Schema>;
 export type RegisterStep2Type = Yup.InferType<typeof RegisterStep2Schema>;
 export type ApplicationStep1Type = Yup.InferType<typeof ApplicationStep1Schema>;

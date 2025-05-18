@@ -1,97 +1,94 @@
 "use client";
+import { useEffect, useState } from "react";
+import { apiClient } from "@/lib/client";
+import { ThesisStudentView } from "@/components/student/thesis-student-view";
+import { ThesisSubmitForm } from "@/components/student/thesis-submit-form";
+import type { ThesisStatusResponse, ThesisResponse } from "@/lib/types";
 
-import type React from "react";
+export default function ThesisPage() {
+  const [isLoading, setIsLoading] = useState(true);
+  const [thesisData, setThesisData] = useState<ThesisResponse | null>(null);
+  const [status, setStatus] = useState<ThesisStatusResponse | null>(null);
+  const [error, setError] = useState("");
 
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Upload } from "lucide-react";
+  const extractErrorMessage = (data: unknown): string => {
+    if (typeof data === "string") return data;
+    if (data && typeof data === "object") {
+      if ("reason" in data && typeof data.reason === "string") return data.reason;
+      if ("message" in data && typeof data.message === "string") return data.message;
+      if ("error" in data && typeof data.error === "string") return data.error;
+    }
+    return "حدث خطأ غير متوقع";
+  };
 
-export default function Page() {
-  const [file, setFile] = useState<File | null>(null);
+  const fetchThesisData = async () => {
+    try {
+      setIsLoading(true);
+      setError("");
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setFile(e.target.files[0]);
+      // thesis status
+      const statusResponse = await apiClient.students.me.thesis.status.$get();
+
+      if (!statusResponse.ok) {
+        const errorData = await statusResponse.json();
+        throw new Error(extractErrorMessage(errorData));
+      }
+
+      const statusData = await statusResponse.json();
+      setStatus(statusData);
+
+      if (statusData.available) {
+        const thesisResponse = await apiClient.students.me.thesis.$get();
+        // This route returns 404 when the thesis is not yet submitted
+        // so we set thesis data to null instead
+        if (thesisResponse.status === 404) {
+          setThesisData(null);
+        } else {
+          const thesis = await thesisResponse.json();
+          setThesisData(thesis);
+        }
+      } else {
+        setError(extractErrorMessage(statusData));
+      }
+    } catch (err) {
+      setError(extractErrorMessage(err));
+      console.error("Error:", err);
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    //will be added when we are done with the api
-    console.log("Form submitted");
+  useEffect(() => {
+    fetchThesisData();
+  }, []);
+
+  const handleSubmissionSuccess = (newThesis: ThesisResponse) => {
+    setThesisData(newThesis);
+    setError("");
   };
 
-  return (
-    <div className="container mx-auto py-8 px-4 max-w-3xl" dir="rtl">
-      <h1 className="text-2xl font-bold text-center mb-8">محتوى الرسالة</h1>
+  if (isLoading) {
+    return <div className="text-center py-8">جاري التحميل...</div>;
+  }
 
-      <div className="space-y-6">
-        <div className="flex flex-col md:flex-row justify-between">
-          <p className="text-lg">
-            <span className="font-semibold">اسم الطالب :</span> لؤي احمد محمد رشاد
-          </p>
-          <p className="text-lg">
-            <span className="font-semibold">الدرجة العلمية :</span> دكتوراة
-          </p>
-        </div>
-
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="space-y-2">
-            <label htmlFor="title" className="text-lg font-semibold block">
-              عنوان الرسالة:
-            </label>
-            <Input
-              id="title"
-              className="w-full border-2 border-gray-300 rounded-md p-3 h-12"
-              placeholder=""
-            />
-          </div>
-
-          <div className="space-y-2">
-            <label htmlFor="introduction" className="text-lg font-semibold block">
-              المقدمة:
-            </label>
-            <Textarea
-              id="introduction"
-              className="w-full border-2 border-gray-300 rounded-md p-3 min-h-[150px]"
-              placeholder=""
-            />
-          </div>
-
-          <div className="space-y-2">
-            <label className="text-lg font-semibold block">أدخل محتوى الرسالة PDF:</label>
-            <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-              <div className="order-2 md:order-1">
-                <Button
-                  type="submit"
-                  className="bg-blue-500 hover:bg-blue-600 text-white px-8 py-2 rounded-md"
-                >
-                  تسليم
-                </Button>
-              </div>
-
-              <div className="order-1 md:order-2 w-full md:w-auto">
-                <label htmlFor="file-upload" className="cursor-pointer">
-                  <div className="flex items-center gap-2 border border-gray-300 rounded-md px-4 py-2 text-gray-600">
-                    <Upload className="h-5 w-5" />
-                    <span>إضافة الملف</span>
-                  </div>
-                  <input
-                    id="file-upload"
-                    type="file"
-                    accept=".pdf"
-                    className="hidden"
-                    onChange={handleFileChange}
-                  />
-                </label>
-                {file && <p className="mt-2 text-sm text-gray-600">تم اختيار: {file.name}</p>}
-              </div>
-            </div>
-          </div>
-        </form>
+  if (error) {
+    return (
+      <div className="max-w-3xl mx-auto p-4 bg-red-50 border border-red-200 text-red-700 rounded-lg">
+        <h3 className="font-bold mb-2">التقديم غير متاح</h3>
+        <p>{error}</p>
       </div>
+    );
+  }
+
+  console.log(thesisData);
+
+  return (
+    <div className="max-w-3xl mx-auto">
+      {thesisData != null ? (
+        <ThesisStudentView thesis={thesisData} />
+      ) : (
+        <ThesisSubmitForm onSubmissionSuccess={handleSubmissionSuccess} />
+      )}
     </div>
   );
 }

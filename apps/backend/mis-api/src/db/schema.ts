@@ -405,6 +405,9 @@ export const theses = pgTable(
     applicationId: integer("application_id").notNull(),
     attachmentId: integer("attachment_id").notNull(),
     title: text().notNull(),
+    createdAt: timestamp("created_at", { mode: "string" })
+      .default(sql`CURRENT_TIMESTAMP`)
+      .notNull(),
   },
   (table) => [
     foreignKey({

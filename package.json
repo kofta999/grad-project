@@ -27,8 +27,7 @@
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.6",
     "@types/js-cookie": "^3.0.6",
-    "country-state-city": "^3.2.1",
-    "i18n-iso-countries": "^7.14.0",
+    "dropdown-menu": "^0.1.1",
     "js-cookie": "^3.0.5",
     "next-client-cookies": "^2.0.1",
     "react-cookie": "^7.2.2",
