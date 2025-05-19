@@ -193,24 +193,17 @@ export default function Page() {
           <Table className="border rounded-md mt-6">
             <TableHeader className="bg-white">
               <TableRow>
-                <TableHead className="text-right font-medium text-[#96A0B6] w-1/4">
-                  اسم المقرر
-                </TableHead>
-                <TableHead className="text-right font-medium text-[#96A0B6] w-1/4">
-                  كود المقرر
-                </TableHead>
-                <TableHead className="text-right font-medium text-[#96A0B6] w-1/4">
-                  عدد الساعات
-                </TableHead>
-                <TableHead className="text-right font-medium text-[#96A0B6] w-1/4">
-                  التقدير
-                </TableHead>
+                <TableHead className="text-right font-medium w-[25%]">اسم المقرر</TableHead>
+                <TableHead className="text-right font-medium w-[20%]">كود المقرر</TableHead>
+                <TableHead className="text-right font-medium w-[20%]">عدد الساعات</TableHead>
+                <TableHead className="text-right font-medium w-[20%]">التقدير</TableHead>
+                <TableHead className="text-right font-medium w-[20%]">الإجراءات</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {courses.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={4} className="text-center">
+                  <TableCell colSpan={5} className="text-center">
                     لا يوجد مواد
                   </TableCell>
                 </TableRow>
@@ -227,6 +220,17 @@ export default function Page() {
                     <TableCell className="text-right">{course.totalHours}</TableCell>
                     <TableCell className="text-right">
                       {course.grade ? course.grade : "مسجل على الفصل الحالي"}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <Button
+                        className={`w-full md:w-auto ${
+                          course.grade
+                            ? "bg-mainColor hover:bg-blue-700"
+                            : "bg-green-600 hover:bg-green-700"
+                        }`}
+                      >
+                        {course.grade ? "تعديل تقدير" : "إضافة تقدير"}
+                      </Button>
                     </TableCell>
                   </TableRow>
                 ))

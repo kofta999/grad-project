@@ -8,18 +8,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Card, CardContent, CardHeader, CardGrid } from "@/components/ui/card";
-import {
-  CalendarIcon,
-  Flag,
-  User,
-  Mail,
-  Printer,
-  UserCheck,
-  Eye,
-  Phone,
-  Shield,
-} from "lucide-react";
+import { Card, CardContent, CardHeader, CardGrid, CardTitle } from "@/components/ui/card";
+import { Flag, User, Mail, Printer, UserCheck, Phone, Shield, Info, ShieldOff } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Container, ContainerTitle } from "@/components/ui/container";
 import { FormikProps } from "formik";
@@ -27,31 +17,39 @@ import { useState } from "react";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 import DatePicker from "@/components/ui/date-picker";
 import { RegisterStep1Type } from "@/lib/types";
+import { usePathname } from "next/navigation";
+import { SpacingWrapper } from "../ui/spacing-wrapper";
+import { ErrorMessage } from "../ui/error-message";
 
 interface Step1Props {
   formik: FormikProps<RegisterStep1Type>;
 }
 
 export default function RegisterStep1Form({ formik }: Step1Props) {
-  const { role } = JSON.parse(localStorage.getItem("loggedInUser") || "{}");
+  const pathname = usePathname();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   return (
     <Container>
       <ContainerTitle>
-        {role === "admin" ? "تعديل بيانات الطالب" : "انشاء حساب جديد"}
+        {pathname === "/register" ? "انشاء حساب جديد" : "تعديل بيانات الطالب"}
       </ContainerTitle>
       <form onSubmit={formik.handleSubmit}>
         {/* Basic Information */}
         <Card>
+          <CardHeader>
+            <CardTitle>
+              <Info className="text-yellow-200" />
+              المعلومات الأساسية
+            </CardTitle>
+          </CardHeader>
           <CardContent>
-            <CardHeader>المعلومات الأساسية</CardHeader>
             <CardGrid>
-              <div className="space-y-2">
+              <SpacingWrapper>
                 <Label>
                   الاسم الرباعي (بالعربية)
-                  {role === "student" && <span className="text-red-500">*</span>}
+                  {pathname === "/register" && <span className="text-red-500">*</span>}
                 </Label>
                 <Input
                   name="fullNameAr"
@@ -61,15 +59,13 @@ export default function RegisterStep1Form({ formik }: Step1Props) {
                   icon={<User className="h-4 w-4" />}
                 />
                 {formik.touched.fullNameAr && formik.errors.fullNameAr && (
-                  <p className="text-red-500 text-sm">
-                    <>{formik.errors.fullNameAr}</>
-                  </p>
+                  <ErrorMessage message={formik.errors.fullNameAr} />
                 )}
-              </div>
-              <div className="space-y-2">
+              </SpacingWrapper>
+              <SpacingWrapper>
                 <Label>
                   الاسم الرباعي (بالانجليزية)
-                  {role === "student" && <span className="text-red-500">*</span>}
+                  {pathname === "/register" && <span className="text-red-500">*</span>}
                 </Label>
                 <Input
                   name="fullNameEn"
@@ -79,15 +75,13 @@ export default function RegisterStep1Form({ formik }: Step1Props) {
                   icon={<User className="h-4 w-4" />}
                 />
                 {formik.touched.fullNameEn && formik.errors.fullNameEn && (
-                  <p className="text-red-500 text-sm">
-                    <>{formik.errors.fullNameEn}</>
-                  </p>
+                  <ErrorMessage message={formik.errors.fullNameEn} />
                 )}
-              </div>
-              <div className="space-y-2">
+              </SpacingWrapper>
+              <SpacingWrapper>
                 <Label>
                   النوع (الجنس)
-                  {role === "student" && <span className="text-red-500">*</span>}
+                  {pathname === "/register" && <span className="text-red-500">*</span>}
                 </Label>
                 <Select
                   value={formik.values.gender ? "male" : "female"}
@@ -104,15 +98,13 @@ export default function RegisterStep1Form({ formik }: Step1Props) {
                   </SelectContent>
                 </Select>
                 {formik.touched.gender && formik.errors.gender && (
-                  <p className="text-red-500 text-sm">
-                    <>{formik.errors.gender}</>
-                  </p>
+                  <ErrorMessage message={formik.errors.gender} />
                 )}
-              </div>
-              <div className="space-y-2">
+              </SpacingWrapper>
+              <SpacingWrapper>
                 <Label>
                   الجنسية
-                  {role === "student" && <span className="text-red-500">*</span>}
+                  {pathname === "/register" && <span className="text-red-500">*</span>}
                 </Label>
                 <Input
                   name="nationality"
@@ -122,15 +114,13 @@ export default function RegisterStep1Form({ formik }: Step1Props) {
                   icon={<Flag className="h-4 w-4" />}
                 />
                 {formik.touched.nationality && formik.errors.nationality && (
-                  <p className="text-red-500 text-sm">
-                    <>{formik.errors.nationality}</>
-                  </p>
+                  <ErrorMessage message={formik.errors.nationality} />
                 )}
-              </div>
-              <div className="space-y-2 md:col-span-2 md:justify-self-center md:w-full md:max-w-[calc(100%/2)]">
+              </SpacingWrapper>
+              <SpacingWrapper className="md:col-span-2 md:justify-self-center md:w-full md:max-w-[calc(100%/2)]">
                 <Label>
                   تاريخ الميلاد
-                  {role === "student" && <span className="text-red-500">*</span>}
+                  {pathname === "/register" && <span className="text-red-500">*</span>}
                 </Label>
                 <DatePicker
                   value={formik.values.dob ? new Date(formik.values.dob) : undefined}
@@ -138,24 +128,27 @@ export default function RegisterStep1Form({ formik }: Step1Props) {
                   placeholder="اختر تاريخ الميلاد"
                 />
                 {formik.touched.dob && formik.errors.dob && (
-                  <p className="text-red-500 text-sm">
-                    <>{formik.errors.dob}</>
-                  </p>
+                  <ErrorMessage message={formik.errors.dob as string} />
                 )}
-              </div>
+              </SpacingWrapper>
             </CardGrid>
           </CardContent>
         </Card>
 
         {/* Contact Information */}
         <Card>
-          <CardContent className="pt-6">
-            <CardHeader className="text-lg font-semibold mb-4">معلومات الاتصال</CardHeader>
+          <CardHeader>
+            <CardTitle>
+              <Phone className="text-yellow-200" />
+              معلومات الاتصال
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
             <CardGrid>
-              <div className="space-y-2">
+              <SpacingWrapper className="space-y-2">
                 <Label>
                   البريد الإلكتروني
-                  {role === "student" && <span className="text-red-500">*</span>}
+                  {pathname === "/register" && <span className="text-red-500">*</span>}
                 </Label>
                 <Input
                   type="email"
@@ -166,12 +159,10 @@ export default function RegisterStep1Form({ formik }: Step1Props) {
                   icon={<Mail className="h-4 w-4" />}
                 />
                 {formik.touched.email && formik.errors.email && (
-                  <p className="text-red-500 text-sm">
-                    <>{formik.errors.email}</>
-                  </p>
+                  <ErrorMessage message={formik.errors.email} />
                 )}
-              </div>
-              <div className="space-y-2">
+              </SpacingWrapper>
+              <SpacingWrapper>
                 <Label>فاكس</Label>
                 <Input
                   type="tel"
@@ -182,15 +173,13 @@ export default function RegisterStep1Form({ formik }: Step1Props) {
                   icon={<Printer className="h-4 w-4" />}
                 />
                 {formik.touched.fax && formik.errors.fax && (
-                  <p className="text-red-500 text-sm">
-                    <>{formik.errors.fax}</>
-                  </p>
+                  <ErrorMessage message={formik.errors.fax} />
                 )}
-              </div>
-              <div className="space-y-2">
+              </SpacingWrapper>
+              <SpacingWrapper>
                 <Label>
                   رقم الهاتف
-                  {role === "student" && <span className="text-red-500">*</span>}
+                  {pathname === "/register" && <span className="text-red-500">*</span>}
                 </Label>
                 <Input
                   type="tel"
@@ -201,12 +190,10 @@ export default function RegisterStep1Form({ formik }: Step1Props) {
                   icon={<Phone className="h-4 w-4" />}
                 />
                 {formik.touched.phoneNoMain && formik.errors.phoneNoMain && (
-                  <p className="text-red-500 text-sm">
-                    <>{formik.errors.phoneNoMain}</>
-                  </p>
+                  <ErrorMessage message={formik.errors.phoneNoMain} />
                 )}
-              </div>
-              <div className="space-y-2">
+              </SpacingWrapper>
+              <SpacingWrapper>
                 <Label>رقم هاتف آخر</Label>
                 <Input
                   type="tel"
@@ -217,24 +204,27 @@ export default function RegisterStep1Form({ formik }: Step1Props) {
                   icon={<Phone className="h-4 w-4" />}
                 />
                 {formik.touched.phoneNoSec && formik.errors.phoneNoSec && (
-                  <p className="text-red-500 text-sm">
-                    <>{formik.errors.phoneNoSec}</>
-                  </p>
+                  <ErrorMessage message={formik.errors.phoneNoSec} />
                 )}
-              </div>
+              </SpacingWrapper>
             </CardGrid>
           </CardContent>
         </Card>
 
         {/* Security */}
         <Card>
-          <CardContent className="pt-6">
-            <CardHeader className="text-lg font-semibold mb-4">الأمان</CardHeader>
+          <CardHeader>
+            <CardTitle>
+              <ShieldOff className="text-yellow-200" />
+              الأمان
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
             <CardGrid>
-              <div className="space-y-2">
+              <SpacingWrapper>
                 <Label>
                   كلمة المرور
-                  {role === "student" && <span className="text-red-500">*</span>}
+                  {pathname === "/register" && <span className="text-red-500">*</span>}
                 </Label>
                 <Input
                   type={showPassword ? "text" : "password"}
@@ -253,16 +243,13 @@ export default function RegisterStep1Form({ formik }: Step1Props) {
                   }
                 />
                 {formik.touched.hashedPassword && formik.errors.hashedPassword && (
-                  <p className="text-red-500 text-sm">
-                    <>{formik.errors.hashedPassword}</>
-                  </p>
+                  <ErrorMessage message={formik.errors.hashedPassword} />
                 )}
-              </div>
-
-              <div className="space-y-2">
+              </SpacingWrapper>
+              <SpacingWrapper>
                 <Label>
                   تأكيد كلمة المرور
-                  {role === "student" && <span className="text-red-500">*</span>}
+                  {pathname === "/register" && <span className="text-red-500">*</span>}
                 </Label>
                 <Input
                   type={showConfirmPassword ? "text" : "password"}
@@ -284,15 +271,13 @@ export default function RegisterStep1Form({ formik }: Step1Props) {
                   }
                 />
                 {formik.touched.confirmPassword && formik.errors.confirmPassword && (
-                  <p className="text-red-500 text-sm">
-                    <>{formik.errors.confirmPassword}</>
-                  </p>
+                  <ErrorMessage message={formik.errors.confirmPassword} />
                 )}
-              </div>
-              <div className={cn("space-y-2", { hidden: role === "admin" })}>
+              </SpacingWrapper>
+              <SpacingWrapper className={cn({ hidden: pathname !== "/register" })}>
                 <Label>
                   سؤال الأمان
-                  {role === "student" && <span className="text-red-500">*</span>}
+                  {pathname === "/register" && <span className="text-red-500">*</span>}
                 </Label>
                 <Input
                   name="secQuestion"
@@ -302,15 +287,13 @@ export default function RegisterStep1Form({ formik }: Step1Props) {
                   icon={<Shield className="h-4 w-4" />}
                 />
                 {formik.touched.secQuestion && formik.errors.secQuestion && (
-                  <p className="text-red-500 text-sm">
-                    <>{formik.errors.secQuestion}</>
-                  </p>
+                  <ErrorMessage message={formik.errors.secQuestion} />
                 )}
-              </div>
-              <div className={cn("space-y-2", { hidden: role === "admin" })}>
+              </SpacingWrapper>
+              <SpacingWrapper className={cn({ hidden: pathname !== "/register" })}>
                 <Label>
                   إجابة سؤال الأمان
-                  {role === "student" && <span className="text-red-500">*</span>}
+                  {pathname === "/register" && <span className="text-red-500">*</span>}
                 </Label>
                 <Input
                   name="secAnswer"
@@ -320,18 +303,16 @@ export default function RegisterStep1Form({ formik }: Step1Props) {
                   icon={<UserCheck className="h-4 w-4" />}
                 />
                 {formik.touched.secAnswer && formik.errors.secAnswer && (
-                  <p className="text-red-500 text-sm">
-                    <>{formik.errors.secAnswer}</>
-                  </p>
+                  <ErrorMessage message={formik.errors.secAnswer} />
                 )}
-              </div>
+              </SpacingWrapper>
             </CardGrid>
           </CardContent>
         </Card>
 
         <div className="flex justify-center items-center">
           <Button className="px-8 py-2 bg-mainColor hover:bg-blue-700 text-white" type="submit">
-            {role === "admin" ? "تعديل" : "التالي"}
+            {pathname === "/register" ? "التالي" : "تعديل"}
           </Button>
         </div>
       </form>

@@ -12,170 +12,189 @@ import {
   Mail,
 } from "lucide-react";
 import { ApplicationType } from "@/lib/types";
+import { Card, CardContent, CardGrid, CardHeader, CardTitle } from "../ui/card";
+import { SpacingWrapper } from "../ui/spacing-wrapper";
+import Link from "next/link";
 
 export default function ApplicationDetails({ application }: { application: ApplicationType }) {
+  if (!application) {
+    return <div className="text-2xl font-bold text-blue-900 mb-4">لا يوجد بيانات للطلب</div>;
+  }
+
   return (
     <>
       {/* نظرة عامة */}
-      <div className="mb-2 py-8">
-        <h2 className="text-xl font-semibold text-gray-700 mb-4 flex items-center">
-          <GraduationCap className="ml-2" /> نظرة عامة
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-white rounded-lg shadow-lg p-3">
-          <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
-            <p className="text-gray-600">العام الأكاديمي للتسجيل</p>
-            <p className="text-lg font-semibold text-gray-800">
-              {application?.registration?.academicYear}
-            </p>
-          </div>
-          <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
-            <p className="text-gray-600">حالة الطلب</p>
-            <p className="text-lg font-semibold text-gray-800">
-              {application?.isAccepted ? "مقبول" : "قيد المراجعة"}
-            </p>
-          </div>
-          <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
-            <p className="text-gray-600">الكلية</p>
-            <p className="text-lg font-semibold text-gray-800">
-              {application?.registration?.faculty}
-            </p>
-          </div>
-          <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
-            <p className="text-gray-600">البرنامج العلمي</p>
-            <p className="text-lg font-semibold text-gray-800">
-              {application.registration.academicProgram}
-            </p>
-          </div>
-        </div>
-      </div>
+      <Card>
+        <CardHeader>
+          <CardTitle>
+            <GraduationCap className="w-5 h-5 text-yellow-200" /> نظرة عامة
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <CardGrid>
+            <SpacingWrapper className="bg-gray-50 p-3 rounded-lg shadow-sm">
+              <p className="text-gray-600">العام الأكاديمي للتسجيل</p>
+              <p className="text-lg font-semibold text-gray-800">
+                {application?.registration?.academicYear}
+              </p>
+            </SpacingWrapper>
+            <SpacingWrapper className="bg-gray-50 p-3 rounded-lg shadow-sm">
+              <p className="text-gray-600">حالة الطلب</p>
+              <p className="text-lg font-semibold text-gray-800">
+                {application?.isAccepted ? "مقبول" : "قيد المراجعة"}
+              </p>
+            </SpacingWrapper>
+            <SpacingWrapper className="bg-gray-50 p-3 rounded-lg shadow-sm">
+              <p className="text-gray-600">الكلية</p>
+              <p className="text-lg font-semibold text-gray-800">
+                {application?.registration?.faculty}
+              </p>
+            </SpacingWrapper>
+            <SpacingWrapper className="bg-gray-50 p-3 rounded-lg shadow-sm">
+              <p className="text-gray-600">البرنامج العلمي</p>
+              <p className="text-lg font-semibold text-gray-800">
+                {application.registration?.academicProgram}
+              </p>
+            </SpacingWrapper>
+          </CardGrid>
+        </CardContent>
+      </Card>
 
       {/* المعلومات الأكاديمية */}
-      <div className="mb-2 py-8">
-        <h2 className="text-xl font-semibold text-gray-700 mb-4 flex items-center">
-          <School className="ml-2" /> المعلومات الأكاديمية
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-white rounded-lg shadow-lg p-3">
-          <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
-            <p className="text-gray-600">المؤهل</p>
-            <p className="text-lg font-semibold text-gray-800">
-              {application?.academicQualification?.qualification}
-            </p>
-          </div>
-          <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
-            <p className="text-gray-600">الجامعة</p>
-            <p className="text-lg font-semibold text-gray-800">
-              {application?.academicQualification?.university}
-            </p>
-          </div>
-          <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
-            <p className="text-gray-600">الكلية</p>
-            <p className="text-lg font-semibold text-gray-800">
-              {application?.academicQualification?.faculty}
-            </p>
-          </div>
-          <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
-            <p className="text-gray-600">التخصص</p>
-            <p className="text-lg font-semibold text-gray-800">
-              {application?.academicQualification?.specialization}
-            </p>
-          </div>
-          <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
-            <p className="text-gray-600">سنة النخرج</p>
-            <p className="text-lg font-semibold text-gray-800">
-              {application?.academicQualification?.year}
-            </p>
-          </div>
-          <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
-            <p className="text-gray-600">المعدل التراكمي</p>
-            <p className="text-lg font-semibold text-gray-800">
-              {application?.academicQualification?.gpa}
-            </p>
-          </div>
-          <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
-            <p className="text-gray-600">التقدير الأكاديمي</p>
-            <p className="text-lg font-semibold text-gray-800">
-              {application?.academicQualification?.grade}
-            </p>
-          </div>
-          <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
-            <p className="text-gray-600">الدولة</p>
-            <p className="text-lg font-semibold text-gray-800">
-              {application?.academicQualification?.country}
-            </p>
-          </div>
-        </div>
-      </div>
+      <Card>
+        <CardHeader>
+          <CardTitle>
+            <School className="w-5 h-5 text-yellow-200" /> المعلومات الأكاديمية
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <CardGrid>
+            <SpacingWrapper className="bg-gray-50 p-3 rounded-lg shadow-sm">
+              <p className="text-gray-600">المؤهل</p>
+              <p className="text-lg font-semibold text-gray-800">
+                {application?.academicQualification?.qualification}
+              </p>
+            </SpacingWrapper>
+            <SpacingWrapper className="bg-gray-50 p-3 rounded-lg shadow-sm">
+              <p className="text-gray-600">الجامعة</p>
+              <p className="text-lg font-semibold text-gray-800">
+                {application?.academicQualification?.university}
+              </p>
+            </SpacingWrapper>
+            <SpacingWrapper className="bg-gray-50 p-3 rounded-lg shadow-sm">
+              <p className="text-gray-600">الكلية</p>
+              <p className="text-lg font-semibold text-gray-800">
+                {application?.academicQualification?.faculty}
+              </p>
+            </SpacingWrapper>
+            <SpacingWrapper className="bg-gray-50 p-3 rounded-lg shadow-sm">
+              <p className="text-gray-600">التخصص</p>
+              <p className="text-lg font-semibold text-gray-800">
+                {application?.academicQualification?.specialization}
+              </p>
+            </SpacingWrapper>
+            <SpacingWrapper className="bg-gray-50 p-3 rounded-lg shadow-sm">
+              <p className="text-gray-600">سنة النخرج</p>
+              <p className="text-lg font-semibold text-gray-800">
+                {application?.academicQualification?.year}
+              </p>
+            </SpacingWrapper>
+            <SpacingWrapper className="bg-gray-50 p-3 rounded-lg shadow-sm">
+              <p className="text-gray-600">المعدل التراكمي</p>
+              <p className="text-lg font-semibold text-gray-800">
+                {application?.academicQualification?.gpa}
+              </p>
+            </SpacingWrapper>
+            <SpacingWrapper className="bg-gray-50 p-3 rounded-lg shadow-sm">
+              <p className="text-gray-600">التقدير الأكاديمي</p>
+              <p className="text-lg font-semibold text-gray-800">
+                {application?.academicQualification?.grade}
+              </p>
+            </SpacingWrapper>
+            <SpacingWrapper className="bg-gray-50 p-3 rounded-lg shadow-sm">
+              <p className="text-gray-600">الدولة</p>
+              <p className="text-lg font-semibold text-gray-800">
+                {application?.academicQualification?.country}
+              </p>
+            </SpacingWrapper>
+          </CardGrid>
+        </CardContent>
+      </Card>
 
       {/* المعلومات الشخصية */}
-      <div className="mb-2 py-8">
-        <h2 className="text-xl font-semibold text-gray-700 mb-4 flex items-center">
-          <Info className="ml-2" /> المعلومات الشخصية
-        </h2>
-        <div className="grid grid-cols-1 gap-4 bg-white rounded-lg shadow-lg p-3">
-          <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
-            <h2 className="text-gray-600 mb-4 flex items-center">العنوان</h2>
-            {application?.addresses?.map((address, index) => (
-              <p key={index} className="text-lg font-semibold text-gray-800 flex items-center">
-                <Home className="ml-2" />
-                {address.fullAddress}, {address.city}, {address.country} ({address.type})
-              </p>
-            ))}
-          </div>
-          {application.emergencyContact && (
-            <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
-              <h2 className="text-gray-600 mb-4 flex items-center">
-                معلومات الاتصال في حالات الطوارئ
-              </h2>
-              <p className="text-lg font-semibold text-gray-800 mb-3 flex items-center">
-                <User className="ml-2" />
-                {application?.emergencyContact?.name}
-              </p>
-              <p className="text-lg font-semibold text-gray-800 mb-3 flex items-center">
-                <Phone className="ml-2" />
-                {application?.emergencyContact?.phoneNumber}
-              </p>
-              <p className="text-lg font-semibold text-gray-800 mb-3 flex items-center">
-                <Mail className="ml-2" />
-                {application?.emergencyContact?.email || "غير متوفر"}
-              </p>
-              <p className="text-lg font-semibold text-gray-800 mb-3 flex items-center">
-                <MapPin className="ml-2" />
-                {application?.emergencyContact?.address || "غير متوفر"}
-              </p>
-            </div>
-          )}
-        </div>
-      </div>
+      <Card>
+        <CardHeader>
+          <CardTitle>
+            <Info className="w-5 h-5 text-yellow-200" /> المعلومات الشخصية
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <CardGrid>
+            <SpacingWrapper className="bg-gray-50 p-3 rounded-lg shadow-sm">
+              <p className="text-gray-600 flex items-center">العنوان</p>
+              {application?.addresses?.map((address, index) => (
+                <p key={index} className="text-lg font-semibold text-gray-800 flex items-center">
+                  <Home className="ml-2" />
+                  {`${address.fullAddress}, ${address.city}, ${address.country}${address.type ? ` (${address.type})` : ""}`}
+                </p>
+              ))}
+            </SpacingWrapper>
+            {application.emergencyContact && (
+              <SpacingWrapper className="bg-gray-50 p-3 rounded-lg shadow-sm">
+                <p className="text-gray-600 flex items-center">معلومات الاتصال في حالات الطوارئ</p>
+                <p className="text-lg font-semibold text-gray-800 mb-3 flex items-center">
+                  <User className="ml-2" />
+                  {application?.emergencyContact?.name}
+                </p>
+                <p className="text-lg font-semibold text-gray-800 mb-3 flex items-center">
+                  <Phone className="ml-2" />
+                  {application?.emergencyContact?.phoneNumber}
+                </p>
+                <p className="text-lg font-semibold text-gray-800 mb-3 flex items-center">
+                  <Mail className="ml-2" />
+                  {application?.emergencyContact?.email || "غير متوفر"}
+                </p>
+                <p className="text-lg font-semibold text-gray-800 mb-3 flex items-center">
+                  <MapPin className="ml-2" />
+                  {application?.emergencyContact?.address || "غير متوفر"}
+                </p>
+              </SpacingWrapper>
+            )}
+          </CardGrid>
+        </CardContent>
+      </Card>
 
       {/* المستندات المرفوعة */}
-      <div className="mb-2 py-8">
-        <h2 className="text-xl font-semibold text-gray-700 mb-4 flex items-center">
-          <FileText className="ml-2" /> المستندات المرفوعة
-        </h2>
-        <div className="grid grid-cols-1 gap-4 bg-white rounded-lg shadow-lg p-3">
-          {application?.attachments?.map((attachment, index) => (
-            <div
-              key={index}
-              className="bg-gray-50 p-4 rounded-lg shadow-sm flex justify-between items-center"
-            >
-              <h2 className="text-gray-800 mb-4 flex items-center">
-                <File className="ml-2" />
-                {attachment.type}
-              </h2>
-              <div className="rounded-md border border-gray-400 px-5 pb-1">
-                <a
-                  className="text-gray-800"
+      <Card>
+        <CardHeader>
+          <CardTitle>
+            <FileText className="w-5 h-5 text-yellow-200" /> المستندات المرفوعة
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <CardGrid className="md:grid-cols-1">
+            {application?.attachments?.map((attachment, index) => (
+              <SpacingWrapper
+                key={index}
+                className="bg-gray-50 p-4 rounded-lg shadow-sm flex justify-between items-center"
+              >
+                <p className="text-gray-800 flex items-center">
+                  <File className="ml-2" />
+                  {attachment.type}
+                </p>
+                <Link
+                  className="text-gray-800 rounded-md border border-gray-400 px-5 pb-1"
                   href={attachment.attachmentUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
                   عرض
-                </a>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
+                </Link>
+              </SpacingWrapper>
+            ))}
+          </CardGrid>
+        </CardContent>
+      </Card>
     </>
   );
 }

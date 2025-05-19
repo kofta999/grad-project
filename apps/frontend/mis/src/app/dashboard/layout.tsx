@@ -44,7 +44,7 @@ export default function Layout({
       <aside className="sideNav">
         <SideBar role={role} />
       </aside>
-      <main className="py-14 xl:py-6">{role === "admin" ? admin : student}</main>
+      <main>{role === "admin" ? admin : student}</main>
     </div>
   );
 }

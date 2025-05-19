@@ -13,15 +13,24 @@ import { MapPin, Phone, User, Mail } from "lucide-react";
 import { Container, ContainerTitle } from "@/components/ui/container";
 import { FormikProps } from "formik";
 import { ApplicationStep1Type } from "@/lib/types";
+import { usePathname } from "next/navigation";
+import { SpacingWrapper } from "../ui/spacing-wrapper";
+import { ErrorMessage } from "../ui/error-message";
+import CountrySelect from "../ui/CountrySelect";
+import StateSelect from "../ui/StateSelect";
 
 interface Step1Props {
   formik: FormikProps<ApplicationStep1Type>;
 }
 
 export default function ApplicationStep1Form({ formik }: Step1Props) {
+  const pathname = usePathname();
+
   return (
     <Container>
-      <ContainerTitle>بيانات التسجيل</ContainerTitle>
+      <ContainerTitle>
+        {pathname === "/dashboard/applications" ? "بيانات التسجيل" : "تعديل بيانات التسجيل"}
+      </ContainerTitle>
 
       <form onSubmit={formik.handleSubmit}>
         {/* Permanent Address */}
@@ -30,60 +39,44 @@ export default function ApplicationStep1Form({ formik }: Step1Props) {
             <CardHeader>العنوان الدائم</CardHeader>
             <CardGrid>
               {/* Country */}
-              <div className="space-y-2">
-                <Label>
-                  الدولة<span className="text-red-500">*</span>
-                </Label>
-                <Select
+              <SpacingWrapper>
+                <CountrySelect
+                  name="permanentAddress.country"
+                  label="الدولة"
                   value={formik.values.permanentAddress.country}
-                  onValueChange={(value: any) =>
-                    formik.setFieldValue("permanentAddress.country", value)
-                  }
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="اختر الدولة" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="region1">المنطقة 1</SelectItem>
-                    <SelectItem value="region2">المنطقة 2</SelectItem>
-                    <SelectItem value="region3">المنطقة 3</SelectItem>
-                  </SelectContent>
-                </Select>
-                {formik.touched.permanentAddress?.country &&
-                  formik.errors.permanentAddress?.country && (
-                    <p className="text-red-500 text-sm">{formik.errors.permanentAddress.country}</p>
-                  )}
-              </div>
-
+                  error={formik.errors.permanentAddress?.country}
+                  touched={formik.touched.permanentAddress?.country}
+                  onChange={(value) => {
+                    formik.setFieldValue("permanentAddress.country", value);
+                    formik.setFieldValue("permanentAddress.city", "");
+                    // getStates(value);
+                  }}
+                  required={pathname === "/dashboard/applications"}
+                />
+              </SpacingWrapper>
               {/* City */}
-              <div className="space-y-2">
-                <Label>
-                  المدينة<span className="text-red-500">*</span>
-                </Label>
-                <Select
+              <SpacingWrapper>
+                <StateSelect
+                  name="permanentAddress.city"
+                  label="المدينة"
+                  countryCode={formik.values.permanentAddress.country}
                   value={formik.values.permanentAddress.city}
-                  onValueChange={(value: any) =>
-                    formik.setFieldValue("permanentAddress.city", value)
-                  }
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="اختر المدينة" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="region1">المنطقة 1</SelectItem>
-                    <SelectItem value="region2">المنطقة 2</SelectItem>
-                    <SelectItem value="region3">المنطقة 3</SelectItem>
-                  </SelectContent>
-                </Select>
-                {formik.touched.permanentAddress?.city && formik.errors.permanentAddress?.city && (
-                  <p className="text-red-500 text-sm">{formik.errors.permanentAddress.city}</p>
-                )}
-              </div>
+                  error={formik.errors.permanentAddress?.city}
+                  touched={formik.touched.permanentAddress?.city}
+                  onChange={(value) => {
+                    formik.setFieldValue("permanentAddress.city", value);
+                  }}
+                  required={pathname === "/dashboard/applications"}
+                />
+              </SpacingWrapper>
 
               {/* Full Address */}
-              <div className="space-y-2 md:col-span-2 w-full md:w-1/2 mx-auto">
+              <SpacingWrapper className="md:col-span-2 w-full md:w-1/2 mx-auto">
                 <Label>
-                  العنوان<span className="text-red-500">*</span>
+                  العنوان
+                  {pathname === "/dashboard/applications" && (
+                    <span className="text-red-500">*</span>
+                  )}
                 </Label>
                 <Input
                   name="permanentAddress.fullAddress"
@@ -93,11 +86,9 @@ export default function ApplicationStep1Form({ formik }: Step1Props) {
                 />
                 {formik.touched.permanentAddress?.fullAddress &&
                   formik.errors.permanentAddress?.fullAddress && (
-                    <p className="text-red-500 text-sm">
-                      {formik.errors.permanentAddress.fullAddress}
-                    </p>
+                    <ErrorMessage message={formik.errors.permanentAddress.fullAddress} />
                   )}
-              </div>
+              </SpacingWrapper>
             </CardGrid>
           </CardContent>
         </Card>
@@ -108,58 +99,44 @@ export default function ApplicationStep1Form({ formik }: Step1Props) {
             <CardHeader>العنوان الحالي</CardHeader>
             <CardGrid>
               {/* Country */}
-              <div className="space-y-2">
-                <Label>
-                  الدولة<span className="text-red-500">*</span>
-                </Label>
-                <Select
+              <SpacingWrapper>
+                <CountrySelect
+                  name="currentAddress.country"
+                  label="الدولة"
                   value={formik.values.currentAddress.country}
-                  onValueChange={(value: any) =>
-                    formik.setFieldValue("currentAddress.country", value)
-                  }
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="اختر الدولة" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="region1">المنطقة 1</SelectItem>
-                    <SelectItem value="region2">المنطقة 2</SelectItem>
-                    <SelectItem value="region3">المنطقة 3</SelectItem>
-                  </SelectContent>
-                </Select>
-                {formik.touched.currentAddress?.country &&
-                  formik.errors.currentAddress?.country && (
-                    <p className="text-red-500 text-sm">{formik.errors.currentAddress.country}</p>
-                  )}
-              </div>
+                  error={formik.errors.currentAddress?.country}
+                  touched={formik.touched.currentAddress?.country}
+                  onChange={(value) => {
+                    formik.setFieldValue("currentAddress.country", value);
+                    formik.setFieldValue("currentAddress.city", "");
+                  }}
+                  required={pathname === "/dashboard/applications"}
+                />
+              </SpacingWrapper>
 
               {/* City */}
-              <div className="space-y-2">
-                <Label>
-                  المدينة<span className="text-red-500">*</span>
-                </Label>
-                <Select
+              <SpacingWrapper>
+                <StateSelect
+                  name="currentAddress.city"
+                  label="المدينة"
+                  countryCode={formik.values.currentAddress.country}
                   value={formik.values.currentAddress.city}
-                  onValueChange={(value: any) => formik.setFieldValue("currentAddress.city", value)}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="اختر المدينة" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="region1">المنطقة 1</SelectItem>
-                    <SelectItem value="region2">المنطقة 2</SelectItem>
-                    <SelectItem value="region3">المنطقة 3</SelectItem>
-                  </SelectContent>
-                </Select>
-                {formik.touched.currentAddress?.city && formik.errors.currentAddress?.city && (
-                  <p className="text-red-500 text-sm">{formik.errors.currentAddress.city}</p>
-                )}
-              </div>
+                  error={formik.errors.currentAddress?.city}
+                  touched={formik.touched.currentAddress?.city}
+                  onChange={(value) => {
+                    formik.setFieldValue("currentAddress.city", value);
+                  }}
+                  required={pathname === "/dashboard/applications"}
+                />
+              </SpacingWrapper>
 
               {/* Full Address */}
-              <div className="space-y-2 md:col-span-2 w-full md:w-1/2 mx-auto">
+              <SpacingWrapper className="md:col-span-2 w-full md:w-1/2 mx-auto">
                 <Label>
-                  العنوان<span className="text-red-500">*</span>
+                  العنوان
+                  {pathname === "/dashboard/applications" && (
+                    <span className="text-red-500">*</span>
+                  )}
                 </Label>
                 <Input
                   name="currentAddress.fullAddress"
@@ -169,11 +146,9 @@ export default function ApplicationStep1Form({ formik }: Step1Props) {
                 />
                 {formik.touched.currentAddress?.fullAddress &&
                   formik.errors.currentAddress?.fullAddress && (
-                    <p className="text-red-500 text-sm">
-                      {formik.errors.currentAddress.fullAddress}
-                    </p>
+                    <ErrorMessage message={formik.errors.currentAddress.fullAddress} />
                   )}
-              </div>
+              </SpacingWrapper>
             </CardGrid>
           </CardContent>
         </Card>
@@ -184,7 +159,7 @@ export default function ApplicationStep1Form({ formik }: Step1Props) {
             <CardHeader>شخصيات يمكن الرجوع اليها</CardHeader>
             <CardGrid>
               {/* Name */}
-              <div className="space-y-2">
+              <SpacingWrapper>
                 <Label>الاسم</Label>
                 <Input
                   name="emergencyContact.name"
@@ -193,12 +168,12 @@ export default function ApplicationStep1Form({ formik }: Step1Props) {
                   icon={<User className="h-4 w-4" />}
                 />
                 {formik.touched.emergencyContact?.name && formik.errors.emergencyContact?.name && (
-                  <p className="text-red-500 text-sm">{formik.errors.emergencyContact.name}</p>
+                  <ErrorMessage message={formik.errors.emergencyContact.name} />
                 )}
-              </div>
+              </SpacingWrapper>
 
               {/* Address */}
-              <div className="space-y-2">
+              <SpacingWrapper>
                 <Label>العنوان</Label>
                 <Input
                   name="emergencyContact.address"
@@ -208,14 +183,12 @@ export default function ApplicationStep1Form({ formik }: Step1Props) {
                 />
                 {formik.touched.emergencyContact?.address &&
                   formik.errors.emergencyContact?.address && (
-                    <p className="text-red-500 text-sm">
-                      {formik.errors.emergencyContact?.address}
-                    </p>
+                    <ErrorMessage message={formik.errors.emergencyContact.address} />
                   )}
-              </div>
+              </SpacingWrapper>
 
               {/* Phone Number */}
-              <div className="space-y-2">
+              <SpacingWrapper>
                 <Label>التليفون</Label>
                 <Input
                   type="tel"
@@ -226,14 +199,12 @@ export default function ApplicationStep1Form({ formik }: Step1Props) {
                 />
                 {formik.touched.emergencyContact?.phoneNumber &&
                   formik.errors.emergencyContact?.phoneNumber && (
-                    <p className="text-red-500 text-sm">
-                      {formik.errors.emergencyContact?.phoneNumber}
-                    </p>
+                    <ErrorMessage message={formik.errors.emergencyContact.phoneNumber} />
                   )}
-              </div>
+              </SpacingWrapper>
 
               {/* Email */}
-              <div className="space-y-2">
+              <SpacingWrapper>
                 <Label>البريد الإلكتروني</Label>
                 <Input
                   name="emergencyContact.email"
@@ -243,9 +214,9 @@ export default function ApplicationStep1Form({ formik }: Step1Props) {
                 />
                 {formik.touched.emergencyContact?.email &&
                   formik.errors.emergencyContact?.email && (
-                    <p className="text-red-500 text-sm">{formik.errors.emergencyContact?.email}</p>
+                    <ErrorMessage message={formik.errors.emergencyContact.email} />
                   )}
-              </div>
+              </SpacingWrapper>
             </CardGrid>
           </CardContent>
         </Card>

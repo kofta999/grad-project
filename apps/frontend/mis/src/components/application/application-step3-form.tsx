@@ -11,9 +11,10 @@ import { ApplicationStep3Type } from "@/lib/types";
 interface Step3Props {
   goPrevStep: () => void;
   formik: FormikProps<ApplicationStep3Type>;
+  loading: boolean;
 }
 
-export default function ApplicationStep3Form({ goPrevStep, formik }: Step3Props) {
+export default function ApplicationStep3Form({ goPrevStep, formik, loading }: Step3Props) {
   const { values, setFieldValue } = formik;
 
   const handleAttachmentUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
