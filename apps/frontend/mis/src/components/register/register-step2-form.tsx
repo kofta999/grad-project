@@ -1,9 +1,9 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardGrid, CardHeader } from "@/components/ui/card";
+import { Card, CardContent, CardGrid, CardHeader, CardTitle } from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Briefcase, Building, CalendarIcon, CreditCard, Shield, Upload } from "lucide-react";
+import { Briefcase, Building, CreditCard, Upload, IdCard, BookPlus, User } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -62,8 +62,13 @@ export default function RegisterStep2Form({ goPrevStep, formik, loading }: Step2
       <form onSubmit={formik.handleSubmit}>
         {/* Identity Information */}
         <Card>
+          <CardHeader>
+            <CardTitle>
+              <IdCard className="text-yellow-200" />
+              الهوية
+            </CardTitle>
+          </CardHeader>
           <CardContent>
-            <CardHeader>الهوية</CardHeader>
             <CardGrid>
               <SpacingWrapper>
                 <Label>
@@ -141,8 +146,13 @@ export default function RegisterStep2Form({ goPrevStep, formik, loading }: Step2
 
         {/* Additional Information */}
         <Card>
+          <CardHeader>
+            <CardTitle>
+              <BookPlus className="text-yellow-200" />
+              معلومات إضافية
+            </CardTitle>
+          </CardHeader>
           <CardContent>
-            <CardHeader>معلومات إضافية</CardHeader>
             <CardGrid>
               <SpacingWrapper>
                 <Label>
@@ -166,7 +176,6 @@ export default function RegisterStep2Form({ goPrevStep, formik, loading }: Step2
                     <SelectItem value="other">أخرى</SelectItem>
                   </SelectContent>
                 </Select>
-
                 {formik.touched.martialStatus && formik.errors.martialStatus && (
                   <ErrorMessage message={formik.errors.martialStatus} />
                 )}
@@ -243,8 +252,13 @@ export default function RegisterStep2Form({ goPrevStep, formik, loading }: Step2
 
         {/* Personal Photo */}
         <Card>
+          <CardHeader>
+            <CardTitle>
+              <User className="text-yellow-200" />
+              الصورة الشخصية
+            </CardTitle>
+          </CardHeader>
           <CardContent>
-            <CardHeader>الصورة الشخصية</CardHeader>
             <div className="flex flex-col items-center gap-4">
               <div className="w-32 h-32 rounded-full bg-gray-100 border-2 border-dashed border-gray-300 flex items-center justify-center overflow-hidden">
                 {formik.values.imageUrl ? (
@@ -271,10 +285,7 @@ export default function RegisterStep2Form({ goPrevStep, formik, loading }: Step2
                     onChange={handlePhotoUpload}
                   />
                 </Label>
-                <ErrorMessage
-                  message="* يجب أن لا يزيد الملف عن 2 ميجا بايت"
-                  className="mt-2 text-center"
-                />
+                <ErrorMessage message="يجب أن لا يزيد الملف عن 2 ميجا بايت*" className="mt-2" />
               </div>
             </div>
             {formik.touched.imageUrl && formik.errors.imageUrl && (

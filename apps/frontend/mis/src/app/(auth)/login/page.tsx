@@ -85,17 +85,17 @@ export default function LoginForm() {
       <Container className="flex items-center justify-center h-screen max-w-xl">
         <Card>
           <CardContent>
-            <CardHeader>
-              <CardTitle>
-                <div className="flex items-center justify-between">
-                  <Image
-                    src={facultyLogo}
-                    alt="Faculty of Engineering Logo"
-                    width={120}
-                    height={120}
-                  />
-                  <Image src={universityLogo} alt="University Logo" width={95} height={95} />
-                </div>
+            <CardHeader className="bg-white">
+              <div className="flex items-center justify-between">
+                <Image
+                  src={facultyLogo}
+                  alt="Faculty of Engineering Logo"
+                  width={120}
+                  height={120}
+                />
+                <Image src={universityLogo} alt="University Logo" width={95} height={95} />
+              </div>
+              <CardTitle className="flex-col">
                 <h1 className="text-2xl font-bold text-gray-900 text-center">مرحبا بك</h1>
                 <p className="text-gray-600 text-center text-sm mt-2">
                   الرجاء تسجيل الدخول للوصول إلى تجربتك التعليمية المخصصة
@@ -179,7 +179,7 @@ export default function LoginForm() {
 
               <Button
                 type="submit"
-                className="w-full bg-mainColor hover:bg-blue-600 text-white"
+                className="w-full bg-mainColor hover:bg-blue-700 text-white"
                 disabled={loading}
               >
                 {loading ? <Loader className="w-6 h-6" /> : "تسجيل الدخول"}

@@ -3,8 +3,7 @@ import { useState } from "react";
 import {
   LayoutDashboard,
   ChartLine,
-  ShieldBan,
-  Wallet,
+  LibraryBig,
   File,
   ChevronDown,
   Settings,
@@ -35,16 +34,10 @@ const STUDENT_SIDEBAR_ITEMS = [
   { title: "بيانات الطالب", path: "/dashboard", icon: <LayoutDashboard /> },
   { title: "تقدم الطالب", path: "/dashboard/progress", icon: <ChartLine /> },
   {
-    title: "المرحلة التمهيدية",
-    path: "/projects",
-    icon: <ShieldBan />,
-    submenu: true,
-    subMenuItems: [
-      // { title: "التسجيل", path: "/dashboard/log-courses" },
-      { title: "المقررات الحالية", path: "/dashboard/current-courses" },
-    ],
+    title: "المقررات الحالية",
+    path: "/dashboard/current-courses",
+    icon: <LibraryBig />,
   },
-  // { title: "المصروفات", path: "/messages", icon: <Wallet /> },
   {
     title: "الرسالة",
     path: "/dashboard/thesis",
@@ -111,7 +104,7 @@ export default function SideNav({ role }: SideNavProps) {
     const [subMenuOpen, setSubMenuOpen] = useState(false);
 
     return (
-      <div className="my-3 text-[#8C8C8C]">
+      <div className="my-3 text-gray-600">
         {item.submenu ? (
           <>
             <button
@@ -206,15 +199,16 @@ export default function SideNav({ role }: SideNavProps) {
             <div className="footer">
               <div className="box bg-blue-600 text-white p-3 rounded-2xl">
                 <h1 className="font-bold text-xl flex items-center justify-between">
-                  مرحبًا {personalData?.fullNameAr.split(" ").slice(0, 2).join(" ")} <Star />
+                  مرحبًا {loggedInUser?.name.split(" ").slice(0, 2).join(" ")}{" "}
+                  <Star className="text-yellow-200" />
                 </h1>
                 <p className="mt-3">نتمنى لك يوماً طيباً.</p>
               </div>
               <div className="flex mt-3 items-center justify-between">
-                <Image src={personalData?.imageUrl} width={40} height={40} alt="avatar" />
+                {/* <Image src={personalData?.imageUrl} width={40} height={40} alt="avatar" /> */}
                 <div className="info">
-                  <h2 className="h2">{personalData?.fullNameAr}</h2>
-                  <p className="text-sm text-[#8C8C8C]">{personalData?.email}</p>
+                  <h2 className="h2">{loggedInUser?.name}</h2>
+                  {/* <p className="text-sm text-gray-600">{personalData?.email}</p> */}
                 </div>
                 <Popover>
                   <PopoverTrigger asChild>

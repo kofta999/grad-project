@@ -25,12 +25,12 @@ export default function ApplicationDetails({ application }: { application: Appli
     <>
       {/* نظرة عامة */}
       <Card>
+        <CardHeader>
+          <CardTitle>
+            <GraduationCap className="w-5 h-5 text-yellow-200" /> نظرة عامة
+          </CardTitle>
+        </CardHeader>
         <CardContent>
-          <CardHeader>
-            <CardTitle className="flex items-center mb-3">
-              <GraduationCap className="ml-2" /> نظرة عامة
-            </CardTitle>
-          </CardHeader>
           <CardGrid>
             <SpacingWrapper className="bg-gray-50 p-3 rounded-lg shadow-sm">
               <p className="text-gray-600">العام الأكاديمي للتسجيل</p>
@@ -62,12 +62,12 @@ export default function ApplicationDetails({ application }: { application: Appli
 
       {/* المعلومات الأكاديمية */}
       <Card>
+        <CardHeader>
+          <CardTitle>
+            <School className="w-5 h-5 text-yellow-200" /> المعلومات الأكاديمية
+          </CardTitle>
+        </CardHeader>
         <CardContent>
-          <CardHeader>
-            <CardTitle className="flex items-center mb-3">
-              <School className="ml-2" /> المعلومات الأكاديمية
-            </CardTitle>
-          </CardHeader>
           <CardGrid>
             <SpacingWrapper className="bg-gray-50 p-3 rounded-lg shadow-sm">
               <p className="text-gray-600">المؤهل</p>
@@ -123,15 +123,15 @@ export default function ApplicationDetails({ application }: { application: Appli
 
       {/* المعلومات الشخصية */}
       <Card>
+        <CardHeader>
+          <CardTitle>
+            <Info className="w-5 h-5 text-yellow-200" /> المعلومات الشخصية
+          </CardTitle>
+        </CardHeader>
         <CardContent>
-          <CardHeader>
-            <CardTitle className="flex items-center mb-3">
-              <Info className="ml-2" /> المعلومات الشخصية
-            </CardTitle>
-          </CardHeader>
           <CardGrid>
             <SpacingWrapper className="bg-gray-50 p-3 rounded-lg shadow-sm">
-              <p className="text-gray-600 mb-4 flex items-center">العنوان</p>
+              <p className="text-gray-600 flex items-center">العنوان</p>
               {application?.addresses?.map((address, index) => (
                 <p key={index} className="text-lg font-semibold text-gray-800 flex items-center">
                   <Home className="ml-2" />
@@ -141,9 +141,7 @@ export default function ApplicationDetails({ application }: { application: Appli
             </SpacingWrapper>
             {application.emergencyContact && (
               <SpacingWrapper className="bg-gray-50 p-3 rounded-lg shadow-sm">
-                <p className="text-gray-600 mb-4 flex items-center">
-                  معلومات الاتصال في حالات الطوارئ
-                </p>
+                <p className="text-gray-600 flex items-center">معلومات الاتصال في حالات الطوارئ</p>
                 <p className="text-lg font-semibold text-gray-800 mb-3 flex items-center">
                   <User className="ml-2" />
                   {application?.emergencyContact?.name}
@@ -168,12 +166,12 @@ export default function ApplicationDetails({ application }: { application: Appli
 
       {/* المستندات المرفوعة */}
       <Card>
+        <CardHeader>
+          <CardTitle>
+            <FileText className="w-5 h-5 text-yellow-200" /> المستندات المرفوعة
+          </CardTitle>
+        </CardHeader>
         <CardContent>
-          <CardHeader>
-            <CardTitle className="flex items-center mb-3">
-              <FileText className="ml-2" /> المستندات المرفوعة
-            </CardTitle>
-          </CardHeader>
           <CardGrid className="md:grid-cols-1">
             {application?.attachments?.map((attachment, index) => (
               <SpacingWrapper

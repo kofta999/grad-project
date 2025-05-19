@@ -5,6 +5,7 @@ import { ThesisStudentView } from "@/components/student/thesis-student-view";
 import { ThesisSubmitForm } from "@/components/student/thesis-submit-form";
 import type { ThesisStatusResponse, ThesisResponse } from "@/lib/types";
 import { Loader } from "@/components/ui/loader";
+import { Container } from "@/components/ui/container";
 
 export default function ThesisPage() {
   const [isLoading, setIsLoading] = useState(true);
@@ -85,15 +86,13 @@ export default function ThesisPage() {
     );
   }
 
-  console.log(thesisData);
-
   return (
-    <div className="max-w-3xl mx-auto">
+    <Container>
       {thesisData != null ? (
         <ThesisStudentView thesis={thesisData} />
       ) : (
         <ThesisSubmitForm onSubmissionSuccess={handleSubmissionSuccess} />
       )}
-    </div>
+    </Container>
   );
 }

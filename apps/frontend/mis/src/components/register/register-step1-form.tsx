@@ -8,8 +8,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Card, CardContent, CardHeader, CardGrid } from "@/components/ui/card";
-import { Flag, User, Mail, Printer, UserCheck, Phone, Shield } from "lucide-react";
+import { Card, CardContent, CardHeader, CardGrid, CardTitle } from "@/components/ui/card";
+import { Flag, User, Mail, Printer, UserCheck, Phone, Shield, Info, ShieldOff } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Container, ContainerTitle } from "@/components/ui/container";
 import { FormikProps } from "formik";
@@ -38,8 +38,13 @@ export default function RegisterStep1Form({ formik }: Step1Props) {
       <form onSubmit={formik.handleSubmit}>
         {/* Basic Information */}
         <Card>
+          <CardHeader>
+            <CardTitle>
+              <Info className="text-yellow-200" />
+              المعلومات الأساسية
+            </CardTitle>
+          </CardHeader>
           <CardContent>
-            <CardHeader>المعلومات الأساسية</CardHeader>
             <CardGrid>
               <SpacingWrapper>
                 <Label>
@@ -132,8 +137,13 @@ export default function RegisterStep1Form({ formik }: Step1Props) {
 
         {/* Contact Information */}
         <Card>
-          <CardContent className="pt-6">
-            <CardHeader className="text-lg font-semibold mb-4">معلومات الاتصال</CardHeader>
+          <CardHeader>
+            <CardTitle>
+              <Phone className="text-yellow-200" />
+              معلومات الاتصال
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
             <CardGrid>
               <SpacingWrapper className="space-y-2">
                 <Label>
@@ -203,8 +213,13 @@ export default function RegisterStep1Form({ formik }: Step1Props) {
 
         {/* Security */}
         <Card>
-          <CardContent className="pt-6">
-            <CardHeader className="text-lg font-semibold mb-4">الأمان</CardHeader>
+          <CardHeader>
+            <CardTitle>
+              <ShieldOff className="text-yellow-200" />
+              الأمان
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
             <CardGrid>
               <SpacingWrapper>
                 <Label>
