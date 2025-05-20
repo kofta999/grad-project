@@ -1,4 +1,4 @@
-import { Filter, ChevronRight, ChevronLeft, Check } from "lucide-react";
+import { Filter, ChevronRight, ChevronLeft, Check, Scroll } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -8,7 +8,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { apiClient } from "@/lib/client";
 import { InferResponseType } from "@repo/mis-api";
 import toast from "react-hot-toast";
@@ -131,121 +131,117 @@ export default function ApplicationsList({
       ) : (
         <>
           <Card>
+            <CardHeader>
+              <CardTitle>
+                <Scroll className="text-yellow-500" />
+                تقديمات الطلاب
+              </CardTitle>
+            </CardHeader>
             <CardContent>
-              <CardHeader>
-                <DropdownMenu>
-                  <DropdownMenuTrigger className="bg-gray-100 px-4 py-2 rounded-md text-sm w-fit">
-                    <Filter />
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent className="w-40 text-right">
-                    <DropdownMenuLabel className="font-bold text-md">حسب الحالة</DropdownMenuLabel>
-                    <DropdownMenuItem onSelect={() => setFilter({ ...filter, status: "all" })}>
-                      الكل {filter.status === "all" && <Check className="w-4 h-4 ml-2" />}
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onSelect={() => setFilter({ ...filter, status: "accepted" })}>
-                      مقبول {filter.status === "accepted" && <Check className="w-4 h-4 ml-2" />}
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onSelect={() => setFilter({ ...filter, status: "pending" })}>
-                      تحت المراجعة{" "}
-                      {filter.status === "pending" && <Check className="w-4 h-4 ml-2" />}
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuLabel className="font-bold text-md">
-                      حسب الأبجدية
-                    </DropdownMenuLabel>
-                    <DropdownMenuItem onSelect={() => setFilter({ ...filter, sort: "a-z" })}>
-                      من أ إلى ي {filter.sort === "a-z" && <Check className="w-4 h-4 ml-2" />}
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onSelect={() => setFilter({ ...filter, sort: "z-a" })}>
-                      من ي إلى أ {filter.sort === "z-a" && <Check className="w-4 h-4 ml-2" />}
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-
-                <h1 className="text-xl font-semibold text-center">تقديمات الطلاب</h1>
-              </CardHeader>
-
-              <CardContent>
-                <div className="overflow-x-auto">
-                  <Table dir="rtl">
-                    <TableHeader>
-                      <TableRow className="border-b">
-                        <TableHead className="text-right">اسم الطالب</TableHead>
-                        <TableHead className="text-right">الدرجة العلمية</TableHead>
-                        <TableHead className="text-right">البرنامج الأكاديمي</TableHead>
-                        <TableHead className="text-center">حالة الطالب</TableHead>
+              <DropdownMenu>
+                <DropdownMenuTrigger className="bg-gray-100 px-4 py-2 rounded-md text-sm w-fit">
+                  <Filter />
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-40 text-right">
+                  <DropdownMenuLabel className="font-bold text-md">حسب الحالة</DropdownMenuLabel>
+                  <DropdownMenuItem onSelect={() => setFilter({ ...filter, status: "all" })}>
+                    الكل {filter.status === "all" && <Check className="w-4 h-4 ml-2" />}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onSelect={() => setFilter({ ...filter, status: "accepted" })}>
+                    مقبول {filter.status === "accepted" && <Check className="w-4 h-4 ml-2" />}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onSelect={() => setFilter({ ...filter, status: "pending" })}>
+                    تحت المراجعة {filter.status === "pending" && <Check className="w-4 h-4 ml-2" />}
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuLabel className="font-bold text-md">حسب الأبجدية</DropdownMenuLabel>
+                  <DropdownMenuItem onSelect={() => setFilter({ ...filter, sort: "a-z" })}>
+                    من أ إلى ي {filter.sort === "a-z" && <Check className="w-4 h-4 ml-2" />}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onSelect={() => setFilter({ ...filter, sort: "z-a" })}>
+                    من ي إلى أ {filter.sort === "z-a" && <Check className="w-4 h-4 ml-2" />}
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+              <div className="overflow-x-auto">
+                <Table dir="rtl">
+                  <TableHeader>
+                    <TableRow className="border-b">
+                      <TableHead className="text-right">اسم الطالب</TableHead>
+                      <TableHead className="text-right">الدرجة العلمية</TableHead>
+                      <TableHead className="text-right">البرنامج الأكاديمي</TableHead>
+                      <TableHead className="text-center">حالة الطالب</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {filteredData.length === 0 && (
+                      <TableRow className="border-b h-12">
+                        <TableCell colSpan={4} className="text-center">
+                          لا يوجد طلاب
+                        </TableCell>
                       </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {filteredData.length === 0 && (
-                        <TableRow className="border-b h-12">
-                          <TableCell colSpan={4} className="text-center">
-                            لا يوجد طلاب
+                    )}
+                    {filteredData &&
+                      filteredData.map((application, index) => (
+                        <TableRow
+                          onClick={() =>
+                            router.push(`/dashboard/applications/${application.applicationId}`)
+                          }
+                          key={application.applicationId}
+                          className={`border-b h-12 cursor-pointer ${index % 2 !== 0 ? "bg-white" : "bg-blue-50"}`}
+                        >
+                          <TableCell className="w-[20%]">{application.studentName}</TableCell>
+                          <TableCell className="w-[15%]">
+                            {DEGREE_MAP[application.academicDegree]}
+                          </TableCell>
+                          <TableCell className="w-[50%]">{application.department}</TableCell>
+                          <TableCell className="w-[15%]">
+                            <Button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleAcceptApplication(application.applicationId);
+                              }}
+                              disabled={application.isAdminAccepted}
+                              className={`py-1 px-2 text-sm rounded w-full text-center transition-colors duration-200 ${
+                                application.isAdminAccepted
+                                  ? "bg-gray-100 text-black cursor-not-allowed"
+                                  : "bg-mainColor/90 text-white cursor-pointer"
+                              }`}
+                            >
+                              {application.isAdminAccepted ? "مقبول" : "قبول"}
+                            </Button>
                           </TableCell>
                         </TableRow>
-                      )}
-                      {filteredData &&
-                        filteredData.map((application) => (
-                          <TableRow
-                            onClick={() =>
-                              router.push(`/dashboard/applications/${application.applicationId}`)
-                            }
-                            key={application.applicationId}
-                            className="border-b h-12 cursor-pointer"
-                          >
-                            <TableCell className="w-[20%]">{application.studentName}</TableCell>
-                            <TableCell className="w-[15%]">
-                              {DEGREE_MAP[application.academicDegree]}
-                            </TableCell>
-                            <TableCell className="w-[50%]">{application.department}</TableCell>
-                            <TableCell className="w-[15%]">
-                              <Button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleAcceptApplication(application.applicationId);
-                                }}
-                                disabled={application.isAdminAccepted}
-                                className={`py-1 px-2 text-sm rounded w-full text-center transition-colors duration-200 ${
-                                  application.isAdminAccepted
-                                    ? "bg-gray-100 text-black cursor-not-allowed"
-                                    : "bg-mainColor/90 text-white cursor-pointer"
-                                }`}
-                              >
-                                {application.isAdminAccepted ? "مقبول" : "قبول"}
-                              </Button>
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                    </TableBody>
-                  </Table>
-                </div>
-                <div className="mt-4 flex justify-between items-center">
-                  <Button
-                    onClick={() => setPage(Math.max(1, page - 1))}
-                    variant="outline"
-                    size="sm"
-                    disabled={page === 1 || !applicationsResponse?.pagination?.hasPreviousPage}
-                  >
-                    <ChevronRight className="h-4 w-4 ml-1" />
-                    <p className="hidden sm:block">الصفحة السابقة</p>
-                  </Button>
+                      ))}
+                  </TableBody>
+                </Table>
+              </div>
+              <div className="mt-4 flex justify-between items-center">
+                <Button
+                  onClick={() => setPage(Math.max(1, page - 1))}
+                  variant="outline"
+                  size="sm"
+                  disabled={page === 1 || !applicationsResponse?.pagination?.hasPreviousPage}
+                >
+                  <ChevronRight className="h-4 w-4 ml-1" />
+                  <p className="hidden sm:block">الصفحة السابقة</p>
+                </Button>
 
-                  <div className="text-sm text-gray-600">
-                    الصفحة {applicationsResponse?.pagination?.currentPage} من{" "}
-                    {applicationsResponse?.pagination?.totalPages}
-                  </div>
-
-                  <Button
-                    onClick={() => setPage(page + 1)}
-                    variant="outline"
-                    size="sm"
-                    disabled={!applicationsResponse?.pagination?.hasNextPage}
-                  >
-                    <p className="hidden sm:block">الصفحة التالية</p>
-                    <ChevronLeft className="h-4 w-4 ml-1" />
-                  </Button>
+                <div className="text-sm text-gray-600">
+                  الصفحة {applicationsResponse?.pagination?.currentPage} من{" "}
+                  {applicationsResponse?.pagination?.totalPages}
                 </div>
-              </CardContent>
+
+                <Button
+                  onClick={() => setPage(page + 1)}
+                  variant="outline"
+                  size="sm"
+                  disabled={!applicationsResponse?.pagination?.hasNextPage}
+                >
+                  <p className="hidden sm:block">الصفحة التالية</p>
+                  <ChevronLeft className="h-4 w-4 ml-1" />
+                </Button>
+              </div>
             </CardContent>
           </Card>
         </>
