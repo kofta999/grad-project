@@ -24,7 +24,6 @@ export default function ApplicationStep3Form({ goPrevStep, formik, loading }: St
     if (file) {
       setFieldValue("attachmentFile", file);
       const res = await apiClient.auth.upload.$post({ form: { file } });
-
       if (res.ok) {
         const { uploadUrl } = await res.json();
         setFieldValue("attachments", [
