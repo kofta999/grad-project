@@ -30,7 +30,7 @@ export function ThesisStudentView({ thesis }: ThesisStudentViewProps) {
       </CardHeader>
       <CardContent>
         <CardGrid className="md:grid-cols-1">
-          <SpacingWrapper className="bg-gray-50 p-3 rounded-lg shadow-sm">
+          <SpacingWrapper>
             <p className="text-gray-600 flex items-center gap-2">
               <Text className="w-4 h-4 " />
               عنوان الرسالة
@@ -38,7 +38,7 @@ export function ThesisStudentView({ thesis }: ThesisStudentViewProps) {
             <p className="text-lg font-semibold text-gray-800">{thesis.title}</p>
           </SpacingWrapper>
           {thesis.attachmentUrl && (
-            <SpacingWrapper className="bg-gray-50 p-3 rounded-lg shadow-sm">
+            <SpacingWrapper>
               <div className="flex items-center gap-2 mb-3">
                 <File className="w-4 h-4" />
                 <p className="text-gray-600">ملف الرسالة</p>
