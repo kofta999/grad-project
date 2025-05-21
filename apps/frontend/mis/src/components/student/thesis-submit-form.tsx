@@ -7,7 +7,7 @@ import { apiClient } from "@/lib/client";
 import { useState, ChangeEvent } from "react";
 import toast from "react-hot-toast";
 import { BookmarkCheck, UploadCloud, CheckCircle2, Loader2, Send } from "lucide-react";
-import type { SubmitThesisRequest, SubmitThesisResponse, ThesisResponse } from "@/lib/types";
+import type { SubmitThesisRequest, ThesisResponse } from "@/lib/types";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const ACCEPTED_FILE_TYPES = ["application/pdf"];
@@ -60,7 +60,7 @@ export function ThesisSubmitForm({ onSubmissionSuccess }: ThesisSubmitFormProps)
       toast.success("تم تقديم الرسالة بنجاح", { id: toastId });
       setFormValues({ title: "", attachmentUrl: "" });
 
-      onSubmissionSuccess?.(result);
+      onSubmissionSuccess?.(result as any);
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "حدث خطأ غير متوقع";
       toast.error(errorMessage, { id: toastId });
