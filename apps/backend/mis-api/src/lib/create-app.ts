@@ -17,8 +17,6 @@ export default function createApp() {
   // TODO: Decide on using / not using a memory store
   const store = new MemoryStore();
 
-  app.use(cors({ origin: "http://localhost:3002", credentials: true }));
-
   app.use(
     sessionMiddleware({
       store,
@@ -33,9 +31,15 @@ export default function createApp() {
   );
   app.use(serveEmojiFavicon("🔥"));
   app.use(logger());
-  app.use("/uploads/*", serveStatic({ root: "./" }));
-
   app.notFound(notFound);
+  app.use(
+    "/uploads/*",
+    serveStatic({
+      root: "./",
+    })
+  );
+
+  app.use(cors({ origin: "http://localhost:3002", credentials: true }));
   app.onError(onError);
   return app;
 }

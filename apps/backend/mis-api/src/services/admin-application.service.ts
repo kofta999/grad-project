@@ -61,7 +61,8 @@ export class AdminApplicationService
       .from(adminApplicationsList)
       .where(whereQuery)
       .offset(this.PAGE_LIMIT * (page - 1))
-      .limit(this.PAGE_LIMIT);
+      .limit(this.PAGE_LIMIT)
+      .orderBy(adminApplicationsList.studentName);
 
     return {
       data,
