@@ -54,7 +54,7 @@ export default function CourseResultsDialog({
 
   const addGrade = async () => {
     try {
-      const res = await apiClient["course-results"]["set-result"].$post({
+      const res = await apiClient["course-results"].$post({
         json: {
           courseRegistrationId: selectedCourse?.courseRegistrationId!,
           grade: result!,
