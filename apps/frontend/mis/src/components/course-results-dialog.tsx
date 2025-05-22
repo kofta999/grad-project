@@ -35,7 +35,8 @@ export default function CourseResultsDialog({
   const getGradeNumber = async (selectedCourse: RegisteredCourse) => {
     try {
       const res = await apiClient["course-results"].$get({
-        query: { courseRegistrationId: selectedCourse?.courseRegistrationId?.toString() },
+        // Here the course _should_ be registered, or this function would not be invoked in first place, right?
+        query: { courseRegistrationId: selectedCourse.courseRegistrationId!.toString() },
       });
 
       if (res.status === 200) {

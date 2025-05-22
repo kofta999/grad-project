@@ -1,12 +1,13 @@
 import db from "@/db";
-import { courseResults, courseRegistrations } from "@/db/schema";
+import { courseResults } from "@/db/schema";
+import { CourseResultDTO } from "@/dtos/course-results.dto";
 import { eq } from "drizzle-orm";
 
 export interface ICourseResultsService {
   setCourseResult(courseRegistrationId: number, grade: number): Promise<boolean>;
   updateCourseResult(courseResultId: number, grade: number): Promise<boolean>;
   deleteCourseResult(resultId: number): Promise<boolean>;
-  getCourseResults(courseRegistrationId?: number): Promise<(typeof courseResults.$inferSelect)[]>;
+  getCourseResults(courseRegistrationId: number): Promise<CourseResultDTO[]>;
 }
 
 export class CourseResultsService implements ICourseResultsService {
@@ -48,14 +49,14 @@ export class CourseResultsService implements ICourseResultsService {
       const existingResult = await db
         .select()
         .from(courseResults)
-        .where(eq(courseResults.resultId, courseResultId));
+        .where(eq(courseResults.courseResultId, courseResultId));
 
       if (existingResult.length > 0) {
         // update existing record
         await db
           .update(courseResults)
           .set({ grade })
-          .where(eq(courseResults.resultId, courseResultId));
+          .where(eq(courseResults.courseResultId, courseResultId));
       } else {
         throw new Error("Not found");
       }
@@ -74,13 +75,13 @@ export class CourseResultsService implements ICourseResultsService {
           courseRegistrationId: courseResults.courseRegistrationId,
         })
         .from(courseResults)
-        .where(eq(courseResults.resultId, resultId));
+        .where(eq(courseResults.courseResultId, resultId));
 
       if (result.length === 0) {
         throw new Error("Course result not found");
       }
 
-      await db.delete(courseResults).where(eq(courseResults.resultId, resultId));
+      await db.delete(courseResults).where(eq(courseResults.courseResultId, resultId));
 
       return true;
     } catch (error) {
@@ -89,23 +90,14 @@ export class CourseResultsService implements ICourseResultsService {
     }
   }
 
-  async getCourseResults(
-    courseRegistrationId?: number
-  ): Promise<(typeof courseResults.$inferSelect)[]> {
+  async getCourseResults(courseRegistrationId: number): Promise<CourseResultDTO[]> {
     try {
-      const query = db
-        .select({
-          resultId: courseResults.resultId,
-          courseRegistrationId: courseResults.courseRegistrationId,
-          grade: courseResults.grade,
-        })
-        .from(courseResults);
+      const results = await db
+        .select()
+        .from(courseResults)
+        .where(eq(courseResults.courseRegistrationId, courseRegistrationId));
 
-      if (courseRegistrationId) {
-        return await query.where(eq(courseResults.courseRegistrationId, courseRegistrationId));
-      }
-
-      return await query;
+      return results;
     } catch (error) {
       console.error("Error getting course results:", error);
       throw error;

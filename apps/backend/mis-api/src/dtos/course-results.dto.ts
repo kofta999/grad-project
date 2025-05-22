@@ -9,8 +9,6 @@ export const CourseResultSchema = z.object({
   courseResultId: z.number(),
   courseRegistrationId: z.number(),
   grade: z.number(),
-  createdAt: z.string().datetime(),
-  updatedAt: z.string().datetime(),
 });
 
 export type SetCourseResultDTO = z.infer<typeof SetCourseResultSchema>;

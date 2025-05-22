@@ -2,6 +2,7 @@ import { createRoute, z } from "@hono/zod-openapi";
 import { jsonContent, jsonContentRequired } from "stoker/openapi/helpers";
 import * as HttpStatusCodes from "stoker/http-status-codes";
 import { adminMiddleware } from "@/lib/constants";
+import { CourseResultSchema } from "@/dtos/course-results.dto";
 
 const tags = ["Course Results"];
 
@@ -90,20 +91,11 @@ export const getCourseResults = createRoute({
   summary: "Get Course Results",
   request: {
     query: z.object({
-      courseRegistrationId: z.string().optional(),
+      courseRegistrationId: z.coerce.number(),
     }),
   },
   responses: {
-    [HttpStatusCodes.OK]: jsonContent(
-      z.array(
-        z.object({
-          courseResultId: z.number(),
-          courseRegistrationId: z.number(),
-          grade: z.number(),
-        })
-      ),
-      "Course results list"
-    ),
+    [HttpStatusCodes.OK]: jsonContent(z.array(CourseResultSchema), "Course results list"),
     [HttpStatusCodes.BAD_REQUEST]: jsonContent(
       z.object({ error: z.string() }),
       "Error fetching course results"

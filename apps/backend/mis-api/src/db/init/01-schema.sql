@@ -203,7 +203,7 @@ CREATE TABLE course_registrations (
 );
 
 CREATE TABLE course_results (
-	result_id serial PRIMARY KEY,
+	course_result_id serial PRIMARY KEY,
 	course_registration_id INT NOT NULL,
 	grade INT NOT NULL,
 	-- May add something like a computed property for (failed | passed)
