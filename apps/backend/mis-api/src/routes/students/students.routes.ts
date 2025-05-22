@@ -261,7 +261,7 @@ export const submitThesis = createRoute({
     ),
   },
   responses: {
-    [HttpStatusCodes.OK]: jsonContent(z.object({}), "Thesis is successfully submitted"),
+    [HttpStatusCodes.OK]: jsonContent(GetThesisSchema, "Student's thesis information"),
     [HttpStatusCodes.FORBIDDEN]: jsonContent(
       z.object({ message: z.string() }),
       "The application did not meet the requirements to upload thesis"

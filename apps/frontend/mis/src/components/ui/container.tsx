@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 
 export const Container = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
   ({ className, ...props }, ref) => (
-    <div ref={ref} className={cn("max-w-5xl mx-auto px-4", className)} {...props} />
+    <div ref={ref} className={cn("max-w-5xl mx-auto py-14 xl:py-6 px-4", className)} {...props} />
   )
 );
 Container.displayName = "Container";

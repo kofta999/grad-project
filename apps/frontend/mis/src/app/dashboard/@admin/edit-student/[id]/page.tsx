@@ -13,8 +13,8 @@ import RegisterStep2Form from "@/components/register/register-step2-form";
 
 export default function Page() {
   const router = useRouter();
-  const { id } = useParams();
-  const { student } = useApplicationDataForAdmin(id as string);
+  const { id } = useParams<{ id: string }>();
+  const { student } = useApplicationDataForAdmin(id);
   const [step, setStep] = useState(1);
 
   const handleSubmit = async (formik: any, extraData: object = {}, onSuccess?: () => void) => {
