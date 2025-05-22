@@ -1,7 +1,6 @@
 "use client";
-
 import { useEffect, useState } from "react";
-import { InferRequestType, InferResponseType } from "@repo/mis-api";
+import { InferResponseType } from "@repo/mis-api";
 import { apiClient } from "@/lib/client";
 import { Progress } from "@/components/ui/progress";
 import toast, { Toaster } from "react-hot-toast";
@@ -25,6 +24,8 @@ export type InitialFormDataType = {
 
 export default function ApplicationForm() {
   const router = useRouter();
+  const [loading, setLoading] = useState(false);
+
   const [step, setStep] = useState(1);
   const { applicationId, setApplicationId } = useApplicationIdContext();
   const [initialData, setInitialData] = useState<InitialFormDataType>({
@@ -51,7 +52,8 @@ export default function ApplicationForm() {
     try {
       await formikStep2.validateForm();
       if (Object.keys(formikStep2.errors).length === 0) {
-        const response = await apiClient.students.me.applications.$post({
+        setLoading(true);
+        const res = await apiClient.students.me.applications.$post({
           json: {
             ...values,
             ...formikStep1.values,
@@ -65,24 +67,20 @@ export default function ApplicationForm() {
             },
           },
         });
-        if (!response.ok) {
-          const result = await response.json();
-          console.log(result);
-          // @ts-ignore Otherwise I need to explicitly set the type
-          throw new Error(result.error);
-        } else {
-          const result: { applicationId: number } = await response.json();
-
+        if (res.ok) {
+          const result: { applicationId: number } = await res.json();
+          setLoading(false);
           setApplicationId(result.applicationId);
+          toast.success("تم التسجيل النموذج الثاني بنجاح!");
+          setStep(3);
+          window.scrollTo(0, 0);
         }
-
-        toast.success("تم التسجيل النموذج الثاني بنجاح!");
-        setStep(3);
-        window.scrollTo(0, 0);
       } else {
+        setLoading(false);
         toast.error("الرجاء تصحيح الأخطاء قبل المتابعة.");
       }
     } catch {
+      setLoading(false);
       toast.error("حدث خطأ غير متوقع. الرجاء المحاولة مرة أخرى.");
     }
   };
@@ -94,32 +92,32 @@ export default function ApplicationForm() {
         if (!applicationId) {
           throw new Error("Application id not found");
         }
+        setLoading(true);
+        const res = await apiClient.students.me.applications[":applicationId"]["attachments"].$post(
+          {
+            param: {
+              applicationId: applicationId.toString(),
+            },
+            json: {
+              applicationId,
+              attachments: values.attachments,
+            },
+          }
+        );
 
-        const response = await apiClient.students.me.applications[":applicationId"][
-          "attachments"
-        ].$post({
-          param: {
-            applicationId: applicationId.toString(),
-          },
-          json: {
-            applicationId,
-            attachments: values.attachments,
-          },
-        });
-        const result = await response.json();
-
-        if (!response.ok) {
-          // @ts-ignore Otherwise I need to explicitly set the type
-          throw new Error(result.error);
+        if (res.ok) {
+          await res.json();
+          setLoading(false);
+          toast.success("تم التسجيل بنجاح!");
+          router.push("/dashboard");
+          router.refresh();
         }
-
-        toast.success("تم التسجيل بنجاح!");
-        router.push("/dashboard");
-        router.refresh();
       } else {
+        setLoading(false);
         toast.error("الرجاء تصحيح الأخطاء قبل المتابعة.");
       }
     } catch {
+      setLoading(false);
       toast.error("حدث خطأ غير متوقع. الرجاء المحاولة مرة أخرى.");
     }
   };
@@ -187,13 +185,10 @@ export default function ApplicationForm() {
   useEffect(() => {
     const getAcademicYears = async () => {
       const res = await apiClient["academic-years"].$get();
-
       const data = await res.json();
-      console.log(data);
 
       setInitialData((prev) => ({ ...prev, currentAcademicYears: data }));
     };
-
     getAcademicYears();
   }, []);
 
@@ -202,13 +197,10 @@ export default function ApplicationForm() {
       const res = await apiClient.departments.$get({
         query: { type },
       });
-
       const data = await res.json();
-      console.log(data);
 
       setInitialData((prev) => ({ ...prev, availableDepartments: data }));
     };
-
     getAvailableDepartments(formikStep2.values.registration.academicDegree);
   }, [formikStep2.values.registration.academicDegree]);
 
@@ -223,11 +215,17 @@ export default function ApplicationForm() {
           goPrevStep={() => setStep(1)}
           formik={formikStep2}
           initialData={initialData}
+          loading={loading}
         />
       )}
 
-      {step === 3 && <ApplicationStep3Form goPrevStep={() => setStep(2)} formik={formikStep3} />}
-
+      {step === 3 && (
+        <ApplicationStep3Form
+          goPrevStep={() => setStep(2)}
+          formik={formikStep3}
+          loading={loading}
+        />
+      )}
       <Toaster />
     </>
   );

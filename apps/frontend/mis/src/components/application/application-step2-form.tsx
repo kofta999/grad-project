@@ -18,17 +18,32 @@ import { cn } from "@/lib/utils";
 import { FormikProps } from "formik";
 import { ApplicationStep2Type } from "@/lib/types";
 import { InitialFormDataType } from "./application-form";
+import { usePathname } from "next/navigation";
+import { SpacingWrapper } from "../ui/spacing-wrapper";
+import { ErrorMessage } from "../ui/error-message";
+import CountrySelect from "../ui/CountrySelect";
 
 interface Step2Props {
   goPrevStep: () => void;
   initialData: InitialFormDataType;
   formik: FormikProps<ApplicationStep2Type>;
+  loading: boolean;
 }
 
-export default function ApplicationStep2Form({ goPrevStep, formik, initialData }: Step2Props) {
+export default function ApplicationStep2Form({
+  goPrevStep,
+  formik,
+  initialData,
+  loading,
+}: Step2Props) {
+  const pathname = usePathname();
   return (
     <Container>
-      <ContainerTitle>تابع بيانات التسجيل</ContainerTitle>
+      <ContainerTitle>
+        {pathname === "/dashboard/applications"
+          ? "تابع بيانات التسجيل"
+          : "تابع تعديل بيانات التسجيل"}
+      </ContainerTitle>
       <form onSubmit={formik.handleSubmit}>
         {/* Qualification Section */}
         <Card>
@@ -36,32 +51,25 @@ export default function ApplicationStep2Form({ goPrevStep, formik, initialData }
             <CardHeader>المؤهل المتقدم به</CardHeader>
             <CardGrid>
               {/* Country */}
-              <div className="space-y-2">
-                <Label>الدولة</Label>
-                <Select
+              <SpacingWrapper>
+                <CountrySelect
+                  name="qualification.country"
+                  label="الدولة"
                   value={formik.values.qualification.country}
-                  onValueChange={(value: any) =>
-                    formik.setFieldValue("qualification.country", value)
-                  }
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="اختر الدولة" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="region1">المنطقة 1</SelectItem>
-                    <SelectItem value="region2">المنطقة 2</SelectItem>
-                    <SelectItem value="region3">المنطقة 3</SelectItem>
-                  </SelectContent>
-                </Select>
-                {formik.touched.qualification?.country && formik.errors.qualification?.country && (
-                  <p className="text-red-500 text-sm">{formik.errors.qualification.country}</p>
-                )}
-              </div>
+                  error={formik.errors.qualification?.country}
+                  touched={formik.touched.qualification?.country}
+                  onChange={(value: string) => formik.setFieldValue("qualification.country", value)}
+                  required={pathname === "/dashboard/applications"}
+                />
+              </SpacingWrapper>
 
               {/* University */}
-              <div className="space-y-2">
+              <SpacingWrapper>
                 <Label>
-                  الجامعة<span className="text-red-500">*</span>
+                  الجامعة
+                  {pathname === "/dashboard/applications" && (
+                    <span className="text-red-500">*</span>
+                  )}
                 </Label>
                 <Select
                   value={formik.values.qualification.university}
@@ -80,14 +88,17 @@ export default function ApplicationStep2Form({ goPrevStep, formik, initialData }
                 </Select>
                 {formik.touched.qualification?.university &&
                   formik.errors.qualification?.university && (
-                    <p className="text-red-500 text-sm">{formik.errors.qualification.university}</p>
+                    <ErrorMessage message={formik.errors.qualification.university} />
                   )}
-              </div>
+              </SpacingWrapper>
 
               {/* Faculty */}
-              <div className="space-y-2">
+              <SpacingWrapper>
                 <Label>
-                  الكلية<span className="text-red-500">*</span>
+                  الكلية
+                  {pathname === "/dashboard/applications" && (
+                    <span className="text-red-500">*</span>
+                  )}
                 </Label>
                 <Select
                   value={formik.values.qualification.faculty}
@@ -105,65 +116,17 @@ export default function ApplicationStep2Form({ goPrevStep, formik, initialData }
                   </SelectContent>
                 </Select>
                 {formik.touched.qualification?.faculty && formik.errors.qualification?.faculty && (
-                  <p className="text-red-500 text-sm">{formik.errors.qualification.faculty}</p>
+                  <ErrorMessage message={formik.errors.qualification.faculty} />
                 )}
-              </div>
-
-              {/* Qualification Type */}
-              <div className="space-y-2">
-                <Label>
-                  نوع المؤهل<span className="text-red-500">*</span>
-                </Label>
-                <Select
-                  value={formik.values.qualification.type}
-                  onValueChange={(value: any) => formik.setFieldValue("qualification.type", value)}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="اختر نوع المؤهل" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="region1">المنطقة 1</SelectItem>
-                    <SelectItem value="region2">المنطقة 2</SelectItem>
-                    <SelectItem value="region3">المنطقة 3</SelectItem>
-                  </SelectContent>
-                </Select>
-                {formik.touched.qualification?.type && formik.errors.qualification?.type && (
-                  <p className="text-red-500 text-sm">{formik.errors.qualification.type}</p>
-                )}
-              </div>
-
-              {/* Qualification */}
-              <div className="space-y-2">
-                <Label>
-                  المؤهل<span className="text-red-500">*</span>
-                </Label>
-                <Select
-                  value={formik.values.qualification.qualification}
-                  onValueChange={(value: string) =>
-                    formik.setFieldValue("qualification.qualification", value)
-                  }
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="اختر المؤهل" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="region1">المنطقة 1</SelectItem>
-                    <SelectItem value="region2">المنطقة 2</SelectItem>
-                    <SelectItem value="region3">المنطقة 3</SelectItem>
-                  </SelectContent>
-                </Select>
-                {formik.touched.qualification?.qualification &&
-                  formik.errors.qualification?.qualification && (
-                    <p className="text-red-500 text-sm">
-                      {formik.errors.qualification.qualification}
-                    </p>
-                  )}
-              </div>
+              </SpacingWrapper>
 
               {/* Specialization */}
-              <div className="space-y-2">
+              <SpacingWrapper>
                 <Label>
-                  التخصص<span className="text-red-500">*</span>
+                  التخصص
+                  {pathname === "/dashboard/applications" && (
+                    <span className="text-red-500">*</span>
+                  )}
                 </Label>
                 <Select
                   value={formik.values.qualification.specialization}
@@ -182,16 +145,72 @@ export default function ApplicationStep2Form({ goPrevStep, formik, initialData }
                 </Select>
                 {formik.touched.qualification?.specialization &&
                   formik.errors.qualification?.specialization && (
-                    <p className="text-red-500 text-sm">
-                      {formik.errors.qualification.specialization}
-                    </p>
+                    <ErrorMessage message={formik.errors.qualification.specialization} />
                   )}
-              </div>
+              </SpacingWrapper>
+
+              {/* Qualification */}
+              <SpacingWrapper>
+                <Label>
+                  المؤهل
+                  {pathname === "/dashboard/applications" && (
+                    <span className="text-red-500">*</span>
+                  )}
+                </Label>
+                <Select
+                  value={formik.values.qualification.qualification}
+                  onValueChange={(value: string) =>
+                    formik.setFieldValue("qualification.qualification", value)
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="اختر المؤهل" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="region1">المنطقة 1</SelectItem>
+                    <SelectItem value="region2">المنطقة 2</SelectItem>
+                    <SelectItem value="region3">المنطقة 3</SelectItem>
+                  </SelectContent>
+                </Select>
+                {formik.touched.qualification?.qualification &&
+                  formik.errors.qualification?.qualification && (
+                    <ErrorMessage message={formik.errors.qualification.qualification} />
+                  )}
+              </SpacingWrapper>
+
+              {/* Qualification Type */}
+              <SpacingWrapper>
+                <Label>
+                  نوع المؤهل
+                  {pathname === "/dashboard/applications" && (
+                    <span className="text-red-500">*</span>
+                  )}
+                </Label>
+                <Select
+                  value={formik.values.qualification.type}
+                  onValueChange={(value: any) => formik.setFieldValue("qualification.type", value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="اختر نوع المؤهل" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="region1">المنطقة 1</SelectItem>
+                    <SelectItem value="region2">المنطقة 2</SelectItem>
+                    <SelectItem value="region3">المنطقة 3</SelectItem>
+                  </SelectContent>
+                </Select>
+                {formik.touched.qualification?.type && formik.errors.qualification?.type && (
+                  <ErrorMessage message={formik.errors.qualification.type} />
+                )}
+              </SpacingWrapper>
 
               {/* Year */}
-              <div className="space-y-2">
+              <SpacingWrapper>
                 <Label>
-                  سنة المؤهل<span className="text-red-500">*</span>
+                  سنة المؤهل
+                  {pathname === "/dashboard/applications" && (
+                    <span className="text-red-500">*</span>
+                  )}
                 </Label>
                 <Select
                   value={formik.values.qualification.year}
@@ -207,14 +226,17 @@ export default function ApplicationStep2Form({ goPrevStep, formik, initialData }
                   </SelectContent>
                 </Select>
                 {formik.touched.qualification?.year && formik.errors.qualification?.year && (
-                  <p className="text-red-500 text-sm">{formik.errors.qualification.year}</p>
+                  <ErrorMessage message={formik.errors.qualification.year} />
                 )}
-              </div>
+              </SpacingWrapper>
 
               {/* Date */}
-              <div className="space-y-2">
+              <SpacingWrapper>
                 <Label>
-                  تاريخ الحصول عليه<span className="text-red-500">*</span>
+                  تاريخ الحصول عليه
+                  {pathname === "/dashboard/applications" && (
+                    <span className="text-red-500">*</span>
+                  )}
                 </Label>
                 <Popover>
                   <PopoverTrigger asChild>
@@ -253,12 +275,12 @@ export default function ApplicationStep2Form({ goPrevStep, formik, initialData }
                 </Popover>
                 {formik.touched.qualification?.date &&
                   typeof formik.errors.qualification?.date === "string" && (
-                    <p className="text-red-500 text-sm">{formik.errors.qualification?.date}</p>
+                    <ErrorMessage message={formik.errors.qualification.date} />
                   )}
-              </div>
+              </SpacingWrapper>
 
               {/* Credit Hours */}
-              <div className="space-y-2">
+              <SpacingWrapper>
                 <Label>نوع الدراسة</Label>
                 <Select
                   value={formik.values.qualification.creditHours ? "creditHours" : "classic"}
@@ -276,14 +298,12 @@ export default function ApplicationStep2Form({ goPrevStep, formik, initialData }
                 </Select>
                 {formik.touched.qualification?.creditHours &&
                   formik.errors.qualification?.creditHours && (
-                    <p className="text-red-500 text-sm">
-                      {formik.errors.qualification.creditHours}
-                    </p>
+                    <ErrorMessage message={formik.errors.qualification.creditHours} />
                   )}
-              </div>
+              </SpacingWrapper>
 
               {/* Grade */}
-              <div className="space-y-2">
+              <SpacingWrapper>
                 <Label>التقدير</Label>
                 <Select
                   value={formik.values.qualification.grade}
@@ -308,12 +328,12 @@ export default function ApplicationStep2Form({ goPrevStep, formik, initialData }
                   </SelectContent>
                 </Select>
                 {formik.touched.qualification?.grade && formik.errors.qualification?.grade && (
-                  <p className="text-red-500 text-sm">{formik.errors.qualification.grade}</p>
+                  <ErrorMessage message={formik.errors.qualification.grade} />
                 )}
-              </div>
+              </SpacingWrapper>
 
               {/* GPA */}
-              <div className="space-y-2 col-span-2 justify-self-center md:w-full md:max-w-[calc(100%/2)]">
+              <SpacingWrapper className="md:col-span-2 w-full md:w-1/2 mx-auto">
                 <Label>النسبة المئوية / المعدل التراكمي</Label>
                 <Input
                   name="qualification.gpa"
@@ -324,9 +344,9 @@ export default function ApplicationStep2Form({ goPrevStep, formik, initialData }
                   }}
                 />
                 {formik.touched.qualification?.gpa && formik.errors.qualification?.gpa && (
-                  <p className="text-red-500 text-sm">{formik.errors.qualification.gpa}</p>
+                  <ErrorMessage message={formik.errors.qualification.gpa} />
                 )}
-              </div>
+              </SpacingWrapper>
             </CardGrid>
           </CardContent>
         </Card>
@@ -337,9 +357,12 @@ export default function ApplicationStep2Form({ goPrevStep, formik, initialData }
             <CardHeader>المؤهل المتقدم به</CardHeader>
             <CardGrid>
               {/* Academic Year */}
-              <div className="space-y-2">
+              <SpacingWrapper>
                 <Label>
-                  العام الأكاديمي للتسجيل<span className="text-red-500">*</span>
+                  العام الأكاديمي للتسجيل
+                  {pathname === "/dashboard/applications" && (
+                    <span className="text-red-500">*</span>
+                  )}
                 </Label>
                 <Select
                   value={
@@ -364,14 +387,12 @@ export default function ApplicationStep2Form({ goPrevStep, formik, initialData }
                 </Select>
                 {formik.touched.registration?.academicYearId &&
                   formik.errors.registration?.academicYearId && (
-                    <p className="text-red-500 text-sm">
-                      {formik.errors.registration.academicYearId}
-                    </p>
+                    <ErrorMessage message={formik.errors.registration.academicYearId} />
                   )}
-              </div>
+              </SpacingWrapper>
 
               {/* Faculty */}
-              <div className="space-y-2">
+              <SpacingWrapper>
                 <Label>الكلية</Label>
                 <Select
                   value={formik.values.registration.faculty}
@@ -387,14 +408,17 @@ export default function ApplicationStep2Form({ goPrevStep, formik, initialData }
                   </SelectContent>
                 </Select>
                 {formik.touched.registration?.faculty && formik.errors.registration?.faculty && (
-                  <p className="text-red-500 text-sm">{formik.errors.registration.faculty}</p>
+                  <ErrorMessage message={formik.errors.registration.faculty} />
                 )}
-              </div>
+              </SpacingWrapper>
 
               {/* Academic Degree */}
-              <div className="space-y-2">
+              <SpacingWrapper>
                 <Label>
-                  الدرجات العلمية<span className="text-red-500">*</span>
+                  الدرجات العلمية
+                  {pathname === "/dashboard/applications" && (
+                    <span className="text-red-500">*</span>
+                  )}
                 </Label>
                 <Select
                   value={formik.values.registration.academicDegree}
@@ -413,16 +437,17 @@ export default function ApplicationStep2Form({ goPrevStep, formik, initialData }
                 </Select>
                 {formik.touched.registration?.academicDegree &&
                   formik.errors.registration?.academicDegree && (
-                    <p className="text-red-500 text-sm">
-                      {formik.errors.registration.academicDegree}
-                    </p>
+                    <ErrorMessage message={formik.errors.registration.academicDegree} />
                   )}
-              </div>
+              </SpacingWrapper>
 
               {/* Academic Program */}
-              <div className="space-y-2">
+              <SpacingWrapper>
                 <Label>
-                  البرامج / التخصص<span className="text-red-500">*</span>
+                  البرامج / التخصص
+                  {pathname === "/dashboard/applications" && (
+                    <span className="text-red-500">*</span>
+                  )}
                 </Label>
                 <Select
                   value={
@@ -447,11 +472,9 @@ export default function ApplicationStep2Form({ goPrevStep, formik, initialData }
                 </Select>
                 {formik.touched.registration?.departmentId &&
                   formik.errors.registration?.departmentId && (
-                    <p className="text-red-500 text-sm">
-                      {formik.errors.registration.departmentId}
-                    </p>
+                    <ErrorMessage message={formik.errors.registration.departmentId} />
                   )}
-              </div>
+              </SpacingWrapper>
             </CardGrid>
           </CardContent>
         </Card>

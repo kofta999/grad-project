@@ -4,6 +4,7 @@ import { eq } from "drizzle-orm";
 
 export interface ICourseResultsService {
   setCourseResult(courseRegistrationId: number, grade: number): Promise<boolean>;
+  updateCourseResult(courseResultId: number, grade: number): Promise<boolean>;
   deleteCourseResult(resultId: number): Promise<boolean>;
   getCourseResults(courseRegistrationId?: number): Promise<{ resultId: number | null; courseRegistrationId: number; grade: number | null; }[]>;
 }
@@ -21,20 +22,42 @@ export class CourseResultsService implements ICourseResultsService {
         .from(courseResults)
         .where(eq(courseResults.courseRegistrationId, courseRegistrationId));
 
+      if (existingResult) {
+        throw new Error("Already exists");
+      }
+
+      await db.insert(courseResults).values({
+        courseRegistrationId,
+        grade,
+      });
+
+      return true;
+    } catch (error) {
+      console.error("Error setting course result:", error);
+      throw error;
+    }
+  }
+
+  async updateCourseResult(courseResultId: number, grade: number): Promise<boolean> {
+    try {
+      if (grade < 0 || grade > 100) {
+        throw new Error("Grade must be between 0 and 100");
+      }
+
+      //finding existing record first
+      const existingResult = await db
+        .select()
+        .from(courseResults)
+        .where(eq(courseResults.resultId, courseResultId));
+
       if (existingResult.length > 0) {
         // update existing record
         await db
           .update(courseResults)
           .set({ grade })
-          .where(eq(courseResults.courseRegistrationId, courseRegistrationId));
+          .where(eq(courseResults.resultId, courseResultId));
       } else {
-        // iinsert new record
-        await db
-          .insert(courseResults)
-          .values({
-            courseRegistrationId,
-            grade,
-          });
+        throw new Error("Not found");
       }
 
       return true;
@@ -48,7 +71,7 @@ export class CourseResultsService implements ICourseResultsService {
     try {
       const result = await db
         .select({
-          courseRegistrationId: courseResults.courseRegistrationId
+          courseRegistrationId: courseResults.courseRegistrationId,
         })
         .from(courseResults)
         .where(eq(courseResults.resultId, resultId));
@@ -58,12 +81,6 @@ export class CourseResultsService implements ICourseResultsService {
       }
 
       await db.delete(courseResults).where(eq(courseResults.resultId, resultId));
-      //Now the courrse doesn't delete
-      /*
-      await db
-        .delete(courseRegistrations)
-        .where(eq(courseRegistrations.courseRegistrationId, result[0].courseRegistrationId));
-        */
 
       return true;
     } catch (error) {
@@ -86,7 +103,7 @@ export class CourseResultsService implements ICourseResultsService {
       if (courseRegistrationId) {
         return await query.where(eq(courseRegistrations.courseRegistrationId, courseRegistrationId));
       }
-  
+
       return await query;
     } catch (error) {
       console.error("Error getting course results:", error);

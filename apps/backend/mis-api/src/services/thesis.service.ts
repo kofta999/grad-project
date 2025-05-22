@@ -7,7 +7,7 @@ type ThesisAvailability = { available: true } | { available: false; reason: stri
 
 export interface IThesisService {
   isThesisAvailable(studentId: number): Promise<ThesisAvailability>;
-  submitThesis(studentId: number, title: string, attachmentUrl: string): Promise<boolean>;
+  submitThesis(studentId: number, title: string, attachmentUrl: string): Promise<GetThesisDTO>;
   getThesis(studentId: number): Promise<GetThesisDTO | null>;
 }
 
@@ -30,7 +30,11 @@ export class ThesisService implements IThesisService {
     }
   }
 
-  async submitThesis(studentId: number, title: string, attachmentUrl: string): Promise<boolean> {
+  async submitThesis(
+    studentId: number,
+    title: string,
+    attachmentUrl: string
+  ): Promise<GetThesisDTO> {
     const applicationId = await this.getApplicationByStudentId(studentId);
 
     if (!applicationId) {
@@ -40,18 +44,23 @@ export class ThesisService implements IThesisService {
     try {
       // Transaction to ensure both insertions succeed or fail together
       return await db.transaction(async (tx) => {
-        const result = await tx
+        const attachment = await tx
           .insert(attachments)
           .values({ applicationId, type: "thesis", attachmentUrl })
           .returning();
 
-        const attachment = result[0];
-
-        await tx
+        const thesis = await tx
           .insert(theses)
-          .values({ applicationId, title, attachmentId: attachment.attachmentId });
+          .values({ applicationId, title, attachmentId: attachment[0].attachmentId })
+          .returning();
 
-        return true;
+        return {
+          thesisId: thesis[0].thesisId,
+          applicationId: thesis[0].applicationId,
+          title: thesis[0].title,
+          attachmentUrl: attachment[0].attachmentUrl,
+          createdAt: thesis[0].createdAt,
+        };
       });
     } catch (error) {
       console.error("Error submitting thesis:", error);
@@ -97,7 +106,7 @@ export class ThesisService implements IThesisService {
       thesisId: thesis[0].theses.thesisId,
       title: thesis[0].theses.title,
       attachmentUrl: thesis[0].attachments.attachmentUrl,
-      createdAt: thesis[0].theses.createdAt
+      createdAt: thesis[0].theses.createdAt,
     };
   }
 }

@@ -4,6 +4,8 @@ import { apiClient } from "@/lib/client";
 import { ThesisStudentView } from "@/components/student/thesis-student-view";
 import { ThesisSubmitForm } from "@/components/student/thesis-submit-form";
 import type { ThesisStatusResponse, ThesisResponse } from "@/lib/types";
+import { Loader } from "@/components/ui/loader";
+import { Container } from "@/components/ui/container";
 
 export default function ThesisPage() {
   const [isLoading, setIsLoading] = useState(true);
@@ -68,7 +70,11 @@ export default function ThesisPage() {
   };
 
   if (isLoading) {
-    return <div className="text-center py-8">جاري التحميل...</div>;
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <Loader className="w-20 h-20" />
+      </div>
+    );
   }
 
   if (error) {
@@ -80,15 +86,13 @@ export default function ThesisPage() {
     );
   }
 
-  console.log(thesisData);
-
   return (
-    <div className="max-w-3xl mx-auto">
+    <Container>
       {thesisData != null ? (
         <ThesisStudentView thesis={thesisData} />
       ) : (
         <ThesisSubmitForm onSubmissionSuccess={handleSubmissionSuccess} />
       )}
-    </div>
+    </Container>
   );
 }

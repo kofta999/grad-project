@@ -153,21 +153,22 @@ INSERT INTO
 	"addresses" (
 		"application_id",
 		"full_address",
-		"country",
-		"city",
+		"country_id",
+		"city_id",
 		"type"
 	)
+
 VALUES
-	(1, '123 Main St', 'Egypt', 'Cairo', 'permanent'),
-	(1, '456 Second St', 'Egypt', 'Cairo', 'current'),
+	(1, '123 Main St', 59, 934, 'permanent'),
+	(1, '456 Second St', 59, 934, 'current'),
 	(
 		2,
 		'789 Third St',
-		'Egypt',
-		'Alexandria',
+		59,
+		934,
 		'permanent'
 	),
-	(3, '101 Fourth St', 'Egypt', 'Giza', 'permanent');
+	(3, '101 Fourth St', 59, 934, 'permanent');
 
 -- Insert sample emergency_contacts
 INSERT INTO

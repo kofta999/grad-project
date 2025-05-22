@@ -11,7 +11,7 @@
   },
   "devDependencies": {
     "prettier": "^3.2.5",
-    "turbo": "^2.3.0",
+    "turbo": "^2.5.3",
     "@types/bun": "latest"
   },
   "engines": {

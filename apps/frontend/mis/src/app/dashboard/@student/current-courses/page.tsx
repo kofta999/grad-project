@@ -8,8 +8,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Card } from "@/components/ui/card";
-import { CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -21,6 +20,8 @@ import {
 import { apiClient } from "@/lib/client";
 import { InferResponseType } from "@repo/mis-api";
 import toast from "react-hot-toast";
+import { LibraryBig } from "lucide-react";
+import { Loader } from "@/components/ui/loader";
 
 type CoursesType = InferResponseType<typeof apiClient.students.me.courses.$get, 200>;
 
@@ -33,12 +34,20 @@ type SemesterType = "first" | "second" | "third";
 export default function Page() {
   const [academicYear, setAcademicYear] = useState<AcademicYear | null>(null);
   const [courses, setCourses] = useState<CoursesType>([]);
+  const [loading, setLoading] = useState(false);
 
   const getCurrentAcademicYear = async () => {
-    const res = await apiClient.students.me.courses["registered-academic-years"].$get();
-    if (res.status === 200) {
-      const data = await res.json();
-      setAcademicYear(data[0]);
+    try {
+      setLoading(true);
+      const res = await apiClient.students.me.courses["registered-academic-years"].$get();
+      if (res.status === 200) {
+        const data = await res.json();
+        setAcademicYear(data[0]);
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -48,6 +57,7 @@ export default function Page() {
 
   const getCourses = async (semester: SemesterType, academicYear: AcademicYear | null) => {
     try {
+      setLoading(true);
       const res = await apiClient.students.me.courses.$get({
         query: {
           semester: semester,
@@ -67,12 +77,27 @@ export default function Page() {
     } catch (error) {
       console.error(error);
       toast.error("فشل العثور علي المواد");
+    } finally {
+      setLoading(false);
     }
   };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <Loader className="w-20 h-20" />
+      </div>
+    );
+  }
 
   return (
     <Container>
       <Card>
+        <CardHeader>
+          <CardTitle>
+            <LibraryBig className="w-5 h-5 text-yellow-200" /> المواد الحالية
+          </CardTitle>
+        </CardHeader>
         <CardContent>
           <Select onValueChange={(value: SemesterType) => getCourses(value, academicYear)}>
             <SelectTrigger className="w-full md:w-1/2">
@@ -85,20 +110,12 @@ export default function Page() {
             </SelectContent>
           </Select>
           <Table className="border rounded-md mt-6">
-            <TableHeader className="bg-white">
+            <TableHeader>
               <TableRow>
-                <TableHead className="text-right font-medium text-[#96A0B6] w-1/4">
-                  اسم المقرر
-                </TableHead>
-                <TableHead className="text-right font-medium text-[#96A0B6] w-1/4">
-                  كود المقرر
-                </TableHead>
-                <TableHead className="text-right font-medium text-[#96A0B6] w-1/4">
-                  عدد الساعات
-                </TableHead>
-                <TableHead className="text-right font-medium text-[#96A0B6] w-1/4">
-                  التقدير
-                </TableHead>
+                <TableHead className="text-right font-medium w-1/4">اسم المقرر</TableHead>
+                <TableHead className="text-right font-medium w-1/4">كود المقرر</TableHead>
+                <TableHead className="text-right font-medium w-1/4">عدد الساعات</TableHead>
+                <TableHead className="text-right font-medium w-1/4">التقدير</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -113,7 +130,7 @@ export default function Page() {
                   <TableRow
                     key={index}
                     className={`
-                      ${index % 2 !== 0 ? "bg-white" : "bg-gray-100"}
+                      ${index % 2 !== 0 ? "bg-white" : "bg-blue-50"}
                     `}
                   >
                     <TableCell className="text-right">{course.title}</TableCell>
