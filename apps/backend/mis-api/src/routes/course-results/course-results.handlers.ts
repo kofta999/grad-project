@@ -54,15 +54,9 @@ export const getCourseResults: AppRouteHandler<GetCourseResultsRoute> = async (c
   const { courseRegistrationId } = c.req.valid("query");
 
   try {
-    const results = await courseResultsService.getCourseResults(
-      courseRegistrationId ? parseInt(courseRegistrationId) : undefined
-    );
-    const formattedResults = results.map((result) => ({
-      courseResultId: result.resultId,
-      courseRegistrationId: result.courseRegistrationId,
-      grade: result.grade,
-    }));
-    return c.json(formattedResults, HttpStatusCodes.OK);
+    const results = await courseResultsService.getCourseResults(courseRegistrationId);
+
+    return c.json(results, HttpStatusCodes.OK);
   } catch (error) {
     console.error("Error fetching course results:", error);
     const errorMessage = error instanceof Error ? error.message : "Failed to fetch course results";

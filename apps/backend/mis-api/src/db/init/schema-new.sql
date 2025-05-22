@@ -314,7 +314,7 @@ WHERE
 -- 	c_r.academic_year_id = get_current_academic_year ()
 -- 	AND d_c.department_id = r.department_id;
 --
-CREATE OR REPLACE FUNCTION courses.available_courses_for_application(p_application_id INT) 
+CREATE OR REPLACE FUNCTION courses.available_courses_for_application(p_application_id INT)
 RETURNS SETOF courses.courses AS $$
 BEGIN
 				RETURN QUERY
@@ -336,7 +336,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- Create functions in appropriate schemas
-CREATE OR REPLACE FUNCTION academic.get_current_academic_year() 
+CREATE OR REPLACE FUNCTION academic.get_current_academic_year()
 RETURNS INT AS $$
 DECLARE
 				current_date DATE := CURRENT_DATE;
@@ -350,7 +350,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION thesis.is_thesis_available(p_application_id INT) 
+CREATE OR REPLACE FUNCTION thesis.is_thesis_available(p_application_id INT)
 RETURNS BOOLEAN AS $$
 DECLARE
 				v_department_id INT;
@@ -583,7 +583,7 @@ COMMENT ON COLUMN academic.departments.compulsory_hours IS 'Is the hours that mu
 COMMENT ON COLUMN academic.departments.thesis_hours IS 'Is the hours that doing thesis gives you';
 
 -- Triggers
-CREATE OR REPLACE FUNCTION common.update_updated_at_column() 
+CREATE OR REPLACE FUNCTION common.update_updated_at_column()
 RETURNS trigger AS $$
 BEGIN
 				NEW.updated_at = CURRENT_TIMESTAMP;
@@ -591,17 +591,17 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER update_students_updated_at 
-BEFORE UPDATE ON students.students 
+CREATE TRIGGER update_students_updated_at
+BEFORE UPDATE ON students.students
 FOR EACH ROW
 EXECUTE FUNCTION common.update_updated_at_column();
 
-CREATE TRIGGER update_admins_updated_at 
-BEFORE UPDATE ON admin.admins 
+CREATE TRIGGER update_admins_updated_at
+BEFORE UPDATE ON admin.admins
 FOR EACH ROW
 EXECUTE FUNCTION common.update_updated_at_column();
 
-CREATE OR REPLACE FUNCTION thesis.thesis_availability_trigger() 
+CREATE OR REPLACE FUNCTION thesis.thesis_availability_trigger()
 RETURNS trigger AS $$
 BEGIN
 				PERFORM thesis.is_thesis_available(NEW.application_id);
@@ -609,7 +609,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER check_thesis_availability 
-BEFORE INSERT ON thesis.theses 
+CREATE TRIGGER check_thesis_availability
+BEFORE INSERT ON thesis.theses
 FOR EACH ROW
 EXECUTE FUNCTION thesis.thesis_availability_trigger();
