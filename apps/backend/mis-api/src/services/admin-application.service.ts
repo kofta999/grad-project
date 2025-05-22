@@ -65,7 +65,7 @@ export class AdminApplicationService
     }
 
     if (isAccepted != undefined) {
-      console.log(isAccepted)
+      console.log(isAccepted);
       whereQuery.push(eq(adminApplicationsList.isAdminAccepted, isAccepted));
     }
 

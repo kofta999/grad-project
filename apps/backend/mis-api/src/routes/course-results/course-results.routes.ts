@@ -5,8 +5,8 @@ import { adminMiddleware } from "@/lib/constants";
 
 const tags = ["Course Results"];
 
-export const setResult = createRoute({
-  path: "/set-result",
+export const setCourseResult = createRoute({
+  path: "/",
   method: "post",
   middleware: adminMiddleware,
   tags,
@@ -15,10 +15,10 @@ export const setResult = createRoute({
     body: jsonContent(
       z.object({
         courseRegistrationId: z.number(),
-        grade: z.number()
+        grade: z.number(),
       }),
       "Course result data"
-    )
+    ),
   },
   responses: {
     [HttpStatusCodes.OK]: jsonContent(
@@ -28,8 +28,35 @@ export const setResult = createRoute({
     [HttpStatusCodes.BAD_REQUEST]: jsonContent(
       z.object({ error: z.string() }),
       "Error setting course result"
-    )
-  }
+    ),
+  },
+});
+
+export const updateCourseResult = createRoute({
+  path: "/",
+  method: "put",
+  middleware: adminMiddleware,
+  tags,
+  summary: "Update Course Result",
+  request: {
+    body: jsonContent(
+      z.object({
+        resultId: z.number(),
+        grade: z.number(),
+      }),
+      "Course result data"
+    ),
+  },
+  responses: {
+    [HttpStatusCodes.OK]: jsonContent(
+      z.object({ message: z.string() }),
+      "Course result updated successfully"
+    ),
+    [HttpStatusCodes.BAD_REQUEST]: jsonContent(
+      z.object({ error: z.string() }),
+      "Error setting course result"
+    ),
+  },
 });
 
 export const deleteResult = createRoute({
@@ -40,8 +67,8 @@ export const deleteResult = createRoute({
   summary: "Delete Course Result",
   request: {
     params: z.object({
-      id: z.string()
-    })
+      id: z.string(),
+    }),
   },
   responses: {
     [HttpStatusCodes.OK]: jsonContent(
@@ -51,8 +78,8 @@ export const deleteResult = createRoute({
     [HttpStatusCodes.BAD_REQUEST]: jsonContent(
       z.object({ error: z.string() }),
       "Error deleting course result"
-    )
-  }
+    ),
+  },
 });
 
 export const getCourseResults = createRoute({
@@ -80,11 +107,11 @@ export const getCourseResults = createRoute({
     [HttpStatusCodes.BAD_REQUEST]: jsonContent(
       z.object({ error: z.string() }),
       "Error fetching course results"
-    )
-  }
+    ),
+  },
 });
 
 export type GetCourseResultsRoute = typeof getCourseResults;
-export type SetResultRoute = typeof setResult;
-export type DeleteResultRoute = typeof deleteResult;
-
+export type SetCourseResultRoute = typeof setCourseResult;
+export type UpdateCourseResultRoute = typeof updateCourseResult;
+export type DeleteCourseResultRoute = typeof deleteResult;
