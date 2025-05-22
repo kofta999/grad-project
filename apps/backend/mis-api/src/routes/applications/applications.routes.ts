@@ -20,11 +20,13 @@ export const getAllApplications = createRoute({
   path: "/",
   method: "get",
   tags,
-  // middleware: adminMiddleware,
+  middleware: adminMiddleware,
   request: {
     query: z.object({
       nameAr: z.string().optional(),
       page: z.coerce.number().min(1).default(1),
+      isAccepted: z.enum(["true", "false"]).optional(),
+      sortName: z.enum(["asc", "desc"]).default("asc"),
     }),
   },
   summary: "List Applications", // ملخص: قائمة الطلبات
