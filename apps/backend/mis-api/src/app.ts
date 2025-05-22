@@ -7,7 +7,8 @@ import departments from "@/routes/departments/departments.index";
 import enrollments from "@/routes/enrollments/enrollments.index";
 import students from "@/routes/students/students.index";
 import reports from "@/routes/reports/reports.index";
-import courseResults from "@/routes/course-results/index";
+import courseResults from "@/routes/course-results/course-results.index";
+import countries from "@/routes/countries/countries.index";
 import configureOpenAPI from "./lib/configure-open-api";
 
 const app = createApp();
@@ -23,12 +24,13 @@ configureOpenAPI(app);
 export const _app = app
   .route("", index)
   .route("/auth", auth)
-  .route("/academic-years", academicYears)
-  .route("/applications", applications)
-  .route("/departments", departments)
-  .route("/enrollments", enrollments)
   .route("/students", students)
+  .route("/applications", applications)
+  .route("/enrollments", enrollments)
+  .route("/course-results", courseResults)
   .route("/reports", reports)
-  .route("/course-results", courseResults);
+  .route("/academic-years", academicYears)
+  .route("/departments", departments)
+  .route("/countries", countries);
 
 export default app;
