@@ -72,49 +72,49 @@ export default function ApplicationDetails({ application }: { application: Appli
             <SpacingWrapper className="bg-gray-50 p-3 rounded-lg shadow-sm">
               <p className="text-gray-600">المؤهل</p>
               <p className="text-lg font-semibold text-gray-800">
-                {application?.academicQualification?.qualification}
+                {application?.qualification?.qualification}
               </p>
             </SpacingWrapper>
             <SpacingWrapper className="bg-gray-50 p-3 rounded-lg shadow-sm">
               <p className="text-gray-600">الجامعة</p>
               <p className="text-lg font-semibold text-gray-800">
-                {application?.academicQualification?.university}
+                {application?.qualification?.university}
               </p>
             </SpacingWrapper>
             <SpacingWrapper className="bg-gray-50 p-3 rounded-lg shadow-sm">
               <p className="text-gray-600">الكلية</p>
               <p className="text-lg font-semibold text-gray-800">
-                {application?.academicQualification?.faculty}
+                {application?.qualification?.faculty}
               </p>
             </SpacingWrapper>
             <SpacingWrapper className="bg-gray-50 p-3 rounded-lg shadow-sm">
               <p className="text-gray-600">التخصص</p>
               <p className="text-lg font-semibold text-gray-800">
-                {application?.academicQualification?.specialization}
+                {application?.qualification?.specialization}
               </p>
             </SpacingWrapper>
             <SpacingWrapper className="bg-gray-50 p-3 rounded-lg shadow-sm">
               <p className="text-gray-600">سنة النخرج</p>
               <p className="text-lg font-semibold text-gray-800">
-                {application?.academicQualification?.year}
+                {application?.qualification?.year}
               </p>
             </SpacingWrapper>
             <SpacingWrapper className="bg-gray-50 p-3 rounded-lg shadow-sm">
               <p className="text-gray-600">المعدل التراكمي</p>
               <p className="text-lg font-semibold text-gray-800">
-                {application?.academicQualification?.gpa}
+                {application?.qualification?.gpa}
               </p>
             </SpacingWrapper>
             <SpacingWrapper className="bg-gray-50 p-3 rounded-lg shadow-sm">
               <p className="text-gray-600">التقدير الأكاديمي</p>
               <p className="text-lg font-semibold text-gray-800">
-                {application?.academicQualification?.grade}
+                {application?.qualification?.grade}
               </p>
             </SpacingWrapper>
             <SpacingWrapper className="bg-gray-50 p-3 rounded-lg shadow-sm">
               <p className="text-gray-600">الدولة</p>
               <p className="text-lg font-semibold text-gray-800">
-                {application?.academicQualification?.country}
+                {application?.qualification?.country}
               </p>
             </SpacingWrapper>
           </CardGrid>
