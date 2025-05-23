@@ -22,6 +22,10 @@ export default function Settings() {
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const { applicationData } = useUser();
+  console.log(applicationData);
+  const [applicationId, setApplicationId] = useState<ApplicationStep1Type | null>(
+    applicationData?.applicationId
+  );
 
   const handleStep1Submit = async () => {
     try {
@@ -60,7 +64,6 @@ export default function Settings() {
         });
 
         if (res.ok) {
-          const result: { applicationId: number } = await res.json();
           setLoading(false);
           toast.success("تم التسجيل النموذج الثاني بنجاح!");
           setStep(3);
@@ -85,10 +88,10 @@ export default function Settings() {
         const res = await apiClient.students.me.applications[":applicationId"]["attachments"].$post(
           {
             param: {
-              applicationId: "",
+              applicationId: applicationId,
             },
             json: {
-              applicationId: "",
+              applicationId: applicationId,
               attachments: values.attachments,
             },
           }
@@ -187,13 +190,13 @@ export default function Settings() {
 
     formikStep1.setValues({
       permanentAddress: {
-        city: permanentAddress.city || "",
-        country: permanentAddress.country || "",
+        cityId: permanentAddress.cityId || "",
+        countryId: permanentAddress.countryId || "",
         fullAddress: permanentAddress.fullAddress || "",
       },
       currentAddress: {
-        city: currentAddress.city || "",
-        country: currentAddress.country || "",
+        cityId: currentAddress.cityId || "",
+        countryId: currentAddress.countryId || "",
         fullAddress: currentAddress.fullAddress || "",
       },
       emergencyContact: {
