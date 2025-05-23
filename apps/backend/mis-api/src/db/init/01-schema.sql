@@ -387,7 +387,7 @@ BEGIN
         SELECT 1 FROM accepted_applications
         WHERE application_id = p_application_id
     ) THEN
-	    RAISE EXCEPTION 'Application ID % is not found or not accepted', p_application_id;
+	    RAISE EXCEPTION 'رقم الطلب % غير موجود أو لم يتم قبوله', p_application_id;
 	END IF;
 
     -- Get application data
@@ -418,13 +418,13 @@ BEGIN
 
 	-- Check compulsory hours requirement
     IF COALESCE(v_completed_compulsory_hours, 0) < v_required_compulsory_hours THEN
-        RAISE EXCEPTION 'Completed compulsory hours (%) is less than required compulsory hours (%) for thesis submission',
+        RAISE EXCEPTION 'عدد الساعات الإجباري المكتملة (%) أقل من عدد الساعات الإجباري المطلوب (%) لتقديم الرسالة',
             v_completed_compulsory_hours, v_required_compulsory_hours;
     END IF;
 
     -- Check total hours requirement
     IF COALESCE(v_completed_hours, 0) < v_required_hours THEN
-        RAISE EXCEPTION 'Completed hours (%) is less than required hours (%) for thesis submission',
+        RAISE EXCEPTION 'عدد الساعات المكتملة (%) أقل من عدد الساعات المطلوب (%) لتقديم الرسالة',
             v_completed_hours, v_required_hours;
     END IF;
 
@@ -550,7 +550,7 @@ BEGIN
 		FROM applications
 		WHERE application_id = NEW.application_id AND is_admin_accepted = TRUE
 	) THEN
-		RAISE EXCEPTION 'Application is not yet accepted';
+		RAISE EXCEPTION 'لم يتم قبول الطلب بعد';
 	END IF;
 
     -- Check if the course is already registered
@@ -561,7 +561,7 @@ BEGIN
           AND course_id = NEW.course_id
           AND semester = NEW.semester
     ) THEN
-        RAISE EXCEPTION 'Course is already registered for this application and semester';
+        RAISE EXCEPTION 'المقرر مسجل بالفعل لهذا الطلب والفصل الدراسي';
     END IF;
 
     -- Check if the course has a prerequisite
@@ -580,7 +580,7 @@ BEGIN
               AND crs.grade >= 60 -- Assuming a passing grade is 60
         ) THEN
 			-- TODO: Add which prerequisite course is it
-            RAISE EXCEPTION 'Prerequisite course is not completed';
+            RAISE EXCEPTION 'المقرر المتطلب السابق لم يكتمل';
         END IF;
     END IF;
 
@@ -596,7 +596,7 @@ BEGIN
     WHERE course_id = NEW.course_id;
 
     IF (COALESCE(v_total_hours, 0) + v_course_hours) > v_max_hours THEN
-        RAISE EXCEPTION 'Total hours (%) exceed the maximum allowed hours for this semester (%)', COALESCE(v_total_hours, 0) + v_course_hours, v_max_hours;
+        RAISE EXCEPTION 'إجمالي عدد الساعات (%) يتجاوز الحد الأقصى المسموح به لهذا الفصل الدراسي (%)', COALESCE(v_total_hours, 0) + v_course_hours, v_max_hours;
     END IF;
 
 
@@ -611,7 +611,7 @@ BEGIN
         WHERE department_id = v_department_id
           AND course_id = NEW.course_id
     ) THEN
-        RAISE EXCEPTION 'This course is not available for this academic program';
+        RAISE EXCEPTION 'هذا المقرر غير متاح لهذا البرنامج الأكاديمي';
     END IF;
 
     -- Check if passed before or not
@@ -624,7 +624,7 @@ BEGIN
 		-- Assume passing grade is 60
 		AND grade >= 60
 	) THEN
-	   RAISE EXCEPTION 'Course is already passed before';
+	   RAISE EXCEPTION 'تم اجتياز المقرر من قبل';
 	END IF;
 
 	-- Check if the course is registered before or not
@@ -634,7 +634,7 @@ BEGIN
 		WHERE course_registrations.course_id = NEW.course_id
 		AND course_registrations.application_id = NEW.application_id
 	) THEN
-	   RAISE EXCEPTION 'Course is already registered in a previous semester';
+	   RAISE EXCEPTION 'المقرر مسجل بالفعل في فصل دراسي سابق';
 	END IF;
 
 	NEW.academic_year_id = get_current_academic_year();

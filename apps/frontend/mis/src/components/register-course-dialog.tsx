@@ -100,7 +100,8 @@ export default function RegisterCourseDialog({
 
         toast.success("تم تسجيل المادة بنجاح");
       } else {
-        toast.error("فشل تسجيل المادة");
+        const error = await res.json();
+        toast.error(error.error);
       }
     } catch (error) {
       console.log("Registration error:", error);
