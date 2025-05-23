@@ -1,3 +1,4 @@
+import { DEPARTMENT_TYPES } from "@/lib/constants";
 import { z } from "zod";
 
 export const ApplicationDetailsSchema = z.object({
@@ -44,7 +45,7 @@ export const ApplicationDetailsSchema = z.object({
     academicYearId: z.number(),
     faculty: z.string(),
     academicYear: z.string(),
-    academicDegree: z.string(),
+    academicDegree: z.enum(DEPARTMENT_TYPES),
     academicProgram: z.string(),
   }),
   attachments: z.array(

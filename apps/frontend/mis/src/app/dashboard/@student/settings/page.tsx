@@ -23,7 +23,7 @@ export default function Settings() {
   const [loading, setLoading] = useState(false);
   const { applicationData } = useUser();
   console.log(applicationData);
-  const [applicationId, setApplicationId] = useState<ApplicationStep1Type | null>(
+  const [applicationId, setApplicationId] = useState<number | undefined>(
     applicationData?.applicationId
   );
 
@@ -83,12 +83,12 @@ export default function Settings() {
   const handleStep3Submit = async (values: ApplicationStep3Type) => {
     try {
       await formikStep3.validateForm();
-      if (Object.keys(formikStep3.errors).length === 0) {
+      if (Object.keys(formikStep3.errors).length === 0 && applicationId) {
         setLoading(true);
         const res = await apiClient.students.me.applications[":applicationId"]["attachments"].$post(
           {
             param: {
-              applicationId: applicationId,
+              applicationId: applicationId.toString(),
             },
             json: {
               applicationId: applicationId,
@@ -185,8 +185,9 @@ export default function Settings() {
       attachments = [],
     } = applicationData;
 
-    const permanentAddress = addresses.find((addr) => addr.type === "permanent") || {};
-    const currentAddress = addresses.find((addr) => addr.type === "current") || {};
+    // We can use ! here as the addresses MUST be there, or our backend is broken xd
+    const permanentAddress = addresses.find((addr) => addr.type === "permanent")!;
+    const currentAddress = addresses.find((addr) => addr.type === "current")!;
 
     formikStep1.setValues({
       permanentAddress: {
@@ -224,7 +225,7 @@ export default function Settings() {
       registration: {
         academicYearId: registration?.academicYearId || 0,
         faculty: registration?.faculty || "",
-        academicDegree: registration?.academicDegree || "diploma",
+        academicDegree: registration?.academicDegree || "diploma" as const,
         departmentId: registration?.departmentId || 0,
       },
     });
