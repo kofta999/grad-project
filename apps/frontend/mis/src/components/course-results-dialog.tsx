@@ -167,7 +167,7 @@ export default function CourseResultsDialog({
             <CardHeader>
               <CardTitle>
                 <Cog className="w-5 h-5 text-yellow-200" />
-                تعديل تقدير الطالب
+                {result ? "تعديل تقدير الطالب" : "إضافة تقدير الطالب"}
               </CardTitle>
             </CardHeader>
             <CardContent>
