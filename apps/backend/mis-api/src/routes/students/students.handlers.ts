@@ -152,8 +152,8 @@ export const submitThesis: AppRouteHandler<routes.SubmitThesisRoute> = async (c)
   const { attachmentUrl, title } = c.req.valid("json");
 
   try {
-    await thesisService.submitThesis(studentId, title, attachmentUrl);
-    return c.json({}, HttpStatusCodes.OK);
+    const thesis = await thesisService.submitThesis(studentId, title, attachmentUrl);
+    return c.json(thesis, HttpStatusCodes.OK);
   } catch (error) {
     console.error("Error submitting thesis:", error);
     const errorMessage = error instanceof Error ? error.message : "Failed to submit thesis";

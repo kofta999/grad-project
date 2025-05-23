@@ -14,9 +14,16 @@ const adminApplicationService = new AdminApplicationService();
 const courseService = new CourseService();
 
 export const getAllApplications: AppRouteHandler<GetAllApplicationsRoute> = async (c) => {
-  const { nameAr, page } = c.req.valid("query");
+  const { nameAr, page, sortName, isAccepted } = c.req.valid("query");
 
-  const applicationsList = await adminApplicationService.getAllApplications(nameAr ?? "", page);
+  console.log(c.req.valid("query"));
+
+  const applicationsList = await adminApplicationService.getAllApplications({
+    page,
+    sortByName: sortName,
+    isAccepted: isAccepted ? isAccepted === "true" : undefined,
+    studentNameArQuery: nameAr,
+  });
   return c.json(applicationsList, HttpStatusCodes.OK);
 };
 
