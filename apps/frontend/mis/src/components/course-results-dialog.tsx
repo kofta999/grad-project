@@ -186,7 +186,9 @@ export default function CourseResultsDialog({
                     }}
                   />
                   <p className="text-gray-400 py-2 text-sm">
-                    يرجي كتابة التقدير الجديد واضغط إضافة
+                    {result
+                      ? "يرجي كتابة التقدير الجديد واضغط تعديل"
+                      : "يرجي كتابة التقدير واضغط إضافة"}
                   </p>
                   {!response ? (
                     <Button
