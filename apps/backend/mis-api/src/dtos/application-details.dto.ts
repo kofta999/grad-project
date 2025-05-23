@@ -8,6 +8,8 @@ export const ApplicationDetailsSchema = z.object({
     z.object({
       addressId: z.number(),
       fullAddress: z.string(),
+      countryId: z.number(),
+      cityId: z.number(),
       country: z.string(),
       city: z.string(),
       type: z.enum(["permanent", "current"]),

@@ -4,8 +4,8 @@ export const UpdateApplicationSchema = z.object({
   permanentAddress: z
     .object({
       fullAddress: z.string().optional(),
-      country: z.string().optional(),
-      city: z.string().optional(),
+      countryId: z.number().optional(),
+      cityId: z.number().optional(),
       // Note: type is omitted as specified in the original schema
     })
     .optional(),
@@ -13,8 +13,8 @@ export const UpdateApplicationSchema = z.object({
   currentAddress: z
     .object({
       fullAddress: z.string().optional(),
-      country: z.string().optional(),
-      city: z.string().optional(),
+      countryId: z.number().optional(),
+      cityId: z.number().optional(),
       // Note: type is omitted as specified in the original schema
     })
     .optional(),
