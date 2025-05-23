@@ -39,11 +39,13 @@ export default function StateSelect({
   const [stateList, setStateList] = useState<State[]>([]);
 
   const getStates = async (countryCode: string) => {
+    console.log(countryCode);
     try {
       const res = await apiClient.countries[":id"].$get({
         param: { id: countryCode },
       });
       const data = (await res.json()) as State[];
+      console.log(data);
       setStateList(data);
     } catch {
       console.log("Failed to get states");
@@ -65,12 +67,12 @@ export default function StateSelect({
           <SelectValue placeholder="اختر المدينة" />
         </SelectTrigger>
         <SelectContent>
-          {stateList.length === 0 ? (
+          {stateList?.length === 0 ? (
             <SelectItem disabled value="لا يوجد مدن">
               لا يوجد مدن
             </SelectItem>
           ) : (
-            stateList.map((state) => (
+            stateList?.map((state) => (
               <SelectItem key={state.cityId} value={state.cityId.toString()}>
                 {state.nameAr}
               </SelectItem>

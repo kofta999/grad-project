@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardGrid, CardHeader } from "@/components/ui/card";
+import { Card, CardContent, CardGrid, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Select,
   SelectContent,
@@ -9,7 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { MapPin, Phone, User, Mail } from "lucide-react";
+import { MapPin, Phone, User, Mail, MapPinHouse } from "lucide-react";
 import { Container, ContainerTitle } from "@/components/ui/container";
 import { FormikProps } from "formik";
 import { ApplicationStep1Type } from "@/lib/types";
@@ -35,12 +35,17 @@ export default function ApplicationStep1Form({ formik }: Step1Props) {
       <form onSubmit={formik.handleSubmit}>
         {/* Permanent Address */}
         <Card>
+          <CardHeader>
+            <CardTitle>
+              <MapPinHouse className="h-4 w-4 text-yellow-500" />
+              العنوان الدائم
+            </CardTitle>
+          </CardHeader>
           <CardContent>
-            <CardHeader>العنوان الدائم</CardHeader>
             <CardGrid>
               {/* Country */}
               <SpacingWrapper>
-                <CountrySelect
+                {/* <CountrySelect
                   name="permanentAddress.country"
                   label="الدولة"
                   value={formik.values.permanentAddress.country}
@@ -52,11 +57,11 @@ export default function ApplicationStep1Form({ formik }: Step1Props) {
                     // getStates(value);
                   }}
                   required={pathname === "/dashboard/applications"}
-                />
+                /> */}
               </SpacingWrapper>
               {/* City */}
               <SpacingWrapper>
-                <StateSelect
+                {/* <StateSelect
                   name="permanentAddress.city"
                   label="المدينة"
                   countryCode={formik.values.permanentAddress.country}
@@ -67,7 +72,7 @@ export default function ApplicationStep1Form({ formik }: Step1Props) {
                     formik.setFieldValue("permanentAddress.city", value);
                   }}
                   required={pathname === "/dashboard/applications"}
-                />
+                /> */}
               </SpacingWrapper>
 
               {/* Full Address */}
@@ -95,12 +100,17 @@ export default function ApplicationStep1Form({ formik }: Step1Props) {
 
         {/* Current Address */}
         <Card>
+          <CardHeader>
+            <CardTitle>
+              <MapPinHouse className="h-4 w-4 text-yellow-500" />
+              العنوان الحالي
+            </CardTitle>
+          </CardHeader>
           <CardContent>
-            <CardHeader>العنوان الحالي</CardHeader>
             <CardGrid>
               {/* Country */}
               <SpacingWrapper>
-                <CountrySelect
+                {/* <CountrySelect
                   name="currentAddress.country"
                   label="الدولة"
                   value={formik.values.currentAddress.country}
@@ -111,12 +121,12 @@ export default function ApplicationStep1Form({ formik }: Step1Props) {
                     formik.setFieldValue("currentAddress.city", "");
                   }}
                   required={pathname === "/dashboard/applications"}
-                />
+                /> */}
               </SpacingWrapper>
 
               {/* City */}
               <SpacingWrapper>
-                <StateSelect
+                {/* <StateSelect
                   name="currentAddress.city"
                   label="المدينة"
                   countryCode={formik.values.currentAddress.country}
@@ -127,7 +137,7 @@ export default function ApplicationStep1Form({ formik }: Step1Props) {
                     formik.setFieldValue("currentAddress.city", value);
                   }}
                   required={pathname === "/dashboard/applications"}
-                />
+                /> */}
               </SpacingWrapper>
 
               {/* Full Address */}
@@ -155,8 +165,13 @@ export default function ApplicationStep1Form({ formik }: Step1Props) {
 
         {/* Emergency Contact */}
         <Card>
+          <CardHeader>
+            <CardTitle>
+              <User className="h-4 w-4 text-yellow-500" />
+              شخصيات يمكن الرجوع اليها
+            </CardTitle>
+          </CardHeader>
           <CardContent>
-            <CardHeader>شخصيات يمكن الرجوع اليها</CardHeader>
             <CardGrid>
               {/* Name */}
               <SpacingWrapper>

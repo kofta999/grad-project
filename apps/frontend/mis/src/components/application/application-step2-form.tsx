@@ -1,6 +1,6 @@
 import { Container, ContainerTitle } from "@/components/ui/container";
 import React from "react";
-import { Card, CardContent, CardHeader, CardGrid } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardGrid, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -12,7 +12,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon, GraduationCap } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
 import { FormikProps } from "formik";
@@ -47,12 +47,17 @@ export default function ApplicationStep2Form({
       <form onSubmit={formik.handleSubmit}>
         {/* Qualification Section */}
         <Card>
+          <CardHeader>
+            <CardTitle>
+              <GraduationCap className="h-4 w-4 text-yellow-500" />
+              المؤهل المتقدم به
+            </CardTitle>
+          </CardHeader>
           <CardContent>
-            <CardHeader>المؤهل المتقدم به</CardHeader>
             <CardGrid>
               {/* Country */}
               <SpacingWrapper>
-                <CountrySelect
+                {/* <CountrySelect
                   name="qualification.country"
                   label="الدولة"
                   value={formik.values.qualification.country}
@@ -60,7 +65,7 @@ export default function ApplicationStep2Form({
                   touched={formik.touched.qualification?.country}
                   onChange={(value: string) => formik.setFieldValue("qualification.country", value)}
                   required={pathname === "/dashboard/applications"}
-                />
+                /> */}
               </SpacingWrapper>
 
               {/* University */}
@@ -72,7 +77,7 @@ export default function ApplicationStep2Form({
                   )}
                 </Label>
                 <Select
-                  value={formik.values.qualification.university}
+                  value={formik.values.qualification?.university}
                   onValueChange={(value: any) =>
                     formik.setFieldValue("qualification.university", value)
                   }
@@ -101,7 +106,7 @@ export default function ApplicationStep2Form({
                   )}
                 </Label>
                 <Select
-                  value={formik.values.qualification.faculty}
+                  value={formik.values.qualification?.faculty}
                   onValueChange={(value: any) =>
                     formik.setFieldValue("qualification.faculty", value)
                   }
@@ -129,7 +134,7 @@ export default function ApplicationStep2Form({
                   )}
                 </Label>
                 <Select
-                  value={formik.values.qualification.specialization}
+                  value={formik.values.qualification?.specialization}
                   onValueChange={(value: any) =>
                     formik.setFieldValue("qualification.specialization", value)
                   }
@@ -158,7 +163,7 @@ export default function ApplicationStep2Form({
                   )}
                 </Label>
                 <Select
-                  value={formik.values.qualification.qualification}
+                  value={formik.values.qualification?.qualification}
                   onValueChange={(value: string) =>
                     formik.setFieldValue("qualification.qualification", value)
                   }
@@ -187,7 +192,7 @@ export default function ApplicationStep2Form({
                   )}
                 </Label>
                 <Select
-                  value={formik.values.qualification.type}
+                  value={formik.values.qualification?.type}
                   onValueChange={(value: any) => formik.setFieldValue("qualification.type", value)}
                 >
                   <SelectTrigger>
@@ -213,7 +218,7 @@ export default function ApplicationStep2Form({
                   )}
                 </Label>
                 <Select
-                  value={formik.values.qualification.year}
+                  value={formik.values.qualification?.year}
                   onValueChange={(value: any) => formik.setFieldValue("qualification.year", value)}
                 >
                   <SelectTrigger>
@@ -244,11 +249,11 @@ export default function ApplicationStep2Form({
                       variant={"outline"}
                       className={cn(
                         "w-full justify-start text-right font-normal",
-                        !formik.values.qualification.date && "text-muted-foreground"
+                        !formik.values.qualification?.date && "text-muted-foreground"
                       )}
                     >
-                      {formik.values.qualification.date ? (
-                        new Date(formik.values.qualification.date).toLocaleDateString()
+                      {formik.values.qualification?.date ? (
+                        new Date(formik.values.qualification?.date).toLocaleDateString()
                       ) : (
                         <span>اختر التاريخ</span>
                       )}
@@ -259,8 +264,8 @@ export default function ApplicationStep2Form({
                     <Calendar
                       mode="single"
                       selected={
-                        formik.values.qualification.date
-                          ? new Date(formik.values.qualification.date)
+                        formik.values.qualification?.date
+                          ? new Date(formik.values.qualification?.date)
                           : undefined
                       }
                       onSelect={(date) =>
@@ -283,7 +288,7 @@ export default function ApplicationStep2Form({
               <SpacingWrapper>
                 <Label>نوع الدراسة</Label>
                 <Select
-                  value={formik.values.qualification.creditHours ? "creditHours" : "classic"}
+                  value={formik.values.qualification?.creditHours ? "creditHours" : "classic"}
                   onValueChange={(value: string) =>
                     formik.setFieldValue("qualification.creditHours", value === "creditHours")
                   }
@@ -306,7 +311,7 @@ export default function ApplicationStep2Form({
               <SpacingWrapper>
                 <Label>التقدير</Label>
                 <Select
-                  value={formik.values.qualification.grade}
+                  value={formik.values.qualification?.grade}
                   onValueChange={(value: string) =>
                     formik.setFieldValue("qualification.grade", value)
                   }
@@ -337,7 +342,7 @@ export default function ApplicationStep2Form({
                 <Label>النسبة المئوية / المعدل التراكمي</Label>
                 <Input
                   name="qualification.gpa"
-                  value={formik.values.qualification.gpa}
+                  value={formik.values.qualification?.gpa}
                   onChange={(e: any) => {
                     const value = e.target.value === "" ? 0 : parseFloat(e.target.value);
                     formik.setFieldValue("qualification.gpa", value);
@@ -353,8 +358,13 @@ export default function ApplicationStep2Form({
 
         {/* Registration Section */}
         <Card>
+          <CardHeader>
+            <CardTitle>
+              <GraduationCap className="h-4 w-4 text-yellow-500" />
+              الدرجة العلمية المراد التسجيل لها
+            </CardTitle>
+          </CardHeader>
           <CardContent>
-            <CardHeader>المؤهل المتقدم به</CardHeader>
             <CardGrid>
               {/* Academic Year */}
               <SpacingWrapper>
@@ -378,7 +388,7 @@ export default function ApplicationStep2Form({
                     <SelectValue placeholder="اختر العام الأكاديمي" />
                   </SelectTrigger>
                   <SelectContent>
-                    {initialData.currentAcademicYears.map(({ academicYearId, year }) => (
+                    {initialData?.currentAcademicYears.map(({ academicYearId, year }) => (
                       <SelectItem key={academicYearId} value={academicYearId.toString()}>
                         {year}
                       </SelectItem>
@@ -395,7 +405,7 @@ export default function ApplicationStep2Form({
               <SpacingWrapper>
                 <Label>الكلية</Label>
                 <Select
-                  value={formik.values.registration.faculty}
+                  value={formik.values.registration?.faculty}
                   onValueChange={(value: any) =>
                     formik.setFieldValue("registration.faculty", value)
                   }
@@ -421,7 +431,7 @@ export default function ApplicationStep2Form({
                   )}
                 </Label>
                 <Select
-                  value={formik.values.registration.academicDegree}
+                  value={formik.values.registration?.academicDegree}
                   onValueChange={(value: any) =>
                     formik.setFieldValue("registration.academicDegree", value)
                   }
@@ -451,9 +461,9 @@ export default function ApplicationStep2Form({
                 </Label>
                 <Select
                   value={
-                    formik.values.registration.departmentId === 0
+                    formik.values.registration?.departmentId === 0
                       ? undefined
-                      : formik.values.registration.departmentId.toString()
+                      : formik.values.registration?.departmentId.toString()
                   }
                   onValueChange={(value: string) =>
                     formik.setFieldValue("registration.departmentId", parseInt(value))
@@ -463,7 +473,7 @@ export default function ApplicationStep2Form({
                     <SelectValue placeholder="اختر البرنامج / التخصص" />
                   </SelectTrigger>
                   <SelectContent>
-                    {initialData.availableDepartments.map(({ title, departmentId }) => (
+                    {initialData?.availableDepartments.map(({ title, departmentId }) => (
                       <SelectItem key={departmentId} value={departmentId.toString()}>
                         {title}
                       </SelectItem>

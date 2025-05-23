@@ -61,7 +61,7 @@ export default function CountrySelect({
         </SelectTrigger>
         <SelectContent>
           {countryList &&
-            countryList.map((country) => (
+            countryList?.map((country) => (
               <SelectItem key={country.countryId} value={country.countryId.toString()}>
                 {country.nameAr}
               </SelectItem>

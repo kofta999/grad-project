@@ -15,7 +15,7 @@ export default function useUser() {
   const getUserApplicationData = async () => {
     const res = await apiClient.students.me.applications.$get();
     const data = await res.json();
-    setApplicationData(data);
+    setApplicationData(data.application);
     return data;
   };
 
