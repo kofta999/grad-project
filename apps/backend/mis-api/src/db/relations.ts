@@ -109,8 +109,11 @@ export const academicQualificationsRelations = relations(academicQualifications,
     fields: [academicQualifications.applicationId],
     references: [applications.applicationId],
   }),
+  country: one(countries, {
+    fields: [academicQualifications.countryId],
+    references: [countries.countryId],
+  }),
 }));
-
 export const courseRegistrationsRelations = relations(courseRegistrations, ({ one, many }) => ({
   course: one(courses, {
     fields: [courseRegistrations.courseId],

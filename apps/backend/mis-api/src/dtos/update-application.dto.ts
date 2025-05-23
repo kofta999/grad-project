@@ -30,7 +30,7 @@ export const UpdateApplicationSchema = z.object({
 
   qualification: z
     .object({
-      country: z.string().optional(),
+      countryId: z.number().optional(),
       university: z.string().optional(),
       faculty: z.string().optional(),
       type: z.string().optional(),

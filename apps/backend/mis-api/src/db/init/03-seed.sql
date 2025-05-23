@@ -206,7 +206,7 @@ VALUES
 INSERT INTO
 	"academic_qualifications" (
 		"application_id",
-		"country",
+		"country_id",
 		"university",
 		"faculty",
 		"type",
@@ -221,7 +221,7 @@ INSERT INTO
 VALUES
 	(
 		1,
-		'Egypt',
+		53,
 		'Cairo University',
 		'Engineering',
 		'Bachelor',
@@ -235,7 +235,7 @@ VALUES
 	),
 	(
 		2,
-		'Egypt',
+		54,
 		'Alexandria University',
 		'Science',
 		'Master',
@@ -249,7 +249,7 @@ VALUES
 	),
 	(
 		3,
-		'Egypt',
+		55,
 		'Helwan University',
 		'Arts',
 		'Bachelor',

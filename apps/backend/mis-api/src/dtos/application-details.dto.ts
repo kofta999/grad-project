@@ -17,6 +17,7 @@ export const ApplicationDetailsSchema = z.object({
   ),
   qualification: z.object({
     qualificationId: z.number(),
+    countryId: z.number(),
     country: z.string(),
     university: z.string(),
     faculty: z.string(),

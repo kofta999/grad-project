@@ -132,7 +132,7 @@ CREATE TABLE "emergency_contacts" (
 CREATE TABLE "academic_qualifications" (
 	"qualification_id" serial PRIMARY KEY,
 	"application_id" INTEGER UNIQUE NOT NULL,
-	"country" TEXT NOT NULL,
+	"country_id" INT NOT NULL,
 	"university" TEXT NOT NULL,
 	"faculty" TEXT NOT NULL,
 	"type" TEXT NOT NULL,
@@ -143,7 +143,8 @@ CREATE TABLE "academic_qualifications" (
 	"credit_hours" BOOLEAN NOT NULL,
 	"grade" TEXT NOT NULL,
 	"gpa" REAL NOT NULL,
-	FOREIGN key ("application_id") REFERENCES "applications" ("application_id")
+	FOREIGN key ("application_id") REFERENCES "applications" ("application_id"),
+	FOREIGN key ("country_id") REFERENCES "countries" ("country_id")
 );
 
 CREATE TABLE "admins" (
