@@ -35,6 +35,7 @@ export default function Page() {
   const [academicYear, setAcademicYear] = useState<AcademicYear | null>(null);
   const [courses, setCourses] = useState<CoursesType>([]);
   const [loading, setLoading] = useState(false);
+  const [semester, setSemester] = useState<SemesterType | "">("");
 
   const getCurrentAcademicYear = async () => {
     try {
@@ -99,7 +100,13 @@ export default function Page() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <Select onValueChange={(value: SemesterType) => getCourses(value, academicYear)}>
+          <Select
+            value={semester}
+            onValueChange={(value: SemesterType) => {
+              setSemester(value);
+              getCourses(value, academicYear);
+            }}
+          >
             <SelectTrigger className="w-full md:w-1/2">
               <SelectValue placeholder="اختر الترم" />
             </SelectTrigger>

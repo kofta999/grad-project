@@ -38,7 +38,7 @@ export type RegisteredCourse = InferResponseType<
 >[number];
 type CoursesType = RegisteredCourse[];
 
-export type SemesterType = "first" | "second" | "third";
+export type SemesterType = "first" | "second" | "third" | "";
 
 export default function Page() {
   const [student, setStudent] = useState<StudentType | null>(null);
@@ -46,7 +46,7 @@ export default function Page() {
 
   const [applicationId, setApplicationId] = useState<number | null>(null);
   const [academicYear, setAcademicYear] = useState<number | null>(null);
-  const [semester, setSemester] = useState<SemesterType | null>(null);
+  const [semester, setSemester] = useState<SemesterType | null>("");
 
   const [courses, setCourses] = useState<CoursesType>([]);
 
@@ -224,6 +224,7 @@ export default function Page() {
                 </SpacingWrapper>
               </CardGrid>
               <Select
+                value={semester as string}
                 onValueChange={(value: "first" | "second" | "third") => {
                   setSemester(value);
                 }}

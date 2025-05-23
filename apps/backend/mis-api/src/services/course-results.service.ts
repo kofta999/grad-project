@@ -17,16 +17,6 @@ export class CourseResultsService implements ICourseResultsService {
         throw new Error("Grade must be between 0 and 100");
       }
 
-      //finding existing record first
-      const existingResult = await db
-        .select()
-        .from(courseResults)
-        .where(eq(courseResults.courseRegistrationId, courseRegistrationId));
-
-      if (existingResult) {
-        throw new Error("Already exists");
-      }
-
       await db.insert(courseResults).values({
         courseRegistrationId,
         grade,
