@@ -1,23 +1,25 @@
-'use client';
-import { useState, ChangeEvent } from 'react';
-import { UploadCloud, CheckCircle2, Loader2, BookmarkCheck } from 'lucide-react';
-import { toast } from 'react-hot-toast';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
-import { apiClient } from '@/lib/client';
+"use client";
+import { useState, ChangeEvent } from "react";
+import { UploadCloud, CheckCircle2, Loader2, BookmarkCheck } from "lucide-react";
+import { toast } from "react-hot-toast";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
+import { apiClient } from "@/lib/client";
 
-const ACCEPTED_FILE_TYPES = ['application/pdf'];
+const ACCEPTED_FILE_TYPES = ["application/pdf"];
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
 interface ReportsSubmitFormProps {
-  onSubmit: (reportData: {
-    type: string;
-    title: string;
-    attachmentUrl: string;
-  }) => void;
+  onSubmit: (reportData: { type: string; title: string; attachmentUrl: string }) => void;
   isLoading: boolean;
   onCancel?: () => void;
 }
@@ -28,9 +30,9 @@ export default function ReportsSubmitForm({
   onCancel,
 }: ReportsSubmitFormProps) {
   const [formValues, setFormValues] = useState({
-    type: '',
-    title: '',
-    attachmentUrl: '',
+    type: "",
+    title: "",
+    attachmentUrl: "",
   });
   const [isUploading, setIsUploading] = useState(false);
 
@@ -48,7 +50,7 @@ export default function ReportsSubmitForm({
       }
 
       const { uploadUrl } = await uploadResponse.json();
-      setFormValues(prev => ({ ...prev, attachmentUrl: uploadUrl }));
+      setFormValues((prev) => ({ ...prev, attachmentUrl: uploadUrl }));
       toast.success("تم رفع الملف بنجاح", { id: toastId });
     } catch (error) {
       toast.error("فشل في رفع الملف", { id: toastId });
@@ -103,8 +105,8 @@ export default function ReportsSubmitForm({
             <Label htmlFor="type" className="text-gray-700 font-medium block text-right">
               نوع التقرير <span className="text-yellow-500">*</span>
             </Label>
-            <Select 
-              onValueChange={(value) => setFormValues({...formValues, type: value})}
+            <Select
+              onValueChange={(value) => setFormValues({ ...formValues, type: value })}
               value={formValues.type}
               required
             >
@@ -126,7 +128,7 @@ export default function ReportsSubmitForm({
             <Input
               id="title"
               value={formValues.title}
-              onChange={(e) => setFormValues({...formValues, title: e.target.value})}
+              onChange={(e) => setFormValues({ ...formValues, title: e.target.value })}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-right"
               placeholder="أدخل عنوان التقرير"
               required
@@ -161,9 +163,7 @@ export default function ReportsSubmitForm({
                   <>
                     <UploadCloud className="h-10 w-10 text-blue-500 mb-3" />
                     <p className="font-medium text-gray-600">اضغط لرفع الملف أو اسحبه هنا</p>
-                    {isUploading && (
-                      <Loader2 className="h-5 w-5 animate-spin text-blue-500 mt-2" />
-                    )}
+                    {isUploading && <Loader2 className="h-5 w-5 animate-spin text-blue-500 mt-2" />}
                   </>
                 )}
               </div>
@@ -196,7 +196,13 @@ export default function ReportsSubmitForm({
             <Button
               type="submit"
               className="px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-medium rounded-lg shadow-md transition-all transform hover:scale-[1.02]"
-              disabled={isLoading || isUploading || !formValues.type || !formValues.title || !formValues.attachmentUrl}
+              disabled={
+                isLoading ||
+                isUploading ||
+                !formValues.type ||
+                !formValues.title ||
+                !formValues.attachmentUrl
+              }
             >
               {isLoading ? (
                 <span className="flex items-center justify-center gap-2">
@@ -204,9 +210,7 @@ export default function ReportsSubmitForm({
                   جاري التقديم...
                 </span>
               ) : (
-                <span className="flex items-center justify-center gap-2">
-                  تقديم التقرير
-                </span>
+                <span className="flex items-center justify-center gap-2">تقديم التقرير</span>
               )}
             </Button>
           </div>
