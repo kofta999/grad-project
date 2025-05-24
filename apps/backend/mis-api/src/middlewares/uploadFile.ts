@@ -1,37 +1,15 @@
-import { File } from "@web-std/file";
-import { createWriteStream } from "fs";
-import { mkdir } from "fs/promises";
-import { join } from "path";
 import { createMiddleware } from "hono/factory";
 import { AppBindings } from "@/lib/types";
-import { APP_URL } from "@/lib/constants";
+import { StorageService } from "@/services/storage.service";
 
 export const uploadFile = createMiddleware<AppBindings>(async (c, next) => {
   const image = await c.req.parseBody();
   const file = image.file as File;
 
-  const finalDest = "./uploads";
-  const filename = `${Date.now()}-${file.name}`;
+  const storageService = new StorageService();
+  const fileUrl = await storageService.saveFile(file);
 
-  await mkdir(finalDest, { recursive: true });
-
-  await saveFile(finalDest, new File([file], filename));
-
-  c.set("file", APP_URL + "/" + join(finalDest, filename));
+  c.set("file", fileUrl);
 
   await next();
 });
-
-const saveFile = async (dest: string, file: File) => {
-  const writeStream = createWriteStream(join(dest, file.name));
-  const reader = file.stream().getReader();
-  // eslint-disable-next-line no-constant-condition
-  while (true) {
-    const { done, value } = await reader.read();
-    if (done) {
-      break;
-    }
-    writeStream.write(value);
-  }
-  writeStream.end();
-};

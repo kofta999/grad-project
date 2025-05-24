@@ -173,6 +173,10 @@ export const saveApplicationAttachments = createRoute({
       z.object({ success: z.boolean(), applicationId: z.number() }),
       "Attachments saved"
     ),
+    [HttpStatusCodes.FORBIDDEN]: jsonContent(
+      createMessageObjectSchema("Cannot save this attachment"),
+      "Cannot save this attachment"
+    ),
     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
       createErrorSchema(SaveAttachmentsSchema),
       "The validation error(s)"
@@ -341,7 +345,6 @@ export type SaveApplicationAttachmentsRoute = typeof saveApplicationAttachments;
 export type DeleteApplicationAttachmentRoute = typeof deleteApplicationAttachment;
 export type GetApplicationRoute = typeof getApplication;
 export type UpdateApplicationRoute = typeof updateApplication;
-// export type GetApplicationByIdRoute = typeof getApplicationById;
 export type CheckThesisAvailabilityRoute = typeof checkThesisAvailability;
 export type GetThesisRoute = typeof getThesis;
 export type SubmitThesisRoute = typeof submitThesis;
