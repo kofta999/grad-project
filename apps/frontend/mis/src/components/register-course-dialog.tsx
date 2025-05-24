@@ -1,10 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { LucideClipboardList } from "lucide-react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardGrid,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { apiClient } from "@/lib/client";
 import toast from "react-hot-toast";
 import { InferResponseType } from "@repo/mis-api";
+import { SpacingWrapper } from "./ui/spacing-wrapper";
 
 type AvailableCourse = InferResponseType<
   (typeof apiClient.applications)[":id"]["available-courses"]["$get"],
@@ -92,7 +100,8 @@ export default function RegisterCourseDialog({
 
         toast.success("تم تسجيل المادة بنجاح");
       } else {
-        toast.error("فشل تسجيل المادة");
+        const error = await res.json();
+        toast.error(error.error);
       }
     } catch (error) {
       console.log("Registration error:", error);
@@ -162,14 +171,14 @@ export default function RegisterCourseDialog({
         <CardDescription>
           يجب عليك بتسجيل عدد من المواد بما يعادل 9 من الساعات المعتمده وبحد اقصى 19
         </CardDescription>
-        <div>
+        <CardGrid className="md:grid-cols-1">
           {availableCourses.map((course) => {
             const isRegistered = userRegisteredCourses.some(
               (rc) => rc.courseId === course.courseId
             );
 
             return (
-              <Card key={course.courseId} className="mt-3 md:p-6">
+              <SpacingWrapper key={course.courseId}>
                 <div className="flex justify-between flex-col md:flex-row p-3 mx-3 md:mx-0">
                   <div>
                     <p>{course.title}</p>
@@ -191,10 +200,10 @@ export default function RegisterCourseDialog({
                     </Button>
                   </div>
                 </div>
-              </Card>
+              </SpacingWrapper>
             );
           })}
-        </div>
+        </CardGrid>
       </CardContent>
     </Card>
   );

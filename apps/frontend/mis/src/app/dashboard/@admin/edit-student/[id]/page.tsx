@@ -16,9 +16,11 @@ export default function Page() {
   const { id } = useParams<{ id: string }>();
   const { student } = useApplicationDataForAdmin(id);
   const [step, setStep] = useState(1);
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (formik: any, extraData: object = {}, onSuccess?: () => void) => {
     try {
+      setLoading(true);
       const errors = await formik.validateForm();
       if (Object.keys(errors).length === 0 && student) {
         const res = await apiClient.students[":id"].$patch({
@@ -28,17 +30,20 @@ export default function Page() {
             ...extraData,
           },
         });
-        const result = await res.json();
+        await res.json();
 
         if (res.status === 200) {
+          setLoading(false);
           toast.success("تم التعديل بنجاح!");
           onSuccess?.();
           window.scrollTo(0, 0);
         }
       } else {
+        setLoading(false);
         toast.error("الرجاء تصحيح الأخطاء قبل المتابعة.");
       }
     } catch (error) {
+      setLoading(false);
       console.log("Registration failed:", error);
       toast.error("فشل التعديل. الرجاء المحاولة مرة أخرى.");
     }
@@ -143,7 +148,9 @@ export default function Page() {
 
       {step === 1 && <RegisterStep1Form formik={formikStep1} />}
 
-      {step !== 1 && <RegisterStep2Form goPrevStep={() => setStep(1)} formik={formikStep2} />}
+      {step !== 1 && (
+        <RegisterStep2Form goPrevStep={() => setStep(1)} formik={formikStep2} loading={loading} />
+      )}
 
       <Toaster />
     </>

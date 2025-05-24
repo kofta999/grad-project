@@ -45,7 +45,7 @@ const SearchBar = React.forwardRef<
           type="submit"
           className="flex h-10 pr-3 items-center justify-center text-muted-foreground hover:text-foreground"
         >
-          <Search className="h-4 w-4" />
+          <Search className="h-4 w-4 text-mainColor" />
         </button>
         <input
           type="text"

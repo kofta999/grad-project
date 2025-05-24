@@ -177,7 +177,10 @@ export default function Page({
   return (
     <Container>
       <Card>
-        <SearchBar placeholder="ابحث هنا باستخدام معرف الطلب..." onChange={(value) => handleSearch(value as string)} />
+        <SearchBar
+          placeholder="ابحث هنا باستخدام معرف الطلب..."
+          onChange={(value) => handleSearch(value as string)}
+        />
       </Card>
 
       {loading ? (

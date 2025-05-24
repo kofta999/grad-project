@@ -32,23 +32,23 @@ export default function ApplicationDetails({ application }: { application: Appli
         </CardHeader>
         <CardContent>
           <CardGrid>
-            <SpacingWrapper className="bg-gray-50 p-3 rounded-lg shadow-sm">
+            <SpacingWrapper>
               <p className="text-gray-600">العام الأكاديمي للتسجيل</p>
               <p className="text-lg font-semibold text-gray-800">
                 {application?.registration?.academicYear}
               </p>
             </SpacingWrapper>
-            <SpacingWrapper className="bg-gray-50 p-3 rounded-lg shadow-sm">
+            <SpacingWrapper>
               <p className="text-gray-600">حالة الطلب</p>
               <p className="text-lg font-semibold text-gray-800">{STATUS[application.status]}</p>
             </SpacingWrapper>
-            <SpacingWrapper className="bg-gray-50 p-3 rounded-lg shadow-sm">
+            <SpacingWrapper>
               <p className="text-gray-600">الكلية</p>
               <p className="text-lg font-semibold text-gray-800">
                 {application?.registration?.faculty}
               </p>
             </SpacingWrapper>
-            <SpacingWrapper className="bg-gray-50 p-3 rounded-lg shadow-sm">
+            <SpacingWrapper>
               <p className="text-gray-600">البرنامج العلمي</p>
               <p className="text-lg font-semibold text-gray-800">
                 {application.registration?.academicProgram}
@@ -67,49 +67,49 @@ export default function ApplicationDetails({ application }: { application: Appli
         </CardHeader>
         <CardContent>
           <CardGrid>
-            <SpacingWrapper className="bg-gray-50 p-3 rounded-lg shadow-sm">
+            <SpacingWrapper>
               <p className="text-gray-600">المؤهل</p>
               <p className="text-lg font-semibold text-gray-800">
                 {application?.qualification?.qualification}
               </p>
             </SpacingWrapper>
-            <SpacingWrapper className="bg-gray-50 p-3 rounded-lg shadow-sm">
+            <SpacingWrapper>
               <p className="text-gray-600">الجامعة</p>
               <p className="text-lg font-semibold text-gray-800">
                 {application?.qualification?.university}
               </p>
             </SpacingWrapper>
-            <SpacingWrapper className="bg-gray-50 p-3 rounded-lg shadow-sm">
+            <SpacingWrapper>
               <p className="text-gray-600">الكلية</p>
               <p className="text-lg font-semibold text-gray-800">
                 {application?.qualification?.faculty}
               </p>
             </SpacingWrapper>
-            <SpacingWrapper className="bg-gray-50 p-3 rounded-lg shadow-sm">
+            <SpacingWrapper>
               <p className="text-gray-600">التخصص</p>
               <p className="text-lg font-semibold text-gray-800">
                 {application?.qualification?.specialization}
               </p>
             </SpacingWrapper>
-            <SpacingWrapper className="bg-gray-50 p-3 rounded-lg shadow-sm">
+            <SpacingWrapper>
               <p className="text-gray-600">سنة النخرج</p>
               <p className="text-lg font-semibold text-gray-800">
                 {application?.qualification?.year}
               </p>
             </SpacingWrapper>
-            <SpacingWrapper className="bg-gray-50 p-3 rounded-lg shadow-sm">
+            <SpacingWrapper>
               <p className="text-gray-600">المعدل التراكمي</p>
               <p className="text-lg font-semibold text-gray-800">
                 {application?.qualification?.gpa}
               </p>
             </SpacingWrapper>
-            <SpacingWrapper className="bg-gray-50 p-3 rounded-lg shadow-sm">
+            <SpacingWrapper>
               <p className="text-gray-600">التقدير الأكاديمي</p>
               <p className="text-lg font-semibold text-gray-800">
                 {application?.qualification?.grade}
               </p>
             </SpacingWrapper>
-            <SpacingWrapper className="bg-gray-50 p-3 rounded-lg shadow-sm">
+            <SpacingWrapper>
               <p className="text-gray-600">الدولة</p>
               <p className="text-lg font-semibold text-gray-800">
                 {application?.qualification?.country}
@@ -128,7 +128,7 @@ export default function ApplicationDetails({ application }: { application: Appli
         </CardHeader>
         <CardContent>
           <CardGrid>
-            <SpacingWrapper className="bg-gray-50 p-3 rounded-lg shadow-sm">
+            <SpacingWrapper>
               <p className="text-gray-600 flex items-center">العنوان</p>
               {application?.addresses?.map((address, index) => (
                 <p key={index} className="text-lg font-semibold text-gray-800 flex items-center">
@@ -138,7 +138,7 @@ export default function ApplicationDetails({ application }: { application: Appli
               ))}
             </SpacingWrapper>
             {application.emergencyContact && (
-              <SpacingWrapper className="bg-gray-50 p-3 rounded-lg shadow-sm">
+              <SpacingWrapper>
                 <p className="text-gray-600 flex items-center">معلومات الاتصال في حالات الطوارئ</p>
                 <p className="text-lg font-semibold text-gray-800 mb-3 flex items-center">
                   <User className="ml-2" />
@@ -181,7 +181,7 @@ export default function ApplicationDetails({ application }: { application: Appli
                   {attachment.type}
                 </p>
                 <Link
-                  className="text-gray-800 rounded-md border border-gray-400 px-5 pb-1"
+                  className="text-gray-800 rounded-md border border-mainColor px-5 pb-1"
                   href={attachment.attachmentUrl}
                   target="_blank"
                   rel="noopener noreferrer"

@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import { FormikProps } from "formik";
 import { apiClient } from "@/lib/client";
 import { ApplicationStep3Type } from "@/lib/types";
+import { SpacingWrapper } from "@/components/ui/spacing-wrapper";
+import { ErrorMessage } from "../ui/error-message";
 
 interface Step3Props {
   goPrevStep: () => void;
@@ -22,7 +24,6 @@ export default function ApplicationStep3Form({ goPrevStep, formik, loading }: St
     if (file) {
       setFieldValue("attachmentFile", file);
       const res = await apiClient.auth.upload.$post({ form: { file } });
-
       if (res.ok) {
         const { uploadUrl } = await res.json();
         setFieldValue("attachments", [
@@ -45,7 +46,7 @@ export default function ApplicationStep3Form({ goPrevStep, formik, loading }: St
         <Card>
           <CardContent>
             <CardHeader>رفع المستندات المطلوبة</CardHeader>
-            <div className="space-y-2">
+            <SpacingWrapper>
               <Label>
                 نوع الهوية<span className="text-red-500">*</span>
               </Label>
@@ -58,7 +59,7 @@ export default function ApplicationStep3Form({ goPrevStep, formik, loading }: St
               {formik.touched.attachmentType && formik.errors.attachmentType && (
                 <p className="text-red-500 text-sm">{formik.errors.attachmentType}</p>
               )}
-            </div>
+            </SpacingWrapper>
 
             <div className="bg-[#dcdcdc] p-6 mt-6 rounded-sm">
               <div className="w-full flex flex-col justify-center items-center">
@@ -81,17 +82,15 @@ export default function ApplicationStep3Form({ goPrevStep, formik, loading }: St
                     <>{formik.errors.attachmentFile}</>
                   </p>
                 )}
-                <p className="text-sm text-gray-500 text-center mt-2">
-                  * يجب أن لا يزيد الملف عن 2 ميجا بايت
-                </p>
+                <ErrorMessage message="* يجب أن لا يزيد الملف عن 2 ميجا بايت" />
               </div>
             </div>
 
             {/* Attachments List */}
             <Card>
-              <div className="space-y-2 border-b">
+              <SpacingWrapper className="border-b">
                 {formik.values.attachments.map((attachment, index) => (
-                  <div
+                  <SpacingWrapper
                     className="file flex justify-between items-center p-4"
                     key={attachment.attachmentUrl}
                   >
@@ -102,9 +101,9 @@ export default function ApplicationStep3Form({ goPrevStep, formik, loading }: St
                       className="text-red-500 cursor-pointer"
                       onClick={() => handleRemoveAttachment(index)}
                     />
-                  </div>
+                  </SpacingWrapper>
                 ))}
-              </div>
+              </SpacingWrapper>
             </Card>
           </CardContent>
         </Card>
