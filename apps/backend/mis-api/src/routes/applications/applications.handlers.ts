@@ -6,6 +6,7 @@ import {
   GetApplicationAvailableCoursesRoute,
   GetApplicationDetailsRoute,
   GetApplicationRegisteredCoursesRoute,
+  RejectApplicationRoute,
 } from "./applications.routes";
 import { AdminApplicationService } from "@/services/admin-application.service";
 import { CourseService } from "@/services/course.service";
@@ -93,7 +94,7 @@ export const acceptApplication: AppRouteHandler<AcceptApplicationRoute> = async 
   return c.json({ message: "Application accepted" }, HttpStatusCodes.OK);
 };
 
-export const rejectApplication: AppRouteHandler<AcceptApplicationRoute> = async (c) => {
+export const rejectApplication: AppRouteHandler<RejectApplicationRoute> = async (c) => {
   const { applicationId } = c.req.valid("json");
 
   const operationStatus = await adminApplicationService.rejectApplication(applicationId);
