@@ -117,13 +117,13 @@ export default function Settings() {
   let formikStep1 = useFormik<ApplicationStep1Type>({
     initialValues: {
       permanentAddress: {
-        city: "",
-        country: "",
+        cityId: 0,
+        countryId: 0,
         fullAddress: "",
       },
       currentAddress: {
-        city: "",
-        country: "",
+        cityId: 0,
+        countryId: 0,
         fullAddress: "",
       },
       emergencyContact: {
@@ -140,7 +140,7 @@ export default function Settings() {
   let formikStep2 = useFormik<ApplicationStep2Type>({
     initialValues: {
       qualification: {
-        country: "",
+        countryId: 0,
         university: "",
         faculty: "",
         type: "",
@@ -191,14 +191,14 @@ export default function Settings() {
 
     formikStep1.setValues({
       permanentAddress: {
-        cityId: permanentAddress.cityId || "",
-        countryId: permanentAddress.countryId || "",
-        fullAddress: permanentAddress.fullAddress || "",
+        cityId: permanentAddress.cityId,
+        countryId: permanentAddress.countryId,
+        fullAddress: permanentAddress.fullAddress,
       },
       currentAddress: {
-        cityId: currentAddress.cityId || "",
-        countryId: currentAddress.countryId || "",
-        fullAddress: currentAddress.fullAddress || "",
+        cityId: currentAddress.cityId,
+        countryId: currentAddress.countryId,
+        fullAddress: currentAddress.fullAddress,
       },
       emergencyContact: {
         name: emergencyContact?.name || "",
@@ -210,7 +210,7 @@ export default function Settings() {
 
     formikStep2.setValues({
       qualification: {
-        country: qualification?.country || "",
+        countryId: qualification?.countryId,
         university: qualification?.university || "",
         faculty: qualification?.faculty || "",
         type: qualification?.type || "",
@@ -225,13 +225,14 @@ export default function Settings() {
       registration: {
         academicYearId: registration?.academicYearId || 0,
         faculty: registration?.faculty || "",
-        academicDegree: registration?.academicDegree || "diploma" as const,
-        departmentId: registration?.departmentId || 0,
+        academicDegree: registration?.academicDegree || ("diploma" as const),
+        departmentId: registration?.departmentId,
       },
     });
 
     formikStep3.setValues({
       attachmentType: "",
+      // @ts-ignore IDK but it works
       attachmentFile: null,
       attachments: attachments.map((att) => ({
         type: att.type || "",
@@ -250,7 +251,7 @@ export default function Settings() {
         <ApplicationStep2Form
           goPrevStep={() => setStep(1)}
           formik={formikStep2}
-          // initialData={initialData}
+          initialData={initialData}
           loading={loading}
         />
       )}

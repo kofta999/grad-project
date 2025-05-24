@@ -42,6 +42,7 @@ export const ApplicationDetailsSchema = z.object({
     .nullable(),
   registration: z.object({
     registerationId: z.number(),
+    departmentId: z.number(),
     academicYearId: z.number(),
     faculty: z.string(),
     academicYear: z.string(),

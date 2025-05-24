@@ -105,6 +105,29 @@ VALUES
 		'Not Completed',
 		'1996-12-05 00:00:00',
 		CURRENT_TIMESTAMP
+	), (
+	'محمد علي',
+	'Mohamed AAli',
+	TRUE,
+	'user@example.com',
+	'Egyptian',
+	'http://localhost:3002/avatar.jpg',
+	'0123456789',
+	'0987654321',
+	'01234',
+	'national_id',
+	'2020-01-01 00:00:00',
+	'123456789',
+	'Cairo',
+	'single',
+	FALSE,
+	NULL,
+	'$2a$10$xxRUJhEPNZjZoKcmuQxXr.q/iCJPvZIWCYrxuSNjN61y27KLdr6Ve',
+	'What is your favorite color?',
+	'Blue',
+	'Completed',
+	'1995-05-15 00:00:00',
+	CURRENT_TIMESTAMP
 	);
 
 -- Insert sample applications

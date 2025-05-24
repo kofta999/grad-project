@@ -2,13 +2,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardGrid, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { MapPin, Phone, User, Mail, MapPinHouse } from "lucide-react";
 import { Container, ContainerTitle } from "@/components/ui/container";
 import { FormikProps } from "formik";
@@ -45,34 +38,34 @@ export default function ApplicationStep1Form({ formik }: Step1Props) {
             <CardGrid>
               {/* Country */}
               <SpacingWrapper>
-                {/* <CountrySelect
-                  name="permanentAddress.country"
+                <CountrySelect
+                  name="permanentAddress.countryId"
                   label="الدولة"
-                  value={formik.values.permanentAddress.country}
-                  error={formik.errors.permanentAddress?.country}
-                  touched={formik.touched.permanentAddress?.country}
+                  value={formik.values.permanentAddress.countryId.toString()}
+                  error={formik.errors.permanentAddress?.countryId}
+                  touched={formik.touched.permanentAddress?.countryId}
                   onChange={(value) => {
-                    formik.setFieldValue("permanentAddress.country", value);
-                    formik.setFieldValue("permanentAddress.city", "");
+                    formik.setFieldValue("permanentAddress.countryId", parseInt(value));
+                    formik.setFieldValue("permanentAddress.cityId", "");
                     // getStates(value);
                   }}
                   required={pathname === "/dashboard/applications"}
-                /> */}
+                />
               </SpacingWrapper>
               {/* City */}
               <SpacingWrapper>
-                {/* <StateSelect
-                  name="permanentAddress.city"
+                <StateSelect
+                  name="permanentAddress.cityId"
                   label="المدينة"
-                  countryCode={formik.values.permanentAddress.country}
-                  value={formik.values.permanentAddress.city}
-                  error={formik.errors.permanentAddress?.city}
-                  touched={formik.touched.permanentAddress?.city}
+                  countryCode={formik.values.permanentAddress.countryId.toString()}
+                  value={formik.values.permanentAddress.cityId.toString()}
+                  error={formik.errors.permanentAddress?.cityId}
+                  touched={formik.touched.permanentAddress?.cityId}
                   onChange={(value) => {
-                    formik.setFieldValue("permanentAddress.city", value);
+                    formik.setFieldValue("permanentAddress.cityId", parseInt(value));
                   }}
                   required={pathname === "/dashboard/applications"}
-                /> */}
+                />
               </SpacingWrapper>
 
               {/* Full Address */}
@@ -110,34 +103,34 @@ export default function ApplicationStep1Form({ formik }: Step1Props) {
             <CardGrid>
               {/* Country */}
               <SpacingWrapper>
-                {/* <CountrySelect
-                  name="currentAddress.country"
+                <CountrySelect
+                  name="currentAddress.countryId"
                   label="الدولة"
-                  value={formik.values.currentAddress.country}
-                  error={formik.errors.currentAddress?.country}
-                  touched={formik.touched.currentAddress?.country}
+                  value={formik.values.currentAddress.countryId.toString()}
+                  error={formik.errors.currentAddress?.countryId}
+                  touched={formik.touched.currentAddress?.countryId}
                   onChange={(value) => {
-                    formik.setFieldValue("currentAddress.country", value);
-                    formik.setFieldValue("currentAddress.city", "");
+                    formik.setFieldValue("currentAddress.countryId", parseInt(value));
+                    formik.setFieldValue("currentAddress.cityId", "");
                   }}
                   required={pathname === "/dashboard/applications"}
-                /> */}
+                />
               </SpacingWrapper>
 
               {/* City */}
               <SpacingWrapper>
-                {/* <StateSelect
-                  name="currentAddress.city"
+                <StateSelect
+                  name="currentAddress.cityId"
                   label="المدينة"
-                  countryCode={formik.values.currentAddress.country}
-                  value={formik.values.currentAddress.city}
-                  error={formik.errors.currentAddress?.city}
-                  touched={formik.touched.currentAddress?.city}
+                  countryCode={formik.values.currentAddress.countryId.toString()}
+                  value={formik.values.currentAddress.cityId.toString()}
+                  error={formik.errors.currentAddress?.cityId}
+                  touched={formik.touched.currentAddress?.cityId}
                   onChange={(value) => {
-                    formik.setFieldValue("currentAddress.city", value);
+                    formik.setFieldValue("currentAddress.cityId", parseInt(value));
                   }}
                   required={pathname === "/dashboard/applications"}
-                /> */}
+                />
               </SpacingWrapper>
 
               {/* Full Address */}

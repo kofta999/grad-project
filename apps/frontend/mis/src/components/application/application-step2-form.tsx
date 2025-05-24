@@ -57,15 +57,17 @@ export default function ApplicationStep2Form({
             <CardGrid>
               {/* Country */}
               <SpacingWrapper>
-                {/* <CountrySelect
-                  name="qualification.country"
+                <CountrySelect
+                  name="qualification.countryId"
                   label="الدولة"
-                  value={formik.values.qualification.country}
-                  error={formik.errors.qualification?.country}
-                  touched={formik.touched.qualification?.country}
-                  onChange={(value: string) => formik.setFieldValue("qualification.country", value)}
+                  value={formik.values.qualification.countryId.toString()}
+                  error={formik.errors.qualification?.countryId}
+                  touched={formik.touched.qualification?.countryId}
+                  onChange={(value: string) =>
+                    formik.setFieldValue("qualification.countryId", parseInt(value))
+                  }
                   required={pathname === "/dashboard/applications"}
-                /> */}
+                />
               </SpacingWrapper>
 
               {/* University */}

@@ -89,6 +89,7 @@ export abstract class ApplicationService implements IApplicationService {
         academicDegree: department.type,
         faculty: registration.faculty,
         academicYearId: academicYear.academicYearId,
+        departmentId: registration.departmentId,
         academicYear: formatAcademicYear(academicYear),
         academicProgram: department.title,
       },
