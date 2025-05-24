@@ -10,6 +10,7 @@ import { STATUS } from "@/lib/types";
 export default function Page() {
   const { id } = useParams();
   const { application, student } = useApplicationDataForAdmin(id as string);
+  console.log(application);
 
   const router = useRouter();
 
@@ -25,18 +26,18 @@ export default function Page() {
     application && (
       <div className="min-h-screen bg-gray-50 p-6" dir="rtl">
         <div className="max-w-4xl mx-auto">
-          <div className="flex flex-row-reverse justify-end justify-between">
+          <div className="flex flex-col items-end gap-2">
             <Button
               onClick={() => handleEditStudent(application.applicationId)}
-              className="bg-mainColor/95 py-1 px-2 text-sm rounded w-[200px] right-full text-center text-white hover:bg-mainColor transition-colors duration-200"
+              className="bg-green-600 py-1 px-2 text-sm rounded w-[200px] text-center text-white hover:bg-green-700 transition-colors duration-200"
             >
               تعديل بيانات الطالب
             </Button>
 
-            {application.isAccepted && (
+            {application.status === "accepted" && (
               <Button
                 onClick={() => handleRegisterCourses(application.applicationId)}
-                className="bg-mainColor/95 py-1 px-2 text-sm rounded w-[200px] right-full text-center text-white hover:bg-mainColor transition-colors duration-200"
+                className="bg-mainColor py-1 px-2 text-sm rounded w-[200px] text-center text-white transition-colors duration-200"
               >
                 تسجيل المواد للطالب
               </Button>

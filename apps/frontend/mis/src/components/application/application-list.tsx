@@ -37,7 +37,12 @@ export default function ApplicationsList({
 }: {
   applicationsResponse: ApplicationsListResponse;
   setApplicationsResponse: (applications: ApplicationsListResponse) => void;
-  getApplicationsList: (nameAr: string, page: number) => void;
+  getApplicationsList: (
+    nameAr: string,
+    page: number,
+    status: string | undefined,
+    sortName: string | undefined
+  ) => void;
 }) {
   const router = useRouter();
   const DEGREE_MAP: Record<ApplicationsData[number]["academicDegree"], string> = {
@@ -45,33 +50,12 @@ export default function ApplicationsList({
     master: "ماجستير",
     phd: "دكتوراه",
   };
-  const [nameAr, setNameAr] = useState("");
-  const [page, setPage] = useState(1);
-  const [loader, setLoader] = useState(false);
-  const [filter, setFilter] = useState({ status: "all", sort: "none" });
-
+  const [nameAr, setNameAr] = useState<string>("");
+  const [page, setPage] = useState<number>(1);
+  const [status, setStatus] = useState<string | undefined>(undefined);
+  const [sortName, setSortName] = useState<string | undefined>(undefined);
+  const [loader, setLoader] = useState<boolean>(false);
   const { data } = applicationsResponse;
-  const [filteredData, setFilteredData] = useState<ApplicationsData>([]);
-
-  const filterApplications = (filter: { status: string; sort: string }, data: ApplicationsData) => {
-    if (!data) return [];
-
-    let result = [...data];
-
-    if (filter.status === "accepted") {
-      result = result.filter((app) => app.status === filter.status);
-    } else if (filter.status === "pending") {
-      result = result.filter((app) => app.status === filter.status);
-    }
-
-    if (filter.sort === "a-z") {
-      result = result.sort((a, b) => a.studentName.localeCompare(b.studentName));
-    } else if (filter.sort === "z-a") {
-      result = result.sort((a, b) => b.studentName.localeCompare(a.studentName));
-    }
-
-    return result;
-  };
 
   const handleAcceptApplication = async (applicationId: number) => {
     try {
@@ -105,11 +89,11 @@ export default function ApplicationsList({
             app.applicationId === applicationId ? { ...app, status: "rejected" } : app
           ),
         });
-        toast.success(`تم قبول طلب الطالب ذو الرقم ${applicationId}.`);
+        toast.success(`تم رفض طلب الطالب ذو الرقم ${applicationId}.`);
       }
     } catch (err) {
       console.error("Failed to accept application:", err);
-      toast.error("فشل في قبول الطلب. الرجاء المحاولة مرة أخرى.");
+      toast.error("فشل في رفض الطلب. الرجاء المحاولة مرة أخرى.");
     }
   };
 
@@ -121,17 +105,12 @@ export default function ApplicationsList({
   useEffect(() => {
     const fetchData = async () => {
       setLoader(true);
-      await getApplicationsList(nameAr, page);
+      await getApplicationsList(nameAr, page, status, sortName);
       setLoader(false);
     };
 
     fetchData();
-  }, [nameAr, page]);
-
-  useEffect(() => {
-    const filtered = filterApplications(filter, data);
-    setFilteredData(filtered);
-  }, [filter, data]);
+  }, [nameAr, page, status, sortName]);
 
   return (
     <Container>
@@ -164,22 +143,25 @@ export default function ApplicationsList({
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-40 text-right">
                   <DropdownMenuLabel className="font-bold text-md">حسب الحالة</DropdownMenuLabel>
-                  <DropdownMenuItem onSelect={() => setFilter({ ...filter, status: "all" })}>
-                    الكل {filter.status === "all" && <Check className="w-4 h-4 ml-2" />}
+                  <DropdownMenuItem onSelect={() => setStatus(undefined)}>
+                    الكل {status === undefined && <Check className="w-4 h-4 ml-2" />}
                   </DropdownMenuItem>
-                  <DropdownMenuItem onSelect={() => setFilter({ ...filter, status: "accepted" })}>
-                    مقبول {filter.status === "accepted" && <Check className="w-4 h-4 ml-2" />}
+                  <DropdownMenuItem onSelect={() => setStatus("accepted")}>
+                    مقبول {status === "accepted" && <Check className="w-4 h-4 ml-2" />}
                   </DropdownMenuItem>
-                  <DropdownMenuItem onSelect={() => setFilter({ ...filter, status: "pending" })}>
-                    تحت المراجعة {filter.status === "pending" && <Check className="w-4 h-4 ml-2" />}
+                  <DropdownMenuItem onSelect={() => setStatus("pending")}>
+                    تحت المراجعة {status === "pending" && <Check className="w-4 h-4 ml-2" />}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onSelect={() => setStatus("rejected")}>
+                    مرفوض {status === "rejected" && <Check className="w-4 h-4 ml-2" />}
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuLabel className="font-bold text-md">حسب الأبجدية</DropdownMenuLabel>
-                  <DropdownMenuItem onSelect={() => setFilter({ ...filter, sort: "a-z" })}>
-                    من أ إلى ي {filter.sort === "a-z" && <Check className="w-4 h-4 ml-2" />}
+                  <DropdownMenuItem onSelect={() => setSortName("asc")}>
+                    من أ إلى ي {sortName === "asc" && <Check className="w-4 h-4 ml-2" />}
                   </DropdownMenuItem>
-                  <DropdownMenuItem onSelect={() => setFilter({ ...filter, sort: "z-a" })}>
-                    من ي إلى أ {filter.sort === "z-a" && <Check className="w-4 h-4 ml-2" />}
+                  <DropdownMenuItem onSelect={() => setSortName("desc")}>
+                    من ي إلى أ {sortName === "desc" && <Check className="w-4 h-4 ml-2" />}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -194,15 +176,15 @@ export default function ApplicationsList({
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {filteredData.length === 0 && (
+                    {data.length === 0 && (
                       <TableRow className="border-b h-12">
                         <TableCell colSpan={4} className="text-center">
                           لا يوجد طلاب
                         </TableCell>
                       </TableRow>
                     )}
-                    {filteredData &&
-                      filteredData.map((application, index) => (
+                    {data &&
+                      data.map((application, index) => (
                         <TableRow
                           onClick={() =>
                             router.push(`/dashboard/applications/${application.applicationId}`)
@@ -216,20 +198,44 @@ export default function ApplicationsList({
                           </TableCell>
                           <TableCell className="w-[50%]">{application.department}</TableCell>
                           <TableCell className="w-[15%]">
-                            <Button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleAcceptApplication(application.applicationId);
-                              }}
-                              disabled={application.status !== "pending"}
-                              className={`py-1 px-2 text-sm rounded w-full text-center transition-colors duration-200 ${
-                                application.status === "accepted"
-                                  ? "bg-gray-100 text-black cursor-not-allowed"
-                                  : "bg-mainColor/90 text-white cursor-pointer"
-                              }`}
-                            >
-                              {application.status === "accepted" ? "مقبول" : "قبول"}
-                            </Button>
+                            {application.status === "accepted" && (
+                              <p
+                                className={`h-10 flex items-center justify-center py-1 px-2 text-sm rounded w-full transition-colors duration-200 bg-mainColor text-white cursor-not-allowed`}
+                              >
+                                مقبول
+                              </p>
+                            )}
+                            {application.status === "pending" && (
+                              <div className="flex gap-2 justify-between items-center">
+                                <Button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleAcceptApplication(application.applicationId);
+                                  }}
+                                  disabled={application.status !== "pending"}
+                                  className={`py-1 px-2 text-sm rounded w-full text-center transition-colors duration-200 bg-green-600 hover:bg-green-700 text-white cursor-pointer`}
+                                >
+                                  قبول
+                                </Button>
+                                <Button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleRejectApplication(application.applicationId);
+                                  }}
+                                  disabled={application.status !== "pending"}
+                                  className={`h-10 py-1 px-2 text-sm rounded w-full text-center transition-colors duration-200 bg-red-600 hover:bg-red-700 text-white cursor-pointer`}
+                                >
+                                  رفض
+                                </Button>
+                              </div>
+                            )}
+                            {application.status === "rejected" && (
+                              <p
+                                className={`h-10 flex items-center justify-center py-1 px-2 text-sm rounded w-full transition-colors duration-200 bg-red-600 hover:bg-red-700 text-white cursor-not-allowed`}
+                              >
+                                مرفوض
+                              </p>
+                            )}
                           </TableCell>
                         </TableRow>
                       ))}
