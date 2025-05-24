@@ -21,6 +21,8 @@ CREATE TYPE "identification_type" AS ENUM('national_id', 'passport');
 
 CREATE TYPE "address_type" AS ENUM('permanent', 'current');
 
+CREATE TYPE "application_status" AS ENUM('pending', 'accepted', 'rejected');
+
 CREATE TYPE "martial_status" AS ENUM(
 	'single', -- اعزب
 	'married', -- متزوج
@@ -81,7 +83,7 @@ CREATE TABLE "students" (
 CREATE TABLE "applications" (
 	"application_id" serial PRIMARY KEY,
 	"student_id" INTEGER NOT NULL,
-	"is_admin_accepted" BOOL NOT NULL DEFAULT FALSE,
+	"status" application_status NOT NULL DEFAULT 'pending',
 	FOREIGN key ("student_id") REFERENCES "students" ("student_id")
 );
 
@@ -229,7 +231,7 @@ SELECT
 	d.type as academic_degree,
 	-- TODO: Add real dep name
 	d.title AS department,
-	a.is_admin_accepted
+	a.status
 FROM
 	applications a
 	JOIN students s USING (student_id)
@@ -263,7 +265,7 @@ FROM
     LEFT JOIN department_courses d_c ON d_c.course_id = c_reg.course_id
         AND d_c.department_id = r.department_id
 WHERE
-    a.is_admin_accepted = TRUE
+    a.status = 'accepted'
 GROUP BY
     a.application_id,
     r.department_id;
@@ -549,7 +551,7 @@ BEGIN
 	IF NOT EXISTS (
 		SELECT 1
 		FROM applications
-		WHERE application_id = NEW.application_id AND is_admin_accepted = TRUE
+		WHERE application_id = NEW.application_id AND status = 'accepted'
 	) THEN
 		RAISE EXCEPTION 'لم يتم قبول الطلب بعد';
 	END IF;

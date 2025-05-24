@@ -1,10 +1,11 @@
 import { DEPARTMENT_TYPES } from "@/lib/constants";
+import { APPLICATION_STATUSES } from "@/lib/constants";
 import { z } from "zod";
 
 export const ApplicationDetailsSchema = z.object({
   applicationId: z.number(),
   studentId: z.number(),
-  isAccepted: z.boolean(),
+  status: z.enum(APPLICATION_STATUSES),
   addresses: z.array(
     z.object({
       addressId: z.number(),

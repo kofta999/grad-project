@@ -11,7 +11,7 @@ import {
 } from "@/db/schema";
 import { ApplicationDetailsDTO } from "@/dtos/application-details.dto";
 import { formatAcademicYear, removeApplicationId } from "@/lib/util";
-import { count, eq, exists } from "drizzle-orm";
+import { count, eq } from "drizzle-orm";
 
 export interface IApplicationService {
   getApplicationByStudentId(studentId: number): Promise<ApplicationDetailsDTO | null>;
@@ -33,7 +33,7 @@ export abstract class ApplicationService implements IApplicationService {
     const applicationList = await db
       .select({
         application: {
-          isAccepted: a.isAdminAccepted,
+          status: a.status,
           studentId: a.studentId,
           applicationId: a.applicationId,
         },

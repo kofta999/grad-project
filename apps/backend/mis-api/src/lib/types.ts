@@ -1,7 +1,7 @@
 import type { OpenAPIHono, RouteConfig, RouteHandler } from "@hono/zod-openapi";
 import type { PinoLogger } from "hono-pino";
 import type { Session } from "hono-sessions";
-import { DEPARTMENT_TYPES, GRADES, ROLES, SEMESTERS } from "./constants";
+import { APPLICATION_STATUSES, DEPARTMENT_TYPES, GRADES, ROLES, SEMESTERS } from "./constants";
 
 interface SessionData {
   id: number;
@@ -25,3 +25,5 @@ export type DepartmentType = (typeof DEPARTMENT_TYPES)[number];
 export type Semester = (typeof SEMESTERS)[number];
 
 export type GradeType = (typeof GRADES)[number];
+
+export type ApplicationStatusType = (typeof APPLICATION_STATUSES)[number];
