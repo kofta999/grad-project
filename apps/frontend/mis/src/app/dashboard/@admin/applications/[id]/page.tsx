@@ -16,17 +16,30 @@ export default function Page() {
     router.push(`/dashboard/edit-student/${applicationId}`);
   };
 
+  const handleRegisterCourses = (applicationId: number) => {
+    router.push(`/dashboard/course-registrations?applicationId=${applicationId}`);
+  };
+
   return (
     application && (
       <div className="min-h-screen bg-gray-50 p-6" dir="rtl">
         <div className="max-w-4xl mx-auto">
-          <div className="flex justify-end">
+          <div className="flex flex-row-reverse justify-end justify-between">
             <Button
-              onClick={() => handleEditStudent(application?.applicationId)}
+              onClick={() => handleEditStudent(application.applicationId)}
               className="bg-mainColor py-1 px-2 text-sm rounded w-[200px] right-full text-center text-white hover:bg-blue-700"
             >
               تعديل بيانات الطالب
             </Button>
+
+            {application.isAccepted && (
+              <Button
+                onClick={() => handleRegisterCourses(application.applicationId)}
+                className="bg-mainColor py-1 px-2 text-sm rounded w-[200px] right-full text-center text-white hover:bg-blue-700"
+              >
+                تسجيل المواد للطالب
+              </Button>
+            )}
           </div>
 
           <h1 className="text-3xl font-bold text-center text-blue-600 mt-8">

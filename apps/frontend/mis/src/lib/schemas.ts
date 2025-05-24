@@ -103,20 +103,32 @@ export const ApplicationStep2Schema = Yup.object().shape({
     specialization: Yup.string().required("التخصص مطلوب"),
     year: Yup.string().required("العام مطلوب"),
     date: Yup.date().required("التاريخ مطلوب"),
-    creditHours: Yup.boolean().required("عدد الساعات المعتمدة مطلوب"),
+    creditHours: Yup.boolean().required("نوع الدراسة مطلوب"),
     grade: Yup.string().required("التقدير مطلوب"),
     gpa: Yup.number()
-      .min(0, "يجب ألا يقل المعدل التراكمي عن 0")
-      .max(4, "يجب ألا يتجاوز المعدل التراكمي 4")
-      .required("المعدل التراكمي مطلوب"),
+      .typeError("يجب أن يكون المعدل التراكمي رقماً")
+      .required("المعدل التراكمي مطلوب")
+      .when("creditHours", {
+        is: true,
+        then: (schema) =>
+          schema
+            .min(0, "يجب ألا يقل المعدل التراكمي عن 0")
+            .max(4, "يجب ألا يتجاوز المعدل التراكمي عن 4"),
+        otherwise: (schema) =>
+          schema
+            .min(0, "يجب ألا يقل المعدل التراكمي عن 0")
+            .max(100, "يجب ألا يتجاوز المعدل التراكمي عن 100"),
+      }),
   }),
   registration: Yup.object().shape({
-    academicYearId: Yup.number().required("السنة الدراسية مطلوبة").min(1),
+    academicYearId: Yup.number().required("السنة الدراسية مطلوبة").min(1, "السنة الدراسية مطلوبة"),
     faculty: Yup.string().required("الكلية مطلوبة"),
     academicDegree: Yup.string()
       .oneOf(["diploma", "master", "phd"])
       .required("الدرجة الأكاديمية مطلوبة"),
-    departmentId: Yup.number().min(1).required("البرنامج الأكاديمي مطلوب"),
+    departmentId: Yup.number()
+      .min(1, "البرنامج الاكاديمي مطلوب")
+      .required("البرنامج الأكاديمي مطلوب"),
   }),
 });
 

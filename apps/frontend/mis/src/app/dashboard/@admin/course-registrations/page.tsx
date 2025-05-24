@@ -38,15 +38,21 @@ export type RegisteredCourse = InferResponseType<
 >[number];
 type CoursesType = RegisteredCourse[];
 
-export type SemesterType = "first" | "second" | "third";
+export type SemesterType = "first" | "second" | "third" | "";
 
-export default function Page() {
+export default function Page({
+  searchParams,
+}: {
+  searchParams: { applicationId: string | undefined };
+}) {
   const [student, setStudent] = useState<StudentType | null>(null);
   const [application, setApplication] = useState<ApplicationType | null>(null);
 
-  const [applicationId, setApplicationId] = useState<number | null>(null);
+  const [applicationId, setApplicationId] = useState<number | null>(
+    searchParams.applicationId ? parseInt(searchParams.applicationId) : null
+  );
   const [academicYear, setAcademicYear] = useState<number | null>(null);
-  const [semester, setSemester] = useState<SemesterType | null>(null);
+  const [semester, setSemester] = useState<SemesterType | null>("");
 
   const [courses, setCourses] = useState<CoursesType>([]);
 
@@ -90,12 +96,7 @@ export default function Page() {
 
       const student = await studentRes.json();
 
-      const res = await apiClient.applications[":id"].$get({
-        param: { id: id.toString() },
-      });
-
-      if (res.status === 200) {
-        const data = await res.json();
+      if (studentRes.status === 200) {
         setLoading(false);
         // Data WILL be there
         setStudent(student);
@@ -155,8 +156,11 @@ export default function Page() {
   const handleSearch = (applicationId: string) => {
     const id = applicationId ? Number(applicationId) : null;
     setApplicationId(id);
-    getUser(id);
   };
+
+  useEffect(() => {
+    getUser(applicationId);
+  }, [applicationId]);
 
   useEffect(() => {
     setLoading(true);
@@ -173,7 +177,10 @@ export default function Page() {
   return (
     <Container>
       <Card>
-        <SearchBar placeholder="ابحث هنا..." onChange={(value) => handleSearch(value as string)} />
+        <SearchBar
+          placeholder="ابحث هنا باستخدام معرف الطلب..."
+          onChange={(value) => handleSearch(value as string)}
+        />
       </Card>
 
       {loading ? (
@@ -224,6 +231,7 @@ export default function Page() {
                 </SpacingWrapper>
               </CardGrid>
               <Select
+                value={semester as string}
                 onValueChange={(value: "first" | "second" | "third") => {
                   setSemester(value);
                 }}

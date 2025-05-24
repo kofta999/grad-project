@@ -1,8 +1,8 @@
-'use client';
+"use client";
 import { Report } from "@/lib/types";
-import { FileText, Plus, Download, NotebookPen} from 'lucide-react';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { FileText, Plus, Download, NotebookPen } from "lucide-react";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 interface ReportsAdminViewProps {
   reports: Report[];
@@ -45,9 +45,7 @@ export default function ReportsAdminView({
         {reports.length === 0 ? (
           <div className="text-center py-12 border-2 border-dashed border-gray-200 rounded-xl">
             <FileText className="mx-auto h-12 w-12 text-gray-400" />
-            <h3 className="mt-4 text-lg font-medium text-gray-900">
-              لا توجد تقارير متاحة
-            </h3>
+            <h3 className="mt-4 text-lg font-medium text-gray-900">لا توجد تقارير متاحة</h3>
             <p className="mt-1 text-sm text-gray-500">
               ابدأ بإضافة تقرير جديد بالنقر على زر "تقرير جديد"
             </p>
@@ -73,16 +71,18 @@ export default function ReportsAdminView({
                   <tr key={report.reportId} className="hover:bg-gray-50 transition-colors">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
-                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                          report.type === 'academic' 
-                            ? 'bg-purple-100 text-purple-800' 
-                            : report.type === 'research' 
-                              ? 'bg-green-100 text-green-800' 
-                              : 'bg-yellow-100 text-yellow-800'
-                        }`}>
-                          {report.type === 'academic' && 'أكاديمي'}
-                          {report.type === 'research' && 'بحثي'}
-                          {report.type === 'progress' && 'تقدم'}
+                        <span
+                          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                            report.type === "academic"
+                              ? "bg-purple-100 text-purple-800"
+                              : report.type === "research"
+                                ? "bg-green-100 text-green-800"
+                                : "bg-yellow-100 text-yellow-800"
+                          }`}
+                        >
+                          {report.type === "academic" && "أكاديمي"}
+                          {report.type === "research" && "بحثي"}
+                          {report.type === "progress" && "تقدم"}
                         </span>
                       </div>
                     </td>
@@ -96,11 +96,7 @@ export default function ReportsAdminView({
                           className="text-blue-600 hover:text-blue-800 border-blue-200"
                           asChild
                         >
-                          <a
-                            href={report.attachmentUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
+                          <a href={report.attachmentUrl} target="_blank" rel="noopener noreferrer">
                             <Download className="w-4 h-4 mr-1" />
                             عرض التقرير
                           </a>
@@ -117,5 +113,3 @@ export default function ReportsAdminView({
     </Card>
   );
 }
-
-

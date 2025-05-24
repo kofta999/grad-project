@@ -362,7 +362,7 @@ export const courseRegistrations = pgTable(
 export const courseResults = pgTable(
   "course_results",
   {
-    resultId: serial("result_id").primaryKey().notNull(),
+    courseResultId: serial("course_result_id").primaryKey().notNull(),
     courseRegistrationId: integer("course_registration_id").notNull(),
     grade: integer().notNull(),
   },

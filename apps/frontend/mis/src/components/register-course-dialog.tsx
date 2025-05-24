@@ -74,7 +74,7 @@ export default function RegisterCourseDialog({
       const totalHours = hoursArray.reduce((a, b) => a + b, 0);
 
       if (totalHours >= 16) {
-        toast.error("تجاوز عدد الساعات المسموح بها");
+        toast.error("تجاوزت عدد الساعات المسموح بها");
         return;
       }
 
@@ -100,7 +100,8 @@ export default function RegisterCourseDialog({
 
         toast.success("تم تسجيل المادة بنجاح");
       } else {
-        toast.error("فشل تسجيل المادة");
+        const error = await res.json();
+        toast.error(error.error);
       }
     } catch (error) {
       console.log("Registration error:", error);
@@ -159,15 +160,15 @@ export default function RegisterCourseDialog({
   }, [applicationId]);
 
   return (
-    <Card>
+    <Card className="w-full max-w-2xl">
       <CardHeader>
         <CardTitle>
-          <LucideClipboardList className="w-5 h-5 text-yellow-200" />
-          تعديل تقدير الطالب
+          <LucideClipboardList className="text-yellow-500" />
+          تسجيل المواد الدراسيه
         </CardTitle>
       </CardHeader>
       <CardContent className="p-3 md:p-6">
-        <CardDescription className="mb-6">
+        <CardDescription>
           يجب عليك بتسجيل عدد من المواد بما يعادل 9 من الساعات المعتمده وبحد اقصى 19
         </CardDescription>
         <CardGrid className="md:grid-cols-1">
