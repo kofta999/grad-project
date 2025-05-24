@@ -142,18 +142,15 @@ export default function SideNav({ role }: SideNavProps) {
                 <Image src="/image.jpg" alt="logo" width={200} height={100} />
               </Link>
               {/* Navigation Items */}
-              {sidebarItems.map((item: any, idx: number) => (
-                // if (role === "student") {
-                //   if (
-                //     applicationData?.application?.isAccepted === true &&
-                //     item.path === "/dashboard/settings"
-                //   ) {
-                //     return null;
-                //   }
-                // }
+              {sidebarItems.map((item: any, idx: number) => {
+                if (role === "student") {
+                  if (applicationData?.isAccepted === true && item.path === "/dashboard/settings") {
+                    return null;
+                  }
+                }
 
-                <MenuItem key={idx} item={item} />
-              ))}
+                return <MenuItem key={idx} item={item} />;
+              })}
             </div>
 
             {/* Footer Section */}
