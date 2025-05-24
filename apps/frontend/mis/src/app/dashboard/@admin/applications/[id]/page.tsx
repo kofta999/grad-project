@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import ApplicationDetails from "@/components/application/application-details";
 import StudentDetails from "@/components/student/student-details";
+import { STATUS } from "@/lib/types";
 
 export default function Page() {
   const { id } = useParams();
@@ -30,7 +31,7 @@ export default function Page() {
           </div>
 
           <h1 className="text-3xl font-bold text-center text-blue-600 mt-8">
-            بيانات التقديم ({application.isAccepted ? "مقبول" : "تحت المراجعة"})
+            بيانات التقديم ({STATUS[application.status]})
           </h1>
 
           {student && <StudentDetails student={student} />}

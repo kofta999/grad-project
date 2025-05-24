@@ -19,6 +19,7 @@ import {
 } from "drizzle-orm/pg-core";
 
 export const addressType = pgEnum("address_type", ["permanent", "current"]);
+export const applicationStatus = pgEnum("application_status", ["pending", "accepted", "rejected"]);
 export const departmentType = pgEnum("department_type", ["diploma", "master", "phd"]);
 export const identificationType = pgEnum("identification_type", ["national_id", "passport"]);
 export const martialStatus = pgEnum("martial_status", [
@@ -100,7 +101,7 @@ export const applications = pgTable(
   {
     applicationId: serial("application_id").primaryKey().notNull(),
     studentId: integer("student_id").notNull(),
-    isAdminAccepted: boolean("is_admin_accepted").default(false).notNull(),
+    status: applicationStatus().default("pending").notNull(),
   },
   (table) => {
     return {
@@ -455,11 +456,10 @@ export const adminApplicationsList = pgView("admin_applications_list", {
   studentName: text("student_name").notNull(),
   academicDegree: departmentType("academic_degree").notNull(),
   department: text().notNull(),
-  isAdminAccepted: boolean("is_admin_accepted").notNull(),
+  status: applicationStatus(),
 }).as(
-  sql`SELECT a.application_id, s.full_name_ar AS student_name, r.academic_degree, d.title AS department, a.is_admin_accepted FROM applications a JOIN students s USING (student_id) JOIN registerations r USING (application_id) JOIN departments d ON d.department_id = r.department_id`
+  sql`SELECT a.application_id, s.full_name_ar AS student_name, d.type AS academic_degree, d.title AS department, a.status FROM applications a JOIN students s USING (student_id) JOIN registerations r USING (application_id) JOIN departments d ON d.department_id = r.department_id`
 );
-
 export const acceptedApplications = pgView("accepted_applications", {
   applicationId: integer("application_id").notNull(),
   departmentId: integer("department_id"),
@@ -473,7 +473,7 @@ export const acceptedApplications = pgView("accepted_applications", {
     mode: "number",
   }).notNull(),
 }).as(
-  sql`SELECT a.application_id, a.student_id, r.department_id, sum(c.total_hours) AS total_completed_hours, sum( CASE WHEN d_c.is_compulsory = true THEN c.total_hours ELSE 0 END) AS completed_compulsory_hours FROM applications a JOIN registerations r ON r.application_id = a.application_id JOIN course_registrations c_reg ON c_reg.application_id = a.application_id JOIN course_results c_res ON c_res.course_registration_id = c_reg.course_registration_id JOIN courses c ON c.course_id = c_reg.course_id JOIN department_courses d_c ON d_c.course_id = c_reg.course_id AND d_c.department_id = r.department_id WHERE a.is_admin_accepted = true AND c_res.grade >= 50 GROUP BY a.application_id, r.department_id`
+  sql`SELECT a.application_id, a.student_id, r.department_id, COALESCE(sum( CASE WHEN c_res.grade >= 60 THEN c.total_hours ELSE 0 END), 0::bigint) AS total_completed_hours, COALESCE(sum( CASE WHEN d_c.is_compulsory = true AND c_res.grade >= 60 THEN c.total_hours ELSE 0 END), 0::bigint) AS completed_compulsory_hours FROM applications a JOIN registerations r ON r.application_id = a.application_id LEFT JOIN course_registrations c_reg ON c_reg.application_id = a.application_id LEFT JOIN course_results c_res ON c_res.course_registration_id = c_reg.course_registration_id LEFT JOIN courses c ON c.course_id = c_reg.course_id LEFT JOIN department_courses d_c ON d_c.course_id = c_reg.course_id AND d_c.department_id = r.department_id WHERE a.status = 'accepted'::application_status GROUP BY a.application_id, r.department_id`
 );
 
 export const detailedCourseRegistrationsView = pgView("detailed_course_registrations_view", {

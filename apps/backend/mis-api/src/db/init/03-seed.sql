@@ -109,11 +109,11 @@ VALUES
 
 -- Insert sample applications
 INSERT INTO
-	"applications" ("student_id", "is_admin_accepted")
+	"applications" ("student_id", "status")
 VALUES
-	(2, TRUE),
-	(1, TRUE),
-	(3, FALSE);
+	(2, 'accepted'),
+	(1, 'accepted'),
+	(3, 'pending');
 
 -- Insert sample registrations
 INSERT INTO

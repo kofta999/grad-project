@@ -11,7 +11,7 @@ import {
   MapPin,
   Mail,
 } from "lucide-react";
-import { ApplicationType } from "@/lib/types";
+import { ApplicationType, STATUS } from "@/lib/types";
 import { Card, CardContent, CardGrid, CardHeader, CardTitle } from "../ui/card";
 import { SpacingWrapper } from "../ui/spacing-wrapper";
 import Link from "next/link";
@@ -40,9 +40,7 @@ export default function ApplicationDetails({ application }: { application: Appli
             </SpacingWrapper>
             <SpacingWrapper className="bg-gray-50 p-3 rounded-lg shadow-sm">
               <p className="text-gray-600">حالة الطلب</p>
-              <p className="text-lg font-semibold text-gray-800">
-                {application?.isAccepted ? "مقبول" : "قيد المراجعة"}
-              </p>
+              <p className="text-lg font-semibold text-gray-800">{STATUS[application.status]}</p>
             </SpacingWrapper>
             <SpacingWrapper className="bg-gray-50 p-3 rounded-lg shadow-sm">
               <p className="text-gray-600">الكلية</p>

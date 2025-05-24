@@ -59,9 +59,9 @@ export default function ApplicationsList({
     let result = [...data];
 
     if (filter.status === "accepted") {
-      result = result.filter((app) => app.isAdminAccepted === true);
+      result = result.filter((app) => app.status === filter.status);
     } else if (filter.status === "pending") {
-      result = result.filter((app) => app.isAdminAccepted === false);
+      result = result.filter((app) => app.status === filter.status);
     }
 
     if (filter.sort === "a-z") {
@@ -82,7 +82,27 @@ export default function ApplicationsList({
         setApplicationsResponse({
           ...applicationsResponse,
           data: applicationsResponse.data.map((app) =>
-            app.applicationId === applicationId ? { ...app, isAdminAccepted: true } : app
+            app.applicationId === applicationId ? { ...app, status: "accepted" } : app
+          ),
+        });
+        toast.success(`تم قبول طلب الطالب ذو الرقم ${applicationId}.`);
+      }
+    } catch (err) {
+      console.error("Failed to accept application:", err);
+      toast.error("فشل في قبول الطلب. الرجاء المحاولة مرة أخرى.");
+    }
+  };
+
+  const handleRejectApplication = async (applicationId: number) => {
+    try {
+      const res = await apiClient.applications.reject.$post({
+        json: { applicationId },
+      });
+      if (res.status === 200) {
+        setApplicationsResponse({
+          ...applicationsResponse,
+          data: applicationsResponse.data.map((app) =>
+            app.applicationId === applicationId ? { ...app, status: "rejected" } : app
           ),
         });
         toast.success(`تم قبول طلب الطالب ذو الرقم ${applicationId}.`);
@@ -201,14 +221,14 @@ export default function ApplicationsList({
                                 e.stopPropagation();
                                 handleAcceptApplication(application.applicationId);
                               }}
-                              disabled={application.isAdminAccepted}
+                              disabled={application.status !== "pending"}
                               className={`py-1 px-2 text-sm rounded w-full text-center transition-colors duration-200 ${
-                                application.isAdminAccepted
+                                application.status === "accepted"
                                   ? "bg-gray-100 text-black cursor-not-allowed"
                                   : "bg-mainColor/90 text-white cursor-pointer"
                               }`}
                             >
-                              {application.isAdminAccepted ? "مقبول" : "قبول"}
+                              {application.status === "accepted" ? "مقبول" : "قبول"}
                             </Button>
                           </TableCell>
                         </TableRow>

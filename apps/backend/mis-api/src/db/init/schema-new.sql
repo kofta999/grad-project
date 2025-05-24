@@ -78,7 +78,7 @@ CREATE TABLE students.students (
 CREATE TABLE students.applications (
 	application_id serial PRIMARY KEY,
 	student_id INTEGER NOT NULL,
-	is_admin_accepted BOOL NOT NULL DEFAULT FALSE,
+	"status" application_status NOT NULL DEFAULT "pending",
 	FOREIGN key (student_id) REFERENCES students.students (student_id)
 );
 
@@ -226,7 +226,7 @@ SELECT
 	r.academic_degree,
 	-- TODO: Add real dep name
 	d.title AS department,
-	a.is_admin_accepted
+	a.status
 FROM
 	students.applications a
 	JOIN students.students s ON s.student_id = a.student_id
@@ -254,7 +254,7 @@ FROM
 	JOIN courses.department_courses d_c ON d_c.course_id = c_reg.course_id
 	AND d_c.department_id = r.department_id
 WHERE
-	a.is_admin_accepted = TRUE
+	a.status = 'accepted'
 	AND c_res.grade >= 50
 GROUP BY
 	a.application_id,

@@ -5,7 +5,7 @@ import { apiClient } from "@/lib/client";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { Loader } from "@/components/ui/loader";
-import { ApplicationType } from "@/lib/types";
+import { ApplicationType, STATUS } from "@/lib/types";
 import { Container } from "@/components/ui/container";
 
 export default function Page() {
@@ -53,8 +53,8 @@ export default function Page() {
     <div className="min-h-screen bg-gray-50 p-6" dir="rtl">
       <Container>
         <div className="relative flex justify-center items-center">
-          <h1 className="text-3xl font-bold text-center text-blue-600 mb-5">
-            بيانات التقديم ({application?.isAccepted ? "مقبول" : "تحت المراجعة"})
+          <h1 className="text-3xl font-bold text-center text-blue-600 mt-8">
+            بيانات التقديم ({STATUS[application.status]})
           </h1>
         </div>
         <ApplicationDetails application={application} />
