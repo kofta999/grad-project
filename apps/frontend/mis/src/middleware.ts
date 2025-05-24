@@ -5,7 +5,7 @@ import { apiClient } from "./lib/client";
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const isAuthPage = pathname === "/login" || pathname === "/register";
-  const isDashboardPage = pathname.startsWith("/dashboard") || pathname === "/";
+  const isDashboardPage = pathname.startsWith("/dashboard");
 
   try {
     // Check authentication status

@@ -15,9 +15,12 @@ export default function RootLayout({ children }: RootLayoutProps): JSX.Element {
   return (
     <html lang="ar" dir="rtl">
       <head>
-        <title>بوابة كلية الهندسة - جامعة قناة السويس</title>
-        <meta charSet="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>كلية الهندسة - جامعة قناة السويس</title>
+        <meta
+          name="description"
+          content="كلية الهندسة بجامعة قناة السويس - تعليم متطور وبحث علمي متميز"
+        />
+        <link rel="icon" href="/logo_with_transparent_bg.png" />
       </head>
       <body className={cn(cairo.className, "min-h-screen bg-[#F9FAFB]")}>
         <UserContextProvider>{children}</UserContextProvider>
