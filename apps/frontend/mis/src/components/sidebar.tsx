@@ -82,7 +82,6 @@ export default function SideNav({ role }: SideNavProps) {
   const [isOpen, setIsOpen] = useState(false);
   const { loggedInUser, setLoggedInUser, isLoading } = useUserContext();
   const { personalData } = useUser();
-  console.log(personalData);
 
   const handleLogout = async () => {
     try {
