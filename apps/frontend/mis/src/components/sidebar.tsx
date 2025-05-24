@@ -144,7 +144,10 @@ export default function SideNav({ role }: SideNavProps) {
               {/* Navigation Items */}
               {sidebarItems.map((item: any, idx: number) => {
                 if (role === "student") {
-                  if (applicationData?.isAccepted === true && item.path === "/dashboard/settings") {
+                  if (
+                    applicationData?.status === "accepted" &&
+                    item.path === "/dashboard/settings"
+                  ) {
                     return null;
                   }
                 }

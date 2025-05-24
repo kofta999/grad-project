@@ -6,7 +6,7 @@ import Settings from "@/components/student/student-settings";
 export default function Page() {
   const { applicationData } = useUser();
 
-  if (applicationData?.isAccepted) {
+  if (applicationData?.status === "accepted") {
     redirect("/dashboard");
   }
 

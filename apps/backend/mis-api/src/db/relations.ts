@@ -1,21 +1,21 @@
 import { relations } from "drizzle-orm/relations";
 import {
-  academicQualifications,
-  academicYears,
-  addresses,
-  applications,
-  attachments,
-  cities,
   countries,
+  cities,
+  students,
+  applications,
+  registerations,
+  academicYears,
+  departments,
+  attachments,
+  addresses,
+  emergencyContacts,
+  academicQualifications,
+  courses,
   courseRegistrations,
   courseResults,
-  courses,
-  departmentCourses,
-  departments,
-  emergencyContacts,
-  registerations,
-  students,
   theses,
+  departmentCourses,
 } from "./schema";
 
 export const citiesRelations = relations(cities, ({ one, many }) => ({
@@ -29,6 +29,7 @@ export const citiesRelations = relations(cities, ({ one, many }) => ({
 export const countriesRelations = relations(countries, ({ many }) => ({
   cities: many(cities),
   addresses: many(addresses),
+  academicQualifications: many(academicQualifications),
 }));
 
 export const applicationsRelations = relations(applications, ({ one, many }) => ({
@@ -114,6 +115,7 @@ export const academicQualificationsRelations = relations(academicQualifications,
     references: [countries.countryId],
   }),
 }));
+
 export const courseRegistrationsRelations = relations(courseRegistrations, ({ one, many }) => ({
   course: one(courses, {
     fields: [courseRegistrations.courseId],
