@@ -79,9 +79,11 @@ export default function ThesisPage() {
 
   if (error) {
     return (
-      <div className="max-w-3xl mx-auto p-4 bg-red-50 border border-red-200 text-red-700 rounded-lg">
-        <h3 className="font-bold mb-2">التقديم غير متاح</h3>
-        <p>{error}</p>
+      <div className="flex mt-auto h-dvh justify-center items-center">
+        <div className="max-w-3xl mx-auto p-4 bg-red-50 border border-red-200 text-red-700 rounded-lg">
+          <h3 className="font-bold mb-2">التقديم غير متاح</h3>
+          <p>{error}</p>
+        </div>
       </div>
     );
   }

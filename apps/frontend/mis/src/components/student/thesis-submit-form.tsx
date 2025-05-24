@@ -129,17 +129,15 @@ export function ThesisSubmitForm({ onSubmissionSuccess }: ThesisSubmitFormProps)
 
   return (
     <Card className="overflow-hidden">
-      <CardHeader className="bg-gradient-to-r from-blue-600 to-blue-800 p-6">
-        <SpacingWrapper className="flex flex-col items-center">
-          <BookmarkCheck className="h-8 w-8 text-yellow-300" />
-          <CardTitle className="text-white text-2xl font-bold text-center">
-            تقديم الرسالة الأكاديمية
-          </CardTitle>
-          <CardDescription className="text-blue-100 flex items-center gap-2 text-center">
-            <span className="h-2 w-2 bg-yellow-300 rounded-full animate-pulse"></span>
-            التقديم متاح الآن
-          </CardDescription>
-        </SpacingWrapper>
+      <CardHeader className="bg-gradient-to-r from-blue-600 to-blue-800 p-6 flex flex-col items-center">
+        <BookmarkCheck className="h-8 w-8 text-yellow-300" />
+        <CardTitle className="text-white text-2xl font-bold text-center">
+          تقديم الرسالة الأكاديمية
+        </CardTitle>
+        <CardDescription className="text-blue-100 flex items-center gap-2 text-center">
+          <span className="h-2 w-2 bg-yellow-300 rounded-full animate-pulse"></span>
+          التقديم متاح الآن
+        </CardDescription>
       </CardHeader>
 
       <CardContent>

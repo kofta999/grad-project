@@ -27,7 +27,7 @@ export default function Page() {
           <div className="flex flex-row-reverse justify-end justify-between">
             <Button
               onClick={() => handleEditStudent(application.applicationId)}
-              className="bg-mainColor/95 py-1 px-2 text-sm rounded w-[200px] right-full text-center text-white hover:bg-mainColor transition-colors duration-200"
+              className="bg-mainColor py-1 px-2 text-sm rounded w-[200px] right-full text-center text-white hover:bg-blue-700"
             >
               تعديل بيانات الطالب
             </Button>
@@ -35,7 +35,7 @@ export default function Page() {
             {application.isAccepted && (
               <Button
                 onClick={() => handleRegisterCourses(application.applicationId)}
-                className="bg-mainColor/95 py-1 px-2 text-sm rounded w-[200px] right-full text-center text-white hover:bg-mainColor transition-colors duration-200"
+                className="bg-mainColor py-1 px-2 text-sm rounded w-[200px] right-full text-center text-white hover:bg-blue-700"
               >
                 تسجيل المواد للطالب
               </Button>
