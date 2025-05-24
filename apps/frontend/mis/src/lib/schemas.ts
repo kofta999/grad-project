@@ -110,12 +110,14 @@ export const ApplicationStep2Schema = Yup.object().shape({
       .required("المعدل التراكمي مطلوب")
       .when("creditHours", {
         is: true,
-        then: (schema) => schema
-          .min(0, "يجب ألا يقل المعدل التراكمي عن 0")
-          .max(4, "يجب ألا يتجاوز المعدل التراكمي عن 4"),
-        otherwise: (schema) => schema
-          .min(0, "يجب ألا يقل المعدل التراكمي عن 0")
-          .max(100, "يجب ألا يتجاوز المعدل التراكمي عن 100"),
+        then: (schema) =>
+          schema
+            .min(0, "يجب ألا يقل المعدل التراكمي عن 0")
+            .max(4, "يجب ألا يتجاوز المعدل التراكمي عن 4"),
+        otherwise: (schema) =>
+          schema
+            .min(0, "يجب ألا يقل المعدل التراكمي عن 0")
+            .max(100, "يجب ألا يتجاوز المعدل التراكمي عن 100"),
       }),
   }),
   registration: Yup.object().shape({
@@ -124,7 +126,9 @@ export const ApplicationStep2Schema = Yup.object().shape({
     academicDegree: Yup.string()
       .oneOf(["diploma", "master", "phd"])
       .required("الدرجة الأكاديمية مطلوبة"),
-    departmentId: Yup.number().min(1, "البرنامج الاكاديمي مطلوب").required("البرنامج الأكاديمي مطلوب"),
+    departmentId: Yup.number()
+      .min(1, "البرنامج الاكاديمي مطلوب")
+      .required("البرنامج الأكاديمي مطلوب"),
   }),
 });
 
