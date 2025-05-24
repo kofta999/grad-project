@@ -25,7 +25,6 @@ export type InitialFormDataType = {
 export default function ApplicationForm() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-
   const [step, setStep] = useState(1);
   const { applicationId, setApplicationId } = useApplicationIdContext();
   const [initialData, setInitialData] = useState<InitialFormDataType>({

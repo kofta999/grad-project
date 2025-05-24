@@ -16,6 +16,7 @@ import toast, { Toaster } from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { apiClient } from "@/lib/client";
 import useUser from "@/hooks/use-user";
+import { InitialFormDataType } from "@/components/application/application-form";
 
 export default function Settings() {
   const router = useRouter();
@@ -26,6 +27,10 @@ export default function Settings() {
   const [applicationId, setApplicationId] = useState<number | undefined>(
     applicationData?.applicationId
   );
+  const [initialData, setInitialData] = useState<InitialFormDataType>({
+    currentAcademicYears: [],
+    availableDepartments: [],
+  });
 
   const handleStep1Submit = async () => {
     try {
@@ -240,6 +245,28 @@ export default function Settings() {
       })),
     });
   }, [applicationData]);
+
+  useEffect(() => {
+    const getAcademicYears = async () => {
+      const res = await apiClient["academic-years"].$get();
+      const data = await res.json();
+
+      setInitialData((prev) => ({ ...prev, currentAcademicYears: data }));
+    };
+    getAcademicYears();
+  }, []);
+
+  useEffect(() => {
+    const getAvailableDepartments = async (type: "diploma" | "master" | "phd") => {
+      const res = await apiClient.departments.$get({
+        query: { type },
+      });
+      const data = await res.json();
+
+      setInitialData((prev) => ({ ...prev, availableDepartments: data }));
+    };
+    getAvailableDepartments(formikStep2.values.registration.academicDegree);
+  }, [formikStep2.values.registration.academicDegree]);
 
   return (
     <>

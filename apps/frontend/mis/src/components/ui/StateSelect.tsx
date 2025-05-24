@@ -37,15 +37,14 @@ export default function StateSelect({
   required,
 }: Props) {
   const [stateList, setStateList] = useState<State[]>([]);
+  console.log({ value });
 
   const getStates = async (countryCode: string) => {
-    console.log(countryCode);
     try {
       const res = await apiClient.countries[":id"].$get({
         param: { id: countryCode },
       });
       const data = (await res.json()) as State[];
-      console.log(data);
       setStateList(data);
     } catch {
       console.log("Failed to get states");

@@ -191,7 +191,15 @@ VALUES
 		934,
 		'permanent'
 	),
-	(3, '101 Fourth St', 59, 934, 'permanent');
+	(
+		2,
+		'789 Third St',
+		59,
+		934,
+		'current'
+	),
+	(3, '101 Fourth St', 59, 934, 'permanent'),
+	(3, '101 Fourth St', 59, 934, 'current');
 
 -- Insert sample emergency_contacts
 INSERT INTO

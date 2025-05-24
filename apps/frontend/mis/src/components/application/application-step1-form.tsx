@@ -18,6 +18,7 @@ interface Step1Props {
 
 export default function ApplicationStep1Form({ formik }: Step1Props) {
   const pathname = usePathname();
+  console.log({ formik: formik.values });
 
   return (
     <Container>
@@ -46,7 +47,7 @@ export default function ApplicationStep1Form({ formik }: Step1Props) {
                   touched={formik.touched.permanentAddress?.countryId}
                   onChange={(value) => {
                     formik.setFieldValue("permanentAddress.countryId", parseInt(value));
-                    formik.setFieldValue("permanentAddress.cityId", "");
+                    formik.setFieldValue("permanentAddress.cityId", 0);
                     // getStates(value);
                   }}
                   required={pathname === "/dashboard/applications"}
@@ -62,7 +63,8 @@ export default function ApplicationStep1Form({ formik }: Step1Props) {
                   error={formik.errors.permanentAddress?.cityId}
                   touched={formik.touched.permanentAddress?.cityId}
                   onChange={(value) => {
-                    formik.setFieldValue("permanentAddress.cityId", parseInt(value));
+                    console.log("form value", value);
+                    formik.setFieldValue("permanentAddress.cityId", value ? parseInt(value) : 0);
                   }}
                   required={pathname === "/dashboard/applications"}
                 />
@@ -111,7 +113,7 @@ export default function ApplicationStep1Form({ formik }: Step1Props) {
                   touched={formik.touched.currentAddress?.countryId}
                   onChange={(value) => {
                     formik.setFieldValue("currentAddress.countryId", parseInt(value));
-                    formik.setFieldValue("currentAddress.cityId", "");
+                    formik.setFieldValue("currentAddress.cityId", 0);
                   }}
                   required={pathname === "/dashboard/applications"}
                 />
