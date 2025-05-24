@@ -1,20 +1,20 @@
-import { Facebook, Twitter, Linkedin, Youtube, Instagram } from 'lucide-react';
-import Link from 'next/link';
-import Image from 'next/image';
+import { Facebook, Twitter, Linkedin, Youtube, Instagram } from "lucide-react";
+import Link from "next/link";
+import Image from "next/image";
 
 export default function Footer() {
   const quickLinks = [
-    { title: 'الرئيسية', path: '/' },
-    { title: 'عن الكلية', path: '/about' },
-    { title: 'البرامج الأكاديمية', path: '/#programs-section' },
-    { title: 'البحث العلمي', path: '/research' },
-    { title: 'الفعاليات', path: '/#news-section' },
+    { title: "الرئيسية", path: "/" },
+    { title: "عن الكلية", path: "/about" },
+    { title: "البرامج الأكاديمية", path: "/#programs-section" },
+    { title: "البحث العلمي", path: "/research" },
+    { title: "الفعاليات", path: "/#news-section" },
   ];
 
   const contactInfo = [
-    { text: 'الإسماعيلية، مصر', icon: '📍' },
-    { text: 'itunit@eng.suez.edu.eg', icon: '✉️' },
-    { text: '(+2064)3223007 – 32001258', icon: '📞' },
+    { text: "الإسماعيلية، مصر", icon: "📍" },
+    { text: "itunit@eng.suez.edu.eg", icon: "✉️" },
+    { text: "(+2064)3223007 – 32001258", icon: "📞" },
   ];
 
   return (
@@ -23,34 +23,12 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
           <div>
             <div className="flex items-center mb-6">
-              <Image
-                src="/logo_with_transparent_bg.png"
-                alt="شعار الكلية"
-                width={60}
-                height={60}
-              />
+              <Image src="/logo_with_transparent_bg.png" alt="شعار الكلية" width={60} height={60} />
               <h3 className="text-xl font-bold">كلية الهندسة</h3>
             </div>
             <p className="text-gray-400 mb-4">
               جامعة قناة السويس - تمكن مهندسي المستقبل من خلال التعليم المتطور والبحث العلمي المبتكر
             </p>
-            <div className="flex space-x-4 rtl:space-x-reverse">
-              <a href="#" className="text-yellow-400 hover:text-white transition-colors">
-                <Facebook size={20} />
-              </a>
-              <a href="#" className="text-yellow-400 hover:text-white transition-colors">
-                <Twitter size={20} />
-              </a>
-              <a href="#" className="text-yellow-400 hover:text-white transition-colors">
-                <Linkedin size={20} />
-              </a>
-              <a href="#" className="text-yellow-400 hover:text-white transition-colors">
-                <Youtube size={20} />
-              </a>
-              <a href="#" className="text-yellow-400 hover:text-white transition-colors">
-                <Instagram size={20} />
-              </a>
-            </div>
           </div>
 
           <div>
@@ -110,4 +88,3 @@ export default function Footer() {
     </footer>
   );
 }
-

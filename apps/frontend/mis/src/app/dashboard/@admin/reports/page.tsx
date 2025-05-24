@@ -1,11 +1,11 @@
-'use client';
-import { useState, useEffect } from 'react';
-import { apiClient } from '@/lib/client';
-import ReportsSubmitForm from '@/components/admin/reports-submit-form';
-import ReportsAdminView from '@/components/admin/reports-admin-view';
+"use client";
+import { useState, useEffect } from "react";
+import { apiClient } from "@/lib/client";
+import ReportsSubmitForm from "@/components/admin/reports-submit-form";
+import ReportsAdminView from "@/components/admin/reports-admin-view";
 import { Report } from "@/lib/types";
-import { Loader2 } from 'lucide-react';
-import { toast } from 'react-hot-toast';
+import { Loader2 } from "lucide-react";
+import { toast } from "react-hot-toast";
 
 export default function ReportsPage() {
   const [reports, setReports] = useState<Report[]>([]);
@@ -16,16 +16,16 @@ export default function ReportsPage() {
     setIsLoading(true);
     try {
       const response = await apiClient.reports.$get({
-        query: { type: '' }
+        query: { type: "" },
       });
-      
-      if (!response.ok) throw new Error('Failed to fetch reports');
-      
+
+      if (!response.ok) throw new Error("Failed to fetch reports");
+
       const data = await response.json();
       setReports(data || []);
       setShowForm(!data || data.length === 0);
     } catch (err) {
-      toast.error('فشل في تحميل التقارير. يرجى المحاولة مرة أخرى.');
+      toast.error("فشل في تحميل التقارير. يرجى المحاولة مرة أخرى.");
       console.error(err);
     } finally {
       setIsLoading(false);
@@ -42,18 +42,18 @@ export default function ReportsPage() {
     attachmentUrl: string;
   }) => {
     setIsLoading(true);
-    const toastId = toast.loading('جاري إضافة التقرير...');
+    const toastId = toast.loading("جاري إضافة التقرير...");
     try {
       const response = await apiClient.reports.$post({
-        json: reportData
+        json: reportData,
       });
-      
-      if (!response.ok) throw new Error('Failed to submit report');
-      
-      toast.success('تم إضافة التقرير بنجاح', { id: toastId });
+
+      if (!response.ok) throw new Error("Failed to submit report");
+
+      toast.success("تم إضافة التقرير بنجاح", { id: toastId });
       await fetchReports();
     } catch (err) {
-      toast.error('فشل في إضافة التقرير', { id: toastId });
+      toast.error("فشل في إضافة التقرير", { id: toastId });
       console.error(err);
     } finally {
       setIsLoading(false);
@@ -70,19 +70,19 @@ export default function ReportsPage() {
 
   return (
     <div className="max-w-2xl mx-auto p-4">
-          {showForm ? (
-            <ReportsSubmitForm 
-              onSubmit={handleAddReport}
-              isLoading={isLoading}
-              onCancel={() => setShowForm(false)}
-            />
-          ) : (
-            <ReportsAdminView
-              reports={reports}
-              onAddNewReport={() => setShowForm(true)}
-              isLoading={isLoading}
-            />
-          )}
+      {showForm ? (
+        <ReportsSubmitForm
+          onSubmit={handleAddReport}
+          isLoading={isLoading}
+          onCancel={() => setShowForm(false)}
+        />
+      ) : (
+        <ReportsAdminView
+          reports={reports}
+          onAddNewReport={() => setShowForm(true)}
+          isLoading={isLoading}
+        />
+      )}
     </div>
   );
 }

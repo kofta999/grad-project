@@ -469,5 +469,5 @@ export const reports = pgTable("reports", {
   reportId: serial("report_id").primaryKey(),
   type: text("type").notNull(),
   title: text("title").notNull(),
-  attachmentUrl: text("attachment_url").notNull()
+  attachmentUrl: text("attachment_url").notNull(),
 });

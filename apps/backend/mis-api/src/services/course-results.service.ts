@@ -5,7 +5,7 @@ import { eq } from "drizzle-orm";
 export interface ICourseResultsService {
   setCourseResult(courseRegistrationId: number, grade: number): Promise<boolean>;
   deleteCourseResult(resultId: number): Promise<boolean>;
-  getCourseResults(courseRegistrationId?: number): Promise<typeof courseResults.$inferSelect[]>;
+  getCourseResults(courseRegistrationId?: number): Promise<(typeof courseResults.$inferSelect)[]>;
 }
 
 export class CourseResultsService implements ICourseResultsService {
@@ -29,12 +29,10 @@ export class CourseResultsService implements ICourseResultsService {
           .where(eq(courseResults.courseRegistrationId, courseRegistrationId));
       } else {
         // iinsert new record
-        await db
-          .insert(courseResults)
-          .values({
-            courseRegistrationId,
-            grade,
-          });
+        await db.insert(courseResults).values({
+          courseRegistrationId,
+          grade,
+        });
       }
 
       return true;
@@ -48,7 +46,7 @@ export class CourseResultsService implements ICourseResultsService {
     try {
       const result = await db
         .select({
-          courseRegistrationId: courseResults.courseRegistrationId
+          courseRegistrationId: courseResults.courseRegistrationId,
         })
         .from(courseResults)
         .where(eq(courseResults.resultId, resultId));
@@ -72,18 +70,22 @@ export class CourseResultsService implements ICourseResultsService {
     }
   }
 
-  async getCourseResults(courseRegistrationId?: number): Promise<typeof courseResults.$inferSelect[]> {
+  async getCourseResults(
+    courseRegistrationId?: number
+  ): Promise<(typeof courseResults.$inferSelect)[]> {
     try {
-      const query = db.select({
-        resultId: courseResults.resultId,
-        courseRegistrationId: courseResults.courseRegistrationId,
-        grade: courseResults.grade
-      }).from(courseResults);
-      
+      const query = db
+        .select({
+          resultId: courseResults.resultId,
+          courseRegistrationId: courseResults.courseRegistrationId,
+          grade: courseResults.grade,
+        })
+        .from(courseResults);
+
       if (courseRegistrationId) {
         return await query.where(eq(courseResults.courseRegistrationId, courseRegistrationId));
       }
-  
+
       return await query;
     } catch (error) {
       console.error("Error getting course results:", error);

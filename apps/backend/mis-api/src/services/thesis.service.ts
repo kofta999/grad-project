@@ -97,7 +97,7 @@ export class ThesisService implements IThesisService {
       thesisId: thesis[0].theses.thesisId,
       title: thesis[0].theses.title,
       attachmentUrl: thesis[0].attachments.attachmentUrl,
-      createdAt: thesis[0].theses.createdAt
+      createdAt: thesis[0].theses.createdAt,
     };
   }
 }

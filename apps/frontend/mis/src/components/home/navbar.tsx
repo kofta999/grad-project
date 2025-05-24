@@ -1,8 +1,19 @@
-'use client';
-import { useState, useEffect } from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
-import { Menu, X, ChevronDown, User, GraduationCap, BookOpen, FlaskConical, Calendar, NotebookPen, Mail } from 'lucide-react';
+"use client";
+import { useState, useEffect } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import {
+  Menu,
+  X,
+  ChevronDown,
+  User,
+  GraduationCap,
+  BookOpen,
+  FlaskConical,
+  Calendar,
+  NotebookPen,
+  Mail,
+} from "lucide-react";
 
 interface NavLink {
   title: string;
@@ -16,32 +27,32 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [openSubMenu, setOpenSubMenu] = useState<string | null>(null);
 
-      const navLinks: NavLink[] = [
-        { title: 'الرئيسية', path: '/', icon: <User size={20} className="ml-1" /> },
-        { title: 'عن الكلية', path: '/about', icon: <GraduationCap size={20} className="ml-1" /> },
-        { 
-          title: 'البرامج الأكاديمية', 
-          path: '/#programs-section',
-          icon: <BookOpen size={20} className="ml-1" />,
-          subLinks: [
-            { title: 'العمارة و التخطيط العمراني', path: 'https://eng.suez.edu.eg/?page_id=8426' },
-            { title: 'الهندسة الميكانيكية', path: 'https://eng.suez.edu.eg/?page_id=5443' },
-            { title: 'الهندسة الكهربائية', path: 'https://eng.suez.edu.eg/?page_id=5441' },
-            { title: 'الهندسة المدنية', path: 'https://eng.suez.edu.eg/?page_id=5433' },
-          ]
-        },
-        { title: 'البحث العلمي', path: '/research', icon: <FlaskConical size={20} className="ml-1" /> },
-        { title: 'الفعاليات', path: '/#news-section', icon: <Calendar size={20} className="ml-1" /> },
-        { title: 'بوابة الطالب', path: '/login', icon: <NotebookPen size={20} className="ml-1" /> },
-        { title: 'اتصل بنا', path: '/#contact-section', icon: <Mail size={20} className="ml-1" /> },
-      ];
+  const navLinks: NavLink[] = [
+    { title: "الرئيسية", path: "/", icon: <User size={20} className="ml-1" /> },
+    { title: "عن الكلية", path: "/about", icon: <GraduationCap size={20} className="ml-1" /> },
+    {
+      title: "البرامج الأكاديمية",
+      path: "/#programs-section",
+      icon: <BookOpen size={20} className="ml-1" />,
+      subLinks: [
+        { title: "العمارة و التخطيط العمراني", path: "https://eng.suez.edu.eg/?page_id=8426" },
+        { title: "الهندسة الميكانيكية", path: "https://eng.suez.edu.eg/?page_id=5443" },
+        { title: "الهندسة الكهربائية", path: "https://eng.suez.edu.eg/?page_id=5441" },
+        { title: "الهندسة المدنية", path: "https://eng.suez.edu.eg/?page_id=5433" },
+      ],
+    },
+    { title: "البحث العلمي", path: "/research", icon: <FlaskConical size={20} className="ml-1" /> },
+    { title: "الفعاليات", path: "/#news-section", icon: <Calendar size={20} className="ml-1" /> },
+    { title: "بوابة الطالب", path: "/login", icon: <NotebookPen size={20} className="ml-1" /> },
+    { title: "اتصل بنا", path: "/#contact-section", icon: <Mail size={20} className="ml-1" /> },
+  ];
 
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 100);
     };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const toggleSubMenu = (title: string) => {
@@ -49,18 +60,16 @@ export default function Navbar() {
   };
 
   return (
-    <nav 
+    <nav
       className={`fixed w-full z-50 transition-all duration-300 ${
-        scrolled 
-          ? 'bg-blue-600 shadow-lg py-2' 
-          : 'bg-blue-700/95 backdrop-blur-sm py-4'
+        scrolled ? "bg-blue-600 shadow-lg py-2" : "bg-blue-600/95 backdrop-blur-sm py-4"
       }`}
     >
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center">
           <Link href="/" className="flex items-center flex-1">
             <Image
-              src="/logo_with_transparent_bg.png" 
+              src="/logo_with_transparent_bg.png"
               alt="شعار كلية الهندسة"
               width={60}
               height={60}
@@ -84,7 +93,7 @@ export default function Navbar() {
                       <span className="mx-2">{link.title}</span>
                       <ChevronDown size={16} className="transition-transform duration-200" />
                     </button>
-                    
+
                     {openSubMenu === link.title && (
                       <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-xl z-50 border border-gray-100">
                         {link.subLinks.map((subLink) => (
@@ -136,14 +145,14 @@ export default function Navbar() {
                         {link.icon}
                         <span className="mr-2">{link.title}</span>
                       </div>
-                      <ChevronDown 
-                        size={18} 
+                      <ChevronDown
+                        size={18}
                         className={`transition-transform duration-200 ${
-                          openSubMenu === link.title ? 'rotate-180' : ''
-                        }`} 
+                          openSubMenu === link.title ? "rotate-180" : ""
+                        }`}
                       />
                     </button>
-                    
+
                     {openSubMenu === link.title && (
                       <div className="pr-4 mt-1 space-y-1 bg-blue-900/50 rounded-lg p-2">
                         {link.subLinks.map((subLink) => (

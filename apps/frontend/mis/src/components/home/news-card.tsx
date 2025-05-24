@@ -1,6 +1,6 @@
-import { CalendarDays, Clock, ArrowLeft } from 'lucide-react';
-import Link from 'next/link';
-import Image from 'next/image';
+import { CalendarDays, Clock, ArrowLeft } from "lucide-react";
+import Link from "next/link";
+import Image from "next/image";
 
 interface NewsCardProps {
   id: string;
@@ -21,7 +21,7 @@ export default function NewsCard({
   description,
   imageUrl,
   category,
-  link
+  link,
 }: NewsCardProps) {
   return (
     <div className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300 h-full flex flex-col">
@@ -41,7 +41,7 @@ export default function NewsCard({
       <div className="p-6 flex-grow flex flex-col">
         <div className="flex items-center text-gray-500 mb-3">
           <CalendarDays className="ml-1" size={16} />
-          <span className="text-sm ml-2">{new Date(date).toLocaleDateString('ar-EG')}</span>
+          <span className="text-sm ml-2">{new Date(date).toLocaleDateString("ar-EG")}</span>
           {time && (
             <>
               <Clock className="ml-3" size={16} />
@@ -56,7 +56,7 @@ export default function NewsCard({
 
         <p className="text-gray-600 mb-4 line-clamp-2 flex-grow">{description}</p>
 
-        <Link 
+        <Link
           href={link}
           className="inline-flex items-center text-blue-600 hover:text-blue-800 font-medium mt-auto"
         >

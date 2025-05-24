@@ -32,23 +32,25 @@ export function ThesisStudentView({ thesis }: ThesisStudentViewProps) {
           {
             icon: <Hash className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600" />,
             label: "رقم الرسالة",
-            value: thesis.thesisId
+            value: thesis.thesisId,
           },
           {
             icon: <FileDigit className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600" />,
             label: "رقم الطلب",
-            value: thesis.applicationId
+            value: thesis.applicationId,
           },
           {
             icon: <Text className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600" />,
             label: "عنوان الرسالة",
-            value: thesis.title
-          }
+            value: thesis.title,
+          },
         ].map((item, index) => (
           <div key={index} className="bg-white p-2 sm:p-3 md:p-4 rounded-lg border border-blue-100">
             <div className="flex items-center gap-2 mb-1">
               {item.icon}
-              <p className="text-sm sm:text-base md:text-lg font-medium text-blue-700">{item.label}</p>
+              <p className="text-sm sm:text-base md:text-lg font-medium text-blue-700">
+                {item.label}
+              </p>
             </div>
             <p className="text-base sm:text-lg md:text-xl text-gray-800 border-b border-blue-100 pb-1 sm:pb-2 pt-1">
               {item.value}
@@ -60,7 +62,9 @@ export function ThesisStudentView({ thesis }: ThesisStudentViewProps) {
           <div className="bg-white p-2 sm:p-3 md:p-4 rounded-lg border border-blue-100">
             <div className="flex items-center gap-2 mb-2 sm:mb-3">
               <File className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600" />
-              <p className="text-sm sm:text-base md:text-lg font-medium text-blue-700">ملف الرسالة</p>
+              <p className="text-sm sm:text-base md:text-lg font-medium text-blue-700">
+                ملف الرسالة
+              </p>
             </div>
             <Button
               asChild
@@ -79,10 +83,10 @@ export function ThesisStudentView({ thesis }: ThesisStudentViewProps) {
         <div className="flex items-center gap-2">
           <CalendarDays className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 text-blue-600" />
           <p className="text-xs sm:text-sm md:text-md text-blue-800">
-            تاريخ التقديم: {new Date(thesis.createdAt).toLocaleDateString('en-GB')}
+            تاريخ التقديم: {new Date(thesis.createdAt).toLocaleDateString("en-GB")}
           </p>
         </div>
       </div>
     </Card>
-);
+  );
 }
