@@ -37,7 +37,7 @@ export default function ApplicationForm() {
     try {
       await formikStep1.validateForm();
       if (Object.keys(formikStep1.errors).length === 0) {
-        toast.success("تم التسجيل النموذج الاول بنجاح!");
+        toast.success("تم تسجيل النموذج الاول بنجاح!");
         setStep(2);
         window.scrollTo(0, 0);
       } else {
