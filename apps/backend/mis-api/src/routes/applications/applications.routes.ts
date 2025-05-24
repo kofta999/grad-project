@@ -134,7 +134,7 @@ export const acceptApplication = createRoute({
 });
 
 export const rejectApplication = createRoute({
-  path: "/rejectaaaaa",
+  path: "/reject",
   method: "post",
   summary: "Reject Application",
   tags,
