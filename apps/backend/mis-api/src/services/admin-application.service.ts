@@ -1,19 +1,20 @@
 import { AdminApplicationsListDTO } from "@/dtos/admin-applications-list.dto";
-import { StudentDetailsDTO } from "@/dtos/student-details.dto";
 import { ApplicationService } from "./application.service";
 import db from "@/db";
 import { adminApplicationsList, applications } from "@/db/schema";
-import { count, desc, eq, ilike, SQL, sql } from "drizzle-orm";
+import { count, desc, eq, SQL, sql } from "drizzle-orm";
+import { ApplicationStatusType } from "@/lib/types";
 
 type GetAllApplicationsParams = {
   studentNameArQuery?: string;
   page: number;
-  isAccepted?: boolean;
+  status?: ApplicationStatusType;
   sortByName: "asc" | "desc";
 };
 
 export interface IAdminApplicationService {
   acceptApplication(applicationId: number): Promise<boolean | null>;
+  rejectApplication(applicationId: number): Promise<boolean | null>;
   getAllApplications(options: GetAllApplicationsParams): Promise<AdminApplicationsListDTO>;
 }
 
@@ -29,7 +30,7 @@ export class AdminApplicationService
         return operators.eq(fields.applicationId, applicationId);
       },
       columns: {
-        isAdminAccepted: true,
+        status: true,
       },
     });
 
@@ -37,13 +38,39 @@ export class AdminApplicationService
       return null;
     }
 
-    if (maybeApplication.isAdminAccepted === true) {
+    if (maybeApplication.status !== "pending") {
       return false;
     }
 
     await db
       .update(applications)
-      .set({ isAdminAccepted: true })
+      .set({ status: "accepted" })
+      .where(eq(applications.applicationId, applicationId));
+
+    return true;
+  }
+
+  async rejectApplication(applicationId: number): Promise<boolean | null> {
+    const maybeApplication = await db.query.applications.findFirst({
+      where(fields, operators) {
+        return operators.eq(fields.applicationId, applicationId);
+      },
+      columns: {
+        status: true,
+      },
+    });
+
+    if (!maybeApplication) {
+      return null;
+    }
+
+    if (maybeApplication.status !== "pending") {
+      return false;
+    }
+
+    await db
+      .update(applications)
+      .set({ status: "rejected" })
       .where(eq(applications.applicationId, applicationId));
 
     return true;
@@ -51,7 +78,7 @@ export class AdminApplicationService
 
   async getAllApplications({
     page,
-    isAccepted,
+    status,
     studentNameArQuery,
     sortByName,
   }: GetAllApplicationsParams): Promise<AdminApplicationsListDTO> {
@@ -64,9 +91,8 @@ export class AdminApplicationService
       );
     }
 
-    if (isAccepted != undefined) {
-      console.log(isAccepted);
-      whereQuery.push(eq(adminApplicationsList.isAdminAccepted, isAccepted));
+    if (status != undefined) {
+      whereQuery.push(eq(adminApplicationsList.status, status));
     }
 
     const totalCount = await db

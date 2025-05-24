@@ -8,9 +8,8 @@ import {
   IdParamsSchema,
 } from "stoker/openapi/schemas";
 import * as HttpStatusCodes from "stoker/http-status-codes";
-import { NotFoundSchema, SEMESTERS, adminMiddleware } from "@/lib/constants";
+import { APPLICATION_STATUSES, NotFoundSchema, SEMESTERS, adminMiddleware } from "@/lib/constants";
 import { AdminApplicationsListSchema } from "@/dtos/admin-applications-list.dto";
-import { StudentDetailsSchema } from "@/dtos/student-details.dto";
 import { ApplicationDetailsSchema } from "@/dtos/application-details.dto";
 import { CourseSchema } from "@/dtos/registered-course.dto";
 
@@ -25,7 +24,7 @@ export const getAllApplications = createRoute({
     query: z.object({
       nameAr: z.string().optional(),
       page: z.coerce.number().min(1).default(1),
-      isAccepted: z.enum(["true", "false"]).optional(),
+      status: z.enum(APPLICATION_STATUSES).optional(),
       sortName: z.enum(["asc", "desc"]).default("asc"),
     }),
   },
@@ -134,39 +133,39 @@ export const acceptApplication = createRoute({
   },
 });
 
-// export const rejectApplication = createRoute({
-//  path: "/reject",
-//  method: "post",
-//  tags,
-//  middleware: adminMiddleware,
-//  request: {
-//  body: jsonContentRequired(
-//  z.object({
-//  applicationId: z.number(),
-//  reason: z.string().min(1).optional(),
-//  }),
-//  "Application rejection data"
-//  ),
-//  },
-//  responses: {
-//  [HttpStatusCodes.OK]: jsonContent(
-//  createMessageObjectSchema("Application rejected"),
-//  "Application rejected"
-//  ),
-//  [HttpStatusCodes.NOT_FOUND]: jsonContent(
-//  createMessageObjectSchema("Application not found"),
-//  "Application not found"
-//  ),
-//  [HttpStatusCodes.CONFLICT]: jsonContent(
-//  createMessageObjectSchema("Application already rejected"),
-//  "Application already rejected"
-//  ),
-//  [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
-//  createErrorSchema(z.object({ applicationId: z.number(), reason: z.string().optional() })),
-//  "The validation error(s)"
-//  ),
-//  },
-// });
+export const rejectApplication = createRoute({
+  path: "/reject",
+  method: "post",
+  summary: "Reject Application",
+  tags,
+  middleware: adminMiddleware,
+  request: {
+    body: jsonContentRequired(
+      z.object({
+        applicationId: z.number(),
+      }),
+      "Application rejection data"
+    ),
+  },
+  responses: {
+    [HttpStatusCodes.OK]: jsonContent(
+      createMessageObjectSchema("Application rejected"),
+      "Application rejected"
+    ),
+    [HttpStatusCodes.NOT_FOUND]: jsonContent(
+      createMessageObjectSchema("Application not found"),
+      "Application not found"
+    ),
+    [HttpStatusCodes.CONFLICT]: jsonContent(
+      createMessageObjectSchema("Application already rejected"),
+      "Application already rejected"
+    ),
+    [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
+      createErrorSchema(z.object({ applicationId: z.number(), reason: z.string().optional() })),
+      "The validation error(s)"
+    ),
+  },
+});
 
 export type GetAllApplicationsRoute = typeof getAllApplications;
 export type GetApplicationDetailsRoute = typeof getApplicationDetails;
@@ -174,4 +173,4 @@ export type GetApplicationRegisteredCoursesRoute = typeof getApplicationRegister
 export type GetApplicationAvailableCoursesRoute = typeof getApplicationAvailableCourses;
 // TODO: Use PUT
 export type AcceptApplicationRoute = typeof acceptApplication;
-// export type RejectApplicationRoute = typeof rejectApplication;
+export type RejectApplicationRoute = typeof rejectApplication;

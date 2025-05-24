@@ -9,6 +9,12 @@ import {
   RegisterStep2Schema,
 } from "./schemas";
 
+export const STATUS = {
+  accepted: "مقبول",
+  pending: "تحت المراجعة",
+  rejected: "مرفوض",
+};
+
 export type StudentType = Required<
   InferResponseType<(typeof apiClient)["students"][":id"]["$get"], 200>
 >;

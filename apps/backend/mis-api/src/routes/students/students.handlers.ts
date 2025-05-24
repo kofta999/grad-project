@@ -90,8 +90,12 @@ export const updateApplication: AppRouteHandler<routes.UpdateApplicationRoute> =
     return c.json({ message: "Application not found" }, HttpStatusCodes.NOT_FOUND);
   }
 
-  if (application.isAccepted) {
+  if (application.status === "accepted") {
     return c.json({ message: "Application already accepted" }, HttpStatusCodes.FORBIDDEN);
+  }
+
+  if (application.status === "rejected") {
+    return c.json({ message: "Application was rejected" }, HttpStatusCodes.FORBIDDEN);
   }
 
   await studentApplicationService.updateApplication(

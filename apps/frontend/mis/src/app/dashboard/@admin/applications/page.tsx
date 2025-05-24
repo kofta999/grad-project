@@ -24,10 +24,20 @@ export default function Page() {
     },
   });
 
-  const getApplicationsList = async (nameAr: string, page: number) => {
+  const getApplicationsList = async (
+    nameAr: string,
+    page: number,
+    status?: string,
+    sortName?: string
+  ) => {
     try {
       const res = await apiClient.applications.$get({
-        query: { nameAr, page: page.toString() },
+        query: {
+          nameAr,
+          page: page.toString(),
+          status: status?.toString(),
+          sortName: sortName?.toString(),
+        },
       });
 
       if (res.status === 200) {
