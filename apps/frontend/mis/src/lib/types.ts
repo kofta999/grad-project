@@ -21,8 +21,6 @@ export type ApplicationType = InferResponseType<
   200
 >;
 
-
-
 // No need for custom Types, InferResponseType gets both success and failure types
 export type SubmitThesisResponse = InferResponseType<typeof apiClient.students.me.thesis.$post>;
 // If you had to create custom types because this type also had the {message: string} type
@@ -42,8 +40,6 @@ export type RegisterStep2Type = Yup.InferType<typeof RegisterStep2Schema>;
 export type ApplicationStep1Type = Yup.InferType<typeof ApplicationStep1Schema>;
 export type ApplicationStep2Type = Yup.InferType<typeof ApplicationStep2Schema>;
 export type ApplicationStep3Type = Yup.InferType<typeof ApplicationStep3Schema>;
-
-
 
 // reports
 export type Report = {
