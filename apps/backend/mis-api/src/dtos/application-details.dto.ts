@@ -13,7 +13,7 @@ export const ApplicationDetailsSchema = z.object({
       type: z.enum(["permanent", "current"]),
     })
   ),
-  academicQualification: z.object({
+  qualification: z.object({
     qualificationId: z.number(),
     country: z.string(),
     university: z.string(),

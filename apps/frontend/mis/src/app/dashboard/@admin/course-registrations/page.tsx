@@ -9,7 +9,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { SearchBar } from "@/components/ui/search";
-import { Card } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { CardGrid } from "@/components/ui/card";
 import Image from "next/image";
 import { CardContent } from "@/components/ui/card";
@@ -24,18 +24,21 @@ import {
 import { apiClient } from "@/lib/client";
 import toast from "react-hot-toast";
 import { Button } from "@/components/ui/button";
-import { X } from "lucide-react";
+import { LibraryBig, X } from "lucide-react";
 import RegisterCourseDialog from "@/components/register-course-dialog";
 import { InferResponseType } from "@repo/mis-api";
 import { StudentType, ApplicationType } from "@/lib/types";
+import CourseResultsDialog from "@/components/course-results-dialog";
+import { Loader } from "@/components/ui/loader";
+import { SpacingWrapper } from "@/components/ui/spacing-wrapper";
 
-type RegisteredCourse = InferResponseType<
+export type RegisteredCourse = InferResponseType<
   (typeof apiClient.applications)[":id"]["courses"]["$get"],
   200
 >[number];
 type CoursesType = RegisteredCourse[];
 
-type SemesterType = "first" | "second" | "third";
+export type SemesterType = "first" | "second" | "third" | "";
 
 export default function Page() {
   const [student, setStudent] = useState<StudentType | null>(null);
@@ -43,11 +46,17 @@ export default function Page() {
 
   const [applicationId, setApplicationId] = useState<number | null>(null);
   const [academicYear, setAcademicYear] = useState<number | null>(null);
-  const [semester, setSemester] = useState<SemesterType | null>(null);
+  const [semester, setSemester] = useState<SemesterType | null>("");
 
   const [courses, setCourses] = useState<CoursesType>([]);
 
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isRegisterDialogOpen, setIsRegisterDialogOpen] = useState(false);
+
+  const [isResultsDialogOpen, setIsResultsDialogOpen] = useState(false);
+
+  const [selectedCourse, setSelectedCourse] = useState<RegisteredCourse | null>(null);
+
+  const [loading, setLoading] = useState(false);
 
   const getUser = async (id: number | null) => {
     // Check if id is null or invalid
@@ -60,6 +69,7 @@ export default function Page() {
     }
 
     try {
+      setLoading(true);
       const applicationRes = await apiClient.applications[":id"].$get({
         param: { id: id.toString() },
       });
@@ -86,11 +96,13 @@ export default function Page() {
 
       if (res.status === 200) {
         const data = await res.json();
+        setLoading(false);
         // Data WILL be there
         setStudent(student);
         setApplication(application);
         setAcademicYear(application.registration.academicYearId);
       } else {
+        setLoading(false);
         toast.error("مستخدم غير موجود");
 
         setStudent(null);
@@ -98,6 +110,7 @@ export default function Page() {
         setAcademicYear(null);
       }
     } catch (error) {
+      setLoading(false);
       console.error("Error fetching application:", error);
       toast.error("فشل العثور علي المستخدم");
     }
@@ -113,6 +126,8 @@ export default function Page() {
       return;
     }
     try {
+      setLoading(true);
+
       const res = await apiClient.applications[":id"]["courses"].$get({
         param: { id: applicationId.toString() },
         query: {
@@ -123,11 +138,15 @@ export default function Page() {
 
       if (res.status === 200) {
         const data = await res.json();
+        setLoading(false);
         setCourses(data);
       } else {
+        setLoading(false);
+
         toast.error("فشل العثور علي المواد");
       }
     } catch (error) {
+      setLoading(false);
       console.error("Error fetching courses:", error);
       toast.error("فشل العثور علي المواد");
     }
@@ -140,6 +159,10 @@ export default function Page() {
   };
 
   useEffect(() => {
+    setLoading(true);
+    setInterval(() => {
+      setLoading(false);
+    }, 100);
     if (applicationId && semester && academicYear) {
       getCourses(applicationId, semester, academicYear);
     } else {
@@ -150,129 +173,183 @@ export default function Page() {
   return (
     <Container>
       <Card>
-        <SearchBar
-          placeholder="ابحث هنا..."
-          onChange={(value) => handleSearch(value as string)}
-          className=""
-        />
+        <SearchBar placeholder="ابحث هنا..." onChange={(value) => handleSearch(value as string)} />
       </Card>
 
-      <Card>
-        <CardContent>
-          <div className="flex flex-col mb-6 md:flex-row md:gap-6">
-            <div className="image-Container border-2 border-mainColor rounded-lg overflow-hidden flex items-center justify-center">
-              <Image src="/avatar.jpg" alt="placeholder" width={120} height={120} />
-            </div>
-            <CardGrid className="mt-6 md:mt-0">
-              <p className="text-sm">الاسم / {student?.fullNameAr}</p>
-              <p className="text-sm">تاريخ الميلاد / {student?.dob}</p>
-              <p className="text-sm">الرقم القومي / {student?.idNumber}</p>
-              <p className="text-sm">
-                الدرجة العلمية / {application?.registration?.academicDegree}
-              </p>
-              <p className="text-sm">رقم الهاتف / {student?.phoneNoMain}</p>
-              <p className="text-sm">
-                العام الاكاديمي للتسجيل / {application?.registration.academicYear}
-              </p>
-            </CardGrid>
+      {loading ? (
+        <>
+          <div className="flex items-center justify-center h-screen">
+            <Loader className="w-20 h-20" />
           </div>
-          <Select
-            onValueChange={(value: "first" | "second" | "third") => {
-              setSemester(value);
-            }}
-          >
-            <SelectTrigger className="w-full md:w-1/2">
-              <SelectValue placeholder="اختر الترم" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="first">الأول</SelectItem>
-              <SelectItem value="second">الثاني</SelectItem>
-              <SelectItem value="third">الصيفي</SelectItem>
-            </SelectContent>
-          </Select>
-          <Table className="border rounded-md mt-6">
-            <TableHeader className="bg-white">
-              <TableRow>
-                <TableHead className="text-right font-medium text-[#96A0B6] w-1/4">
-                  اسم المقرر
-                </TableHead>
-                <TableHead className="text-right font-medium text-[#96A0B6] w-1/4">
-                  كود المقرر
-                </TableHead>
-                <TableHead className="text-right font-medium text-[#96A0B6] w-1/4">
-                  عدد الساعات
-                </TableHead>
-                <TableHead className="text-right font-medium text-[#96A0B6] w-1/4">
-                  التقدير
-                </TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {courses.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={4} className="text-center">
-                    لا يوجد مواد
-                  </TableCell>
-                </TableRow>
-              ) : (
-                courses.map((course, index) => (
-                  <TableRow
-                    key={index}
-                    className={`
-                      ${index % 2 !== 0 ? "bg-white" : "bg-gray-100"}
-                    `}
-                  >
-                    <TableCell className="text-right">{course.title}</TableCell>
-                    <TableCell className="text-right">{course.code}</TableCell>
-                    <TableCell className="text-right">{course.totalHours}</TableCell>
-                    <TableCell className="text-right">
-                      {course.grade ? course.grade : "مسجل على الفصل الحالي"}
-                    </TableCell>
-                  </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
-
-      {/* Dialog */}
-      <Container className="p-0">
-        {/* Button to open the dialog */}
-        <Button onClick={() => setIsDialogOpen(true)} disabled={!applicationId || !semester}>
-          صفحة تسجيل المواد
-        </Button>
-
-        {/* Dialog Overlay */}
-        <div
-          className={`overlay bg-black/55 fixed inset-0 flex items-center justify-center z-50 ${
-            isDialogOpen ? "block" : "hidden"
-          }`}
-        >
-          {/* Dialog Content */}
-          <div className="dialog-content bg-white p-3 md:p-6 rounded-lg w-full max-w-2xl h-[90%] overflow-y-scroll m-6 md:m-0">
-            {/* Dialog Header */}
-            <div className="dialog-header flex justify-between items-center mb-4">
-              <button
-                onClick={() => setIsDialogOpen(false)}
-                className="absolute top-3 right-5 lg:right-10 text-white"
+        </>
+      ) : (
+        <>
+          <Card>
+            <CardHeader>
+              <CardTitle>
+                <LibraryBig className="w-5 h-5 text-yellow-200" /> بيانات الطالب ومواده
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="w-[120px] h-[120px] mb-4 border-2 border-mainColor rounded-lg overflow-hidden flex items-center justify-center">
+                <Image
+                  src={student?.imageUrl || "/avatar.jpg"}
+                  alt="user-image"
+                  width={120}
+                  height={120}
+                />
+              </div>
+              <CardGrid className="my-4">
+                <SpacingWrapper>
+                  <p className="text-gray-600">الاسم / {student?.fullNameAr}</p>
+                </SpacingWrapper>
+                <SpacingWrapper>
+                  <p className="text-gray-600">تاريخ الميلاد / {student?.dob}</p>
+                </SpacingWrapper>
+                <SpacingWrapper>
+                  <p className="text-gray-600">الرقم القومي / {student?.idNumber}</p>
+                </SpacingWrapper>
+                <SpacingWrapper>
+                  <p className="text-gray-600">
+                    الدرجة العلمية / {application?.registration?.academicDegree}
+                  </p>
+                </SpacingWrapper>
+                <SpacingWrapper>
+                  <p className="text-gray-600">رقم الهاتف / {student?.phoneNoMain}</p>
+                </SpacingWrapper>
+                <SpacingWrapper>
+                  <p className="text-gray-600">
+                    العام الاكاديمي للتسجيل / {application?.registration.academicYear}
+                  </p>
+                </SpacingWrapper>
+              </CardGrid>
+              <Select
+                value={semester as string}
+                onValueChange={(value: "first" | "second" | "third") => {
+                  setSemester(value);
+                }}
               >
-                <X className="h-8 w-8" />
-              </button>
-            </div>
+                <SelectTrigger className="w-full md:w-[49%]">
+                  <SelectValue placeholder="اختر الترم" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="first">الأول</SelectItem>
+                  <SelectItem value="second">الثاني</SelectItem>
+                  <SelectItem value="third">الصيفي</SelectItem>
+                </SelectContent>
+              </Select>
+              <Table className="border rounded-md mt-6">
+                <TableHeader className="bg-white">
+                  <TableRow>
+                    <TableHead className="text-right font-medium w-[25%]">اسم المقرر</TableHead>
+                    <TableHead className="text-right font-medium w-[20%]">كود المقرر</TableHead>
+                    <TableHead className="text-right font-medium w-[20%]">عدد الساعات</TableHead>
+                    <TableHead className="text-right font-medium w-[20%]">التقدير</TableHead>
+                    <TableHead className="text-right font-medium w-[20%]">الإجراءات</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {courses.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={5} className="text-center text-xl">
+                        لا يوجد مواد
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    courses.map((course, index) => (
+                      <TableRow
+                        key={index}
+                        className={`
+                      ${index % 2 !== 0 ? "bg-white" : "bg-blue-50"}
+                    `}
+                      >
+                        <TableCell className="text-right">{course.title}</TableCell>
+                        <TableCell className="text-right">{course.code}</TableCell>
+                        <TableCell className="text-right">{course.totalHours}</TableCell>
+                        <TableCell className="text-right">
+                          {course.grade ? course.grade : "لا يوجد تقدير"}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <Button
+                            onClick={() => {
+                              setIsResultsDialogOpen(true);
+                              setIsRegisterDialogOpen(false);
+                              setSelectedCourse(course);
+                            }}
+                            className={`w-full md:w-auto ${
+                              course.grade
+                                ? "bg-mainColor hover:bg-blue-700"
+                                : "bg-green-600 hover:bg-green-700"
+                            }`}
+                          >
+                            {course.grade ? "تعديل تقدير" : "إضافة تقدير"}
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
 
-            {/* Render the logCourses component */}
-            {applicationId && semester && (
-              <RegisterCourseDialog
-                applicationId={applicationId}
-                semester={semester}
-                userRegisteredCourses={courses}
-                setUserRegisteredCourses={setCourses}
-              />
-            )}
-          </div>
-        </div>
-      </Container>
+          {/* Dialog */}
+          <Container className="p-0">
+            {/* Button to open the dialog */}
+            <Button
+              onClick={() => {
+                setIsRegisterDialogOpen(true);
+                setIsResultsDialogOpen(false);
+              }}
+              disabled={!applicationId || !semester}
+            >
+              صفحة تسجيل المواد
+            </Button>
+
+            {/* Dialog Overlay */}
+            <div
+              className={`overlay bg-black/55 fixed inset-0 flex items-center justify-center z-50 ${
+                isRegisterDialogOpen || isResultsDialogOpen ? "block" : "hidden"
+              }`}
+            >
+              {/* Dialog Content */}
+              <div className="dialog-content bg-white p-3 md:p-6 rounded-lg w-full max-w-2xl h-[90%] overflow-y-scroll m-6 md:m-0">
+                {/* Dialog Header */}
+                <div className="dialog-header flex justify-between items-center mb-4">
+                  <button
+                    onClick={() => {
+                      setIsRegisterDialogOpen(false);
+                      setIsResultsDialogOpen(false);
+                    }}
+                    className="absolute top-3 right-5 lg:right-10 text-white"
+                  >
+                    <X className="h-8 w-8" />
+                  </button>
+                </div>
+
+                {isResultsDialogOpen ? (
+                  <CourseResultsDialog
+                    selectedCourse={selectedCourse}
+                    getCourses={() => getCourses(applicationId!, semester!, academicYear!)}
+                    applicationId={applicationId}
+                    semester={semester}
+                    academicYear={academicYear}
+                  />
+                ) : null}
+
+                {isRegisterDialogOpen && applicationId && semester ? (
+                  <RegisterCourseDialog
+                    applicationId={applicationId}
+                    semester={semester}
+                    userRegisteredCourses={courses}
+                    setUserRegisteredCourses={setCourses}
+                  />
+                ) : null}
+              </div>
+            </div>
+          </Container>
+        </>
+      )}
     </Container>
   );
 }

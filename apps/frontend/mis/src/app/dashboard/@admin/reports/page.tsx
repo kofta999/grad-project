@@ -4,8 +4,9 @@ import { apiClient } from "@/lib/client";
 import ReportsSubmitForm from "@/components/admin/reports-submit-form";
 import ReportsAdminView from "@/components/admin/reports-admin-view";
 import { Report } from "@/lib/types";
-import { Loader2 } from "lucide-react";
 import { toast } from "react-hot-toast";
+import { Container } from "@/components/ui/container";
+import { Loader } from "@/components/ui/loader";
 
 export default function ReportsPage() {
   const [reports, setReports] = useState<Report[]>([]);
@@ -63,13 +64,13 @@ export default function ReportsPage() {
   if (isLoading && reports.length === 0) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <Loader2 className="w-12 h-12 text-blue-600 animate-spin" />
+        <Loader className="w-20 h-20" />
       </div>
     );
   }
 
   return (
-    <div className="max-w-2xl mx-auto p-4">
+    <Container>
       {showForm ? (
         <ReportsSubmitForm
           onSubmit={handleAddReport}
@@ -83,6 +84,6 @@ export default function ReportsPage() {
           isLoading={isLoading}
         />
       )}
-    </div>
+    </Container>
   );
 }

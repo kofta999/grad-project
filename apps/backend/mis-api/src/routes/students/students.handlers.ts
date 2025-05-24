@@ -6,6 +6,7 @@ import { CourseService } from "@/services/course.service";
 import { ThesisService } from "@/services/thesis.service";
 import { StudentApplicationService } from "@/services/student-application.service";
 import * as routes from "./students.routes";
+import { StorageService } from "@/services/storage.service";
 
 // Initialize services
 const studentService = new StudentService();
@@ -13,6 +14,7 @@ const academicService = new AcademicService();
 const courseService = new CourseService();
 const thesisService = new ThesisService();
 const studentApplicationService = new StudentApplicationService();
+const storageService = new StorageService();
 
 // Profile handlers
 export const getStudentDetails: AppRouteHandler<routes.GetStudentDetailsRoute> = async (c) => {
@@ -103,8 +105,15 @@ export const updateApplication: AppRouteHandler<routes.UpdateApplicationRoute> =
 export const saveApplicationAttachments: AppRouteHandler<
   routes.SaveApplicationAttachmentsRoute
 > = async (c) => {
+  const studentId = c.var.session.get("id")!;
   const { applicationId } = c.req.valid("param");
   const attachments = c.req.valid("json").attachments;
+
+  const isOwned = studentApplicationService.isOwned(applicationId, studentId);
+
+  if (!isOwned) {
+    return c.json({ message: "Cannot save this attachment" }, 403);
+  }
 
   await studentApplicationService.saveApplicationAttachments({
     applicationId,
@@ -123,6 +132,29 @@ export const getApplication: AppRouteHandler<routes.GetApplicationRoute> = async
   }
 
   return c.json({ application }, HttpStatusCodes.OK);
+};
+
+export const deleteApplicationAttachment: AppRouteHandler<
+  routes.DeleteApplicationAttachmentRoute
+> = async (c) => {
+  const studentId = c.var.session.get("id")!;
+  const { applicationId, attachmentId } = c.req.valid("param");
+
+  const isOwned = studentApplicationService.isOwned(applicationId, studentId);
+
+  if (!isOwned) {
+    return c.json({ message: "Cannot delete this attachment" }, 403);
+  }
+
+  const attachment = await studentApplicationService.deleteApplicationAttachment(
+    applicationId,
+    attachmentId
+  );
+  await storageService.deleteFile(attachment.attachmentUrl);
+
+  c.status(HttpStatusCodes.NO_CONTENT);
+
+  return c.json({});
 };
 
 // Thesis handlers
@@ -152,39 +184,14 @@ export const submitThesis: AppRouteHandler<routes.SubmitThesisRoute> = async (c)
   const { attachmentUrl, title } = c.req.valid("json");
 
   try {
-    await thesisService.submitThesis(studentId, title, attachmentUrl);
-    return c.json({}, HttpStatusCodes.OK);
+    const thesis = await thesisService.submitThesis(studentId, title, attachmentUrl);
+    return c.json(thesis, HttpStatusCodes.OK);
   } catch (error) {
     console.error("Error submitting thesis:", error);
     const errorMessage = error instanceof Error ? error.message : "Failed to submit thesis";
 
     return c.json({ message: errorMessage }, HttpStatusCodes.FORBIDDEN);
   }
-};
-
-// Handlers to be implemented
-// export const getApplicationById: AppRouteHandler<routes.GetApplicationByIdRoute> = async (c) => {
-//   // This is a placeholder - you'll need to implement this
-//   const studentId = c.var.session.get("id")!;
-//   const { applicationId } = c.req.valid("param");
-
-//   // You would typically call something like:
-//   // const application = await studentApplicationService.getApplicationById(applicationId, studentId);
-
-//   return c.json({ message: "Not implemented" }, HttpStatusCodes.NOT_IMPLEMENTED);
-// };
-
-export const deleteApplicationAttachment: AppRouteHandler<
-  routes.DeleteApplicationAttachmentRoute
-> = async (c) => {
-  // This is a placeholder - you'll need to implement this
-  const studentId = c.var.session.get("id")!;
-  const { applicationId, attachmentId } = c.req.valid("param");
-
-  // You would typically call something like:
-  // const success = await studentApplicationService.deleteAttachment(applicationId, attachmentId, studentId);
-
-  return c.json({ message: "Not implemented" }, HttpStatusCodes.NOT_IMPLEMENTED);
 };
 
 export const getThesis: AppRouteHandler<routes.GetThesisRoute> = async (c) => {

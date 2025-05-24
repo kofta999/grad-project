@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { LucideClipboardList } from "lucide-react";
-import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { apiClient } from "@/lib/client";
 import toast from "react-hot-toast";
@@ -66,7 +66,7 @@ export default function RegisterCourseDialog({
       const totalHours = hoursArray.reduce((a, b) => a + b, 0);
 
       if (totalHours >= 16) {
-        toast.error("تجاوز عدد الساعات المسموح بها");
+        toast.error("تجاوزت عدد الساعات المسموح بها");
         return;
       }
 
@@ -152,9 +152,13 @@ export default function RegisterCourseDialog({
 
   return (
     <Card className="w-full max-w-2xl">
+      <CardHeader>
+        <CardTitle>
+          <LucideClipboardList className="text-yellow-500" />
+          تسجيل المواد الدراسيه
+        </CardTitle>
+      </CardHeader>
       <CardContent className="p-3 md:p-6">
-        <LucideClipboardList className="text-mainColor mb-4" />
-        <CardHeader>تسجيل المواد الدراسيه</CardHeader>
         <CardDescription>
           يجب عليك بتسجيل عدد من المواد بما يعادل 9 من الساعات المعتمده وبحد اقصى 19
         </CardDescription>

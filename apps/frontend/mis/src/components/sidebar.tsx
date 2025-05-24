@@ -3,8 +3,7 @@ import { useState } from "react";
 import {
   LayoutDashboard,
   ChartLine,
-  ShieldBan,
-  Wallet,
+  LibraryBig,
   File,
   ChevronDown,
   Settings,
@@ -21,6 +20,7 @@ import { useUserContext } from "@/context/user-context";
 import { useRouter } from "next/navigation";
 import { apiClient } from "@/lib/client";
 import toast, { Toaster } from "react-hot-toast";
+import useUser from "@/hooks/use-user";
 
 export type SideNavItem = {
   title: string;
@@ -34,16 +34,10 @@ const STUDENT_SIDEBAR_ITEMS = [
   { title: "بيانات الطالب", path: "/dashboard", icon: <LayoutDashboard /> },
   { title: "تقدم الطالب", path: "/dashboard/progress", icon: <ChartLine /> },
   {
-    title: "المرحلة التمهيدية",
-    path: "/projects",
-    icon: <ShieldBan />,
-    submenu: true,
-    subMenuItems: [
-      // { title: "التسجيل", path: "/dashboard/log-courses" },
-      { title: "المقررات الحالية", path: "/dashboard/current-courses" },
-    ],
+    title: "المقررات الحالية",
+    path: "/dashboard/current-courses",
+    icon: <LibraryBig />,
   },
-  // { title: "المصروفات", path: "/messages", icon: <Wallet /> },
   {
     title: "الرسالة",
     path: "/dashboard/thesis",
@@ -87,6 +81,7 @@ export default function SideNav({ role }: SideNavProps) {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const { loggedInUser, setLoggedInUser, isLoading } = useUserContext();
+  const { personalData } = useUser();
 
   const handleLogout = async () => {
     try {
@@ -109,7 +104,7 @@ export default function SideNav({ role }: SideNavProps) {
     const [subMenuOpen, setSubMenuOpen] = useState(false);
 
     return (
-      <div className="my-3 text-[#8C8C8C]">
+      <div className="my-3 text-gray-600">
         {item.submenu ? (
           <>
             <button
@@ -203,31 +198,24 @@ export default function SideNav({ role }: SideNavProps) {
             {/* Footer Section */}
             <div className="footer">
               <div className="box bg-blue-600 text-white p-3 rounded-2xl">
-                <div className="welcome flex items-center justify-between">
-                  <h1 className="font-bold text-xl">مرحبا</h1>
-                  {/* <Star /> */}
-                </div>
-                <p className="mt-3">هذا الحساب خاص ب{loggedInUser.name}، نتمنى لك يوماً طيباً.</p>
+                <h1 className="font-bold text-xl flex items-center justify-between">
+                  مرحبًا {loggedInUser?.name.split(" ").slice(0, 2).join(" ")}{" "}
+                  <Star className="text-yellow-200" />
+                </h1>
+                <p className="mt-3">نتمنى لك يوماً طيباً.</p>
               </div>
-              <div className="user flex mt-3 gap-2 items-center justify-between">
-                <div className="flex gap-5">
-                  <img src="/avatar.jpg" width={40} height={40} alt="avatar" />
-                  <div className="info">
-                    <h2 className="h2">{loggedInUser.name}</h2>
-                    {/* TODO: Is it a good idea to show emails? */}
-                    {/* <p className="text-sm text-[#8C8C8C]">
-                      Waleed44@scu.edu.org
-                    </p> */}
-                  </div>
+              <div className="flex mt-3 items-center justify-between">
+                {/* <Image src={personalData?.imageUrl} width={40} height={40} alt="avatar" /> */}
+                <div className="info">
+                  <h2 className="h2">{loggedInUser?.name}</h2>
+                  {/* <p className="text-sm text-gray-600">{personalData?.email}</p> */}
                 </div>
                 <Popover>
                   <PopoverTrigger asChild>
-                    <div className="cursor-pointer">
-                      <LogOut />
-                    </div>
+                    <LogOut className="cursor-pointer" />
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-3 cursor-pointer">
-                    <button onClick={() => handleLogout()} className="logout outline-none">
+                    <button onClick={() => handleLogout()} className="outline-none">
                       تسجيل الخروج
                     </button>
                   </PopoverContent>

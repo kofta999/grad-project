@@ -1,19 +1,28 @@
-"use client";
 import { Button } from "@/components/ui/button";
-import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  CardDescription,
+  CardGrid,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { apiClient } from "@/lib/client";
 import { useState, ChangeEvent } from "react";
 import toast from "react-hot-toast";
 import { BookmarkCheck, UploadCloud, CheckCircle2, Loader2, Send } from "lucide-react";
-import type { SubmitThesisRequest, ThesisResponse } from "@/lib/types";
+import type { SubmitThesisRequest, SubmitThesisResponse, ThesisResponse } from "@/lib/types";
+import { SpacingWrapper } from "../ui/spacing-wrapper";
+import { ErrorMessage } from "../ui/error-message";
+import { Loader } from "@/components/ui/loader";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const ACCEPTED_FILE_TYPES = ["application/pdf"];
 
 interface ThesisSubmitFormProps {
-  onSubmissionSuccess?: (response: ThesisResponse) => void;
+  onSubmissionSuccess: (response: ThesisResponse) => void;
 }
 
 export function ThesisSubmitForm({ onSubmissionSuccess }: ThesisSubmitFormProps) {
@@ -56,11 +65,12 @@ export function ThesisSubmitForm({ onSubmissionSuccess }: ThesisSubmitFormProps)
 
       // Here the create endpoint returns {} instead of the created thesis
       // So we need to either refresh the page or query the api for the thesis
+      // Kofta: I'll fix that then xd
       const result = await response.json();
       toast.success("تم تقديم الرسالة بنجاح", { id: toastId });
       setFormValues({ title: "", attachmentUrl: "" });
 
-      onSubmissionSuccess?.(result as any);
+      onSubmissionSuccess(result);
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "حدث خطأ غير متوقع";
       toast.error(errorMessage, { id: toastId });
@@ -118,108 +128,100 @@ export function ThesisSubmitForm({ onSubmissionSuccess }: ThesisSubmitFormProps)
   };
 
   return (
-    <div className="max-w-2xl mx-auto p-4">
-      <Card className="rounded-xl shadow-lg border-0 overflow-hidden">
-        <CardHeader className="bg-gradient-to-r from-blue-600 to-blue-800 p-6">
-          <div className="flex flex-col items-center space-y-2">
-            <BookmarkCheck className="h-8 w-8 text-yellow-300" />
-            <CardTitle className="text-white text-2xl font-bold text-center">
-              تقديم الرسالة الأكاديمية
-            </CardTitle>
-            <CardDescription className="text-blue-100 flex items-center gap-2">
-              <span className="h-2 w-2 bg-yellow-300 rounded-full animate-pulse"></span>
-              التقديم متاح الآن
-            </CardDescription>
-          </div>
-        </CardHeader>
+    <Card className="overflow-hidden">
+      <CardHeader className="bg-gradient-to-r from-blue-600 to-blue-800 p-6">
+        <SpacingWrapper className="flex flex-col items-center">
+          <BookmarkCheck className="h-8 w-8 text-yellow-300" />
+          <CardTitle className="text-white text-2xl font-bold text-center">
+            تقديم الرسالة الأكاديمية
+          </CardTitle>
+          <CardDescription className="text-blue-100 flex items-center gap-2 text-center">
+            <span className="h-2 w-2 bg-yellow-300 rounded-full animate-pulse"></span>
+            التقديم متاح الآن
+          </CardDescription>
+        </SpacingWrapper>
+      </CardHeader>
 
-        <CardContent className="p-6 md:p-8 space-y-6">
-          <div className="space-y-6">
-            <div className="space-y-3">
-              <Label htmlFor="title" className="text-gray-700 font-medium block text-right">
-                عنوان الرسالة <span className="text-yellow-500">*</span>
-              </Label>
-              <Input
-                id="title"
-                value={formValues.title}
-                onChange={handleTitleChange}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-right"
-                placeholder="أدخل العنوان الكامل للرسالة"
-                required
-                minLength={1}
-                maxLength={200}
-              />
-            </div>
+      <CardContent>
+        <CardGrid className="md:grid-cols-1">
+          <SpacingWrapper>
+            <Label htmlFor="title">
+              عنوان الرسالة <span className="text-yellow-500">*</span>
+            </Label>
+            <Input
+              id="title"
+              value={formValues.title}
+              onChange={handleTitleChange}
+              placeholder="أدخل العنوان الكامل للرسالة"
+              required
+              minLength={1}
+              maxLength={200}
+            />
+          </SpacingWrapper>
 
-            <div className="space-y-3">
-              <Label className="text-gray-700 font-medium block text-right">
-                ملف الرسالة (PDF) <span className="text-yellow-500">*</span>
-              </Label>
+          <SpacingWrapper>
+            <Label>
+              ملف الرسالة (PDF) <span className="text-yellow-500">*</span>
+            </Label>
 
-              <label
-                htmlFor="attachment"
-                className={`relative cursor-pointer flex flex-col items-center justify-center border-2 border-dashed rounded-xl p-8 hover:border-blue-500 transition-colors ${
-                  formValues.attachmentUrl
-                    ? "border-green-500 bg-green-50"
-                    : "border-gray-300 bg-gray-50"
-                }`}
-              >
-                <div className="flex flex-col items-center text-center">
-                  {formValues.attachmentUrl ? (
-                    <>
-                      <CheckCircle2 className="h-10 w-10 text-green-500 mb-3" />
-                      <p className="font-medium text-green-600">✓ تم اختيار الملف</p>
-                      <p className="text-sm text-gray-600 mt-1 truncate max-w-xs">
-                        {formValues.attachmentUrl.split("/").pop()}
-                      </p>
-                    </>
-                  ) : (
-                    <>
-                      <UploadCloud className="h-10 w-10 text-blue-500 mb-3" />
-                      <p className="font-medium text-gray-600">اضغط لرفع الملف أو اسحبه هنا</p>
-                      {isUploading && (
-                        <Loader2 className="h-5 w-5 animate-spin text-blue-500 mt-2" />
-                      )}
-                    </>
-                  )}
-                </div>
-                <input
-                  id="attachment"
-                  type="file"
-                  accept=".pdf,application/pdf"
-                  className="sr-only"
-                  onChange={handleFileChange}
-                />
-              </label>
-              <p className="text-xs text-gray-500 text-right mt-1">
-                الحد الأقصى لحجم الملف: 5 ميجابايت - PDF فقط
-              </p>
-            </div>
-
-            <div className="pt-4">
-              <Button
-                onClick={submitForm}
-                className="w-full py-3 px-6 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-medium rounded-lg shadow-md transition-all transform hover:scale-[1.02]"
-                disabled={
-                  isSubmitting || isUploading || !formValues.title || !formValues.attachmentUrl
-                }
-              >
-                {isSubmitting ? (
-                  <span className="flex items-center justify-center gap-2">
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                    جاري التقديم...
-                  </span>
+            <Label
+              htmlFor="attachment"
+              className={`relative cursor-pointer flex flex-col items-center justify-center border-2 border-dashed rounded-xl p-8 hover:border-blue-500 transition-colors ${
+                formValues.attachmentUrl
+                  ? "border-green-500 bg-green-50"
+                  : "border-gray-300 bg-gray-50"
+              }`}
+            >
+              <div className="flex flex-col items-center text-center">
+                {formValues.attachmentUrl ? (
+                  <>
+                    <CheckCircle2 className="h-10 w-10 text-green-500 mb-3" />
+                    <p className="font-medium text-green-600">✓ تم اختيار الملف</p>
+                    <p className="text-sm text-gray-600 mt-1 truncate max-w-xs">
+                      {formValues.attachmentUrl.split("/").pop()}
+                    </p>
+                  </>
                 ) : (
-                  <span className="flex items-center justify-center gap-2">
-                    <Send className="h-4 w-4" />
-                    تقديم الرسالة
-                  </span>
+                  <>
+                    <UploadCloud className="h-10 w-10 text-blue-500 mb-3" />
+                    <p className="font-medium text-gray-600">اضغط لرفع الملف</p>
+                    {isUploading && <Loader2 className="h-5 w-5 animate-spin text-blue-500 mt-2" />}
+                  </>
                 )}
-              </Button>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
+              </div>
+              <Input
+                id="attachment"
+                type="file"
+                accept=".pdf,application/pdf"
+                className="sr-only"
+                onChange={handleFileChange}
+              />
+            </Label>
+            <ErrorMessage message="الحد الأقصى لحجم الملف: 5 ميجابايت - PDF فقط" />
+          </SpacingWrapper>
+
+          <SpacingWrapper>
+            <Button
+              onClick={submitForm}
+              className="w-full py-3 px-6 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-medium rounded-lg shadow-md"
+              disabled={
+                isSubmitting || isUploading || !formValues.title || !formValues.attachmentUrl
+              }
+            >
+              {isSubmitting ? (
+                <span className="flex items-center justify-center gap-2">
+                  <Loader className="h-4 w-4" />
+                </span>
+              ) : (
+                <span className="flex items-center justify-center gap-2">
+                  <Send className="h-4 w-4" />
+                  تقديم الرسالة
+                </span>
+              )}
+            </Button>
+          </SpacingWrapper>
+        </CardGrid>
+      </CardContent>
+    </Card>
   );
 }

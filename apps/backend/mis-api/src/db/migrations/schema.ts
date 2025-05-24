@@ -1,14 +1,15 @@
 import {
   pgTable,
-  unique,
   serial,
-  text,
-  boolean,
-  date,
-  timestamp,
-  index,
+  varchar,
   foreignKey,
   integer,
+  date,
+  unique,
+  text,
+  boolean,
+  timestamp,
+  index,
   real,
   primaryKey,
   pgView,
@@ -29,6 +30,37 @@ export const martialStatus = pgEnum("martial_status", [
   "other",
 ]);
 export const semesterType = pgEnum("semester_type", ["first", "second", "third"]);
+
+export const countries = pgTable("countries", {
+  countryId: serial("country_id").primaryKey().notNull(),
+  nameAr: varchar("name_ar", { length: 255 }).notNull(),
+  nameEn: varchar("name_en", { length: 255 }).notNull(),
+  code: varchar({ length: 10 }).notNull(),
+});
+
+export const cities = pgTable(
+  "cities",
+  {
+    cityId: serial("city_id").primaryKey().notNull(),
+    nameEn: varchar("name_en", { length: 255 }).notNull(),
+    nameAr: varchar("name_ar", { length: 255 }).notNull(),
+    code: varchar({ length: 10 }).notNull(),
+    countryId: integer("country_id").notNull(),
+  },
+  (table) => [
+    foreignKey({
+      columns: [table.countryId],
+      foreignColumns: [countries.countryId],
+      name: "cities_country_id_fkey",
+    }),
+  ]
+);
+
+export const academicYears = pgTable("academic_years", {
+  academicYearId: serial("academic_year_id").primaryKey().notNull(),
+  startDate: date("start_date").notNull(),
+  endDate: date("end_date").notNull(),
+});
 
 export const students = pgTable(
   "students",
@@ -64,6 +96,16 @@ export const students = pgTable(
   },
   (table) => [unique("students_email_key").on(table.email)]
 );
+
+export const departments = pgTable("departments", {
+  departmentId: serial("department_id").primaryKey().notNull(),
+  code: text().notNull(),
+  title: text().notNull(),
+  type: departmentType().notNull(),
+  coursesHours: integer("courses_hours").notNull(),
+  compulsoryHours: integer("compulsory_hours").notNull(),
+  thesisHours: integer("thesis_hours").notNull(),
+});
 
 export const applications = pgTable(
   "applications",
@@ -126,22 +168,6 @@ export const registerations = pgTable(
   ]
 );
 
-export const academicYears = pgTable("academic_years", {
-  academicYearId: serial("academic_year_id").primaryKey().notNull(),
-  startDate: date("start_date").notNull(),
-  endDate: date("end_date").notNull(),
-});
-
-export const departments = pgTable("departments", {
-  departmentId: serial("department_id").primaryKey().notNull(),
-  code: text().notNull(),
-  title: text().notNull(),
-  type: departmentType().notNull(),
-  coursesHours: integer("courses_hours").notNull(),
-  compulsoryHours: integer("compulsory_hours").notNull(),
-  thesisHours: integer("thesis_hours").notNull(),
-});
-
 export const attachments = pgTable(
   "attachments",
   {
@@ -169,8 +195,8 @@ export const addresses = pgTable(
     addressId: serial("address_id").primaryKey().notNull(),
     applicationId: integer("application_id").notNull(),
     fullAddress: text("full_address").notNull(),
-    country: text().notNull(),
-    city: text().notNull(),
+    countryId: integer("country_id").notNull(),
+    cityId: integer("city_id").notNull(),
     type: addressType().notNull(),
   },
   (table) => [
@@ -182,6 +208,16 @@ export const addresses = pgTable(
       columns: [table.applicationId],
       foreignColumns: [applications.applicationId],
       name: "addresses_application_id_fkey",
+    }),
+    foreignKey({
+      columns: [table.countryId],
+      foreignColumns: [countries.countryId],
+      name: "addresses_country_id_fkey",
+    }),
+    foreignKey({
+      columns: [table.cityId],
+      foreignColumns: [cities.cityId],
+      name: "addresses_city_id_fkey",
     }),
   ]
 );
@@ -321,7 +357,7 @@ export const courseRegistrations = pgTable(
 export const courseResults = pgTable(
   "course_results",
   {
-    resultId: serial("result_id").primaryKey().notNull(),
+    courseResultId: serial("course_result_id").primaryKey().notNull(),
     courseRegistrationId: integer("course_registration_id").notNull(),
     grade: integer().notNull(),
   },
@@ -362,6 +398,13 @@ export const theses = pgTable(
   ]
 );
 
+export const reports = pgTable("reports", {
+  reportId: serial("report_id").primaryKey().notNull(),
+  type: text().notNull(),
+  title: text().notNull(),
+  attachmentUrl: text("attachment_url").notNull(),
+});
+
 export const departmentCourses = pgTable(
   "department_courses",
   {
@@ -380,10 +423,7 @@ export const departmentCourses = pgTable(
       foreignColumns: [departments.departmentId],
       name: "department_courses_department_id_fkey",
     }),
-    primaryKey({
-      columns: [table.courseId, table.departmentId],
-      name: "department_courses_pkey",
-    }),
+    primaryKey({ columns: [table.courseId, table.departmentId], name: "department_courses_pkey" }),
   ]
 );
 export const adminApplicationsList = pgView("admin_applications_list", {
@@ -403,11 +443,9 @@ export const acceptedApplications = pgView("accepted_applications", {
   // You can use { mode: "bigint" } if numbers are exceeding js number limitations
   totalCompletedHours: bigint("total_completed_hours", { mode: "number" }),
   // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-  completedCompulsoryHours: bigint("completed_compulsory_hours", {
-    mode: "number",
-  }),
+  completedCompulsoryHours: bigint("completed_compulsory_hours", { mode: "number" }),
 }).as(
-  sql`SELECT a.application_id, a.student_id, r.department_id, COALESCE(sum( CASE WHEN c_res.grade >= 50 THEN c.total_hours ELSE 0 END), 0::bigint) AS total_completed_hours, COALESCE(sum( CASE WHEN d_c.is_compulsory = true AND c_res.grade >= 50 THEN c.total_hours ELSE 0 END), 0::bigint) AS completed_compulsory_hours FROM applications a JOIN registerations r ON r.application_id = a.application_id LEFT JOIN course_registrations c_reg ON c_reg.application_id = a.application_id LEFT JOIN course_results c_res ON c_res.course_registration_id = c_reg.course_registration_id LEFT JOIN courses c ON c.course_id = c_reg.course_id LEFT JOIN department_courses d_c ON d_c.course_id = c_reg.course_id AND d_c.department_id = r.department_id WHERE a.is_admin_accepted = true GROUP BY a.application_id, r.department_id`
+  sql`SELECT a.application_id, a.student_id, r.department_id, COALESCE(sum( CASE WHEN c_res.grade >= 60 THEN c.total_hours ELSE 0 END), 0::bigint) AS total_completed_hours, COALESCE(sum( CASE WHEN d_c.is_compulsory = true AND c_res.grade >= 60 THEN c.total_hours ELSE 0 END), 0::bigint) AS completed_compulsory_hours FROM applications a JOIN registerations r ON r.application_id = a.application_id LEFT JOIN course_registrations c_reg ON c_reg.application_id = a.application_id LEFT JOIN course_results c_res ON c_res.course_registration_id = c_reg.course_registration_id LEFT JOIN courses c ON c.course_id = c_reg.course_id LEFT JOIN department_courses d_c ON d_c.course_id = c_reg.course_id AND d_c.department_id = r.department_id WHERE a.is_admin_accepted = true GROUP BY a.application_id, r.department_id`
 );
 
 export const detailedCourseRegistrationsView = pgView("detailed_course_registrations_view", {
