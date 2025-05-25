@@ -22,7 +22,7 @@ import { InferResponseType } from "@repo/mis-api";
 import toast from "react-hot-toast";
 import { LibraryBig } from "lucide-react";
 import { Loader } from "@/components/ui/loader";
-import useAcademicProgress from "@/hooks/use-acadmic-progress";
+import useAcademicProgress from "@/hooks/use-academic-progress";
 
 type CoursesType = InferResponseType<typeof apiClient.students.me.courses.$get, 200>;
 
