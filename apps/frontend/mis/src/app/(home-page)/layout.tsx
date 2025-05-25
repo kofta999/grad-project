@@ -1,7 +1,7 @@
 import Footer from "@/components/home/footer";
 import Navbar from "@/components/home/navbar";
 import Head from "next/head";
-import React from "react"; // Import React
+import React from "react"; 
 
 export default async function Page({ children }: { children: React.ReactNode }) {
   return (
