@@ -206,7 +206,7 @@ export default function SideNav({ role }: SideNavProps) {
               </div>
               <div className="flex mt-3 items-center justify-between">
                 {loggedInUser.role === "student" && (
-                  <Image src={personalData?.imageUrl} width={40} height={40} alt="avatar" />
+                  <Image src={personalData?.imageUrl || "/avatar.jpg"} width={40} height={40} alt="avatar" />
                 )}
                 <div className="info">
                   <h2 className="h2">{loggedInUser?.name}</h2>
