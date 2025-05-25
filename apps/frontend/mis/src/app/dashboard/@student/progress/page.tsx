@@ -13,11 +13,11 @@ import {
 } from "@/components/ui/table";
 import { Loader } from "@/components/ui/loader";
 import { Calendar } from "lucide-react";
-import useAcadmicProgress from "@/hooks/use-acadmic-progress";
+import useAcademicProgress from "@/hooks/use-academic-progress";
 
 export default function Page() {
   const [semester] = useState(["first", "second", "third"]);
-  const { academicYears, semesterCourses, loading } = useAcadmicProgress();
+  const { academicYears, semesterCourses, loading } = useAcademicProgress();
 
   if (academicYears.length === 0 && semesterCourses.length > 0) {
     return (

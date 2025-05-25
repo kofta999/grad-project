@@ -22,7 +22,7 @@ type SemesterCourses = {
   courses: Course[];
 };
 
-export default function useAcadmicProgress() {
+export default function useAcademicProgress() {
   const [academicYears, setAcademicYears] = useState<AcademicYear[]>([]);
   const [currentAcademicYear, setCurrentAcademicYear] = useState<AcademicYear | null>(null);
 

@@ -22,7 +22,7 @@ import { InferResponseType } from "@repo/mis-api";
 import toast from "react-hot-toast";
 import { LibraryBig } from "lucide-react";
 import { Loader } from "@/components/ui/loader";
-import useAcadmicProgress from "@/hooks/use-acadmic-progress";
+import useAcademicProgress from "@/hooks/use-acadmic-progress";
 
 type CoursesType = InferResponseType<typeof apiClient.students.me.courses.$get, 200>;
 
@@ -49,7 +49,7 @@ type SemesterCourses = {
 };
 
 export default function Page() {
-  const { currentAcademicYear, incompleteSemester, loading } = useAcadmicProgress();
+  const { currentAcademicYear, incompleteSemester, loading } = useAcademicProgress();
 
   console.log(currentAcademicYear, incompleteSemester);
 
