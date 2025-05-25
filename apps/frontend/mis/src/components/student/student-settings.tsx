@@ -23,7 +23,6 @@ export default function Settings() {
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const { applicationData } = useUser();
-  console.log(applicationData);
   const [applicationId, setApplicationId] = useState<number | undefined>(
     applicationData?.applicationId
   );
@@ -123,12 +122,12 @@ export default function Settings() {
     initialValues: {
       permanentAddress: {
         cityId: 0,
-        countryId: 0,
+        countryId: -1,
         fullAddress: "",
       },
       currentAddress: {
         cityId: 0,
-        countryId: 0,
+        countryId: -1,
         fullAddress: "",
       },
       emergencyContact: {
@@ -145,7 +144,7 @@ export default function Settings() {
   let formikStep2 = useFormik<ApplicationStep2Type>({
     initialValues: {
       qualification: {
-        countryId: 0,
+        countryId: -1,
         university: "",
         faculty: "",
         type: "",

@@ -8,7 +8,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { ErrorMessage } from "@/components/ui/error-message";
 import { apiClient } from "@/lib/client";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 type Country = {
   countryId: number;
@@ -35,6 +35,11 @@ export default function CountrySelect({
   required,
 }: Props) {
   const [countryList, setCountryList] = useState<Country[]>([]);
+  const [_open, _setOpen] = useState(false);
+  const selectedOption = useMemo(
+    () => countryList.find((country) => country.countryId.toString() === value),
+    [value, countryList]
+  );
 
   const getCountries = async () => {
     try {
@@ -55,18 +60,29 @@ export default function CountrySelect({
       <Label className="mb-2">
         {label} {required && <span className="text-red-500">*</span>}
       </Label>
-      <Select value={value} onValueChange={onChange}>
+      <Select
+        value={selectedOption?.countryId.toString() ?? ""}
+        onValueChange={(value) => {
+          const country = countryList.find((country) => country.countryId.toString() === value);
+          if (country) {
+            onChange(country.countryId.toString());
+          }
+        }}
+        open={_open}
+        onOpenChange={(open) => _setOpen(open)}
+      >
         <SelectTrigger>
-          <SelectValue placeholder="اختر الدولة" />
+          <span className="pointer-events-none">{selectedOption?.nameAr ?? "اختر الدولة"}</span>
         </SelectTrigger>
-        <SelectContent>
-          {countryList &&
-            countryList?.map((country) => (
+        {countryList.length >= 0 && _open && (
+          <SelectContent>
+            {countryList.map((country) => (
               <SelectItem key={country.countryId} value={country.countryId.toString()}>
                 {country.nameAr}
               </SelectItem>
             ))}
-        </SelectContent>
+          </SelectContent>
+        )}
       </Select>
       {touched && error && <ErrorMessage message={error} />}
     </>

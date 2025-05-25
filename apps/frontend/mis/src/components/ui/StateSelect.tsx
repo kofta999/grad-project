@@ -37,7 +37,6 @@ export default function StateSelect({
   required,
 }: Props) {
   const [stateList, setStateList] = useState<State[]>([]);
-  console.log({ value });
 
   const getStates = async (countryCode: string) => {
     try {

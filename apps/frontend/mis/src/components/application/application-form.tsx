@@ -50,7 +50,6 @@ export default function ApplicationForm() {
   const handleStep2Submit = async (values: ApplicationStep2Type) => {
     try {
       await formikStep2.validateForm();
-      console.log(formikStep1.values);
       if (Object.keys(formikStep2.errors).length === 0) {
         setLoading(true);
         const res = await apiClient.students.me.applications.$post({
@@ -76,7 +75,6 @@ export default function ApplicationForm() {
         toast.error("الرجاء تصحيح الأخطاء قبل المتابعة.");
       }
     } catch (e) {
-      console.log(formikStep2.values);
       setLoading(false);
       toast.error("حدث خطأ غير متوقع. الرجاء المحاولة مرة أخرى.");
     }
@@ -123,12 +121,12 @@ export default function ApplicationForm() {
     initialValues: {
       permanentAddress: {
         cityId: 0,
-        countryId: 0,
+        countryId: -1,
         fullAddress: "",
       },
       currentAddress: {
         cityId: 0,
-        countryId: 0,
+        countryId: -1,
         fullAddress: "",
       },
       emergencyContact: {
@@ -145,7 +143,7 @@ export default function ApplicationForm() {
   let formikStep2 = useFormik<ApplicationStep2Type>({
     initialValues: {
       qualification: {
-        countryId: 0,
+        countryId: -1,
         university: "",
         faculty: "",
         type: "",

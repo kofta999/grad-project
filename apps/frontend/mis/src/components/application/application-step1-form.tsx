@@ -18,7 +18,6 @@ interface Step1Props {
 
 export default function ApplicationStep1Form({ formik }: Step1Props) {
   const pathname = usePathname();
-  console.log({ formik: formik.values });
 
   return (
     <Container>
@@ -63,7 +62,6 @@ export default function ApplicationStep1Form({ formik }: Step1Props) {
                   error={formik.errors.permanentAddress?.cityId}
                   touched={formik.touched.permanentAddress?.cityId}
                   onChange={(value) => {
-                    console.log("form value", value);
                     formik.setFieldValue("permanentAddress.cityId", value ? parseInt(value) : 0);
                   }}
                   required={pathname === "/dashboard/applications"}

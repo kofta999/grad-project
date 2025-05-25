@@ -17,8 +17,6 @@ const courseService = new CourseService();
 export const getAllApplications: AppRouteHandler<GetAllApplicationsRoute> = async (c) => {
   const { nameAr, page, sortName, status } = c.req.valid("query");
 
-  console.log(c.req.valid("query"));
-
   const applicationsList = await adminApplicationService.getAllApplications({
     page,
     sortByName: sortName,
