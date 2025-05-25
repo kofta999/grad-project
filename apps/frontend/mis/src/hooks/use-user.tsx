@@ -1,7 +1,9 @@
 import { apiClient } from "@/lib/client";
 import React, { useEffect, useState } from "react";
+import { useUserContext } from "@/context/user-context";
 
 export default function useUser() {
+  const { loggedInUser } = useUserContext();
   const [personalData, setPersonalData] = useState<any>(null);
   const [applicationData, setApplicationData] = useState<any>(null);
 
@@ -20,8 +22,10 @@ export default function useUser() {
   };
 
   useEffect(() => {
-    getUserPersonalData();
-    getUserApplicationData();
+    if (loggedInUser?.role === "student") {
+      getUserPersonalData();
+      getUserApplicationData();
+    }
   }, []);
 
   return {
