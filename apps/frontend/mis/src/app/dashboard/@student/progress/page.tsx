@@ -1,8 +1,7 @@
 "use client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Container } from "@/components/ui/container";
-import React, { useEffect, useState } from "react";
-import { apiClient } from "@/lib/client";
+import React, { useState } from "react";
 import {
   Table,
   TableBody,
