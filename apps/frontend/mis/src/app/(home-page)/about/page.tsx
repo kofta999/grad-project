@@ -101,7 +101,7 @@ export default function AboutPage() {
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {[
               {
-                name: "الهندسة المعمارية",
+                name: "العمارة والتخطيط العمراني",
                 icon: <GraduationCap className="text-blue-600" size={32} />,
               },
               {
