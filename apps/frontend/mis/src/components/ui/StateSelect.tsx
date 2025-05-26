@@ -65,12 +65,12 @@ export default function StateSelect({
           <SelectValue placeholder="اختر المدينة" />
         </SelectTrigger>
         <SelectContent>
-          {stateList.length === 0 ? (
+          {stateList?.length === 0 ? (
             <SelectItem disabled value="لا يوجد مدن">
               لا يوجد مدن
             </SelectItem>
           ) : (
-            stateList.map((state) => (
+            stateList?.map((state) => (
               <SelectItem key={state.cityId} value={state.cityId.toString()}>
                 {state.nameAr}
               </SelectItem>

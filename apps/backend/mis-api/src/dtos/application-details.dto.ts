@@ -1,3 +1,4 @@
+import { DEPARTMENT_TYPES } from "@/lib/constants";
 import { APPLICATION_STATUSES } from "@/lib/constants";
 import { z } from "zod";
 
@@ -9,6 +10,8 @@ export const ApplicationDetailsSchema = z.object({
     z.object({
       addressId: z.number(),
       fullAddress: z.string(),
+      countryId: z.number(),
+      cityId: z.number(),
       country: z.string(),
       city: z.string(),
       type: z.enum(["permanent", "current"]),
@@ -16,6 +19,7 @@ export const ApplicationDetailsSchema = z.object({
   ),
   qualification: z.object({
     qualificationId: z.number(),
+    countryId: z.number(),
     country: z.string(),
     university: z.string(),
     faculty: z.string(),
@@ -39,10 +43,11 @@ export const ApplicationDetailsSchema = z.object({
     .nullable(),
   registration: z.object({
     registerationId: z.number(),
+    departmentId: z.number(),
     academicYearId: z.number(),
     faculty: z.string(),
     academicYear: z.string(),
-    academicDegree: z.string(),
+    academicDegree: z.enum(DEPARTMENT_TYPES),
     academicProgram: z.string(),
   }),
   attachments: z.array(

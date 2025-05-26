@@ -248,7 +248,7 @@ export const academicQualifications = pgTable(
   {
     qualificationId: serial("qualification_id").primaryKey().notNull(),
     applicationId: integer("application_id").notNull(),
-    country: text().notNull(),
+    countryId: integer("country_id").notNull(),
     university: text().notNull(),
     faculty: text().notNull(),
     type: text().notNull(),
@@ -269,6 +269,11 @@ export const academicQualifications = pgTable(
       columns: [table.applicationId],
       foreignColumns: [applications.applicationId],
       name: "academic_qualifications_application_id_fkey",
+    }),
+    foreignKey({
+      columns: [table.countryId],
+      foreignColumns: [countries.countryId],
+      name: "academic_qualifications_country_id_fkey",
     }),
     unique("academic_qualifications_application_id_key").on(table.applicationId),
   ]

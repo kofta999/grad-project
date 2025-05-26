@@ -256,7 +256,7 @@ export const academicQualifications = pgTable(
   {
     qualificationId: serial("qualification_id").primaryKey().notNull(),
     applicationId: integer("application_id").notNull(),
-    country: text().notNull(),
+    countryId: integer("country_id").notNull(),
     university: text().notNull(),
     faculty: text().notNull(),
     type: text().notNull(),
@@ -268,22 +268,23 @@ export const academicQualifications = pgTable(
     grade: text().notNull(),
     gpa: real().notNull(),
   },
-  (table) => {
-    return {
-      applicationIdIdx: index("academic_qualifications_application_id_idx").using(
-        "btree",
-        table.applicationId.asc().nullsLast()
-      ),
-      academicQualificationsApplicationIdFkey: foreignKey({
-        columns: [table.applicationId],
-        foreignColumns: [applications.applicationId],
-        name: "academic_qualifications_application_id_fkey",
-      }),
-      academicQualificationsApplicationIdKey: unique(
-        "academic_qualifications_application_id_key"
-      ).on(table.applicationId),
-    };
-  }
+  (table) => [
+    index("academic_qualifications_application_id_idx").using(
+      "btree",
+      table.applicationId.asc().nullsLast().op("int4_ops")
+    ),
+    foreignKey({
+      columns: [table.applicationId],
+      foreignColumns: [applications.applicationId],
+      name: "academic_qualifications_application_id_fkey",
+    }),
+    foreignKey({
+      columns: [table.countryId],
+      foreignColumns: [countries.countryId],
+      name: "academic_qualifications_country_id_fkey",
+    }),
+    unique("academic_qualifications_application_id_key").on(table.applicationId),
+  ]
 );
 
 export const admins = pgTable(

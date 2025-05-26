@@ -25,7 +25,7 @@ export const CreateApplicationSchema = z.object({
     .optional(),
 
   qualification: z.object({
-    country: z.string(),
+    countryId: z.number(),
     university: z.string(),
     faculty: z.string(),
     type: z.string(),

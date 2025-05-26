@@ -1,32 +1,31 @@
 "use client";
-import { useEffect, useState } from "react";
-import { InferResponseType } from "@repo/mis-api";
-import { apiClient } from "@/lib/client";
-import { Progress } from "@/components/ui/progress";
-import toast, { Toaster } from "react-hot-toast";
+import React, { useEffect } from "react";
+import { useState } from "react";
 import { useFormik } from "formik";
-import { useRouter } from "next/navigation";
-import { useApplicationIdContext } from "@/context/application-id-context";
-import ApplicationStep1Form from "./application-step1-form";
-import ApplicationStep2Form from "./application-step2-form";
-import ApplicationStep3Form from "./application-step3-form";
+import ApplicationStep1Form from "@/components/application/application-step1-form";
+import ApplicationStep2Form from "@/components/application/application-step2-form";
+import ApplicationStep3Form from "@/components/application/application-step3-form";
+import { Progress } from "@/components/ui/progress";
 import {
   ApplicationStep1Schema,
   ApplicationStep2Schema,
   ApplicationStep3Schema,
 } from "@/lib/schemas";
 import { ApplicationStep2Type, ApplicationStep3Type, ApplicationStep1Type } from "@/lib/types";
+import toast, { Toaster } from "react-hot-toast";
+import { useRouter } from "next/navigation";
+import { apiClient } from "@/lib/client";
+import useUser from "@/hooks/use-user";
+import { InitialFormDataType } from "@/components/application/application-form";
 
-export type InitialFormDataType = {
-  currentAcademicYears: InferResponseType<(typeof apiClient)["academic-years"]["$get"]>;
-  availableDepartments: InferResponseType<(typeof apiClient)["departments"]["$get"]>;
-};
-
-export default function ApplicationForm() {
+export default function Settings() {
   const router = useRouter();
-  const [loading, setLoading] = useState(false);
   const [step, setStep] = useState(1);
-  const { applicationId, setApplicationId } = useApplicationIdContext();
+  const [loading, setLoading] = useState(false);
+  const { applicationData } = useUser();
+  const [applicationId, setApplicationId] = useState<number | undefined>(
+    applicationData?.applicationId
+  );
   const [initialData, setInitialData] = useState<InitialFormDataType>({
     currentAcademicYears: [],
     availableDepartments: [],
@@ -36,13 +35,14 @@ export default function ApplicationForm() {
     try {
       await formikStep1.validateForm();
       if (Object.keys(formikStep1.errors).length === 0) {
-        toast.success("تم تسجيل النموذج الاول بنجاح!");
+        toast.success("تم تعديل النموذج الاول بنجاح!");
         setStep(2);
         window.scrollTo(0, 0);
       } else {
         toast.error("الرجاء تصحيح الأخطاء قبل المتابعة.");
       }
-    } catch {
+    } catch (error) {
+      console.error(error);
       toast.error("حدث خطأ غير متوقع. الرجاء المحاولة مرة أخرى.");
     }
   };
@@ -52,7 +52,7 @@ export default function ApplicationForm() {
       await formikStep2.validateForm();
       if (Object.keys(formikStep2.errors).length === 0) {
         setLoading(true);
-        const res = await apiClient.students.me.applications.$post({
+        const res = await apiClient.students.me.applications.$patch({
           json: {
             ...values,
             ...formikStep1.values,
@@ -60,12 +60,15 @@ export default function ApplicationForm() {
             emergencyContact: formikStep1.values.emergencyContact.name
               ? formikStep1.values.emergencyContact
               : undefined,
+            qualification: {
+              ...values.qualification,
+              date: formikStep2.values.qualification.date.toLocaleDateString("en-US"),
+            },
           },
         });
+
         if (res.ok) {
-          const result: { applicationId: number } = await res.json();
           setLoading(false);
-          setApplicationId(result.applicationId);
           toast.success("تم التسجيل النموذج الثاني بنجاح!");
           setStep(3);
           window.scrollTo(0, 0);
@@ -74,7 +77,8 @@ export default function ApplicationForm() {
         setLoading(false);
         toast.error("الرجاء تصحيح الأخطاء قبل المتابعة.");
       }
-    } catch (e) {
+    } catch (error) {
+      console.error(error);
       setLoading(false);
       toast.error("حدث خطأ غير متوقع. الرجاء المحاولة مرة أخرى.");
     }
@@ -83,10 +87,7 @@ export default function ApplicationForm() {
   const handleStep3Submit = async (values: ApplicationStep3Type) => {
     try {
       await formikStep3.validateForm();
-      if (Object.keys(formikStep3.errors).length === 0) {
-        if (!applicationId) {
-          throw new Error("Application id not found");
-        }
+      if (Object.keys(formikStep3.errors).length === 0 && applicationId) {
         setLoading(true);
         const res = await apiClient.students.me.applications[":applicationId"]["attachments"].$post(
           {
@@ -94,7 +95,7 @@ export default function ApplicationForm() {
               applicationId: applicationId.toString(),
             },
             json: {
-              applicationId,
+              applicationId: applicationId,
               attachments: values.attachments,
             },
           }
@@ -136,7 +137,7 @@ export default function ApplicationForm() {
         address: "",
       },
     },
-    validationSchema: ApplicationStep1Schema,
+    // validationSchema: ApplicationStep1Schema,
     onSubmit: handleStep1Submit,
   });
 
@@ -174,8 +175,75 @@ export default function ApplicationForm() {
       attachments: [] as { type: string; attachmentUrl: string }[],
     },
     validationSchema: ApplicationStep3Schema,
-    onSubmit: handleStep3Submit,
+    // onSubmit: handleStep3Submit,
   });
+
+  useEffect(() => {
+    if (!applicationData) return;
+
+    const {
+      addresses = [],
+      emergencyContact,
+      qualification,
+      registration,
+      attachments = [],
+    } = applicationData;
+
+    // We can use ! here as the addresses MUST be there, or our backend is broken xd
+    const permanentAddress = addresses.find((addr) => addr.type === "permanent")!;
+    const currentAddress = addresses.find((addr) => addr.type === "current")!;
+
+    formikStep1.setValues({
+      permanentAddress: {
+        cityId: permanentAddress.cityId,
+        countryId: permanentAddress.countryId,
+        fullAddress: permanentAddress.fullAddress,
+      },
+      currentAddress: {
+        cityId: currentAddress.cityId,
+        countryId: currentAddress.countryId,
+        fullAddress: currentAddress.fullAddress,
+      },
+      emergencyContact: {
+        name: emergencyContact?.name || "",
+        phoneNumber: emergencyContact?.phoneNumber || "",
+        email: emergencyContact?.email || "",
+        address: emergencyContact?.address || "",
+      },
+    });
+
+    formikStep2.setValues({
+      qualification: {
+        countryId: qualification?.countryId,
+        university: qualification?.university || "",
+        faculty: qualification?.faculty || "",
+        type: qualification?.type || "",
+        qualification: qualification?.qualification || "",
+        specialization: qualification?.specialization || "",
+        year: qualification?.year || "",
+        date: qualification?.date ? new Date(qualification.date) : new Date(),
+        creditHours: qualification?.creditHours || false,
+        grade: qualification?.grade || "",
+        gpa: qualification?.gpa || 0,
+      },
+      registration: {
+        academicYearId: registration?.academicYearId || 0,
+        faculty: registration?.faculty || "",
+        academicDegree: registration?.academicDegree || ("diploma" as const),
+        departmentId: registration?.departmentId,
+      },
+    });
+
+    formikStep3.setValues({
+      attachmentType: "",
+      // @ts-ignore IDK but it works
+      attachmentFile: null,
+      attachments: attachments.map((att) => ({
+        type: att.type || "",
+        attachmentUrl: att.attachmentUrl || "",
+      })),
+    });
+  }, [applicationData]);
 
   useEffect(() => {
     const getAcademicYears = async () => {

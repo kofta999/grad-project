@@ -33,29 +33,29 @@ function nukeAndInitDB() {
 
   // Drop the existing database
   runCommand(
-    'docker exec -i mis_postgres psql -U mis_user -d postgres -c "DROP DATABASE IF EXISTS mis_db WITH (FORCE);"',
+    'docker exec -i mis_postgres psql -U mis_user -d postgres -c "DROP DATABASE IF EXISTS mis_db WITH (FORCE);"'
   );
 
   // Recreate the database
   runCommand(
-    'docker exec -i mis_postgres psql -U mis_user -d postgres -c "CREATE DATABASE mis_db;"',
+    'docker exec -i mis_postgres psql -U mis_user -d postgres -c "CREATE DATABASE mis_db;"'
   );
 
   // Run the initialization scripts
   runCommand(
-    "docker exec -i mis_postgres psql -U mis_user -d mis_db -f /docker-entrypoint-initdb.d/00-countries-cities.sql",
-  );
-  
-  runCommand(
-    "docker exec -i mis_postgres psql -U mis_user -d mis_db -f /docker-entrypoint-initdb.d/01-schema.sql",
-  );
-  
-  runCommand(
-    "docker exec -i mis_postgres psql -U mis_user -d mis_db -f /docker-entrypoint-initdb.d/02-courses-departments.sql",
+    "docker exec -i mis_postgres psql -U mis_user -d mis_db -f /docker-entrypoint-initdb.d/00-countries-cities.sql"
   );
 
   runCommand(
-    "docker exec -i mis_postgres psql -U mis_user -d mis_db -f /docker-entrypoint-initdb.d/03-seed.sql",
+    "docker exec -i mis_postgres psql -U mis_user -d mis_db -f /docker-entrypoint-initdb.d/01-schema.sql"
+  );
+
+  runCommand(
+    "docker exec -i mis_postgres psql -U mis_user -d mis_db -f /docker-entrypoint-initdb.d/02-courses-departments.sql"
+  );
+
+  runCommand(
+    "docker exec -i mis_postgres psql -U mis_user -d mis_db -f /docker-entrypoint-initdb.d/03-seed.sql"
   );
 }
 

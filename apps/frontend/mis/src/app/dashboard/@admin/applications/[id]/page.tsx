@@ -10,7 +10,6 @@ import { STATUS } from "@/lib/types";
 export default function Page() {
   const { id } = useParams();
   const { application, student } = useApplicationDataForAdmin(id as string);
-  console.log(application);
 
   const router = useRouter();
 

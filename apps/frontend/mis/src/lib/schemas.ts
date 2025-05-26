@@ -41,13 +41,13 @@ export const RegisterStep2Schema = Yup.object().shape({
 
 export const ApplicationStep1Schema = Yup.object().shape({
   permanentAddress: Yup.object().shape({
-    city: Yup.string().required("المدينة مطلوبة"),
-    country: Yup.string().required("الدولة مطلوبة"),
+    cityId: Yup.number().required("المدينة مطلوبة"),
+    countryId: Yup.number().required("الدولة مطلوبة"),
     fullAddress: Yup.string().required("العنوان الكامل مطلوب"),
   }),
   currentAddress: Yup.object().shape({
-    city: Yup.string().required("المدينة مطلوبة"),
-    country: Yup.string().required("الدولة مطلوبة"),
+    cityId: Yup.number().required("المدينة مطلوبة"),
+    countryId: Yup.number().required("الدولة مطلوبة"),
     fullAddress: Yup.string().required("العنوان الكامل مطلوب"),
   }),
   emergencyContact: Yup.object().shape(
@@ -95,7 +95,7 @@ export const ApplicationStep1Schema = Yup.object().shape({
 
 export const ApplicationStep2Schema = Yup.object().shape({
   qualification: Yup.object().shape({
-    country: Yup.string().required("الدولة مطلوبة"),
+    countryId: Yup.number().required("الدولة مطلوبة"),
     university: Yup.string().required("الجامعة مطلوبة"),
     faculty: Yup.string().required("الكلية مطلوبة"),
     type: Yup.string().required("النوع مطلوب"),

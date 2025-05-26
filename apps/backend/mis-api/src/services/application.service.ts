@@ -42,10 +42,12 @@ export abstract class ApplicationService implements IApplicationService {
         registration: removeApplicationId(registerations),
         academicYear: academicYears,
         department: departments,
+        qualificationCountry: countries,
       })
       .from(a)
       .innerJoin(addresses, eq(a.applicationId, addresses.applicationId))
       .innerJoin(academicQualifications, eq(a.applicationId, academicQualifications.applicationId))
+      .innerJoin(countries, eq(academicQualifications.countryId, countries.countryId))
       .leftJoin(emergencyContacts, eq(a.applicationId, emergencyContacts.applicationId))
       .innerJoin(registerations, eq(a.applicationId, registerations.applicationId))
       .innerJoin(academicYears, eq(registerations.academicYearId, academicYears.academicYearId))
@@ -54,7 +56,15 @@ export abstract class ApplicationService implements IApplicationService {
 
     if (applicationList.length === 0) return null;
 
-    const { application, academicYear, registration, department, ...rest } = applicationList[0];
+    const {
+      application,
+      academicYear,
+      registration,
+      department,
+      emergencyContact,
+      qualification,
+      qualificationCountry,
+    } = applicationList[0];
 
     const attachmentsList = await db.query.attachments.findMany({
       where: (f, { eq }) => eq(f.applicationId, application.applicationId),
@@ -69,12 +79,17 @@ export abstract class ApplicationService implements IApplicationService {
 
     return {
       ...application,
-      ...rest,
+      emergencyContact,
+      qualification: {
+        ...qualification,
+        country: qualificationCountry.nameAr,
+      },
       registration: {
         registerationId: registration.registerationId,
         academicDegree: department.type,
         faculty: registration.faculty,
         academicYearId: academicYear.academicYearId,
+        departmentId: registration.departmentId,
         academicYear: formatAcademicYear(academicYear),
         academicProgram: department.title,
       },

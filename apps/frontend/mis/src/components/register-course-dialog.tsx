@@ -104,7 +104,6 @@ export default function RegisterCourseDialog({
         toast.error(error.error);
       }
     } catch (error) {
-      console.log("Registration error:", error);
       toast.error("حدث خطأ أثناء تسجيل المادة");
     }
   };

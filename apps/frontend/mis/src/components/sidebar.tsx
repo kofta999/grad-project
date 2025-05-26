@@ -5,7 +5,6 @@ import {
   ChartLine,
   LibraryBig,
   File,
-  ChevronDown,
   Settings,
   Star,
   LogOut,
@@ -26,8 +25,6 @@ export type SideNavItem = {
   title: string;
   path: string;
   icon?: JSX.Element;
-  submenu?: boolean;
-  subMenuItems?: SideNavItem[];
 };
 
 const STUDENT_SIDEBAR_ITEMS = [
@@ -44,14 +41,9 @@ const STUDENT_SIDEBAR_ITEMS = [
     icon: <File />,
   },
   {
-    title: "الاعدادات",
+    title: "اعدادت التسجيل",
     path: "/dashboard/settings",
     icon: <Settings />,
-    submenu: true,
-    subMenuItems: [
-      { title: "الحساب", path: "/dashboard/settings/account" },
-      { title: "التسجيل", path: "/dashboard/settings/application" },
-    ],
   },
 ];
 
@@ -81,7 +73,9 @@ export default function SideNav({ role }: SideNavProps) {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const { loggedInUser, setLoggedInUser, isLoading } = useUserContext();
-  const { personalData } = useUser();
+  const { personalData, applicationData } = useUser();
+
+  const sidebarItems = role === "admin" ? ADMIN_SIDEBAR_ITEMS : STUDENT_SIDEBAR_ITEMS;
 
   const handleLogout = async () => {
     try {
@@ -101,58 +95,19 @@ export default function SideNav({ role }: SideNavProps) {
 
   const MenuItem = ({ item }: { item: any }) => {
     const pathname = usePathname();
-    const [subMenuOpen, setSubMenuOpen] = useState(false);
 
     return (
       <div className="my-3 text-gray-600">
-        {item.submenu ? (
-          <>
-            <button
-              onClick={() => setSubMenuOpen(!subMenuOpen)}
-              className={`flex items-center p-2 rounded-sm w-full justify-between ${
-                pathname.includes(item.path) ? "bg-blue-600 text-white hover:bg-blue-700" : ""
-              }`}
-            >
-              <div className="flex gap-3 items-center">
-                {item.icon}
-                <span className="text-md">{item.title}</span>
-              </div>
-              <div className={`flex ${subMenuOpen ? "rotate-180" : ""}`}>
-                <ChevronDown />
-              </div>
-            </button>
-
-            {subMenuOpen && (
-              <div className="mr-12 flex flex-col">
-                {item.subMenuItems?.map((subItem: any, idx: number) => (
-                  <Link
-                    key={idx}
-                    href={subItem.path}
-                    onClick={() => setIsOpen(false)}
-                    className={`mt-3 block p-2 rounded-sm ${
-                      pathname.includes(subItem.path)
-                        ? "bg-blue-600 text-white hover:bg-blue-700"
-                        : ""
-                    }`}
-                  >
-                    <span>{subItem.title}</span>
-                  </Link>
-                ))}
-              </div>
-            )}
-          </>
-        ) : (
-          <Link
-            href={item.path}
-            onClick={() => setIsOpen(false)}
-            className={`flex gap-3 p-2 items-center rounded-sm ${
-              pathname === item.path ? "bg-blue-600 text-white hover:bg-blue-700" : ""
-            }`}
-          >
-            {item.icon}
-            <span className="text-md flex">{item.title}</span>
-          </Link>
-        )}
+        <Link
+          href={item.path}
+          onClick={() => setIsOpen(false)}
+          className={`flex gap-3 p-2 items-center rounded-sm ${
+            pathname === item.path ? "bg-blue-600 text-white hover:bg-blue-700" : ""
+          }`}
+        >
+          {item.icon}
+          <span className="text-md flex">{item.title}</span>
+        </Link>
       </div>
     );
   };
@@ -186,13 +141,19 @@ export default function SideNav({ role }: SideNavProps) {
               <Link href="/" className="block" onClick={() => setIsOpen(false)}>
                 <Image src="/image.jpg" alt="logo" width={200} height={100} />
               </Link>
-
               {/* Navigation Items */}
-              {(role === "admin" ? ADMIN_SIDEBAR_ITEMS : STUDENT_SIDEBAR_ITEMS).map(
-                (item: any, idx: number) => (
-                  <MenuItem key={idx} item={item} />
-                )
-              )}
+              {sidebarItems.map((item: any, idx: number) => {
+                if (role === "student") {
+                  if (
+                    applicationData?.status === "accepted" &&
+                    item.path === "/dashboard/settings"
+                  ) {
+                    return null;
+                  }
+                }
+
+                return <MenuItem key={idx} item={item} />;
+              })}
             </div>
 
             {/* Footer Section */}
