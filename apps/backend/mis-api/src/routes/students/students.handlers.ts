@@ -144,9 +144,17 @@ export const deleteApplicationAttachment: AppRouteHandler<
   const studentId = c.var.session.get("id")!;
   const { applicationId, attachmentId } = c.req.valid("param");
 
-  const isOwned = studentApplicationService.isOwned(applicationId, studentId);
+  const application = await studentApplicationService.getApplicationByStudentId(studentId);
 
-  if (!isOwned) {
+  if (!application) {
+    return c.json({ message: "Application not found" }, HttpStatusCodes.NOT_FOUND);
+  }
+
+  if (application.status === "accepted") {
+    return c.json({ message: "Application already accepted" }, HttpStatusCodes.FORBIDDEN);
+  }
+
+  if (application.applicationId !== applicationId) {
     return c.json({ message: "Cannot delete this attachment" }, 403);
   }
 
@@ -154,7 +162,12 @@ export const deleteApplicationAttachment: AppRouteHandler<
     applicationId,
     attachmentId
   );
-  await storageService.deleteFile(attachment.attachmentUrl);
+
+  try {
+    await storageService.deleteFile(attachment.attachmentUrl);
+  } catch (error) {
+    console.error(error);
+  }
 
   c.status(HttpStatusCodes.NO_CONTENT);
 

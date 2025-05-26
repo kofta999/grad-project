@@ -51,7 +51,7 @@ export class StudentApplicationService
       .where(
         and(
           eq(attachments.attachmentId, attachmentId),
-          eq(applications.applicationId, applicationId)
+          eq(attachments.applicationId, applicationId)
         )
       )
       .returning();
