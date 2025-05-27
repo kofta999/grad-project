@@ -1,9 +1,31 @@
 import * as Yup from "yup";
 
 export const RegisterStep1Schema = Yup.object().shape({
-  fullNameAr: Yup.string().required("الاسم الكامل بالعربية مطلوب"),
-  fullNameEn: Yup.string().required("الاسم الكامل بالإنجليزية مطلوب"),
-  gender: Yup.boolean().required(),
+  fullNameAr: Yup.string()
+    .required("الاسم الكامل بالعربية مطلوب")
+    .test("is-four-words", "الاسم الكامل يجب أن يكون رباعي بالعربية فقط)", (value) => {
+      if (!value) return false;
+
+      const arabicOnlyRegex = /^[\u0600-\u06FF\s]+$/;
+      if (!arabicOnlyRegex.test(value.trim())) return false;
+
+      const regex = /عبد\s+(ال)?\S+|\S+/g;
+      const matches = value.trim().match(regex);
+
+      return matches && matches.length === 4 ? true : false;
+    }),
+  fullNameEn: Yup.string()
+    .required("الاسم الكامل بالإنجليزية مطلوب")
+    .test("is-four-words", "الاسم الكامل يجب أن يكون رباعي بالإنجليزية فقط", (value) => {
+      if (!value) return false;
+
+      const englishOnlyRegex = /^[A-Za-z\s]+$/;
+      if (!englishOnlyRegex.test(value.trim())) return false;
+
+      const words = value.trim().split(/\s+/);
+      return words.length === 4;
+    }),
+  gender: Yup.boolean().required("الجنس مطلوب"),
   nationality: Yup.string().required("الجنسية مطلوبة"),
   dob: Yup.date().typeError("تاريخ الميلاد غير صالح").required("تاريخ الميلاد مطلوب"),
   email: Yup.string().email("البريد الإلكتروني غير صالح").required("البريد الإلكتروني غير صالح"),
@@ -22,8 +44,6 @@ export const RegisterStep1Schema = Yup.object().shape({
 });
 
 export const RegisterStep2Schema = Yup.object().shape({
-  // Will not use url() because its too strict the errors even if the link is correct
-  // Trust me on this one lil bro
   imageUrl: Yup.string().required("الصورة الشخصية مطلوبة"),
   idType: Yup.string().oneOf(["national_id", "passport"]).required("نوع الهوية مطلوب"),
   idIssuanceDate: Yup.date()
@@ -34,9 +54,11 @@ export const RegisterStep2Schema = Yup.object().shape({
   martialStatus: Yup.string()
     .oneOf(["single", "married", "married_with_dependents", "divorced", "widow", "other"])
     .optional(),
-  isWorking: Yup.boolean().required(),
+  isWorking: Yup.boolean().required("حالة العمل مطلوبة"),
   jobType: Yup.string().optional(),
-  militaryStatus: Yup.string().required("حالة الخدمة العسكرية مطلوبة"),
+  militaryStatus: Yup.string()
+    .oneOf(["completed", "postponed", "permanent-exempt", "required", "not-requested"])
+    .required("حالة الخدمة العسكرية مطلوبة"),
 });
 
 export const ApplicationStep1Schema = Yup.object().shape({
@@ -121,29 +143,25 @@ export const ApplicationStep2Schema = Yup.object().shape({
       }),
   }),
   registration: Yup.object().shape({
-    academicYearId: Yup.number().required("السنة الدراسية مطلوبة").min(1, "السنة الدراسية مطلوبة"),
+    registerationId: Yup.number().optional(),
+    departmentId: Yup.number().required("البرنامج الاكاديمي مطلوب"),
+    academicYearId: Yup.number().required("السنة الدراسية مطلوبة"),
     faculty: Yup.string().required("الكلية مطلوبة"),
+    academicYear: Yup.string().required("السنة الدراسية مطلوبة"),
     academicDegree: Yup.string()
       .oneOf(["diploma", "master", "phd"])
       .required("الدرجة الأكاديمية مطلوبة"),
-    departmentId: Yup.number()
-      .min(1, "البرنامج الاكاديمي مطلوب")
-      .required("البرنامج الأكاديمي مطلوب"),
+    academicProgram: Yup.string().required("البرنامج الاكاديمي مطلوب"),
   }),
 });
 
 export const ApplicationStep3Schema = Yup.object().shape({
   attachmentType: Yup.string().required("نوع الهوية مطلوب"),
-  attachmentFile: Yup.mixed()
-    .required("الملف مطلوب")
-    .test("fileSize", "يجب أن لا يزيد الملف عن 2 ميجا بايت", (value) => {
-      if (!value) return false;
-      return (value as File).size <= 2 * 1024 * 1024;
-    }),
   attachments: Yup.array(
     Yup.object({
       type: Yup.string().required(),
       attachmentUrl: Yup.string().required(),
+      attachmentId: Yup.number().optional(),
     })
   ).required(),
 });

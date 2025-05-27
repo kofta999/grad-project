@@ -156,10 +156,13 @@ export default function ApplicationForm() {
         gpa: 0,
       },
       registration: {
+        registerationId: 0,
+        departmentId: 0,
         academicYearId: 0,
         faculty: "",
+        academicYear: "",
         academicDegree: "diploma",
-        departmentId: 0,
+        academicProgram: "",
       },
     },
     validationSchema: ApplicationStep2Schema,
@@ -169,9 +172,11 @@ export default function ApplicationForm() {
   let formikStep3 = useFormik<ApplicationStep3Type>({
     initialValues: {
       attachmentType: "",
-      // @ts-ignore idk
-      attachmentFile: null as File | null,
-      attachments: [] as { type: string; attachmentUrl: string }[],
+      attachments: [] as {
+        type: string;
+        attachmentUrl: string;
+        attachmentId?: number | undefined;
+      }[],
     },
     validationSchema: ApplicationStep3Schema,
     onSubmit: handleStep3Submit,
@@ -219,6 +224,7 @@ export default function ApplicationForm() {
           goPrevStep={() => setStep(2)}
           formik={formikStep3}
           loading={loading}
+          setLoading={setLoading}
         />
       )}
       <Toaster />

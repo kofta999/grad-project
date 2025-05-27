@@ -1,5 +1,5 @@
 import { Container, ContainerTitle } from "@/components/ui/container";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardGrid, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import {
@@ -22,6 +22,8 @@ import { usePathname } from "next/navigation";
 import { SpacingWrapper } from "../ui/spacing-wrapper";
 import { ErrorMessage } from "../ui/error-message";
 import CountrySelect from "../ui/CountrySelect";
+import { Loader } from "@/components/ui/loader";
+import DatePicker from "../ui/date-picker";
 
 interface Step2Props {
   goPrevStep: () => void;
@@ -37,7 +39,12 @@ export default function ApplicationStep2Form({
   loading,
 }: Step2Props) {
   const pathname = usePathname();
-  return (
+
+  return loading ? (
+    <div className="flex items-center justify-center h-screen">
+      <Loader className="w-20 h-20" />
+    </div>
+  ) : (
     <Container>
       <ContainerTitle>
         {pathname === "/dashboard/applications"
@@ -189,41 +196,15 @@ export default function ApplicationStep2Form({
                     <span className="text-red-500">*</span>
                   )}
                 </Label>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant={"outline"}
-                      className={cn(
-                        "w-full justify-start text-right font-normal",
-                        !formik.values.qualification?.date && "text-muted-foreground"
-                      )}
-                    >
-                      {formik.values.qualification?.date ? (
-                        new Date(formik.values.qualification?.date).toLocaleDateString()
-                      ) : (
-                        <span>اختر التاريخ</span>
-                      )}
-                      <CalendarIcon className="mr-auto h-4 w-4 text-mainColor" />
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0">
-                    <Calendar
-                      mode="single"
-                      selected={
-                        formik.values.qualification?.date
-                          ? new Date(formik.values.qualification?.date)
-                          : undefined
-                      }
-                      onSelect={(date) =>
-                        formik.setFieldValue(
-                          "qualification.date",
-                          date ? date.toLocaleDateString("en-US") : ""
-                        )
-                      }
-                      initialFocus
-                    />
-                  </PopoverContent>
-                </Popover>
+                <DatePicker
+                  value={
+                    formik.values.qualification?.date
+                      ? new Date(formik.values.qualification?.date)
+                      : undefined
+                  }
+                  onChange={(date) => formik.setFieldValue("qualification.date", date)}
+                  placeholder="اختر تاريخ الحصول عليه"
+                />
                 {formik.touched.qualification?.date &&
                   typeof formik.errors.qualification?.date === "string" && (
                     <ErrorMessage message={formik.errors.qualification.date} />
@@ -266,16 +247,27 @@ export default function ApplicationStep2Form({
                     <SelectValue placeholder="اختر التقدير" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="aPlus">A+</SelectItem>
-                    <SelectItem value="a">A</SelectItem>
-                    <SelectItem value="aMinus">A-</SelectItem>
-                    <SelectItem value="bPlus">B+</SelectItem>
-                    <SelectItem value="b">B</SelectItem>
-                    <SelectItem value="bMinus">B-</SelectItem>
-                    <SelectItem value="cPlus">C+</SelectItem>
-                    <SelectItem value="c">C</SelectItem>
-                    <SelectItem value="cMinus">C-</SelectItem>
-                    <SelectItem value="d">D</SelectItem>
+                    {formik.values.qualification?.creditHours ? (
+                      <>
+                        <SelectItem value="aPlus">A+</SelectItem>
+                        <SelectItem value="a">A</SelectItem>
+                        <SelectItem value="aMinus">A-</SelectItem>
+                        <SelectItem value="bPlus">B+</SelectItem>
+                        <SelectItem value="b">B</SelectItem>
+                        <SelectItem value="bMinus">B-</SelectItem>
+                        <SelectItem value="cPlus">C+</SelectItem>
+                        <SelectItem value="c">C</SelectItem>
+                        <SelectItem value="cMinus">C-</SelectItem>
+                        <SelectItem value="d">D</SelectItem>
+                      </>
+                    ) : (
+                      <>
+                        <SelectItem value="a">امتياز</SelectItem>
+                        <SelectItem value="b">جيد جدًا</SelectItem>
+                        <SelectItem value="c">جيد</SelectItem>
+                        <SelectItem value="d">مقبول</SelectItem>
+                      </>
+                    )}
                   </SelectContent>
                 </Select>
                 {formik.touched.qualification?.grade && formik.errors.qualification?.grade && (
@@ -321,13 +313,9 @@ export default function ApplicationStep2Form({
                   )}
                 </Label>
                 <Select
-                  value={
-                    formik.values.registration.academicYearId === 0
-                      ? undefined
-                      : formik.values.registration.academicYearId.toString()
-                  }
+                  value={formik.values.registration?.academicYear}
                   onValueChange={(value: string) =>
-                    formik.setFieldValue("registration.academicYearId", parseInt(value))
+                    formik.setFieldValue("registration.academicYear", value)
                   }
                 >
                   <SelectTrigger>
@@ -341,9 +329,9 @@ export default function ApplicationStep2Form({
                     ))}
                   </SelectContent>
                 </Select>
-                {formik.touched.registration?.academicYearId &&
-                  formik.errors.registration?.academicYearId && (
-                    <ErrorMessage message={formik.errors.registration.academicYearId} />
+                {formik.touched.registration?.academicYear &&
+                  formik.errors.registration?.academicYear && (
+                    <ErrorMessage message={formik.errors.registration.academicYear} />
                   )}
               </SpacingWrapper>
 
@@ -440,8 +428,12 @@ export default function ApplicationStep2Form({
           <Button variant="outline" className="border-[#BABABA]" onClick={goPrevStep}>
             السابق
           </Button>
-          <Button type="submit" className="bg-mainColor hover:bg-blue-700 text-white">
-            التسجيل
+          <Button
+            type="submit"
+            disabled={Object.keys(formik.errors).length > 0}
+            className="bg-mainColor hover:bg-blue-700 text-white"
+          >
+            {pathname === "/dashboard/applications" ? "تسجيل" : "تعديل"}
           </Button>
         </div>
       </form>

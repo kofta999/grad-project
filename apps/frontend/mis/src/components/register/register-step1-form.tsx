@@ -311,7 +311,11 @@ export default function RegisterStep1Form({ formik }: Step1Props) {
         </Card>
 
         <div className="flex justify-center items-center">
-          <Button className="px-8 py-2 bg-mainColor hover:bg-blue-700 text-white" type="submit">
+          <Button
+            disabled={Object.keys(formik.errors).length > 0}
+            className="px-8 py-2 bg-mainColor hover:bg-blue-700 text-white"
+            type="submit"
+          >
             {pathname === "/register" ? "التالي" : "تعديل"}
           </Button>
         </div>

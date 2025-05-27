@@ -22,14 +22,21 @@ import { SpacingWrapper } from "../ui/spacing-wrapper";
 import { ErrorMessage } from "../ui/error-message";
 import toast from "react-hot-toast";
 import { Loader } from "@/components/ui/loader";
+import { RegisterStep1Type } from "@/lib/types";
 
 type Step2Props = {
   goPrevStep: () => void;
+  formikStep1?: FormikProps<RegisterStep1Type>;
   formik: FormikProps<RegisterStep2Type>;
   loading: boolean;
 };
 
-export default function RegisterStep2Form({ goPrevStep, formik, loading }: Step2Props) {
+export default function RegisterStep2Form({
+  goPrevStep,
+  formikStep1,
+  formik,
+  loading,
+}: Step2Props) {
   const pathname = usePathname();
 
   const handlePhotoUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -187,7 +194,12 @@ export default function RegisterStep2Form({ goPrevStep, formik, loading }: Step2
                 </Label>
                 <Select
                   name="militaryStatus"
-                  value={formik.values.militaryStatus}
+                  disabled={formikStep1?.values.gender === false}
+                  value={
+                    formikStep1?.values.gender === false
+                      ? "لا توجد حالة عسكرية"
+                      : formik.values.militaryStatus
+                  }
                   onValueChange={(value: string) => formik.setFieldValue("militaryStatus", value)}
                 >
                   <SelectTrigger>
@@ -300,7 +312,7 @@ export default function RegisterStep2Form({ goPrevStep, formik, loading }: Step2
             السابق
           </Button>
           <Button
-            disabled={loading}
+            disabled={loading || Object.keys(formik.errors).length > 0}
             className="bg-mainColor hover:bg-blue-700 text-white"
             type="submit"
           >

@@ -99,12 +99,17 @@ export default function RegistrationForm() {
 
   return (
     <>
-      <Progress value={step === 1 ? 0 : 50} className="sticky top-0 z-40" />
+      <Progress value={((step - 1) / 2) * 100} className="sticky top-0 z-40" />
 
       {step === 1 && <RegisterStep1Form formik={formikStep1} />}
 
       {step !== 1 && (
-        <RegisterStep2Form goPrevStep={() => setStep(1)} formik={formikStep2} loading={loading} />
+        <RegisterStep2Form
+          goPrevStep={() => setStep(1)}
+          formikStep1={formikStep1}
+          formik={formikStep2}
+          loading={loading}
+        />
       )}
 
       <Toaster />

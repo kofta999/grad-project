@@ -43,7 +43,7 @@ export default function useUser() {
       getUserPersonalData();
       getUserApplicationData();
     }
-  }, []);
+  }, [loggedInUser]);
 
   return {
     personalData,

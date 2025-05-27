@@ -158,7 +158,7 @@ export default function SideNav({ role }: SideNavProps) {
 
             {/* Footer Section */}
             <div className="footer">
-              <div className="box bg-blue-600 text-white p-3 rounded-lg">
+              <div className="box bg-mainColor text-white p-3 rounded-lg">
                 <h1 className="font-bold text-xl flex items-center justify-between">
                   مرحبًا {loggedInUser?.name.split(" ").slice(0, 2).join(" ")}{" "}
                   <Star className="text-yellow-200" />

@@ -22,10 +22,10 @@ export default function Settings() {
   const router = useRouter();
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
+
   const { applicationData } = useUser();
-  const [applicationId, setApplicationId] = useState<number | undefined>(
-    applicationData?.applicationId
-  );
+  const applicationId = applicationData?.applicationId;
+
   const [initialData, setInitialData] = useState<InitialFormDataType>({
     currentAcademicYears: [],
     availableDepartments: [],
@@ -66,6 +66,9 @@ export default function Settings() {
             },
           },
         });
+
+        const result = await res.json();
+        console.log(result);
 
         if (res.ok) {
           setLoading(false);
@@ -137,7 +140,7 @@ export default function Settings() {
         address: "",
       },
     },
-    // validationSchema: ApplicationStep1Schema,
+    validationSchema: ApplicationStep1Schema,
     onSubmit: handleStep1Submit,
   });
 
@@ -157,10 +160,13 @@ export default function Settings() {
         gpa: 0,
       },
       registration: {
+        registerationId: 0,
+        departmentId: 0,
         academicYearId: 0,
         faculty: "",
+        academicYear: "",
         academicDegree: "diploma",
-        departmentId: 0,
+        academicProgram: "",
       },
     },
     validationSchema: ApplicationStep2Schema,
@@ -170,15 +176,18 @@ export default function Settings() {
   let formikStep3 = useFormik<ApplicationStep3Type>({
     initialValues: {
       attachmentType: "",
-      // @ts-ignore idk
-      attachmentFile: null as File | null,
-      attachments: [] as { type: string; attachmentUrl: string }[],
+      attachments: [] as {
+        type: string;
+        attachmentUrl: string;
+        attachmentId: number | undefined;
+      }[],
     },
     validationSchema: ApplicationStep3Schema,
-    // onSubmit: handleStep3Submit,
+    onSubmit: handleStep3Submit,
   });
 
   useEffect(() => {
+    setLoading(true);
     if (!applicationData) return;
 
     const {
@@ -227,22 +236,25 @@ export default function Settings() {
         gpa: qualification?.gpa || 0,
       },
       registration: {
+        registerationId: registration?.registerationId || 0,
         academicYearId: registration?.academicYearId || 0,
         faculty: registration?.faculty || "",
+        academicYear: registration?.academicYear || "",
         academicDegree: registration?.academicDegree || ("diploma" as const),
         departmentId: registration?.departmentId,
+        academicProgram: registration?.academicProgram || "",
       },
     });
 
     formikStep3.setValues({
       attachmentType: "",
-      // @ts-ignore IDK but it works
-      attachmentFile: null,
       attachments: attachments.map((att) => ({
-        type: att.type || "",
-        attachmentUrl: att.attachmentUrl || "",
+        type: att.type,
+        attachmentUrl: att.attachmentUrl,
+        attachmentId: att.attachmentId,
       })),
     });
+    setLoading(false);
   }, [applicationData]);
 
   useEffect(() => {
@@ -271,7 +283,7 @@ export default function Settings() {
     <>
       <Progress value={((step - 1) / 3) * 100} className="sticky top-0 z-40" />
 
-      {step === 1 && <ApplicationStep1Form formik={formikStep1} />}
+      {step === 1 && <ApplicationStep1Form formik={formikStep1} loading={loading} />}
 
       {step === 2 && (
         <ApplicationStep2Form
@@ -287,6 +299,8 @@ export default function Settings() {
           goPrevStep={() => setStep(2)}
           formik={formikStep3}
           loading={loading}
+          setLoading={setLoading}
+          applicationId={applicationData?.applicationId}
         />
       )}
       <Toaster />
