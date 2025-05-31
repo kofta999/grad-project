@@ -89,6 +89,7 @@ export default function RegistrationForm() {
       idType: undefined,
       imageUrl: "",
       isWorking: false,
+      // @ts-ignore
       militaryStatus: "",
       jobType: "",
       martialStatus: undefined,

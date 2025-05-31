@@ -100,6 +100,7 @@ export default function Page() {
       idType: "national_id",
       imageUrl: "",
       isWorking: false,
+      // @ts-ignore
       militaryStatus: "",
       jobType: "",
       martialStatus: "single",
@@ -135,6 +136,7 @@ export default function Page() {
         idType: student.idType || "national_id",
         imageUrl: student.imageUrl || "",
         isWorking: student.isWorking || false,
+        // @ts-ignore
         militaryStatus: student.militaryStatus || "",
         jobType: student.jobType || "",
         martialStatus: student.martialStatus || "single",
