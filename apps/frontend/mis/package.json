@@ -6,6 +6,7 @@
     "build": "next build",
     "clean": "rm -rf .next",
     "dev": "next dev -p 3002",
+    "dev:no-docker": "next dev -p 3002",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
     "start": "next start"

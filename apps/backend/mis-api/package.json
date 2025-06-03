@@ -6,6 +6,7 @@
     "start": "node dist/server/index.js",
     "start:docker": "node scripts/start-docker.js",
     "dev": "node scripts/nuke-and-init-db.js && tsx watch src/index.ts",
+    "dev:no-docker": "tsx watch src/index.ts",
     "dev:tsc": "tsc -p tsconfig.build.json --watch",
     "build": "tsc -p tsconfig.build.json",
     "clean": "rm -rf dist",

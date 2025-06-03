@@ -1426,3 +1426,2017 @@ FROM
 	courses
 WHERE
 	code IN ('CMPE 703', 'CMPE 704');
+	
+	
+-- Generated SQL from File 2, conformed to File 1 schema requirements
+-- Extra fields removed, courses deduplicated by code (first instance kept)
+
+-- =============================================
+-- DEPARTMENTS
+-- =============================================
+INSERT INTO
+		departments (
+			code,
+			title,
+			type,
+			courses_hours,
+			compulsory_hours,
+			thesis_hours
+		)
+VALUES
+		(
+			'DCE',
+			'دبلوم الهندسة الإنشائية',
+			'diploma',
+			24,
+			15,
+			3
+		);
+
+INSERT INTO
+		departments (
+			code,
+			title,
+			type,
+			courses_hours,
+			compulsory_hours,
+			thesis_hours
+		)
+VALUES
+		(
+			'DEM',
+			'دبلوم الدراسات العليا في إدارة مشروعات التشييد',
+			'diploma',
+			24,
+			15,
+			3
+		);
+
+INSERT INTO
+		departments (
+			code,
+			title,
+			type,
+			courses_hours,
+			compulsory_hours,
+			thesis_hours
+		)
+VALUES
+		(
+			'DGM',
+			'دبلوم الدراسات العليا في هندسة الجيوماتكس',
+			'diploma',
+			24,
+			15,
+			3
+		);
+
+INSERT INTO
+		departments (
+			code,
+			title,
+			type,
+			courses_hours,
+			compulsory_hours,
+			thesis_hours
+		)
+VALUES
+		(
+			'DHE',
+			'دبلوم الدراسات العليا في الهندسة الصحية',
+			'diploma',
+			24,
+			15,
+			3
+		);
+
+INSERT INTO
+		departments (
+			code,
+			title,
+			type,
+			courses_hours,
+			compulsory_hours,
+			thesis_hours
+		)
+VALUES
+		(
+			'DRT',
+			'دبلوم الدراسات العليا في هندسة الطرق والنقل',
+			'diploma',
+			24,
+			15,
+			3
+		);
+
+INSERT INTO
+		departments (
+			code,
+			title,
+			type,
+			courses_hours,
+			compulsory_hours,
+			thesis_hours
+		)
+VALUES
+		(
+			'DPE',
+			'دبلوم الدراسات العليا في هندسة الموانئ',
+			'diploma',
+			24,
+			15,
+			3
+		);
+
+INSERT INTO
+		departments (
+			code,
+			title,
+			type,
+			courses_hours,
+			compulsory_hours,
+			thesis_hours
+		)
+VALUES
+		(
+			'MSC_SE',
+			'ماجستير العلوم الهندسية في الهندسة الإنشائية',
+			'master',
+			42,
+			12,
+			18
+		);
+
+INSERT INTO
+		departments (
+			code,
+			title,
+			type,
+			courses_hours,
+			compulsory_hours,
+			thesis_hours
+		)
+VALUES
+		(
+			'CMP',
+			'ماجستير العلوم الهندسية في إدارة مشروعات التشييد',
+			'master',
+			42,
+			24,
+			18
+		);
+
+INSERT INTO
+		departments (
+			code,
+			title,
+			type,
+			courses_hours,
+			compulsory_hours,
+			thesis_hours
+		)
+VALUES
+		(
+			'MGEO',
+			'ماجستير العلوم الهندسية في هندسة الجيوماتكس',
+			'master',
+			24,
+			12,
+			18
+		);
+
+INSERT INTO
+		departments (
+			code,
+			title,
+			type,
+			courses_hours,
+			compulsory_hours,
+			thesis_hours
+		)
+VALUES
+		(
+			'MHE',
+			'ماجستير العلوم الهندسية في الهندسة الصحية',
+			'master',
+			24,
+			18,
+			18
+		);
+
+INSERT INTO
+		departments (
+			code,
+			title,
+			type,
+			courses_hours,
+			compulsory_hours,
+			thesis_hours
+		)
+VALUES
+		(
+			'MRT',
+			'ماجستير العلوم الهندسية في هندسة الطرق والنقل',
+			'master',
+			24,
+			18,
+			18
+		);
+
+INSERT INTO
+		departments (
+			code,
+			title,
+			type,
+			courses_hours,
+			compulsory_hours,
+			thesis_hours
+		)
+VALUES
+		(
+			'MWRE',
+			'ماجستير العلوم الهندسية في هندسة الري والموارد المائية',
+			'master',
+			24,
+			18,
+			18
+		);
+
+INSERT INTO
+		departments (
+			code,
+			title,
+			type,
+			courses_hours,
+			compulsory_hours,
+			thesis_hours
+		)
+VALUES
+		(
+			'PHD_STR',
+			'دكتوراه الفلسفة في الهندسة الإنشائية',
+			'phd',
+			18,
+			9,
+			36
+		);
+
+INSERT INTO
+		departments (
+			code,
+			title,
+			type,
+			courses_hours,
+			compulsory_hours,
+			thesis_hours
+		)
+VALUES
+		(
+			'PHD_CM',
+			'دكتوراه الفلسفة في إدارة مشروعات التشييد',
+			'phd',
+			12,
+			9,
+			48
+		);
+
+INSERT INTO
+		departments (
+			code,
+			title,
+			type,
+			courses_hours,
+			compulsory_hours,
+			thesis_hours
+		)
+VALUES
+		(
+			'PHD_GEO',
+			'دكتوراه الفلسفة في هندسة الجيوماتكس',
+			'phd',
+			18,
+			9,
+			48
+		);
+
+INSERT INTO
+		departments (
+			code,
+			title,
+			type,
+			courses_hours,
+			compulsory_hours,
+			thesis_hours
+		)
+VALUES
+		(
+			'PHD_HENG',
+			'دكتوراه الفلسفة في الهندسة الصحية',
+			'phd',
+			18,
+			9,
+			54
+		);
+
+INSERT INTO
+		departments (
+			code,
+			title,
+			type,
+			courses_hours,
+			compulsory_hours,
+			thesis_hours
+		)
+VALUES
+		(
+			'PHD_RTE',
+			'دكتوراه الفلسفة في هندسة الطرق والنقل',
+			'phd',
+			18,
+			9,
+			54
+		);
+
+INSERT INTO
+		departments (
+			code,
+			title,
+			type,
+			courses_hours,
+			compulsory_hours,
+			thesis_hours
+		)
+VALUES
+		(
+			'PHD_WRE',
+			'دكتوراه الفلسفة في هندسة الري والموارد المائية',
+			'phd',
+			18,
+			9,
+			54
+		);
+
+-- =============================================
+-- COURSES (Deduplicated, conformed schema)
+-- =============================================
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('UNR600', 'اخلاقيات البحث العلمي', NULL, 1);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('UNR501', 'التحليل الإنشائي', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV500', 'مشروع', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV501', 'تحليل منشآت متقدم', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV502', 'خواص واختبار المواد', NULL, 2);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		(
+			'CIV503',
+			'المنشآت الخرسانية سابقة الإجهاد',
+			NULL,
+			3
+		);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV504', 'سلوك المنشآت الجيولوجية', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		(
+			'CIV505',
+			'التحليل الإنشائي (1) للهندسة الإنشائية',
+			NULL,
+			3
+		);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV506', 'ديناميكا المنشآت', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV507', 'التأهيل الهندسي', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV508', 'أسس تصميم المنشآت المعدنية', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV509', 'الأساسات في الهندسة الإنشائية', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV510', 'طرق ترميم وتدعيم المنشآت', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('UNR601', 'التحليل الإحصائي للبيانات', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV514', 'الادارة العامة في التشييد', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV515', 'تخطيط و مراقبة المشروعات', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV516', 'العطاءات و العقود', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV517', 'معدات التشييد', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV511', 'ضبط و تأكيد الجودة', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV512', 'الكباري الخرسانية', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		(
+			'CIV513',
+			'تصنيع و تركيب و صيانة المنشآت الحديدية',
+			NULL,
+			3
+		);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV521', 'ضبط الأرصاد المساحية', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV522', 'أساسيات الجيوديسيا', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV523', 'نظام تحديد المواقع العالمي', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV524', 'أساسيات المساحة التصويرية', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV525', 'أساسيات المساحة البحرية', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV526', 'مقدمة عن الاستشعار عن بعد', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV527', 'أساسيات نظم المعلومات الجغرافية', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		(
+			'CIV528',
+			'التحليل الإحصائي للأرصاد المساحية',
+			NULL,
+			3
+		);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		(
+			'CIV529',
+			'تطبيقات الحاسب الآلي في هندسة الجيوماتكس',
+			NULL,
+			3
+		);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV530', 'مقدمة عن أسقاط الخرائط', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV549', 'الاحتمالات والإحصاء', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV531', 'نظم توزيع مياه الشرب', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV532', 'هندسة التحكم في التلوث البيئي', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		(
+			'CIV533',
+			'إنشاء وصيانة نظم شبكات الصرف الصحي',
+			NULL,
+			3
+		);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV534', 'عمليات الهندسة الصحية', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV535', 'هندسة تنقية المياه', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV536', 'معالجة مياه الصرف الصحي', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV537', 'معالجة الحمأة', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV538', 'إدارة المخلفات الصلبة', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		(
+			'CIV539',
+			'تصميم محطات معالجة المخلفات السائلة',
+			NULL,
+			3
+		);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV540', 'مواد الطرق والخلطات البيتومينية', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		(
+			'CIV541',
+			'التطبيقات المتقدمة للحاسب في الطرق والمرور',
+			NULL,
+			3
+		);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV542', 'هندسة السكك الحديدية', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		(
+			'CIV543',
+			'تطبيقات مختارة في هندسة الطرق والمرور',
+			NULL,
+			3
+		);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV544', 'صيانة الطرق', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV545', 'النقل والموانئ', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV546', 'اقتصاديات النقل', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV547', 'هندسة الصرف', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV548', 'هندسة المطارات', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV550', 'الهندسة الهيدروليكية', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV551', 'الهيدرولوجيا الهندسية', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV552', 'هندسة الري والصرف', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV553', 'هندسة الشواطئ والموانئ', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV554', 'هيدروديناميكا', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV555', 'منشآت هيدروليكية', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		(
+			'CIV556',
+			'ميكانيكا الأمواج وعمليات نقل الرواسب',
+			NULL,
+			3
+		);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV557', 'الملاحة الداخلية', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV558', 'هندسة البيئة الساحلية', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		(
+			'CIV601',
+			'الابتكارات الخاصة بالمنشآت والتقنيات',
+			NULL,
+			3
+		);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV602', 'الاحصاء في الهندسة الانشائية', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV603', 'ديناميكا التربة', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		(
+			'CIV604',
+			'التحليل العددي في الهندسة الانشائية (2)',
+			NULL,
+			3
+		);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV605', 'طريقة العناصر المحددة', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV606', 'إدارة موارد', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV607', 'هندسة الرياح والزلازل', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		(
+			'CIV608',
+			'الأكواد القياسية للمشروعات الإنشائية',
+			NULL,
+			3
+		);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV609', 'طرق الاحصاء والاحتمالات', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV610', 'المواد المركبة', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('1UNR60', 'التحليل الإحصائي للبيانات', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV611', 'المحاسبة و الإدارة المالية', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		(
+			'CIV612',
+			'استخدام الذكاء الاصطناعي في إدارة مشروعات التشييد',
+			NULL,
+			3
+		);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV613', 'إدارة و تطوير العقود', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV614', 'إدارة الجودة و إعداد القرار', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV615', 'السلوك التنظيمي', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV616', 'أسس الكتابة الفنية', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV621', 'تحليل وضبط الأرصاد المساحية', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV622', 'الجيوديسيا (1)', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV623', 'المساحة التصويرية (1)', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		(
+			'CIV624',
+			'تطبيقات برمجة الحاسب الآلي في هندسة الجيوماتكس',
+			NULL,
+			3
+		);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		(
+			'CIV625',
+			'تطبيقات الاستشعار عن بعد',
+			(SELECT course_id FROM courses WHERE code = 'CIV603'),
+			3
+		);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV626', 'المساحة البحرية', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		(
+			'CIV627',
+			'تطبيقات نظم المعلومات الجغرافية',
+			(SELECT course_id FROM courses WHERE code = 'CIV603'),
+			3
+		);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		(
+			'CIV628',
+			'جيوديسيا الأقمار الصناعية',
+			(SELECT course_id FROM courses WHERE code = 'CIV602'),
+			3
+		);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV629', 'تطبيقات إسقاط الخرائط', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV630', 'هيدروليكا الشبكات والمحطات', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV631', 'دراسات متقدمة في تنقية المياه', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		(
+			'CIV632',
+			'دراسات متقدمة في معالجة مياه الصرف الصحي',
+			NULL,
+			3
+		);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV633', 'كيمياء المياه', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV634', 'ميكروبيولوجي المياه', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV635', 'معالجة الحمأة الناتجة', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV636', 'تخطيط شبكات المرافق الاقتصادية', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV637', 'النمذجة في تنقية مياه الشرب', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV638', 'التصميم الإنشائي للطرق', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV639', 'تخطيط النقل', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV640', 'كفاءة خطوط السكك الحديدية', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV641', 'تصميم رصف المطارات', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		(
+			'CIV642',
+			'تخطيط وتشغيل وإدارة النقل العام',
+			NULL,
+			3
+		);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		(
+			'CIV643',
+			'تطبيقات في عمليات إدارة وتنظيم المرور',
+			NULL,
+			3
+		);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV644', 'تخطيط وتوقع مصادر الطرق', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		(
+			'CIV645',
+			'تصميم وتحليل عناصر السكك الحديدية',
+			NULL,
+			3
+		);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV646', 'ميكانيكا الموائع المتقدمة', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV647', 'تصميمات نظم الري والصرف', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV648', 'نظم موارد المياه', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV649', 'تصميم المنشآت البحرية', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		(
+			'CIV650',
+			'التقييم البيئي للمشروعات الساحلية',
+			NULL,
+			3
+		);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV651', 'حركة الأمواج والتيارات البحرية', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV652', 'هيدروليكا متقدمة', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV653', 'اقتصاديات إدارة الموارد المائية', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV701', 'تحليل عددي متقدم', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		(
+			'CIV702',
+			'موضوعات متقدمة في تحليل العناصر المحددة',
+			NULL,
+			3
+		);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV703', 'طريقة العناصر الحدودية', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV704', 'نظرية اللدونة', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV705', 'ديناميكا التربة والأساسات', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV706', 'نظرية القشريات', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV707', 'الطرق الحسابية لميكانيكا الكسر', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV708', 'إدارة أصول البنية التحتية', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV709', 'إدارة التكاليف', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV710', 'التخطيط الاستراتيجي', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV711', 'إدارة الجودة والأمان', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV712', 'إدارة البيئة في صناعة التشييد', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV713', 'إدارة موارد المشروع', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV714', 'قوانين صناعة التشييد', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV721', 'نماذج سطح الأرض الرقمية', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV722', 'الجيوديسيا (2)', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV723', 'المساحة التصويرية (2)', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		(
+			'CIV724',
+			'موضوعات متقدمة في نظم تحديد المواقع العالمية',
+			NULL,
+			3
+		);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		(
+			'CIV725',
+			'موضوعات متقدمة في الاستشعار عن بعد',
+			NULL,
+			3
+		);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		(
+			'CIV726',
+			'موضوعات متقدمة في نظم المعلومات الجغرافية',
+			NULL,
+			3
+		);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV727', 'شبكات مياه الشرب', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV728', 'شبكات الصرف الصحي', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV729', 'علوم بيئية', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV730', 'إدارة وتشريعات بيئية', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV731', 'تلوث المياه والتربة', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV732', 'الطرق المتقدمة في تنقية المياه', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV733', 'عمليات التشغيل', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV734', 'تحليل الطلب على النقل', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		(
+			'CIV735',
+			'موضوعات متقدمة في هندسة الطرق والمطارات والمرور',
+			NULL,
+			3
+		);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV736', 'معدات إنشاء الطرق والمطارات', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		(
+			'CIV737',
+			'أساليب متطورة لتشغيل النقل العام',
+			NULL,
+			3
+		);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV738', 'هندسة وتخطيط السكك الحديدية', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV739', 'موضوعات متقدمة في السكك الحديدية', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		(
+			'CIV740',
+			'موضوعات متقدمة في عمليات إدارة وتنظيم المرور',
+			NULL,
+			3
+		);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		(
+			'CIV741',
+			'تطبيقات البرامج المتداولة في هندسة المياه والبيئة',
+			NULL,
+			3
+		);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV742', 'الإدارة المتكاملة للمناطق الساحلية', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV743', 'تصميم المنشآت البحرية (2)', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV744', 'تصميم السدود الصغيرة', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV745', 'حركة الملوثات بالمياه الجوفية', NULL, 3);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		(
+			'CIV746',
+			'الجريان غير المستقر بالمجاري المفتوحة والمغلقة',
+			NULL,
+			3
+		);
+
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('CIV747', 'محاكاة سريان المياه الجوفية', NULL, 3);
+
+-- =============================================
+-- DEPARTMENT_COURSES (Referential integrity maintained)
+-- =============================================
+INSERT INTO
+		department_courses (department_id, course_id, is_compulsory)
+SELECT
+		(
+			SELECT
+				department_id
+			FROM
+				departments
+			WHERE
+				code = 'DCE'
+		),
+		course_id,
+		TRUE
+FROM
+		courses
+WHERE
+		code IN (
+			'UNR600',
+			'UNR501',
+			'CIV500',
+			'CIV501',
+			'CIV502',
+			'CIV503',
+			'CIV504'
+		);
+
+INSERT INTO
+		department_courses (department_id, course_id, is_compulsory)
+SELECT
+		(
+			SELECT
+				department_id
+			FROM
+				departments
+			WHERE
+				code = 'DCE'
+		),
+		course_id,
+		FALSE
+FROM
+		courses
+WHERE
+		code IN (
+			'CIV505',
+			'CIV506',
+			'CIV507',
+			'CIV508',
+			'CIV509',
+			'CIV510'
+		);
+
+INSERT INTO
+		department_courses (department_id, course_id, is_compulsory)
+SELECT
+		(
+			SELECT
+				department_id
+			FROM
+				departments
+			WHERE
+				code = 'DEM'
+		),
+		course_id,
+		TRUE
+FROM
+		courses
+WHERE
+		code IN (
+			'UNR600',
+			'UNR601',
+			'CIV500',
+			'CIV514',
+			'CIV515',
+			'CIV516',
+			'CIV517'
+		);
+
+INSERT INTO
+		department_courses (department_id, course_id, is_compulsory)
+SELECT
+		(
+			SELECT
+				department_id
+			FROM
+				departments
+			WHERE
+				code = 'DEM'
+		),
+		course_id,
+		FALSE
+FROM
+		courses
+WHERE
+		code IN (
+			'CIV502',
+			'CIV509',
+			'CIV510',
+			'CIV511',
+			'CIV512',
+			'CIV513'
+		);
+
+INSERT INTO
+		department_courses (department_id, course_id, is_compulsory)
+SELECT
+		(
+			SELECT
+				department_id
+			FROM
+				departments
+			WHERE
+				code = 'DGM'
+		),
+		course_id,
+		TRUE
+FROM
+		courses
+WHERE
+		code IN (
+			'UNR600',
+			'UNR601',
+			'CIV500',
+			'CIV521',
+			'CIV522',
+			'CIV523',
+			'CIV524'
+		);
+
+INSERT INTO
+		department_courses (department_id, course_id, is_compulsory)
+SELECT
+		(
+			SELECT
+				department_id
+			FROM
+				departments
+			WHERE
+				code = 'DGM'
+		),
+		course_id,
+		FALSE
+FROM
+		courses
+WHERE
+		code IN (
+			'CIV525',
+			'CIV526',
+			'CIV527',
+			'CIV528',
+			'CIV529',
+			'CIV530'
+		);
+
+INSERT INTO
+		department_courses (department_id, course_id, is_compulsory)
+SELECT
+		(
+			SELECT
+				department_id
+			FROM
+				departments
+			WHERE
+				code = 'DHE'
+		),
+		course_id,
+		TRUE
+FROM
+		courses
+WHERE
+		code IN (
+			'UNR600',
+			'UNR601',
+			'CIV500',
+			'CIV549',
+			'CIV531',
+			'CIV532',
+			'CIV533'
+		);
+
+-- Note: The original DHE elective department_courses was incomplete, so it's omitted.
+-- Note: The original DRT compulsory department_courses was incomplete, so it's omitted.
+INSERT INTO
+		department_courses (department_id, course_id, is_compulsory)
+SELECT
+		(
+			SELECT
+				department_id
+			FROM
+				departments
+			WHERE
+				code = 'DPE'
+		),
+		course_id,
+		TRUE
+FROM
+		courses
+WHERE
+		code IN (
+			'UNR600',
+			'UNR601',
+			'CIV500',
+			'CIV550',
+			'CIV551',
+			'CIV552',
+			'CIV553'
+		);
+
+INSERT INTO
+		department_courses (department_id, course_id, is_compulsory)
+SELECT
+		(
+			SELECT
+				department_id
+			FROM
+				departments
+			WHERE
+				code = 'DPE'
+		),
+		course_id,
+		FALSE
+FROM
+		courses
+WHERE
+		code IN (
+			'CIV554',
+			'CIV555',
+			'CIV556',
+			'CIV557',
+			'CIV558'
+		);
+
+INSERT INTO
+		department_courses (department_id, course_id, is_compulsory)
+SELECT
+		(
+			SELECT
+				department_id
+			FROM
+				departments
+			WHERE
+				code = 'MSC_SE'
+		),
+		course_id,
+		TRUE
+FROM
+		courses
+WHERE
+		code IN (
+			'UNR600',
+			'UNR601',
+			'CIV601',
+			'CIV602',
+			'CIV603',
+			'CIV604'
+		);
+
+INSERT INTO
+		department_courses (department_id, course_id, is_compulsory)
+SELECT
+		(
+			SELECT
+				department_id
+			FROM
+				departments
+			WHERE
+				code = 'MSC_SE'
+		),
+		course_id,
+		FALSE
+FROM
+		courses
+WHERE
+		code IN (
+			'CIV605',
+			'CIV606',
+			'CIV607',
+			'CIV608',
+			'CIV609',
+			'CIV610',
+			'CIV509',
+			'CIV503',
+			'CIV504'
+		);
+
+INSERT INTO
+		department_courses (department_id, course_id, is_compulsory)
+SELECT
+		(
+			SELECT
+				department_id
+			FROM
+				departments
+			WHERE
+				code = 'CMP'
+		),
+		course_id,
+		TRUE
+FROM
+		courses
+WHERE
+		code IN (
+			'UNR600',
+			'1UNR60',
+			'CIV609',
+			'CIV610',
+			'CIV611',
+			'CIV612'
+		);
+
+INSERT INTO
+		department_courses (department_id, course_id, is_compulsory)
+SELECT
+		(
+			SELECT
+				department_id
+			FROM
+				departments
+			WHERE
+				code = 'CMP'
+		),
+		course_id,
+		FALSE
+FROM
+		courses
+WHERE
+		code IN (
+			'CIV613',
+			'CIV614',
+			'CIV615',
+			'CIV616',
+			'CIV607',
+			'CIV608'
+		);
+
+INSERT INTO
+		department_courses (department_id, course_id, is_compulsory)
+SELECT
+		(
+			SELECT
+				department_id
+			FROM
+				departments
+			WHERE
+				code = 'MGEO'
+		),
+		course_id,
+		TRUE
+FROM
+		courses
+WHERE
+		code IN (
+			'UNR600',
+			'UNR601',
+			'CIV621',
+			'CIV622',
+			'CIV623',
+			'CIV624'
+		);
+
+INSERT INTO
+		department_courses (department_id, course_id, is_compulsory)
+SELECT
+		(
+			SELECT
+				department_id
+			FROM
+				departments
+			WHERE
+				code = 'MGEO'
+		),
+		course_id,
+		FALSE
+FROM
+		courses
+WHERE
+		code IN (
+			'CIV625',
+			'CIV626',
+			'CIV627',
+			'CIV628',
+			'CIV629'
+		);
+
+INSERT INTO
+		department_courses (department_id, course_id, is_compulsory)
+SELECT
+		(
+			SELECT
+				department_id
+			FROM
+				departments
+			WHERE
+				code = 'MHE'
+		),
+		course_id,
+		TRUE
+FROM
+		courses
+WHERE
+		code IN (
+			'UNR600',
+			'UNR601',
+			'CIV630',
+			'CIV631',
+			'CIV632',
+			'CIV633'
+		);
+
+INSERT INTO
+		department_courses (department_id, course_id, is_compulsory)
+SELECT
+		(
+			SELECT
+				department_id
+			FROM
+				departments
+			WHERE
+				code = 'MHE'
+		),
+		course_id,
+		FALSE
+FROM
+		courses
+WHERE
+		code IN (
+			'CIV634',
+			'CIV635',
+			'CIV636',
+			'CIV637',
+			'CIV622',
+			'CIV625'
+		);
+
+INSERT INTO
+		department_courses (department_id, course_id, is_compulsory)
+SELECT
+		(
+			SELECT
+				department_id
+			FROM
+				departments
+			WHERE
+				code = 'MRT'
+		),
+		course_id,
+		TRUE
+FROM
+		courses
+WHERE
+		code IN (
+			'UNR600',
+			'UNR601',
+			'CIV638',
+			'CIV639',
+			'CIV640',
+			'CIV641'
+		);
+
+INSERT INTO
+		department_courses (department_id, course_id, is_compulsory)
+SELECT
+		(
+			SELECT
+				department_id
+			FROM
+				departments
+			WHERE
+				code = 'MRT'
+		),
+		course_id,
+		FALSE
+FROM
+		courses
+WHERE
+		code IN (
+			'CIV642',
+			'CIV643',
+			'CIV644',
+			'CIV645',
+			'CIV622', -- This CIV622 is 'الجيوديسيا (1)'
+			'CIV625'
+		);
+
+INSERT INTO
+		department_courses (department_id, course_id, is_compulsory)
+SELECT
+		(
+			SELECT
+				department_id
+			FROM
+				departments
+			WHERE
+				code = 'MWRE'
+		),
+		course_id,
+		TRUE
+FROM
+		courses
+WHERE
+		code IN (
+			'UNR600',
+			'UNR601',
+			'CIV646',
+			'CIV647',
+			'CIV648',
+			'CIV649'
+		);
+
+INSERT INTO
+		department_courses (department_id, course_id, is_compulsory)
+SELECT
+		(
+			SELECT
+				department_id
+			FROM
+				departments
+			WHERE
+				code = 'MWRE'
+		),
+		course_id,
+		FALSE
+FROM
+		courses
+WHERE
+		code IN (
+			'CIV650',
+			'CIV651',
+			'CIV652',
+			'CIV653',
+			'CIV622',
+			'CIV625'
+		);
+
+INSERT INTO
+		department_courses (department_id, course_id, is_compulsory)
+SELECT
+		(
+			SELECT
+				department_id
+			FROM
+				departments
+			WHERE
+				code = 'PHD_STR'
+		),
+		course_id,
+		TRUE
+FROM
+		courses
+WHERE
+		code IN ('CIV701', 'CIV702', 'CIV703');
+
+INSERT INTO
+		department_courses (department_id, course_id, is_compulsory)
+SELECT
+		(
+			SELECT
+				department_id
+			FROM
+				departments
+			WHERE
+				code = 'PHD_STR'
+		),
+		course_id,
+		FALSE
+FROM
+		courses
+WHERE
+		code IN ('CIV704', 'CIV705', 'CIV706', 'CIV707');
+
+INSERT INTO
+		department_courses (department_id, course_id, is_compulsory)
+SELECT
+		(
+			SELECT
+				department_id
+			FROM
+				departments
+			WHERE
+				code = 'PHD_CM'
+		),
+		course_id,
+		TRUE
+FROM
+		courses
+WHERE
+		code IN ('CIV708', 'CIV709', 'CIV710');
+
+INSERT INTO
+		department_courses (department_id, course_id, is_compulsory)
+SELECT
+		(
+			SELECT
+				department_id
+			FROM
+				departments
+			WHERE
+				code = 'PHD_CM'
+		),
+		course_id,
+		FALSE
+FROM
+		courses
+WHERE
+		code IN ('CIV711', 'CIV712', 'CIV713', 'CIV714');
+
+INSERT INTO
+		department_courses (department_id, course_id, is_compulsory)
+SELECT
+		(
+			SELECT
+				department_id
+			FROM
+				departments
+			WHERE
+				code = 'PHD_GEO'
+		),
+		course_id,
+		TRUE
+FROM
+		courses
+WHERE
+		code IN ('CIV721', 'CIV722', 'CIV723');
+
+INSERT INTO
+		department_courses (department_id, course_id, is_compulsory)
+SELECT
+		(
+			SELECT
+				department_id
+			FROM
+				departments
+			WHERE
+				code = 'PHD_GEO'
+		),
+		course_id,
+		FALSE
+FROM
+		courses
+WHERE
+		code IN ('CIV724', 'CIV725', 'CIV726');
+
+INSERT INTO
+		department_courses (department_id, course_id, is_compulsory)
+SELECT
+		(
+			SELECT
+				department_id
+			FROM
+				departments
+			WHERE
+				code = 'PHD_HENG'
+		),
+		course_id,
+		TRUE
+FROM
+		courses
+WHERE
+		code IN ('CIV727', 'CIV728', 'CIV729');
+
+INSERT INTO
+		department_courses (department_id, course_id, is_compulsory)
+SELECT
+		(
+			SELECT
+				department_id
+			FROM
+				departments
+			WHERE
+				code = 'PHD_HENG'
+		),
+		course_id,
+		FALSE
+FROM
+		courses
+WHERE
+		code IN ('CIV730', 'CIV731', 'CIV732', 'CIV733');
+
+INSERT INTO
+		department_courses (department_id, course_id, is_compulsory)
+SELECT
+		(
+			SELECT
+				department_id
+			FROM
+				departments
+			WHERE
+				code = 'PHD_RTE'
+		),
+		course_id,
+		TRUE
+FROM
+		courses
+WHERE
+		code IN ('CIV734', 'CIV735', 'CIV736');
+
+INSERT INTO
+		department_courses (department_id, course_id, is_compulsory)
+SELECT
+		(
+			SELECT
+				department_id
+			FROM
+				departments
+			WHERE
+				code = 'PHD_RTE'
+		),
+		course_id,
+		FALSE
+FROM
+		courses
+WHERE
+		code IN ('CIV737', 'CIV738', 'CIV739', 'CIV740');
+
+INSERT INTO
+		department_courses (department_id, course_id, is_compulsory)
+SELECT
+		(
+			SELECT
+				department_id
+			FROM
+				departments
+			WHERE
+				code = 'PHD_WRE'
+		),
+		course_id,
+		TRUE
+FROM
+		courses
+WHERE
+		code IN ('CIV741', 'CIV742', 'CIV743');
+
+INSERT INTO
+		department_courses (department_id, course_id, is_compulsory)
+SELECT
+		(
+			SELECT
+				department_id
+			FROM
+				departments
+			WHERE
+				code = 'PHD_WRE'
+		),
+		course_id,
+		FALSE
+FROM
+		courses
+WHERE
+		code IN ('CIV744', 'CIV745', 'CIV746', 'CIV747');

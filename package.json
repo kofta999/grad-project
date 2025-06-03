@@ -4,6 +4,7 @@
     "build": "turbo run build",
     "clean": "turbo run clean",
     "dev": "turbo run dev",
+    "dev:no-docker": "turbo run dev:no-docker",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "lint": "turbo run lint",
     "test": "turbo run test",
