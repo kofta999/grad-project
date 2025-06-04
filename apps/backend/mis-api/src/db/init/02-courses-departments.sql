@@ -1426,8 +1426,8 @@ FROM
 	courses
 WHERE
 	code IN ('CMPE 703', 'CMPE 704');
-	
-	
+
+
 -- Generated SQL from File 2, conformed to File 1 schema requirements
 -- Extra fields removed, courses deduplicated by code (first instance kept)
 
@@ -3440,3 +3440,1194 @@ FROM
 		courses
 WHERE
 		code IN ('CIV744', 'CIV745', 'CIV746', 'CIV747');
+
+
+
+
+-- DIPLOMA
+
+-- 1. إدخال بيانات القسم
+INSERT INTO
+	departments (
+		code,
+		title,
+		type,
+		courses_hours,
+		compulsory_hours,
+		thesis_hours
+	)
+VALUES
+	(
+		'DPM',
+		'دبلوم في هندسة القوى الميكانيكية (محطات القوى والهندسة البخارية)',
+		'diploma',
+		24,
+		18,
+		3 -- بناءً على وجود مقرر "المشروع" (MPO 599) بساعات 3 ضمن المقررات الإجبارية
+	);
+
+-- 2. إدخال بيانات المقررات الإجبارية لبرنامج DPM
+INSERT INTO
+	courses (code, title, prerequisite, total_hours)
+VALUES
+	('MPO501', 'انتقال الحرارة وتطبيقاتها', NULL, 3),
+	('MPO502', 'ديناميكا حرارية وآلات احتراق', NULL, 3),
+	('MPO503', 'ديناميكا الموائع ومحطات القوى الهيدروليكية', NULL, 3),
+	('MPO504', 'أجهزة قياس والتحكم', NULL, 3),
+	('MPO505', 'تطبيقات الحاسب', NULL, 3),
+	('MPO599', 'المشروع', NULL, 3);
+
+-- 3. إدخال بيانات المقررات الاختيارية لبرنامج DPM
+INSERT INTO
+	courses (code, title, prerequisite, total_hours)
+VALUES
+	('MPO506', 'محطات القوى الحرارية واقتصادياتها', NULL, 3),
+	('MPO507', 'التوربينات البخارية والغازية', NULL, 3),
+	('MPO508', 'مراجل البخار', NULL, 3),
+	('MPO509', 'موضوعات خاصة في محطات القوى والهندسة البخارية', NULL, 3),
+	('MPO510', 'انتقال الحرارة المتقدم', NULL, 3),
+	('MPO511', 'هندسة نووية', NULL, 3),
+	('MPO512', 'تخزين واسترجاع الطاقة', NULL, 3),
+	('MPO513', 'الطرق العددية في انتقال الحرارة', NULL, 3);
+
+-- 4. ربط القسم بالمقررات الإجبارية
+INSERT INTO
+	department_courses (department_id, course_id, is_compulsory)
+SELECT
+	(
+		SELECT
+			department_id
+		FROM
+			departments
+		WHERE
+			code = 'DPM'
+	),
+	course_id,
+	TRUE
+FROM
+	courses
+WHERE
+	code IN (
+		'MPO501',
+		'MPO502',
+		'MPO503',
+		'MPO504',
+		'MPO505',
+		'MPO599'
+	);
+
+-- 5. ربط القسم بالمقررات الاختيارية
+INSERT INTO
+	department_courses (department_id, course_id, is_compulsory)
+SELECT
+	(
+		SELECT
+			department_id
+		FROM
+			departments
+		WHERE
+			code = 'DPM'
+	),
+	course_id,
+	FALSE
+FROM
+	courses
+WHERE
+	code IN (
+		'MPO506',
+		'MPO507',
+		'MPO508',
+		'MPO509',
+		'MPO510',
+		'MPO511',
+		'MPO512',
+		'MPO513'
+	);
+
+
+
+
+	-- 1. إدخال بيانات القسم الرئيسي
+INSERT INTO
+	departments (
+		code,
+		title,
+		type,
+		courses_hours,
+		compulsory_hours,
+		thesis_hours
+	)
+VALUES
+	(
+		'DPMD',
+		'دبلوم في هندسة الإنتاج والتصميم الميكانيكي',
+		'diploma',
+		24,
+		18,
+		3 -- بناءً على وجود مقرر "المشروع" (MDP 599) بساعات 3 ضمن المقررات الإجبارية
+	);
+
+-- 2. إدخال بيانات المقررات الإجبارية لبرنامج DPMD
+INSERT INTO
+	courses (code, title, prerequisite, total_hours)
+VALUES
+	('MDP501', 'استخدام الحاسبات في النظم الهندسية', NULL, 3),
+	('MDP502', 'الإحصاء و تحليل البيانات', NULL, 3),
+	('MDP503', 'التصميم بمساعدة الحاسب', NULL, 3),
+	('MDP504', 'تريبولوجيا هندسية', NULL, 3),
+	('MDP510', 'التصنيع بمساعدة الحاسب الآلي', NULL, 3),
+	('MDP599', 'المشروع', NULL, 3);
+
+-- 3. إدخال بيانات المقررات الاختيارية لبرنامج DPMD (تجميع من كل التخصصات الفرعية)
+INSERT INTO
+	courses (code, title, prerequisite, total_hours)
+VALUES
+	-- مقررات اختيارية لتخصص التصميم الميكانيكي
+	('MDP517', 'الاهتزازات الميكانيكية وتطبيقاتها', NULL, 3),
+	('MDP518', 'تحليل الاجهادات للأجسام المرنة', NULL, 3),
+	('MDP519', 'التحليل التجريبي والعددي للإجهادات', NULL, 3),
+	('MDP520', 'التصميم الأمثل', NULL, 3),
+	('MDP521', 'طريقة العناصر المحدودة', NULL, 3),
+	('MDP522', 'ميكانيكا الكسر وتحليل الانهيارات', NULL, 3),
+	-- مقررات اختيارية لتخصص هندسة التصنيع
+	('MDP505', 'هندسة السباكة', NULL, 3),
+	('MDP506', 'هندسة اللحام', NULL, 3),
+	('MDP507', 'هندسة القطع والتشكيل', NULL, 3),
+	('MDP508', 'هندسة التشكيل', NULL, 3),
+	('MDP509', 'هندسة المرشدات والقوالب', NULL, 3),
+	('MDP511', 'هندسة العدد', NULL, 3),
+	('MDP513', 'قياسات هندسية متقدمة', NULL, 3),
+	-- مقررات اختيارية لتخصص هندسة المواد (بعضها قد يتكرر، لكن الأكواد مختلفة)
+	('MDP512', 'هندسة المواد واختباراتها', NULL, 3),
+	('MDP523', 'خواص المواد المتقدمة', NULL, 3),
+	('MDP524', 'موضوعات متقدمة في هندسة الإنتاج والمواد', NULL, 3),
+	('MDP525', 'المرونة التطبيقية', NULL, 3),
+	('MDP526', 'اللدونة التطبيقية', NULL, 3),
+	('MDP527', 'ميكانيكا المواد', NULL, 3),
+	('MDP528', 'ميكانيكا الأجسام غير المرنة', NULL, 3),
+	-- مقررات اختيارية لتخصص الهندسة الصناعية
+	('MDP514', 'بحوث عمليات صناعية', NULL, 3),
+	('MDP515', 'تخطيط ومراقبة الإنتاج', NULL, 3),
+	('MDP529', 'اقتصاديات وتكاليف صناعية', NULL, 3),
+	('MDP530', 'توكيد الجودة', NULL, 3),
+	('MDP531', 'تقييم وتحسين أداء المنظومات الصناعية', NULL, 3),
+	('MDP532', 'إدارة المشروعات الصناعية', NULL, 3),
+	-- مقررات اختيارية لتخصص الميكاترونيك
+	('MDP516', 'منظومات هيدروليكي ونيوماتيكي', NULL, 3),
+	('MDP533', 'ديناميكا المنظومات', NULL, 3),
+	('MDP534', 'التحكم التلقائي وتطبيقاتها', NULL, 3),
+	('MDP535', 'هندسة الروبوتات', NULL, 3),
+	('MDP536', 'الميكاترونيك', NULL, 3);
+
+
+-- 4. ربط القسم بالمقررات الإجبارية
+INSERT INTO
+	department_courses (department_id, course_id, is_compulsory)
+SELECT
+	(
+		SELECT
+			department_id
+		FROM
+			departments
+		WHERE
+			code = 'DPMD'
+	),
+	course_id,
+	TRUE
+FROM
+	courses
+WHERE
+	code IN (
+		'MDP501',
+		'MDP502',
+		'MDP503',
+		'MDP504',
+		'MDP510',
+		'MDP599'
+	);
+
+-- 5. ربط القسم بالمقررات الاختيارية (تجميع لكل المقررات الاختيارية المذكورة)
+INSERT INTO
+	department_courses (department_id, course_id, is_compulsory)
+SELECT
+	(
+		SELECT
+			department_id
+		FROM
+			departments
+		WHERE
+			code = 'DPMD'
+	),
+	course_id,
+	FALSE
+FROM
+	courses
+WHERE
+	code IN (
+		'MDP517',
+		'MDP518',
+		'MDP519',
+		'MDP520',
+		'MDP521',
+		'MDP522',
+		'MDP505',
+		'MDP506',
+		'MDP507',
+		'MDP508',
+		'MDP509',
+		'MDP511',
+		'MDP513',
+		'MDP512',
+		'MDP523',
+		'MDP524',
+		'MDP525',
+		'MDP526',
+		'MDP527',
+		'MDP528',
+		'MDP514',
+		'MDP515',
+		'MDP529',
+		'MDP530',
+		'MDP531',
+		'MDP532',
+		'MDP516',
+		'MDP533',
+		'MDP534',
+		'MDP535',
+		'MDP536'
+	);
+
+
+
+
+-- MASTER
+
+	-- 1. إدخال بيانات القسم (برنامج ماجستير العلوم في هندسة القوى الميكانيكية)
+INSERT INTO departments (
+    code,
+    title,
+    type,
+    courses_hours,
+    compulsory_hours,
+    thesis_hours
+) VALUES (
+    'MSM',
+    'ماجستير العلوم في هندسة القوى الميكانيكية',
+    'master',
+    48,
+    12,
+    -- TODO
+    0
+);
+
+-- 2. إدخال بيانات المقررات الإجبارية (جدول courses)
+-- ملاحظة: لن يتم تضمين تفاصيل مثل ساعات النظري/العملي أو تفاصيل الدرجات
+-- لأن سكيما جدول 'courses' الأصلية التي قدمتها لا تحتوي على هذه الحقول.
+INSERT INTO courses (
+    code,
+    title,
+    prerequisite,
+    total_hours
+) VALUES
+('MPO601', 'نظرية القياسات الدقيقة', NULL, 3),
+('MPO602', 'الطرق العددية في علوم الطاقة', NULL, 3),
+('MPO603', 'ميكانيكا الموائع المتقدمة', NULL, 3),
+('MPO604', 'السريان المضطرب', NULL, 3);
+
+-- 3. إدخال بيانات المقررات الاختيارية (جدول courses)
+INSERT INTO courses (
+    code,
+    title,
+    prerequisite,
+    total_hours
+) VALUES
+('MPO605', 'السريان ثنائي الطور', NULL, 3),
+('MPO606', 'آلات توربينية', NULL, 3),
+('MPO607', 'ديناميكا الغازات', NULL, 3),
+('MPO608', 'الطرق العددية في ديناميكا الموائع', NULL, 3),
+('MPO609', 'السريان المتغير مع الزمن', NULL, 3),
+('MPO610', 'هندسة الموائع في حماية البيئة', NULL, 3),
+('MPO611', 'السريان اللزج', NULL, 3),
+('MPO612', 'ثيرموديناميكا متقدمة', NULL, 3),
+('MPO613', 'أساسيات الاحتراق', NULL, 3),
+('MPO614', 'طرق قياس الطاقة', NULL, 3),
+('MPO615', 'نظرية محركات الاحتراق الترددية', NULL, 3),
+('MPO616', 'نظرية التزييت', NULL, 3),
+('MPO617', 'أساسيات تلوث الهواء', NULL, 3),
+('MPO618', 'الحرائق والانفجارات', NULL, 3),
+('MPO619', 'الطرق العددية في الاحتراق', NULL, 3),
+('MPO620', 'التبريد والحرارة', NULL, 3),
+('MPO621', 'الحمل الحراري', NULL, 3),
+('MPO622', 'التوصيل الحراري', NULL, 3),
+('MPO623', 'الإشعاع الحراري (1)', NULL, 3),
+('MPO624', 'الإشعاع الحراري (2)', NULL, 3),
+('MPO625', 'طاقة الشمس وتجميعها وتخزينها', NULL, 3),
+('MPO626', 'استخدامات الطاقة الشمسية', NULL, 3),
+('MPO627', 'محطات القوى', NULL, 3),
+('MPO628', 'التبريد', NULL, 3),
+('MPO629', 'الهندسة النووية', NULL, 3),
+('MPO630', 'تخزين واسترجاع الطاقة', NULL, 3),
+('MPO631', 'الطرق العددية في انتقال الحرارة', NULL, 3),
+('MPO632', 'التصميم الحراري للمنظومات الإلكترونية', NULL, 3),
+('MPO633', 'الميكرومترى المتقدم وتطبيقاته', NULL, 3),
+('MPO634', 'منظومات التحكم الهيدروليكي والنيوماتيكي', NULL, 3),
+('MPO635', 'التحكم التلقائي وتطبيقاته', NULL, 3),
+('MPO636', 'الميكاترونيك', NULL, 3);
+
+-- 4. ربط القسم بالمقررات الإجبارية
+INSERT INTO department_courses (department_id, course_id, is_compulsory)
+SELECT
+    (SELECT department_id FROM departments WHERE code = 'MSM'),
+    course_id,
+    TRUE
+FROM
+    courses
+WHERE
+    code IN (
+        'MPO601', 'MPO602', 'MPO603', 'MPO604'
+    );
+
+-- 5. ربط القسم بالمقررات الاختيارية
+INSERT INTO department_courses (department_id, course_id, is_compulsory)
+SELECT
+    (SELECT department_id FROM departments WHERE code = 'MSM'),
+    course_id,
+    FALSE
+FROM
+    courses
+WHERE
+    code IN (
+        'MPO605', 'MPO606', 'MPO607', 'MPO608', 'MPO609', 'MPO610', 'MPO611',
+        'MPO612', 'MPO613', 'MPO614', 'MPO615', 'MPO616', 'MPO617', 'MPO618',
+        'MPO619', 'MPO620', 'MPO621', 'MPO622', 'MPO623', 'MPO624', 'MPO625',
+        'MPO626', 'MPO627', 'MPO628', 'MPO629', 'MPO630', 'MPO631', 'MPO632',
+        'MPO633', 'MPO634', 'MPO635', 'MPO636'
+    );
+
+
+
+
+	-- 1. إدخال بيانات القسم (برنامج ماجستير العلوم في هندسة الإنتاج والتصميم الميكانيكي)
+INSERT INTO
+	departments (
+		code,
+		title,
+		type,
+		courses_hours,
+		compulsory_hours,
+		thesis_hours
+	)
+VALUES
+	(
+		'MPM',
+		'برنامج ماجستير العلوم في هندسة الإنتاج والتصميم الميكانيكي',
+		'master',
+		24,
+		12,
+		24 -- بناءً على أن إجمالي الساعات 48 والمقررات 24
+	);
+
+-- 2. إدخال بيانات المقررات الإجبارية لبرنامج MPM
+INSERT INTO
+	courses (code, title, prerequisite, total_hours)
+VALUES
+	('MDP601', 'تصميم بمساعدة الحاسب', NULL, 3),
+	('MDP602', 'المترولوجيا الهندسية', NULL, 3),
+	('MDP627', 'التحليل الإحصائي وتصميم التجارب', NULL, 3),
+	('MDP628', 'القياسات الهندسية المتقدمة', NULL, 3);
+
+-- 3. إدخال بيانات المقررات الاختيارية لبرنامج MPM (مقسمة حسب التخصصات)
+-- تخصص التصميم الميكانيكي
+INSERT INTO
+	courses (code, title, prerequisite, total_hours)
+VALUES
+	('MDP603', 'تصميم المنظومات الميكانيكية', NULL, 3),
+	('MDP604', 'تصميم الأمثل', NULL, 3),
+	('MDP618', 'الاهتزازات الميكانيكية', NULL, 3),
+	('MDP624', 'طريقة العناصر المحدودة', NULL, 3);
+
+-- تخصص هندسة التصنيع
+INSERT INTO
+	courses (code, title, prerequisite, total_hours)
+VALUES
+	('MDP607', 'هندسة السباكة', NULL, 3),
+	('MDP608', 'هندسة اللحام', NULL, 3),
+	('MDP609', 'هندسة قطع المعادن', NULL, 3),
+	('MDP610', 'هندسة تشكيل المعادن', NULL, 3),
+	('MDP625', 'هندسة المرشات والمقيدات', NULL, 3),
+	('MDP626', 'هندسة العدد', NULL, 3);
+
+-- تخصص هندسة المواد
+INSERT INTO
+	courses (code, title, prerequisite, total_hours)
+VALUES
+	('MDP605', 'هندسة المواد المتقدمة', NULL, 3),
+	('MDP606', 'المواد المركبة المتقدمة', NULL, 3),
+	('MDP611', 'موضوعات خاصة في هندسة الإنتاج والمواد', NULL, 3),
+	('MDP622', 'المرونة التطبيقية', NULL, 3),
+	('MDP623', 'اللدونة التطبيقية', NULL, 3);
+
+-- تخصص الهندسة الصناعية
+INSERT INTO
+	courses (code, title, prerequisite, total_hours)
+VALUES
+	('MDP612', 'بحوث عمليات صناعية متقدمة', NULL, 3),
+	('MDP613', 'تخطيط ومراقبة العمليات الصناعية', NULL, 3),
+	('MDP614', 'نمذجة وتحليل المنظومات الصناعية', NULL, 3),
+	('MDP615', 'اقتصاديات وتكاليف صناعية', NULL, 3),
+	('MDP616', 'ترشيد الجودة', NULL, 3);
+
+-- تخصص الميكاترونيك
+INSERT INTO
+	courses (code, title, prerequisite, total_hours)
+VALUES
+	('MDP617', 'منظومات التحكم الهيدروليكي والنيوماتيكي', NULL, 3),
+	('MDP619', 'ديناميكا المنظومات', NULL, 3),
+	('MDP620', 'هندسة الروبوتات', NULL, 3),
+	('MDP621', 'ميكاترونيك', NULL, 3);
+
+-- 4. ربط القسم بالمقررات الإجبارية
+INSERT INTO
+	department_courses (department_id, course_id, is_compulsory)
+SELECT
+	(
+		SELECT
+			department_id
+		FROM
+			departments
+		WHERE
+			code = 'MPM'
+	),
+	course_id,
+	TRUE
+FROM
+	courses
+WHERE
+	code IN ('MDP601', 'MDP602', 'MDP627', 'MDP628');
+
+-- 5. ربط القسم بالمقررات الاختيارية
+INSERT INTO
+	department_courses (department_id, course_id, is_compulsory)
+SELECT
+	(
+		SELECT
+			department_id
+		FROM
+			departments
+		WHERE
+			code = 'MPM'
+	),
+	course_id,
+	FALSE
+FROM
+	courses
+WHERE
+	code IN (
+		'MDP603',
+		'MDP604',
+		'MDP618',
+		'MDP624',
+		'MDP607',
+		'MDP608',
+		'MDP609',
+		'MDP610',
+		'MDP625',
+		'MDP626',
+		'MDP605',
+		'MDP606',
+		'MDP611',
+		'MDP622',
+		'MDP623',
+		'MDP612',
+		'MDP613',
+		'MDP614',
+		'MDP615',
+		'MDP616',
+		'MDP617',
+		'MDP619',
+		'MDP620',
+		'MDP621'
+	);
+
+
+
+
+
+
+
+
+
+-- PHD
+
+
+-- 1. إدخال بيانات القسم (برنامج دكتوراه الفلسفة في هندسة القوى الميكانيكية)
+INSERT INTO
+	departments (
+		code,
+		title,
+		type,
+		courses_hours,
+		compulsory_hours,
+		thesis_hours
+	)
+VALUES
+	(
+		'PHD_MPE',
+		'برنامج دكتوراه الفلسفة في هندسة القوى الميكانيكية',
+		'phd',
+		12,
+		6,
+		42 -- 42 ساعة للأطروحة والامتحان الشامل
+	);
+
+-- 2. إدخال بيانات المقررات الإجبارية لبرنامج PHD_MPE
+INSERT INTO
+	courses (code, title, prerequisite, total_hours)
+VALUES
+	('MPO701', 'انتقال الحرارة المتقدم', NULL, 3),
+	('MPO702', 'طرق القياس المتقدمة', NULL, 3);
+
+-- 3. إدخال بيانات المقررات الاختيارية لبرنامج PHD_MPE
+INSERT INTO
+	courses (code, title, prerequisite, total_hours)
+VALUES
+	('MPO703', 'التحليل الإحصائي وتصميم التجارب', NULL, 3),
+	('MPO704', 'ميكانيكا الموائع المتقدمة', NULL, 3),
+	('MPO705', 'السريان المضطرب', NULL, 3),
+	('MPO706', 'السريان ثنائي الطور', NULL, 3),
+	('MPO707', 'آلات توربينية', NULL, 3),
+	('MPO708', 'ديناميكا الغازات', NULL, 3),
+	('MPO709', 'الطرق العددية في ديناميكا الموائع', NULL, 3),
+	('MPO710', 'السريان المتغير مع الزمن', NULL, 3),
+	('MPO711', 'هندسة الموائع في حماية البيئة', NULL, 3),
+	('MPO712', 'السريان اللزج', NULL, 3),
+	('MPO713', 'ترموديناميكا متقدمة', NULL, 3),
+	('MPO714', 'أساسيات الاحتراق', NULL, 3),
+	('MPO715', 'نظرية محركات الاحتراق الترددية', NULL, 3),
+	('MPO716', 'نظرية التزييت', NULL, 3),
+	('MPO717', 'أساسيات تلوث الهواء', NULL, 3),
+	('MPO718', 'الحرائق والانفجارات', NULL, 3),
+	('MPO719', 'الطرق العددية في الاحتراق', NULL, 3),
+	('MPO720', 'التبريد بالامتزاز', NULL, 3),
+	('MPO721', 'الحمل الحراري', NULL, 3),
+	('MPO722', 'الترشيح الحراري', NULL, 3),
+	('MPO723', 'الإشعاع الحراري (1)', NULL, 3),
+	('MPO724', 'الإشعاع الحراري (2)', NULL, 3),
+	('MPO725', 'ديناميكية الطاقة الشمسية وتجميعها وتخزينها', NULL, 3),
+	('MPO726', 'استخدامات الطاقة الشمسية', NULL, 3),
+	('MPO727', 'محطات القوى', NULL, 3),
+	('MPO728', 'التبريد', NULL, 3),
+	('MPO729', 'الهندسة النووية', NULL, 3),
+	('MPO730', 'تخزين واسترجاع الطاقة', NULL, 3),
+	('MPO731', 'الطرق العددية في انتقال الحرارة', NULL, 3),
+	('MPO732', 'التصميم الحراري للمنظومات الإلكترونية', NULL, 3),
+	('MPO733', 'الميكاترونيك المتقدم وتطبيقاته', NULL, 3),
+	('MPO734', 'منظومات التحكم الهيدروليكي والنيوماتيكي', NULL, 3),
+	('MPO735', 'التحكم التكيفي وتطبيقاته', NULL, 3),
+	('MPO736', 'ميكاترونيك', NULL, 3),
+	('MPO737', 'موضوعات خاصة مختارة', NULL, 3);
+
+-- 4. ربط القسم بالمقررات الإجبارية
+INSERT INTO
+	department_courses (department_id, course_id, is_compulsory)
+SELECT
+	(
+		SELECT
+			department_id
+		FROM
+			departments
+		WHERE
+			code = 'PHD_MPE'
+	),
+	course_id,
+	TRUE
+FROM
+	courses
+WHERE
+	code IN ('MPO701', 'MPO702');
+
+-- 5. ربط القسم بالمقررات الاختيارية
+INSERT INTO
+	department_courses (department_id, course_id, is_compulsory)
+SELECT
+	(
+		SELECT
+			department_id
+		FROM
+			departments
+		WHERE
+			code = 'PHD_MPE'
+	),
+	course_id,
+	FALSE
+FROM
+	courses
+WHERE
+	code IN (
+		'MPO703',
+		'MPO704',
+		'MPO705',
+		'MPO706',
+		'MPO707',
+		'MPO708',
+		'MPO709',
+		'MPO710',
+		'MPO711',
+		'MPO712',
+		'MPO713',
+		'MPO714',
+		'MPO715',
+		'MPO716',
+		'MPO717',
+		'MPO718',
+		'MPO719',
+		'MPO720',
+		'MPO721',
+		'MPO722',
+		'MPO723',
+		'MPO724',
+		'MPO725',
+		'MPO726',
+		'MPO727',
+		'MPO728',
+		'MPO729',
+		'MPO730',
+		'MPO731',
+		'MPO732',
+		'MPO733',
+		'MPO734',
+		'MPO735',
+		'MPO736',
+		'MPO737'
+	);
+
+
+
+
+
+
+
+	-- 1. إدخال بيانات القسم (برنامج دكتوراه الفلسفة في هندسة الإنتاج والتصميم الميكانيكي)
+INSERT INTO
+	departments (
+		code,
+		title,
+		type,
+		courses_hours,
+		compulsory_hours,
+		thesis_hours
+	)
+VALUES
+	(
+		'PHD_IPDE',
+		'برنامج دكتوراه الفلسفة في هندسة الإنتاج والتصميم الميكانيكي',
+		'phd',
+		12,
+		6,
+		42 -- 42 ساعة للأطروحة والامتحان الشامل
+	);
+
+-- 2. إدخال بيانات المقررات الإجبارية لبرنامج PHD_IPDE
+INSERT INTO
+	courses (code, title, prerequisite, total_hours)
+VALUES
+	('MDP737', 'التحليل الإحصائي وتصميم التجارب', NULL, 3),
+	('MDP738', 'تطبيقات الحاسب في التصميم الميكانيكي والإنتاج', NULL, 3);
+
+-- 3. إدخال بيانات المقررات الاختيارية لبرنامج PHD_IPDE (مقسمة حسب التخصصات)
+-- تخصص التصميم الميكانيكي
+INSERT INTO
+	courses (code, title, prerequisite, total_hours)
+VALUES
+	('MDP702', 'التربولوجيا الهندسية', NULL, 3),
+	('MDP703', 'تصميم المنظومات الميكانيكية', NULL, 3),
+	('MDP704', 'التصميم الأمثل', NULL, 3),
+	('MDP705', 'نمذجة الأشكال الهندسية', NULL, 3),
+	('MDP706', 'موضوعات متقدمة في التصميم الميكانيكي', NULL, 3),
+	('MDP723', 'الاهتزازات الميكانيكية', NULL, 3),
+	('MDP724', 'ديناميكا المنظومات', NULL, 3),
+	('MDP734', 'طريقة العناصر المحدودة', NULL, 3),
+	('MDP735', 'ميكانيكا الكسر وتحليل الانهيارات', NULL, 3);
+
+-- تخصص هندسة التصنيع
+INSERT INTO
+	courses (code, title, prerequisite, total_hours)
+VALUES
+	('MDP709', 'هندسة السباكة', NULL, 3),
+	('MDP710', 'هندسة اللحام', NULL, 3),
+	('MDP711', 'هندسة قطع المعادن', NULL, 3),
+	('MDP712', 'هندسة تشكيل المعادن', NULL, 3),
+	('MDP713', 'موضوعات متقدمة في هندسة الإنتاج والمواد', NULL, 3),
+	('MDP730', 'المرونة التطبيقية', NULL, 3),
+	('MDP731', 'اللدونة التطبيقية', NULL, 3),
+	('MDP732', 'ميكانيكا الجوامد', NULL, 3),
+	('MDP733', 'ميكانيكا الأجسام غير المرنة', NULL, 3),
+	('MDP739', 'هندسة المرشات والمقيدات', NULL, 3),
+	('MDP740', 'هندسة العدد', NULL, 3);
+
+-- تخصص هندسة المواد
+INSERT INTO
+	courses (code, title, prerequisite, total_hours)
+VALUES
+	('MDP707', 'هندسة المواد المتقدمة', NULL, 3),
+	('MDP708', 'المواد المركبة المتقدمة', NULL, 3),
+	('MDP736', 'موضوعات متقدمة في ميكانيكا الجوامد', NULL, 3);
+
+-- تخصص الهندسة الصناعية
+INSERT INTO
+	courses (code, title, prerequisite, total_hours)
+VALUES
+	('MDP714', 'بحوث عمليات صناعية متقدمة', NULL, 3),
+	('MDP715', 'تخطيط ومراقبة العمليات الصناعية', NULL, 3),
+	('MDP716', 'نمذجة وتحليل المنظومات الصناعية', NULL, 3),
+	('MDP717', 'اقتصاديات وتكاليف صناعية', NULL, 3),
+	('MDP718', 'توكيد الجودة', NULL, 3),
+	('MDP719', 'تقييم وتحسين أداء المنظومات الصناعية', NULL, 3),
+	('MDP720', 'إدارة المشروعات الصناعية', NULL, 3),
+	('MDP721', 'موضوعات متقدمة في الهندسة الصناعية', NULL, 3);
+
+-- تخصص الميكاترونيك
+INSERT INTO
+	courses (code, title, prerequisite, total_hours)
+VALUES
+	('MDP722', 'منظومات التحكم الهيدروليكي والنيوماتيكي', NULL, 3),
+	('MDP725', 'الديناميكا التحليلية', NULL, 3),
+	('MDP726', 'التحكم التكيفي وتطبيقاته', NULL, 3),
+	('MDP727', 'هندسة الروبوتات', NULL, 3),
+	('MDP728', 'ميكاترونيك', NULL, 3),
+	('MDP729', 'موضوعات متقدمة في ديناميكا المنظومات', NULL, 3);
+
+-- 4. ربط القسم بالمقررات الإجبارية
+INSERT INTO
+	department_courses (department_id, course_id, is_compulsory)
+SELECT
+	(
+		SELECT
+			department_id
+		FROM
+			departments
+		WHERE
+			code = 'PHD_IPDE'
+	),
+	course_id,
+	TRUE
+FROM
+	courses
+WHERE
+	code IN ('MDP737', 'MDP738');
+
+-- 5. ربط القسم بالمقررات الاختيارية
+INSERT INTO
+	department_courses (department_id, course_id, is_compulsory)
+SELECT
+	(
+		SELECT
+			department_id
+		FROM
+			departments
+		WHERE
+			code = 'PHD_IPDE'
+	),
+	course_id,
+	FALSE
+FROM
+	courses
+WHERE
+	code IN (
+		'MDP702',
+		'MDP703',
+		'MDP704',
+		'MDP705',
+		'MDP706',
+		'MDP723',
+		'MDP724',
+		'MDP734',
+		'MDP735',
+		'MDP709',
+		'MDP710',
+		'MDP711',
+		'MDP712',
+		'MDP713',
+		'MDP730',
+		'MDP731',
+		'MDP732',
+		'MDP733',
+		'MDP739',
+		'MDP740',
+		'MDP707',
+		'MDP708',
+		'MDP736',
+		'MDP714',
+		'MDP715',
+		'MDP716',
+		'MDP717',
+		'MDP718',
+		'MDP719',
+		'MDP720',
+		'MDP721',
+		'MDP722',
+		'MDP725',
+		'MDP726',
+		'MDP727',
+		'MDP728',
+		'MDP729'
+	);
+
+	
+	
+-- MASTER
+
+
+-- 1. إدخال بيانات القسم
+INSERT INTO
+		departments (
+			code,
+			title,
+			type,
+			courses_hours,
+			compulsory_hours,
+			thesis_hours
+		)
+VALUES
+		(
+			'MBED',
+			'ماجستير العلوم في العمارة والتصميم البيئي',
+			'master',
+			36,
+			12,
+			0
+		);
+
+-- 2. إدخال بيانات المقررات الإجبارية لبرنامج MBED
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('ARCH601', 'منهجية بحث', NULL, 3),
+		('ARCH602', 'الاتجاهات المعمارية المعاصرة في التصميم', NULL, 3),
+		('ARCH603', 'الحاسب الآلي والمحاكاة المعمارية', NULL, 3),
+		('ARCH604', 'الطاقة البيئية الحضرية', NULL, 3);
+
+-- 3. إدخال بيانات المقررات الاختيارية لبرنامج MBED
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('ARCH605', 'أسس النقد المعماري', NULL, 3),
+		('ARCH606', 'هندسة القيمة في المشروعات المعمارية', NULL, 3),
+		('ARCH607', 'التنمية الحضرية المستدامة', NULL, 3),
+		('ARCH608', 'البحوث الإنسانية في العمارة', NULL, 3),
+		('ARCH609', 'مقرر خاص 1', NULL, 3),
+		('ARCH610', 'مقرر خاص 2', NULL, 3);
+
+-- 4. ربط القسم بالمقررات الإجبارية
+INSERT INTO
+		department_courses (department_id, course_id, is_compulsory)
+SELECT
+		(
+			SELECT
+				department_id
+			FROM
+				departments
+			WHERE
+				code = 'MBED'
+		),
+		course_id,
+		TRUE
+FROM
+		courses
+WHERE
+		code IN (
+			'UNR600',
+			'UNR601',
+			'ARCH601',
+			'ARCH602',
+			'ARCH603',
+			'ARCH604'
+		);
+
+-- 5. ربط القسم بالمقررات الاختيارية
+INSERT INTO
+		department_courses (department_id, course_id, is_compulsory)
+SELECT
+		(
+			SELECT
+				department_id
+			FROM
+				departments
+			WHERE
+				code = 'MBED'
+		),
+		course_id,
+		FALSE
+FROM
+		courses
+WHERE
+		code IN (
+			'ARCH605',
+			'ARCH606',
+			'ARCH607',
+			'ARCH608',
+			'ARCH609',
+			'ARCH610'
+		);
+
+
+
+
+
+		-- 1. إدخال بيانات القسم
+INSERT INTO
+		departments (
+			code,
+			title,
+			type,
+			courses_hours,
+			compulsory_hours,
+			thesis_hours
+		)
+VALUES
+		(
+			'MUDP',
+			'ماجستير العلوم في التصميم والتخطيط الحضري',
+			'master',
+			36,
+			12,
+			0
+		);
+
+-- 2. إدخال بيانات المقررات الإجبارية لبرنامج MUDP
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('URPL601', 'تنمية المجتمعات العمرانية الجديدة', NULL, 3),
+		('URPL602', 'النظريات الحديثة في التصميم الحضري', NULL, 3),
+		('URPL603', 'مشروعات التصميم الحضرية وتنمية المجتمعات', NULL, 3);
+
+-- 3. إدخال بيانات المقررات الاختيارية لبرنامج MUDP
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('URPL604', 'دراسات السكان والمرافق بالمناطق العشوائية', NULL, 3),
+		('URPL605', 'الحاسب الآلي ومحاكاة الفراغات الخارجية', NULL, 3),
+		('URPL606', 'التصميم الحضري الإقليمي', NULL, 3),
+		('URPL607', 'تطبيقات في تقييم الأثر البيئي', NULL, 3),
+		('URPL608', 'مقرر خاص 1', NULL, 3),
+		('URPL609', 'مقرر خاص 2', NULL, 3);
+
+-- 4. ربط القسم بالمقررات الإجبارية
+INSERT INTO
+		department_courses (department_id, course_id, is_compulsory)
+SELECT
+		(
+			SELECT
+				department_id
+			FROM
+				departments
+			WHERE
+				code = 'MUDP'
+		),
+		course_id,
+		TRUE
+FROM
+		courses
+WHERE
+		code IN (
+			'UNR600',
+			'UNR601',
+			'ARCH601',
+			'URPL601',
+			'URPL602',
+			'URPL603'
+		);
+
+-- 5. ربط القسم بالمقررات الاختيارية
+INSERT INTO
+		department_courses (department_id, course_id, is_compulsory)
+SELECT
+		(
+			SELECT
+				department_id
+			FROM
+				departments
+			WHERE
+				code = 'MUDP'
+		),
+		course_id,
+		FALSE
+FROM
+		courses
+WHERE
+		code IN (
+			'URPL604',
+			'URPL605',
+			'URPL606',
+			'URPL607',
+			'URPL608',
+			'URPL609'
+		);
+
+
+
+
+-- PHD
+
+
+-- 1. إدخال بيانات القسم
+INSERT INTO
+		departments (
+			code,
+			title,
+			type,
+			courses_hours,
+			compulsory_hours,
+			thesis_hours
+		)
+VALUES
+		(
+			'PHDEB',
+			'دكتوراه الفلسفة في العمارة والتصميم البيئي',
+			'phd',
+			54,
+			3,
+			0 -- لم يتم تحديد ساعات الرسالة بشكل صريح كبند منفصل في الجدول، وهي شرط للبدء في الرسالة ضمن الـ 54 ساعة الإجمالية.
+		);
+
+-- 2. إدخال بيانات المقررات الإجبارية لبرنامج PHDEB
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('ARCH701', 'بحوث التصميم المستدام', NULL, 3);
+
+-- 3. إدخال بيانات المقررات الاختيارية لبرنامج PHDEB
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('ARCH702', 'تطبيقات متقدمة للحاسب في التصميم البيئي', NULL, 3),
+		('ARCH703', 'بحوث الاقتصاد البيئي وعولمة القيمة', NULL, 3),
+		('ARCH704', 'بحوث الطاقة الجديدة والمتجددة', NULL, 3),
+		('ARCH705', 'بحوث كفاءة الأداء البيئي للمشروعات', NULL, 3);
+
+-- 4. ربط القسم بالمقررات الإجبارية
+INSERT INTO
+		department_courses (department_id, course_id, is_compulsory)
+SELECT
+		(
+			SELECT
+				department_id
+			FROM
+				departments
+			WHERE
+				code = 'PHDEB'
+		),
+		course_id,
+		TRUE
+FROM
+		courses
+WHERE
+		code IN ('ARCH701');
+
+-- 5. ربط القسم بالمقررات الاختيارية
+INSERT INTO
+		department_courses (department_id, course_id, is_compulsory)
+SELECT
+		(
+			SELECT
+				department_id
+			FROM
+				departments
+			WHERE
+				code = 'PHDEB'
+		),
+		course_id,
+		FALSE
+FROM
+		courses
+WHERE
+		code IN (
+			'ARCH702',
+			'ARCH703',
+			'ARCH704',
+			'ARCH705'
+		);
+
+
+
+
+
+
+		-- 1. إدخال بيانات القسم
+INSERT INTO
+		departments (
+			code,
+			title,
+			type,
+			courses_hours,
+			compulsory_hours,
+			thesis_hours
+		)
+VALUES
+		(
+			'PHDUT',
+			'دكتوراه الفلسفة في التصميم والتخطيط الحضري',
+			'phd',
+			54,
+			3,
+			0 -- لم يتم تحديد ساعات الرسالة بشكل صريح كبند منفصل في الجدول.
+		);
+
+-- 2. إدخال بيانات المقررات الإجبارية لبرنامج PHDUT
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('URPL701', 'بحوث التصميم الحضري للمدينة', NULL, 3);
+
+-- 3. إدخال بيانات المقررات الاختيارية لبرنامج PHDUT
+INSERT INTO
+		courses (code, title, prerequisite, total_hours)
+VALUES
+		('URPL702', 'تطبيقات متقدمة للحاسب في التصميم العمراني', NULL, 3),
+		('URPL703', 'بحوث تنمية التجمعات العمرانية الجديدة', NULL, 3),
+		('URPL704', 'بحوث في دراسات الإسكان والتنمية العمرانية', NULL, 3),
+		('URPL705', 'بحوث عمران المناطق ذات القيمة', NULL, 3);
+
+-- 4. ربط القسم بالمقررات الإجبارية
+INSERT INTO
+		department_courses (department_id, course_id, is_compulsory)
+SELECT
+		(
+			SELECT
+				department_id
+			FROM
+				departments
+			WHERE
+				code = 'PHDUT'
+		),
+		course_id,
+		TRUE
+FROM
+		courses
+WHERE
+		code IN ('URPL701');
+
+-- 5. ربط القسم بالمقررات الاختيارية
+INSERT INTO
+		department_courses (department_id, course_id, is_compulsory)
+SELECT
+		(
+			SELECT
+				department_id
+			FROM
+				departments
+			WHERE
+				code = 'PHDUT'
+		),
+		course_id,
+		FALSE
+FROM
+		courses
+WHERE
+		code IN (
+			'URPL702',
+			'URPL703',
+			'URPL704',
+			'URPL705'
+		);
