@@ -39,7 +39,7 @@ export default function createApp() {
     })
   );
 
-  app.use(cors({ origin: "http://localhost:3002", credentials: true }));
+  app.use(cors({ origin: env.CLIENT_URL, credentials: true }));
   app.onError(onError);
   return app;
 }
