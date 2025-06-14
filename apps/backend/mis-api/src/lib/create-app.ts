@@ -3,19 +3,34 @@ import { logger } from "@/middlewares/logger";
 import { OpenAPIHono } from "@hono/zod-openapi";
 import { notFound, onError, serveEmojiFavicon } from "stoker/middlewares";
 import { defaultHook } from "stoker/openapi";
-import { MemoryStore, sessionMiddleware } from "hono-sessions";
+import { MemoryStore, sessionMiddleware, Store } from "hono-sessions";
 import { serveStatic } from "@hono/node-server/serve-static";
 import { cors } from "hono/cors";
+import { BunRedisStore } from "connect-redis-hono";
+import { createClient } from "redis";
 import env from "@/env";
 
 export function createRouter() {
   return new OpenAPIHono<AppBindings>({ strict: false, defaultHook });
 }
 
-export default function createApp() {
+export default async function createApp() {
   const app = createRouter();
-  // TODO: Decide on using / not using a memory store
-  const store = new MemoryStore();
+  let store: Store;
+
+  try {
+    const client = createClient({ url: process.env.REDIS_URL });
+    await client.connect();
+    console.log("AT REDIS CACHE");
+    store = new BunRedisStore({
+      prefix: "AppPrefix:",
+      ttl: 3600,
+      client,
+    });
+  } catch (error) {
+    console.error(error);
+    store = new MemoryStore();
+  }
 
   app.use(
     cors({
@@ -35,7 +50,7 @@ export default function createApp() {
         httpOnly: true,
         path: "/",
         secure: env.NODE_ENV !== "development", // Ensure Secure is set in production
-        sameSite: "None",
+        sameSite: env.NODE_ENV !== "development" ? "None" : undefined,
       },
       sessionCookieName: "sessionId",
     })
