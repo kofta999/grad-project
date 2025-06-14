@@ -1,7 +1,7 @@
 import { hcWithType } from "@repo/mis-api";
 
 // Base client for browser use
-export const apiClient = hcWithType("http://localhost:3000", {
+export const apiClient = hcWithType(process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000", {
   init: { credentials: "include" },
 });
 
