@@ -1,40 +1,99 @@
-# Turborepo kitchen sink starter
+# MIS Project
 
-This is an official starter Turborepo with multiple meta-frameworks all working in harmony and sharing packages.
+This project consists of a backend API and a frontend application. The backend is built with Node.js and TypeScript, while the frontend is built with Next.js and React. The project uses Docker for containerization and `bun` for running scripts.
 
-This example also shows how to use [Workspace Configurations](https://turbo.build/repo/docs/core-concepts/monorepos/configuring-workspaces).
+## Table of Contents
 
-## Using this example
+- [Prerequisites](#prerequisites)
+- [Installation](#installation)
+- [Running the Project](#running-the-project)
+- [Development](#development)
+- [Contributing](#contributing)
+- [License](#license)
 
-Run the following command:
+## Prerequisites
 
-```sh
-npx create-turbo@latest -e kitchen-sink
-```
+Before you begin, ensure you have the following installed on your machine:
 
-## What's inside?
+- [Node.js](https://nodejs.org/)
+- [bun](https://bun.sh/)
+- [Docker](https://www.docker.com/)
+- [Docker Compose](https://docs.docker.com/compose/)
 
-This Turborepo includes the following packages and apps:
+### Installing Docker and Docker Compose
 
-### Apps and Packages
+#### Docker
 
-- `api`: an [Express](https://expressjs.com/) server
-- `storefront`: a [Next.js](https://nextjs.org/) app
-- `admin`: a [Vite](https://vitejs.dev/) single page app
-- `blog`: a [Remix](https://remix.run/) blog
-- `@repo/eslint-config`: ESLint configurations used throughout the monorepo
-- `@repo/jest-presets`: Jest configurations
-- `@repo/logger`: isomorphic logger (a small wrapper around console.log)
-- `@repo/ui`: a dummy React UI library (which contains `<CounterButton>` and `<Link>` components)
-- `@repo/typescript-config`: tsconfig.json's used throughout the monorepo
+Follow the instructions for your operating system on the [Docker installation page](https://docs.docker.com/get-docker/).
 
-Each package and app is 100% [TypeScript](https://www.typescriptlang.org/).
+#### Docker Compose
 
-### Utilities
+Docker Compose is included in Docker Desktop for Windows and macOS. For Linux, follow the instructions on the [Docker Compose installation page](https://docs.docker.com/compose/install/).
 
-This Turborepo has some additional tools already setup for you:
+## Installation
 
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Jest](https://jestjs.io) test runner for all things JavaScript
-- [Prettier](https://prettier.io) for code formatting
+1. **Clone the repository:**
+
+   ```sh
+   git clone https://github.com/kofta999/grad-project.git
+   cd grad-project
+   ```
+
+2. **Install dependencies:**
+
+   ```sh
+   bun install
+   ```
+
+3. **Set up environment variables:**
+
+   Create a `.env` file in the `apps/backend/mis-api` directory and add the necessary environment variables. For example:
+
+   ```env
+   NODE_ENV=development
+   PORT=3000
+   LOG_LEVEL=debug
+   DATABASE_URL=postgresql://mis_user:mis_password@localhost:5432/mis_db
+   ```
+
+## Running the Project
+
+### Both Backend and Frontend
+
+1. **Start all servers using:**
+
+   ```sh
+   bun dev
+   ```
+
+### Backend Only
+
+1. **Navigate to the backend directory:**
+
+   ```sh
+   cd apps/backend/mis-api
+   ```
+
+2. **Start the backend server:**
+
+   ```sh
+   bun dev
+   ```
+
+   This will start the Docker containers and run the backend server with hot-reloading.
+
+### Frontend Only
+
+1. **Navigate to the frontend directory:**
+
+   ```sh
+   cd apps/frontend/mis
+   ```
+
+2. **Start the frontend development server:**
+
+   ```sh
+   bun dev
+   ```
+
+This will start the Next.js development server on port 3002.

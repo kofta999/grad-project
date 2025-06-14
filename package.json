@@ -4,6 +4,7 @@
     "build": "turbo run build",
     "clean": "turbo run clean",
     "dev": "turbo run dev",
+    "dev:no-docker": "turbo run dev:no-docker",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "lint": "turbo run lint",
     "test": "turbo run test",
@@ -11,7 +12,8 @@
   },
   "devDependencies": {
     "prettier": "^3.2.5",
-    "turbo": "^2.3.0"
+    "turbo": "^2.5.3",
+    "@types/bun": "latest"
   },
   "engines": {
     "node": ">=18"
@@ -22,5 +24,21 @@
     "apps/frontend/*",
     "apps/backend/*",
     "packages/*"
-  ]
+  ],
+  "dependencies": {
+    "@radix-ui/react-dialog": "^1.1.6",
+    "@types/js-cookie": "^3.0.6",
+    "dropdown-menu": "^0.1.1",
+    "js-cookie": "^3.0.5",
+    "next-client-cookies": "^2.0.1",
+    "react-cookie": "^7.2.2",
+    "react-datepicker": "^8.3.0",
+    "universal-cookie": "^7.2.2",
+    "zod": "^3.24.2"
+  },
+  "module": "index.ts",
+  "type": "module",
+  "peerDependencies": {
+    "typescript": "^5"
+  }
 }

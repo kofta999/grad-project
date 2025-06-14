@@ -1,13 +1,13 @@
-import env from '@/env'
-import { drizzle } from 'drizzle-orm/libsql'
-import * as schema from './schema'
+import env from "@/env";
+import { drizzle } from "drizzle-orm/node-postgres";
+import * as schema from "./schema";
+import * as relations from "./relations";
 
 const db = drizzle({
   connection: {
-    url: env.DATABASE_URL,
-    authToken: env.DATABASE_AUTH_TOKEN,
+    connectionString: env.DATABASE_URL,
   },
-  schema,
-})
+  schema: { ...schema, ...relations },
+});
 
-export default db
+export default db;
