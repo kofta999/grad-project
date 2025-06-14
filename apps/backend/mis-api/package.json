@@ -9,6 +9,7 @@
     "dev:no-docker": "tsx watch src/index.ts",
     "dev:tsc": "tsc -p tsconfig.build.json --watch",
     "build": "tsc -p tsconfig.build.json && tsc-alias",
+    "build:prod": "tsc && tsc-alias",
     "clean": "rm -rf dist",
     "typecheck": "tsc --skipLibCheck --noEmit --project tsconfig.json",
     "lint": "eslint src/",
