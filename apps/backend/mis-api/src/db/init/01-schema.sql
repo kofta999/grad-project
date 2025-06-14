@@ -8,6 +8,9 @@
 -- Set client encoding to UTF-8 for Arabic support
 SET
 	client_encoding = 'UTF8';
+	
+set schema 'public';
+SET search_path TO public;
 
 -- Create ENUMs
 CREATE TYPE "identification_type" AS ENUM('national_id', 'passport');

@@ -15,6 +15,10 @@
 -- PART 1: ORIGINAL SEED DATA (MODIFIED FOR CONSISTENCY)
 -- ============================================================================
 
+
+set schema 'public';
+SET search_path TO public;
+
 -- Insert sample academic_years
 INSERT INTO
 	academic_years (start_date, end_date)
