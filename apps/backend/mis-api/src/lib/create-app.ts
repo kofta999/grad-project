@@ -18,6 +18,16 @@ export default function createApp() {
   const store = new MemoryStore();
 
   app.use(
+    cors({
+      origin: env.CLIENT_URL,
+      allowMethods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+      allowHeaders: ["Content-Type", "Authorization", "authorization", "content-type"],
+      credentials: true,
+      exposeHeaders: ["Content-Length", "authorization", "Authorization", "content-type"],
+    })
+  );
+
+  app.use(
     sessionMiddleware({
       store,
       expireAfterSeconds: 3600,
@@ -25,6 +35,7 @@ export default function createApp() {
         httpOnly: true,
         path: "/",
         secure: env.NODE_ENV !== "development", // Ensure Secure is set in production
+        sameSite: "None",
       },
       sessionCookieName: "sessionId",
     })
@@ -39,15 +50,6 @@ export default function createApp() {
     })
   );
 
-  app.use(
-    cors({
-      origin: env.CLIENT_URL,
-      allowMethods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-      allowHeaders: ["Content-Type", "Authorization", "authorization", "content-type"],
-      credentials: true,
-      exposeHeaders: ["Content-Length", "authorization", "Authorization", "content-type"],
-    })
-  );
   app.onError(onError);
   return app;
 }
