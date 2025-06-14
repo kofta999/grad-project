@@ -39,7 +39,15 @@ export default function createApp() {
     })
   );
 
-  app.use(cors({ origin: env.CLIENT_URL, credentials: true }));
+  app.use(
+    cors({
+      origin: env.CLIENT_URL,
+      allowMethods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+      allowHeaders: ["Content-Type", "Authorization", "authorization", "content-type"],
+      credentials: true,
+      exposeHeaders: ["Content-Length", "authorization", "Authorization", "content-type"],
+    })
+  );
   app.onError(onError);
   return app;
 }
