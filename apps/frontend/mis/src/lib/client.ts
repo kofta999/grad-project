@@ -1,6 +1,6 @@
 import { hcWithType } from "@repo/mis-api";
 
-const URL = `${process.env.NEXT_PUBLIC_CLIENT_URL || process.env.NEXT_PUBLIC_VERCEL_URL || "http://localhost:3002"}/api`;
+const URL = `${`https://${process.env.NEXT_PUBLIC_VERCEL_URL}` || "http://localhost:3002"}/api`;
 
 // Base client for browser use
 export const apiClient = hcWithType(URL, {
