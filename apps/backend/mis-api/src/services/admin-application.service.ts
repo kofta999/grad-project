@@ -87,7 +87,7 @@ export class AdminApplicationService
 
     if (studentNameArQuery) {
       whereQuery.push(
-        sql`unaccent('arabic_unaccent', ${adminApplicationsList.studentName}) like unaccent('arabic_unaccent', ${searchParam})`
+        sql`normalize_arabic_text(${adminApplicationsList.studentName}) like normalize_arabic_text(${searchParam})`
       );
     }
 

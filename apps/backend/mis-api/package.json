@@ -8,7 +8,8 @@
     "dev": "node scripts/nuke-and-init-db.js && tsx watch src/index.ts",
     "dev:no-docker": "tsx watch src/index.ts",
     "dev:tsc": "tsc -p tsconfig.build.json --watch",
-    "build": "tsc -p tsconfig.build.json",
+    "build": "tsc -p tsconfig.build.json && tsc-alias",
+    "build:prod": "tsc && tsc-alias",
     "clean": "rm -rf dist",
     "typecheck": "tsc --skipLibCheck --noEmit --project tsconfig.json",
     "lint": "eslint src/",
@@ -50,6 +51,7 @@
     "drizzle-kit": "^0.30.5",
     "eslint": "^9.12.0",
     "eslint-plugin-format": "^0.1.2",
+    "tsc-alias": "^1.8.16",
     "tsx": "^4.19.2",
     "vitest": "^2.1.5"
   }

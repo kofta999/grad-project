@@ -8,13 +8,9 @@
 -- Set client encoding to UTF-8 for Arabic support
 SET
 	client_encoding = 'UTF8';
-
-CREATE EXTENSION IF NOT EXISTS unaccent;
-
-CREATE TEXT SEARCH DICTIONARY arabic_unaccent (
-    TEMPLATE = unaccent,
-    RULES = 'arabic'
-);
+	
+set schema 'public';
+SET search_path TO public;
 
 -- Create ENUMs
 CREATE TYPE "identification_type" AS ENUM('national_id', 'passport');
@@ -654,6 +650,38 @@ $$;
 
 CREATE TRIGGER register_course_trigger before insert ON course_registrations FOR each ROW
 EXECUTE function check_course_availability ();
+
+CREATE OR REPLACE FUNCTION normalize_arabic_text(input_text TEXT)
+RETURNS TEXT
+LANGUAGE plpgsql
+IMMUTABLE PARALLEL SAFE
+AS $$
+DECLARE
+    normalized_text TEXT := input_text;
+BEGIN
+    -- Normalize Alif variations to a single Alif (ا)
+    normalized_text := REPLACE(normalized_text, 'إ', 'ا'); -- Alif with Hamza below to Alif
+    normalized_text := REPLACE(normalized_text, 'أ', 'ا'); -- Alif with Hamza above to Alif
+    normalized_text := REPLACE(normalized_text, 'آ', 'ا'); -- Alif Maddah to Alif
+
+    normalized_text := REPLACE(normalized_text, 'ة', 'ه');
+
+    -- Remove Harakat (Diacritics)
+    normalized_text := REPLACE(normalized_text, 'َ', ''); -- Fatha
+    normalized_text := REPLACE(normalized_text, 'ُ', ''); -- Damma
+    normalized_text := REPLACE(normalized_text, 'ِ', ''); -- Kasra
+    normalized_text := REPLACE(normalized_text, 'ً', ''); -- Fathatan
+    normalized_text := REPLACE(normalized_text, 'ٌ', ''); -- Dammatan
+    normalized_text := REPLACE(normalized_text, 'ٍ', ''); -- Kasratan
+    normalized_text := REPLACE(normalized_text, 'ّ', ''); -- Shaddah
+    normalized_text := REPLACE(normalized_text, 'ْ', ''); -- Sukun
+
+    RETURN normalized_text;
+END;
+$$;
+
+CREATE INDEX idx_students_first_name_ar_normalized
+ON students(normalize_arabic_text(full_name_ar));
 
 CREATE TABLE "reports" (
     "report_id" serial PRIMARY KEY,

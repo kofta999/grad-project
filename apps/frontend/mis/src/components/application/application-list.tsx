@@ -17,6 +17,7 @@ import { Container } from "@/components/ui/container";
 import { useEffect, useState } from "react";
 import { SearchBar } from "@/components/ui/search";
 import { Loader } from "@/components/ui/loader";
+import { useDebounce } from "use-debounce";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -29,6 +30,7 @@ import {
 type ApplicationsListResponse = InferResponseType<typeof apiClient.applications.$get>;
 type ApplicationsData = ApplicationsListResponse["data"];
 type Pagination = ApplicationsListResponse["pagination"];
+const DEBOUNCE_LENGTH = 500;
 
 export default function ApplicationsList({
   applicationsResponse,
@@ -42,7 +44,7 @@ export default function ApplicationsList({
     page: number,
     status: string | undefined,
     sortName: string | undefined
-  ) => void;
+  ) => Promise<void>;
 }) {
   const router = useRouter();
   const DEGREE_MAP: Record<ApplicationsData[number]["academicDegree"], string> = {
@@ -51,6 +53,7 @@ export default function ApplicationsList({
     phd: "دكتوراه",
   };
   const [nameAr, setNameAr] = useState<string>("");
+  const [debouncedName] = useDebounce(nameAr, DEBOUNCE_LENGTH);
   const [page, setPage] = useState<number>(1);
   const [status, setStatus] = useState<string | undefined>(undefined);
   const [sortName, setSortName] = useState<string | undefined>(undefined);
@@ -105,12 +108,12 @@ export default function ApplicationsList({
   useEffect(() => {
     const fetchData = async () => {
       setLoader(true);
-      await getApplicationsList(nameAr, page, status, sortName);
+      await getApplicationsList(debouncedName, page, status, sortName);
       setLoader(false);
     };
 
     fetchData();
-  }, [nameAr, page, status, sortName]);
+  }, [debouncedName, page, status, sortName]);
 
   return (
     <Container>
