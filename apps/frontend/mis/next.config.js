@@ -15,4 +15,12 @@ module.exports = {
       },
     ],
   },
+  async rewrites() {
+    return [
+      {
+        source: "/api/:slug*",
+        destination: `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000"}/:slug*`,
+      },
+    ];
+  },
 };

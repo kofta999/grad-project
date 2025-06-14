@@ -1,7 +1,9 @@
 import { hcWithType } from "@repo/mis-api";
 
+const URL = `${process.env.NEXT_PUBLIC_VERCEL_URL || "http://localhost:3002"}/api`;
+
 // Base client for browser use
-export const apiClient = hcWithType(process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000", {
+export const apiClient = hcWithType(URL, {
   init: { credentials: "include" },
 });
 
@@ -18,7 +20,7 @@ export async function getServerApiClient() {
         .map((c) => `${c.name}=${c.value}`)
         .join("; ");
 
-      return hcWithType("http://localhost:3000", {
+      return hcWithType(URL, {
         init: { credentials: "include" },
         headers: {
           Cookie: cookieHeader,
