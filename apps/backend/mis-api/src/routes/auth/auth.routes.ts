@@ -41,7 +41,7 @@ export const login = createRoute({
   },
   responses: {
     [HttpStatusCodes.OK]: jsonContent(
-      z.object({ name: z.string(), role: z.enum(ROLES) }),
+      z.object({ name: z.string(), role: z.enum(ROLES), accessToken: z.string() }),
       "Successful login"
     ),
     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
@@ -52,17 +52,17 @@ export const login = createRoute({
   },
 });
 
-export const logout = createRoute({
-  path: "/logout",
-  method: "post",
-  tags,
-  middleware: [isAuthenticated] as const,
-  summary: "Logout User", // الملخص: خروج المستخدم
-  responses: {
-    [HttpStatusCodes.OK]: jsonContent(z.object({}), "Successful logout"),
-    [HttpStatusCodes.UNAUTHORIZED]: jsonContent(UnauthorizedSchema, "The authentication errors"),
-  },
-});
+// export const logout = createRoute({
+//   path: "/logout",
+//   method: "post",
+//   tags,
+//   middleware: [isAuthenticated] as const,
+//   summary: "Logout User", // الملخص: خروج المستخدم
+//   responses: {
+//     [HttpStatusCodes.OK]: jsonContent(z.object({}), "Successful logout"),
+//     [HttpStatusCodes.UNAUTHORIZED]: jsonContent(UnauthorizedSchema, "The authentication errors"),
+//   },
+// });
 
 export const upload = createRoute({
   path: "/upload",
@@ -91,6 +91,6 @@ export type RegisterStudentRoute = typeof register;
 
 export type LoginUserRoute = typeof login;
 
-export type LogoutUserRoute = typeof logout;
+// export type LogoutUserRoute = typeof logout;
 
 export type UploadFileRoute = typeof upload;

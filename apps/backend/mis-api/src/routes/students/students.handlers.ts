@@ -18,7 +18,7 @@ const storageService = new StorageService();
 
 // Profile handlers
 export const getStudentDetails: AppRouteHandler<routes.GetStudentDetailsRoute> = async (c) => {
-  const studentId = c.var.session.get("id");
+  const studentId = c.var.user.userId;
 
   if (!studentId) {
     return c.json({ message: "Unauthorized" }, HttpStatusCodes.UNAUTHORIZED);
@@ -36,7 +36,7 @@ export const getStudentDetails: AppRouteHandler<routes.GetStudentDetailsRoute> =
 // Course handlers
 export const getRegisteredCourses: AppRouteHandler<routes.GetRegisteredCourses> = async (c) => {
   const { academicYearId, semester } = c.req.valid("query");
-  const studentId = c.var.session.get("id");
+  const studentId = c.var.user.userId;
 
   if (!studentId) {
     return c.json({ message: "Unauthorized" }, HttpStatusCodes.UNAUTHORIZED);
@@ -54,7 +54,7 @@ export const getRegisteredCourses: AppRouteHandler<routes.GetRegisteredCourses> 
 export const getRegisteredAcademicYears: AppRouteHandler<
   routes.GetRegisteredAcademicYearsRoute
 > = async (c) => {
-  const studentId = c.var.session.get("id");
+  const studentId = c.var.user.userId;
 
   if (!studentId) {
     return c.json({ message: "Unauthorized" }, HttpStatusCodes.UNAUTHORIZED);
@@ -69,7 +69,7 @@ export const getRegisteredAcademicYears: AppRouteHandler<
 export const createApplication: AppRouteHandler<routes.CreateApplicationRoute> = async (c) => {
   let newApplicationData = c.req.valid("json");
   // Should be there because of middleware
-  let studentId = c.var.session.get("id")!;
+  let studentId = c.var.user.userId;
 
   const applicationId = await studentApplicationService.createApplication(
     studentId,
@@ -82,7 +82,7 @@ export const createApplication: AppRouteHandler<routes.CreateApplicationRoute> =
 export const updateApplication: AppRouteHandler<routes.UpdateApplicationRoute> = async (c) => {
   let updatedApplicationData = c.req.valid("json");
   // Should be there because of middleware
-  let studentId = c.var.session.get("id")!;
+  let studentId = c.var.user.userId;
 
   const application = await studentApplicationService.getApplicationByStudentId(studentId);
 
@@ -109,7 +109,7 @@ export const updateApplication: AppRouteHandler<routes.UpdateApplicationRoute> =
 export const saveApplicationAttachments: AppRouteHandler<
   routes.SaveApplicationAttachmentsRoute
 > = async (c) => {
-  const studentId = c.var.session.get("id")!;
+  const studentId = c.var.user.userId;
   const { applicationId } = c.req.valid("param");
   const attachments = c.req.valid("json").attachments;
 
@@ -128,7 +128,7 @@ export const saveApplicationAttachments: AppRouteHandler<
 };
 
 export const getApplication: AppRouteHandler<routes.GetApplicationRoute> = async (c) => {
-  const studentId = c.var.session.get("id")!;
+  const studentId = c.var.user.userId;
   const application = await studentApplicationService.getApplicationByStudentId(studentId);
 
   if (!application) {
@@ -141,7 +141,7 @@ export const getApplication: AppRouteHandler<routes.GetApplicationRoute> = async
 export const deleteApplicationAttachment: AppRouteHandler<
   routes.DeleteApplicationAttachmentRoute
 > = async (c) => {
-  const studentId = c.var.session.get("id")!;
+  const studentId = c.var.user.userId;
   const { applicationId, attachmentId } = c.req.valid("param");
 
   const application = await studentApplicationService.getApplicationByStudentId(studentId);
@@ -178,7 +178,7 @@ export const deleteApplicationAttachment: AppRouteHandler<
 export const checkThesisAvailability: AppRouteHandler<routes.CheckThesisAvailabilityRoute> = async (
   c
 ) => {
-  const studentId = c.var.session.get("id")!;
+  const studentId = c.var.user.userId;
 
   try {
     const status = await thesisService.isThesisAvailable(studentId);
@@ -197,7 +197,7 @@ export const checkThesisAvailability: AppRouteHandler<routes.CheckThesisAvailabi
 };
 
 export const submitThesis: AppRouteHandler<routes.SubmitThesisRoute> = async (c) => {
-  const studentId = c.var.session.get("id")!;
+  const studentId = c.var.user.userId;
   const { attachmentUrl, title } = c.req.valid("json");
 
   try {
@@ -212,7 +212,7 @@ export const submitThesis: AppRouteHandler<routes.SubmitThesisRoute> = async (c)
 };
 
 export const getThesis: AppRouteHandler<routes.GetThesisRoute> = async (c) => {
-  const studentId = c.var.session.get("id")!;
+  const studentId = c.var.user.userId;
 
   const thesis = await thesisService.getThesis(studentId);
 
