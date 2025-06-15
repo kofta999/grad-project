@@ -83,6 +83,7 @@ export default function SideNav({ role }: SideNavProps) {
       setLoggedInUser(null);
       deleteCookie("role");
       deleteCookie("jwtToken");
+      router.refresh()
       toast.success("تم تسجيل الخروج بنجاح");
     } catch (err) {
       toast.error("فشل تسجيل الخروج حاول مرة أخرى");
