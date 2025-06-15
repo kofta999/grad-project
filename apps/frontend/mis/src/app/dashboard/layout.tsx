@@ -1,6 +1,6 @@
-"use client";
 import SideBar from "@/components/sidebar";
 import { useUserContext } from "@/context/user-context";
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 export default function Layout({
@@ -11,17 +11,18 @@ export default function Layout({
   student: React.ReactNode;
   admin: React.ReactNode;
 }) {
-  const { loggedInUser } = useUserContext();
-  console.log({ loggedInUser });
-  // Get the current path
-  // const pathname = headers().get("x-pathname") || "";
+  const role = cookies().get("role")?.value;
 
-  if (!loggedInUser) {
-    redirect("/login");
-  }
+  // console.log({ loggedInUser });
+  // // Get the current path
+  // // const pathname = headers().get("x-pathname") || "";
 
-  // Validate role
-  const role = loggedInUser.role;
+  // if (!loggedInUser) {
+  //   redirect("/login");
+  // }
+
+  // // Validate role
+  // const role = loggedInUser.role;
   if (role !== "admin" && role !== "student") {
     redirect("/login");
   }
