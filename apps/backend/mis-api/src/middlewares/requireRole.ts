@@ -6,7 +6,7 @@ import { ROLES } from "@/lib/constants";
 
 export const requireRole = (role: (typeof ROLES)[number]) =>
   createMiddleware<AppBindings>(async (c, next) => {
-    if (c.var.session.get("role") === role) {
+    if (c.var.user.role === role) {
       await next();
     } else {
       return c.json({ message: HttpStatusPhrases.FORBIDDEN }, HttpStatusCodes.FORBIDDEN);
