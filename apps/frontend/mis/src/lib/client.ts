@@ -1,28 +1,34 @@
 import { hcWithType } from "@repo/mis-api";
 
+const customFetch: typeof fetch = async (input, init) => {
+  const authToken = JSON.parse(localStorage.getItem("loggedInUser") || "{}").accessToken;
+  const currentHeaders = new Headers(init?.headers);
+  if (authToken) {
+    currentHeaders.set("Authorization", `Bearer ${authToken}`);
+  }
+  const response = await fetch(input, { ...init, headers: currentHeaders });
+  if (response.status === 401 && authToken) {
+    console.warn("API client (dynamic) returned 401. Logging out.");
+    localStorage.removeItem("loggedInUser");
+    // Potentially throw to signal failure upstream
+    // throw new Error("Unauthorized - Logged out");
+  }
+  return response;
+};
+
 // Base client for browser use
 export const apiClient = hcWithType(process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000", {
   init: { credentials: "include" },
+  fetch: customFetch,
 });
 
 // Server-only API client that forwards cookies
 export async function getServerApiClient() {
-  // Only import cookies() in a server context
   if (typeof window === "undefined") {
     try {
-      // Dynamic import to prevent it from being included in client bundles
-      const { cookies } = await import("next/headers");
-      const cookieStore = cookies();
-      const cookieHeader = cookieStore
-        .getAll()
-        .map((c) => `${c.name}=${c.value}`)
-        .join("; ");
-
       return hcWithType("http://localhost:3000", {
         init: { credentials: "include" },
-        headers: {
-          Cookie: cookieHeader,
-        },
+        fetch: customFetch,
       });
     } catch (e) {
       console.warn("Failed to get cookies in server context", e);

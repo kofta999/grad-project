@@ -12,6 +12,8 @@ const EnvSchema = z
     LOG_LEVEL: z.enum(["fatal", "error", "warn", "info", "debug", "trace", "silent"]),
     DATABASE_URL: z.string().url(),
     DATABASE_AUTH_TOKEN: z.string().optional(),
+    CLIENT_URL: z.string().default("http://localhost:3002"),
+    JWT_SECRET: z.string(),
   })
   .superRefine((input, ctx) => {
     if (input.NODE_ENV === "production" && !!input.DATABASE_AUTH_TOKEN) {

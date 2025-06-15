@@ -1,6 +1,7 @@
+"use client";
 import SideBar from "@/components/sidebar";
-import { cookies, headers } from "next/headers";
-import { notFound, redirect } from "next/navigation";
+import { useUserContext } from "@/context/user-context";
+import { redirect } from "next/navigation";
 
 export default function Layout({
   student,
@@ -10,33 +11,19 @@ export default function Layout({
   student: React.ReactNode;
   admin: React.ReactNode;
 }) {
-  const cookieStore = cookies();
-  const roleCookie = cookieStore.get("userRole");
-  const sessionCookie = cookieStore.get("sessionId");
-
+  const { loggedInUser } = useUserContext();
+  console.log({ loggedInUser });
   // Get the current path
-  const pathname = headers().get("x-pathname") || "";
-  const isBaseRoute = pathname === "/dashboard";
+  // const pathname = headers().get("x-pathname") || "";
 
-  if (!roleCookie || !sessionCookie) {
-    // Only redirect to login from the base dashboard route
-    if (isBaseRoute) {
-      redirect("/login");
-    } else {
-      // For all other routes, return 404 to avoid revealing route existence
-      notFound();
-    }
+  if (!loggedInUser) {
+    redirect("/login");
   }
 
   // Validate role
-  const role = roleCookie.value;
+  const role = loggedInUser.role;
   if (role !== "admin" && role !== "student") {
-    // Same security pattern for invalid roles
-    if (isBaseRoute) {
-      redirect("/login");
-    } else {
-      notFound();
-    }
+    redirect("/login");
   }
 
   return (

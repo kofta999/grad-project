@@ -11,7 +11,7 @@ import courseResults from "@/routes/course-results/course-results.index";
 import countries from "@/routes/countries/countries.index";
 import configureOpenAPI from "./lib/configure-open-api";
 
-const app = createApp();
+const app = await createApp();
 
 // export const routes = [
 //   index,

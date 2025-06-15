@@ -3,7 +3,6 @@ import { logger } from "@/middlewares/logger";
 import { OpenAPIHono } from "@hono/zod-openapi";
 import { notFound, onError, serveEmojiFavicon } from "stoker/middlewares";
 import { defaultHook } from "stoker/openapi";
-import { MemoryStore, sessionMiddleware } from "hono-sessions";
 import { serveStatic } from "@hono/node-server/serve-static";
 import { cors } from "hono/cors";
 import env from "@/env";
@@ -12,23 +11,19 @@ export function createRouter() {
   return new OpenAPIHono<AppBindings>({ strict: false, defaultHook });
 }
 
-export default function createApp() {
+export default async function createApp() {
   const app = createRouter();
-  // TODO: Decide on using / not using a memory store
-  const store = new MemoryStore();
 
   app.use(
-    sessionMiddleware({
-      store,
-      expireAfterSeconds: 3600,
-      cookieOptions: {
-        httpOnly: true,
-        path: "/",
-        secure: env.NODE_ENV !== "development", // Ensure Secure is set in production
-      },
-      sessionCookieName: "sessionId",
+    cors({
+      origin: env.CLIENT_URL,
+      allowMethods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+      allowHeaders: ["Content-Type", "Authorization", "authorization", "content-type"],
+      credentials: true,
+      exposeHeaders: ["Content-Length", "authorization", "Authorization", "content-type"],
     })
   );
+
   app.use(serveEmojiFavicon("🔥"));
   app.use(logger());
   app.notFound(notFound);
@@ -39,7 +34,6 @@ export default function createApp() {
     })
   );
 
-  app.use(cors({ origin: "http://localhost:3002", credentials: true }));
   app.onError(onError);
   return app;
 }

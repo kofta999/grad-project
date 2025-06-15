@@ -79,13 +79,6 @@ export default function SideNav({ role }: SideNavProps) {
 
   const handleLogout = async () => {
     try {
-      // First, navigate away from protected routes
-      router.push("/login");
-
-      // Then perform logout API call
-      await apiClient.auth.logout.$post();
-
-      // Finally update state
       setLoggedInUser(null);
       toast.success("تم تسجيل الخروج بنجاح");
     } catch (err) {
