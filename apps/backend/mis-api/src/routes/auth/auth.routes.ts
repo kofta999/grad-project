@@ -69,6 +69,11 @@ export const upload = createRoute({
   method: "post",
   tags,
   summary: "Upload File", // ملخص: رفع ملف
+  security: [
+    {
+      Bearer: [],
+    },
+  ],
   middleware: [uploadFile] as const,
   request: {
     body: {

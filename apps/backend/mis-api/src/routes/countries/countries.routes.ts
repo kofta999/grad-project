@@ -13,6 +13,11 @@ export const getCountryList = createRoute({
   path: "/",
   summary: "Get Country List",
   method: "get",
+  security: [
+    {
+      Bearer: [],
+    },
+  ],
   middleware: studentMiddleware,
   tags,
   responses: {
@@ -31,6 +36,11 @@ export const getCitiesForCountry = createRoute({
   request: {
     params: IdParamsSchema,
   },
+  security: [
+    {
+      Bearer: [],
+    },
+  ],
   middleware: studentMiddleware,
   tags,
   responses: {

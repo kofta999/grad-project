@@ -14,6 +14,11 @@ export const enrollCourse = createRoute({
   path: "/",
   method: "post",
   tags,
+  security: [
+    {
+      Bearer: [],
+    },
+  ],
   middleware: adminMiddleware,
   summary: "Enroll Course", // الملخص: تسجيل مقرر
   request: {
@@ -48,6 +53,11 @@ export const withdrawCourse = createRoute({
   request: {
     params: IdParamsSchema,
   },
+  security: [
+    {
+      Bearer: [],
+    },
+  ],
   middleware: [isAuthenticated, requireRole("admin")],
   responses: {
     [HttpStatusCodes.NO_CONTENT]: {

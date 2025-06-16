@@ -3,6 +3,19 @@ import { apiReference } from "@scalar/hono-api-reference";
 import packageJSON from "../../package.json" with { type: "json" };
 
 export default function configureOpenAPI(app: AppOpenAPI) {
+  const securitySchemes = {
+		bearerAuth: {
+			type: "http" as const,
+			scheme: "bearer" as const,
+			bearerFormat: "JWT" as const,
+		},
+	};
+
+	app.openAPIRegistry.registerComponent(
+		"securitySchemes",
+		"bearerAuth",
+		securitySchemes.bearerAuth,
+	);
   app.doc("/doc", {
     openapi: "3.0.0",
     info: {

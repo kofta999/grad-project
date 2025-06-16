@@ -11,6 +11,11 @@ export const submitReport = createRoute({
   path: "/",
   method: "post",
   summary: "Submit Report",
+  security: [
+    {
+      Bearer: [],
+    },
+  ],
   middleware: adminMiddleware,
   tags,
   request: {
@@ -39,6 +44,11 @@ export const getReport = createRoute({
   path: "/",
   method: "get",
   summary: "Get Reports",
+  security: [
+    {
+      Bearer: [],
+    },
+  ],
   middleware: adminMiddleware,
   request: {
     query: z.object({

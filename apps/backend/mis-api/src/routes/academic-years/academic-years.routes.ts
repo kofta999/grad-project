@@ -9,6 +9,11 @@ const tags = ["Academic Years"];
 export const getCurrentAcademicYears = createRoute({
   path: "/",
   method: "get",
+  security: [
+    {
+      Bearer: [],
+    },
+  ],
   middleware: studentMiddleware,
   tags,
   summary: "List Academic Years", // ملخص: قائمة السنوات الدراسية
