@@ -1,13 +1,6 @@
 "use client";
 import { Container } from "@/components/ui/container";
-import React, { useEffect, useState } from "react";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import React from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Table,
@@ -17,47 +10,18 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { apiClient } from "@/lib/client";
-import { InferResponseType } from "@repo/mis-api";
-import toast from "react-hot-toast";
 import { LibraryBig } from "lucide-react";
 import { Loader } from "@/components/ui/loader";
 import useAcademicProgress from "@/hooks/use-academic-progress";
 
-type CoursesType = InferResponseType<typeof apiClient.students.me.courses.$get, 200>;
-
-interface AcademicYear {
-  academicYearId: number;
-  year: string;
-}
-type SemesterType = "first" | "second" | "third";
-
-type Course = {
-  courseId: number;
-  code: string;
-  title: string;
-  prerequisite: number;
-  totalHours: number;
-  grade: string;
-  courseRegistrationId: number;
-};
-
-type SemesterCourses = {
-  academicYearId: number;
-  semester: string;
-  courses: Course[];
-};
-
 export default function Page() {
   const { currentAcademicYear, incompleteSemester, loading } = useAcademicProgress();
 
-  console.log(currentAcademicYear, incompleteSemester);
-
-  if (loading) {
+  if (!incompleteSemester || incompleteSemester?.courses.length === 0) {
     return (
-      <div className="flex items-center justify-center h-screen">
-        <Loader className="w-20 h-20" />
-      </div>
+      <Container className="h-screen flex items-center justify-center">
+        <p className="text-3xl font-bold text-mainColor">لا يوجد مواد</p>
+      </Container>
     );
   }
 
@@ -73,8 +37,10 @@ export default function Page() {
         <CardContent>
           <CardDescription>المقررات المسجلة في الفصل الدراسي الحالي</CardDescription>
 
-          {!incompleteSemester || incompleteSemester.courses.length === 0 ? (
-            <p className="text-center text-xl mt-4">لا يوجد مواد</p>
+          {loading ? (
+            <div className="flex items-center justify-center h-screen">
+              <Loader className="w-20 h-20" />
+            </div>
           ) : (
             <>
               <h3 className="text-lg font-semibold mb-4 mt-6">
