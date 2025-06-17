@@ -10,6 +10,11 @@ const router = createRouter().openapi(
   createRoute({
     method: "get",
     tags: ["Index"],
+    security: [
+      {
+        Bearer: [],
+      },
+    ],
     middleware: [isAuthenticated] as const,
     path: "/",
     responses: {

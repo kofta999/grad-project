@@ -22,6 +22,11 @@ const tags = ["Students"];
 export const getStudentDetails = createRoute({
   path: "/me",
   method: "get",
+  security: [
+    {
+      Bearer: [],
+    },
+  ],
   middleware: studentMiddleware,
   tags,
   summary: "View Profile", // ملخص: عرض الملف الشخصي
@@ -43,6 +48,11 @@ export const getRegisteredCourses = createRoute({
   path: "/me/courses",
   method: "get",
   tags,
+  security: [
+    {
+      Bearer: [],
+    },
+  ],
   middleware: studentMiddleware,
   request: {
     query: z.object({
@@ -70,6 +80,11 @@ export const getRegisteredCourses = createRoute({
 export const getRegisteredAcademicYears = createRoute({
   path: "/me/courses/registered-academic-years",
   method: "get",
+  security: [
+    {
+      Bearer: [],
+    },
+  ],
   middleware: studentMiddleware,
   tags,
   summary: "List Years", // ملخص: قائمة السنوات
@@ -93,6 +108,11 @@ export const getRegisteredAcademicYears = createRoute({
 export const getApplication = createRoute({
   path: "/me/applications",
   method: "get",
+  security: [
+    {
+      Bearer: [],
+    },
+  ],
   middleware: studentMiddleware,
   tags,
   summary: "View Application", // ملخص: عرض الطلب
@@ -108,6 +128,11 @@ export const getApplication = createRoute({
 export const createApplication = createRoute({
   path: "/me/applications",
   method: "post",
+  security: [
+    {
+      Bearer: [],
+    },
+  ],
   middleware: studentMiddleware,
   tags,
   summary: "Create Application", // ملخص: إنشاء طلب
@@ -130,6 +155,11 @@ export const createApplication = createRoute({
 export const updateApplication = createRoute({
   path: "/me/applications",
   method: "patch",
+  security: [
+    {
+      Bearer: [],
+    },
+  ],
   middleware: studentMiddleware,
   tags,
   summary: "Update Application", // ملخص: تحديث الطلب
@@ -159,6 +189,11 @@ export const updateApplication = createRoute({
 export const saveApplicationAttachments = createRoute({
   path: "/me/applications/{applicationId}/attachments",
   method: "post",
+  security: [
+    {
+      Bearer: [],
+    },
+  ],
   middleware: studentMiddleware,
   tags,
   summary: "Save Attachments", // ملخص: حفظ المرفقات
@@ -187,6 +222,11 @@ export const saveApplicationAttachments = createRoute({
 export const deleteApplicationAttachment = createRoute({
   path: "/me/applications/{applicationId}/attachments/{attachmentId}",
   method: "delete",
+  security: [
+    {
+      Bearer: [],
+    },
+  ],
   middleware: studentMiddleware,
   tags,
   summary: "Delete Attachment", // ملخص: حذف المرفق
@@ -215,6 +255,11 @@ export const deleteApplicationAttachment = createRoute({
 export const checkThesisAvailability = createRoute({
   path: "/me/thesis/status",
   method: "get",
+  security: [
+    {
+      Bearer: [],
+    },
+  ],
   middleware: studentMiddleware,
   tags,
   summary: "Check Thesis Status", // ملخص: تحقق من حالة الرسالة
@@ -237,6 +282,11 @@ export const checkThesisAvailability = createRoute({
 export const getThesis = createRoute({
   path: "/me/thesis",
   method: "get",
+  security: [
+    {
+      Bearer: [],
+    },
+  ],
   middleware: studentMiddleware,
   tags,
   summary: "View Thesis", // ملخص: عرض الرسالة
@@ -252,6 +302,11 @@ export const getThesis = createRoute({
 export const submitThesis = createRoute({
   path: "/me/thesis",
   method: "post",
+  security: [
+    {
+      Bearer: [],
+    },
+  ],
   middleware: studentMiddleware,
   tags,
   summary: "Submit Thesis", // ملخص: تسليم الرسالة
@@ -281,6 +336,11 @@ export const submitThesis = createRoute({
 export const getStudentDetailsById = createRoute({
   path: "/{id}",
   method: "get",
+  security: [
+    {
+      Bearer: [],
+    },
+  ],
   middleware: adminMiddleware,
   request: {
     params: IdParamsSchema,
@@ -306,6 +366,11 @@ export const getStudentDetailsById = createRoute({
 export const editStudentInfo = createRoute({
   path: "/{id}",
   method: "patch",
+  security: [
+    {
+      Bearer: [],
+    },
+  ],
   middleware: adminMiddleware,
   tags,
   summary: "Edit Student", // ملخص: تعديل الطالب

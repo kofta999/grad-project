@@ -17,8 +17,9 @@ import useAcademicProgress from "@/hooks/use-academic-progress";
 export default function Page() {
   const [semester] = useState(["first", "second", "third"]);
   const { academicYears, semesterCourses, loading } = useAcademicProgress();
+  console.log(academicYears, semesterCourses)
 
-  if (academicYears.length === 0 && semesterCourses.length > 0) {
+  if (academicYears.length === 0 && semesterCourses.length === 0) {
     return (
       <Container className="h-screen flex items-center justify-center">
         <p className="text-3xl font-bold text-mainColor">لا يوجد نتائج</p>

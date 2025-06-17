@@ -14,6 +14,11 @@ export const getAvailableDepartments = createRoute({
       type: z.enum(DEPARTMENT_TYPES),
     }),
   },
+  security: [
+    {
+      Bearer: [],
+    },
+  ],
   middleware: studentMiddleware,
   tags,
   summary: "List Departments", // ملخص: قائمة الأقسام

@@ -47,6 +47,8 @@ export default function LoginForm() {
       }
 
       const result = await res.json();
+      document.cookie = `jwtToken=${result.accessToken};`;
+      document.cookie = `role=${result.role};`;
       setLoggedInUser(result);
       setLoading(false);
 

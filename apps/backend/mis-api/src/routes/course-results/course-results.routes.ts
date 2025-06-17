@@ -9,6 +9,11 @@ const tags = ["Course Results"];
 export const setCourseResult = createRoute({
   path: "/",
   method: "post",
+  security: [
+    {
+      Bearer: [],
+    },
+  ],
   middleware: adminMiddleware,
   tags,
   summary: "Set Course Result",
@@ -36,6 +41,11 @@ export const setCourseResult = createRoute({
 export const updateCourseResult = createRoute({
   path: "/",
   method: "put",
+  security: [
+    {
+      Bearer: [],
+    },
+  ],
   middleware: adminMiddleware,
   tags,
   summary: "Update Course Result",
@@ -63,6 +73,11 @@ export const updateCourseResult = createRoute({
 export const deleteResult = createRoute({
   path: "/{id}",
   method: "delete",
+  security: [
+    {
+      Bearer: [],
+    },
+  ],
   middleware: adminMiddleware,
   tags,
   summary: "Delete Course Result",
@@ -86,6 +101,11 @@ export const deleteResult = createRoute({
 export const getCourseResults = createRoute({
   path: "/",
   method: "get",
+  security: [
+    {
+      Bearer: [],
+    },
+  ],
   middleware: adminMiddleware,
   tags,
   summary: "Get Course Results",

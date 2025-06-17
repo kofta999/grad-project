@@ -19,6 +19,11 @@ export const getAllApplications = createRoute({
   path: "/",
   method: "get",
   tags,
+  security: [
+    {
+      Bearer: [],
+    },
+  ],
   middleware: adminMiddleware,
   request: {
     query: z.object({
@@ -44,6 +49,11 @@ export const getApplicationDetails = createRoute({
     params: IdParamsSchema,
   },
   tags,
+  security: [
+    {
+      Bearer: [],
+    },
+  ],
   middleware: adminMiddleware,
   summary: "View Application Details", // ملخص: عرض تفاصيل الطلب
   responses: {
@@ -60,6 +70,11 @@ export const getApplicationRegisteredCourses = createRoute({
   path: "/{id}/courses",
   method: "get",
   tags,
+  security: [
+    {
+      Bearer: [],
+    },
+  ],
   middleware: [isAuthenticated, requireRole("admin")] as const,
   request: {
     params: IdParamsSchema,
@@ -83,6 +98,11 @@ export const getApplicationRegisteredCourses = createRoute({
 export const getApplicationAvailableCourses = createRoute({
   path: "/{id}/available-courses",
   method: "get",
+  security: [
+    {
+      Bearer: [],
+    },
+  ],
   middleware: [isAuthenticated, requireRole("admin")],
   tags,
   summary: "List Available Courses", // ملخص: عرض المقررات المتاحة
@@ -108,6 +128,11 @@ export const acceptApplication = createRoute({
   path: "/accept",
   method: "post",
   tags,
+  security: [
+    {
+      Bearer: [],
+    },
+  ],
   middleware: adminMiddleware,
   summary: "Accept Application", // ملخص: قبول الطلب
   request: {
@@ -138,6 +163,11 @@ export const rejectApplication = createRoute({
   method: "post",
   summary: "Reject Application",
   tags,
+  security: [
+    {
+      Bearer: [],
+    },
+  ],
   middleware: adminMiddleware,
   request: {
     body: jsonContentRequired(
