@@ -3,7 +3,7 @@ import { deleteCookie, getCookie } from "./utils";
 
 const customFetch: typeof fetch = async (input, init) => {
   const currentHeaders = new Headers(init?.headers);
-  let authToken = getCookie("jwtToken");
+  const authToken = getCookie("jwtToken");
 
   currentHeaders.set("Authorization", `Bearer ${authToken}`);
   const response = await fetch(input, { ...init, headers: currentHeaders });
@@ -12,6 +12,7 @@ const customFetch: typeof fetch = async (input, init) => {
     deleteCookie("jwtToken");
     deleteCookie("role");
     localStorage.removeItem("loggedInUser");
+    window.location.reload();
     // Potentially throw to signal failure upstream
     // throw new Error("Unauthorized - Logged out");
   }
