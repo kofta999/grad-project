@@ -3,13 +3,15 @@ import { createWriteStream } from "fs";
 import { mkdir, unlink } from "fs/promises";
 import { join } from "path";
 import { APP_URL } from "@/lib/constants";
+import env from "@/env";
+import { put, del } from "@vercel/blob";
 
 export interface IStorageService {
   saveFile(file: File): Promise<string>;
   deleteFile(filePath: string): Promise<void>;
 }
 
-export class StorageService implements IStorageService {
+class DiskStorageService implements IStorageService {
   private readonly uploadsDir = "./uploads";
 
   async saveFile(file: File): Promise<string> {
@@ -43,3 +45,21 @@ export class StorageService implements IStorageService {
     writeStream.end();
   }
 }
+
+class VercelBlobStorageService implements IStorageService {
+  async saveFile(file: File): Promise<string> {
+    const blob = await put(file.name, file, {
+      access: "public",
+      addRandomSuffix: true,
+    });
+
+    return blob.url;
+  }
+
+  async deleteFile(filePath: string): Promise<void> {
+    del(filePath);
+  }
+}
+
+export const StorageService =
+  env.NODE_ENV === "development" ? DiskStorageService : VercelBlobStorageService;
