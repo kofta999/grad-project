@@ -17,7 +17,7 @@ import useAcademicProgress from "@/hooks/use-academic-progress";
 export default function Page() {
   const [semester] = useState(["first", "second", "third"]);
   const { academicYears, semesterCourses, loading } = useAcademicProgress();
-  console.log(academicYears, semesterCourses)
+  console.log(academicYears, semesterCourses);
 
   if (academicYears.length === 0 && semesterCourses.length === 0) {
     return (
