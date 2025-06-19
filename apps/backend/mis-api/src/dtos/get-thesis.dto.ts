@@ -6,6 +6,10 @@ export const GetThesisSchema = z.object({
   title: z.string(),
   attachmentUrl: z.string(),
   createdAt: z.string(),
+  supervisor: z.object({
+    name: z.string(),
+    email: z.string(),
+  }),
 });
 
 export type GetThesisDTO = z.infer<typeof GetThesisSchema>;

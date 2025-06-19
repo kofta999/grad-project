@@ -1,22 +1,22 @@
-import {
-  pgTable,
-  serial,
-  varchar,
-  foreignKey,
-  integer,
-  date,
-  unique,
-  text,
-  boolean,
-  timestamp,
-  index,
-  real,
-  primaryKey,
-  pgView,
-  bigint,
-  pgEnum,
-} from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
+import {
+  bigint,
+  boolean,
+  date,
+  foreignKey,
+  index,
+  integer,
+  pgEnum,
+  pgTable,
+  pgView,
+  primaryKey,
+  real,
+  serial,
+  text,
+  timestamp,
+  unique,
+  varchar,
+} from "drizzle-orm/pg-core";
 
 export const addressType = pgEnum("address_type", ["permanent", "current"]);
 export const applicationStatus = pgEnum("application_status", ["pending", "accepted", "rejected"]);
@@ -95,24 +95,46 @@ export const students = pgTable(
       .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),
   },
-  (table) => [unique("students_email_key").on(table.email)]
+  (table) => [
+    index("idx_students_first_name_ar_normalized").using(
+      "btree",
+      sql`normalize_arabic_text(full_name_ar)`
+    ),
+    unique("students_email_key").on(table.email),
+  ]
 );
 
-export const departments = pgTable("departments", {
-  departmentId: serial("department_id").primaryKey().notNull(),
-  code: text().notNull(),
+export const reports = pgTable("reports", {
+  reportId: serial("report_id").primaryKey().notNull(),
+  type: text().notNull(),
   title: text().notNull(),
-  type: departmentType().notNull(),
-  coursesHours: integer("courses_hours").notNull(),
-  compulsoryHours: integer("compulsory_hours").notNull(),
-  thesisHours: integer("thesis_hours").notNull(),
+  attachmentUrl: text("attachment_url").notNull(),
 });
+
+export const supervisors = pgTable(
+  "supervisors",
+  {
+    supervisorId: serial("supervisor_id").primaryKey().notNull(),
+    fullNameAr: text("full_name_ar").notNull(),
+    fullNameEn: text("full_name_en").notNull(),
+    email: text().notNull(),
+    hashedPassword: text("hashed_password").notNull(),
+    createdAt: timestamp("created_at", { mode: "string" })
+      .default(sql`CURRENT_TIMESTAMP`)
+      .notNull(),
+    updatedAt: timestamp("updated_at", { mode: "string" })
+      .default(sql`CURRENT_TIMESTAMP`)
+      .notNull(),
+  },
+  (table) => [unique("supervisors_email_key").on(table.email)]
+);
 
 export const applications = pgTable(
   "applications",
   {
     applicationId: serial("application_id").primaryKey().notNull(),
     studentId: integer("student_id").notNull(),
+    supervisorId: integer("supervisor_id").notNull(),
     status: applicationStatus().default("pending").notNull(),
   },
   (table) => [
@@ -124,6 +146,11 @@ export const applications = pgTable(
       columns: [table.studentId],
       foreignColumns: [students.studentId],
       name: "applications_student_id_fkey",
+    }),
+    foreignKey({
+      columns: [table.supervisorId],
+      foreignColumns: [supervisors.supervisorId],
+      name: "applications_supervisor_id_fkey",
     }),
   ]
 );
@@ -168,6 +195,16 @@ export const registerations = pgTable(
     unique("registerations_application_id_key").on(table.applicationId),
   ]
 );
+
+export const departments = pgTable("departments", {
+  departmentId: serial("department_id").primaryKey().notNull(),
+  code: text().notNull(),
+  title: text().notNull(),
+  type: departmentType().notNull(),
+  coursesHours: integer("courses_hours").notNull(),
+  compulsoryHours: integer("compulsory_hours").notNull(),
+  thesisHours: integer("thesis_hours").notNull(),
+});
 
 export const attachments = pgTable(
   "attachments",
@@ -279,24 +316,6 @@ export const academicQualifications = pgTable(
   ]
 );
 
-export const admins = pgTable(
-  "admins",
-  {
-    adminId: serial("admin_id").primaryKey().notNull(),
-    fullNameAr: text("full_name_ar").notNull(),
-    fullNameEn: text("full_name_en").notNull(),
-    email: text().notNull(),
-    hashedPassword: text("hashed_password").notNull(),
-    createdAt: timestamp("created_at", { mode: "string" })
-      .default(sql`CURRENT_TIMESTAMP`)
-      .notNull(),
-    updatedAt: timestamp("updated_at", { mode: "string" })
-      .default(sql`CURRENT_TIMESTAMP`)
-      .notNull(),
-  },
-  (table) => [unique("admins_email_key").on(table.email)]
-);
-
 export const courses = pgTable(
   "courses",
   {
@@ -381,6 +400,24 @@ export const courseResults = pgTable(
   ]
 );
 
+export const admins = pgTable(
+  "admins",
+  {
+    adminId: serial("admin_id").primaryKey().notNull(),
+    fullNameAr: text("full_name_ar").notNull(),
+    fullNameEn: text("full_name_en").notNull(),
+    email: text().notNull(),
+    hashedPassword: text("hashed_password").notNull(),
+    createdAt: timestamp("created_at", { mode: "string" })
+      .default(sql`CURRENT_TIMESTAMP`)
+      .notNull(),
+    updatedAt: timestamp("updated_at", { mode: "string" })
+      .default(sql`CURRENT_TIMESTAMP`)
+      .notNull(),
+  },
+  (table) => [unique("admins_email_key").on(table.email)]
+);
+
 export const theses = pgTable(
   "theses",
   {
@@ -407,13 +444,6 @@ export const theses = pgTable(
   ]
 );
 
-export const reports = pgTable("reports", {
-  reportId: serial("report_id").primaryKey().notNull(),
-  type: text().notNull(),
-  title: text().notNull(),
-  attachmentUrl: text("attachment_url").notNull(),
-});
-
 export const departmentCourses = pgTable(
   "department_courses",
   {
@@ -432,7 +462,10 @@ export const departmentCourses = pgTable(
       foreignColumns: [departments.departmentId],
       name: "department_courses_department_id_fkey",
     }),
-    primaryKey({ columns: [table.courseId, table.departmentId], name: "department_courses_pkey" }),
+    primaryKey({
+      columns: [table.courseId, table.departmentId],
+      name: "department_courses_pkey",
+    }),
   ]
 );
 export const adminApplicationsList = pgView("admin_applications_list", {
@@ -452,7 +485,9 @@ export const acceptedApplications = pgView("accepted_applications", {
   // You can use { mode: "bigint" } if numbers are exceeding js number limitations
   totalCompletedHours: bigint("total_completed_hours", { mode: "number" }),
   // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-  completedCompulsoryHours: bigint("completed_compulsory_hours", { mode: "number" }),
+  completedCompulsoryHours: bigint("completed_compulsory_hours", {
+    mode: "number",
+  }),
 }).as(
   sql`SELECT a.application_id, a.student_id, r.department_id, COALESCE(sum( CASE WHEN c_res.grade >= 60 THEN c.total_hours ELSE 0 END), 0::bigint) AS total_completed_hours, COALESCE(sum( CASE WHEN d_c.is_compulsory = true AND c_res.grade >= 60 THEN c.total_hours ELSE 0 END), 0::bigint) AS completed_compulsory_hours FROM applications a JOIN registerations r ON r.application_id = a.application_id LEFT JOIN course_registrations c_reg ON c_reg.application_id = a.application_id LEFT JOIN course_results c_res ON c_res.course_registration_id = c_reg.course_registration_id LEFT JOIN courses c ON c.course_id = c_reg.course_id LEFT JOIN department_courses d_c ON d_c.course_id = c_reg.course_id AND d_c.department_id = r.department_id WHERE a.status = 'accepted'::application_status GROUP BY a.application_id, r.department_id`
 );

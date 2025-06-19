@@ -1,17 +1,18 @@
+import { count, eq } from "drizzle-orm";
 import db from "@/db";
 import {
-  applications,
   academicQualifications,
+  academicYears,
+  addresses,
+  applications,
+  countries,
+  departments,
   emergencyContacts,
   registerations,
-  academicYears,
-  departments,
-  addresses,
-  countries,
+  supervisors,
 } from "@/db/schema";
-import { ApplicationDetailsDTO } from "@/dtos/application-details.dto";
+import type { ApplicationDetailsDTO } from "@/dtos/application-details.dto";
 import { formatAcademicYear, removeApplicationId } from "@/lib/util";
-import { count, eq } from "drizzle-orm";
 
 export interface IApplicationService {
   getApplicationByStudentId(studentId: number): Promise<ApplicationDetailsDTO | null>;
@@ -43,6 +44,7 @@ export abstract class ApplicationService implements IApplicationService {
         academicYear: academicYears,
         department: departments,
         qualificationCountry: countries,
+        supervisor: { name: supervisors.fullNameAr, email: supervisors.email },
       })
       .from(a)
       .innerJoin(addresses, eq(a.applicationId, addresses.applicationId))
@@ -52,6 +54,7 @@ export abstract class ApplicationService implements IApplicationService {
       .innerJoin(registerations, eq(a.applicationId, registerations.applicationId))
       .innerJoin(academicYears, eq(registerations.academicYearId, academicYears.academicYearId))
       .innerJoin(departments, eq(registerations.departmentId, departments.departmentId))
+      .leftJoin(supervisors, eq(a.supervisorId, supervisors.supervisorId))
       .where(eq(field, fieldValue));
 
     if (applicationList.length === 0) return null;
@@ -64,6 +67,7 @@ export abstract class ApplicationService implements IApplicationService {
       emergencyContact,
       qualification,
       qualificationCountry,
+      supervisor,
     } = applicationList[0];
 
     const attachmentsList = await db.query.attachments.findMany({
@@ -80,6 +84,7 @@ export abstract class ApplicationService implements IApplicationService {
     return {
       ...application,
       emergencyContact,
+      supervisor,
       qualification: {
         ...qualification,
         country: qualificationCountry.nameAr,

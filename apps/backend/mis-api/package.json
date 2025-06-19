@@ -26,6 +26,7 @@
     "@hono/node-server": "^1.14.3",
     "@hono/zod-openapi": "^0.16.4",
     "@scalar/hono-api-reference": "^0.5.173",
+    "@vercel/blob": "^1.1.1",
     "@web-std/file": "^3.0.3",
     "bcryptjs": "^2.4.3",
     "connect-redis-hono": "^0.2.0",

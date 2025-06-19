@@ -8,7 +8,7 @@
 -- Set client encoding to UTF-8 for Arabic support
 SET
 	client_encoding = 'UTF8';
-	
+
 set schema 'public';
 SET search_path TO public;
 
@@ -76,11 +76,44 @@ CREATE TABLE "students" (
 	"updated_at" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE "supervisors" (
+    "supervisor_id" serial PRIMARY KEY,
+	"full_name_ar" TEXT NOT NULL,
+	"full_name_en" TEXT NOT NULL,
+	"email" TEXT NOT NULL UNIQUE,
+	-- "phone_no_main" TEXT NOT NULL,
+	-- "phone_no_sec" TEXT,
+	-- "fax" TEXT,
+	-- "id_type" identification_type NOT NULL,
+	-- "id_issuance_date" DATE NOT NULL,
+	-- "id_number" TEXT NOT NULL,
+	-- "id_authority" TEXT NOT NULL,
+	-- "martial_status" martial_status,
+	-- "is_working" BOOLEAN NOT NULL,
+	-- "job_type" TEXT,
+	"hashed_password" TEXT NOT NULL,
+	-- "sec_question" TEXT NOT NULL,
+	-- "sec_answer" TEXT NOT NULL,
+	-- "military_status" TEXT NOT NULL,
+	-- "dob" DATE NOT NULL,
+	"created_at" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	"updated_at" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE "reports" (
+    "report_id" serial PRIMARY KEY,
+    "type" TEXT NOT NULL,
+    "title" TEXT NOT NULL,
+    "attachment_url" TEXT NOT NULL
+);
+
 CREATE TABLE "applications" (
 	"application_id" serial PRIMARY KEY,
 	"student_id" INTEGER NOT NULL,
+	"supervisor_id" INTEGER,
 	"status" application_status NOT NULL DEFAULT 'pending',
-	FOREIGN key ("student_id") REFERENCES "students" ("student_id")
+	FOREIGN key ("student_id") REFERENCES "students" ("student_id"),
+	FOREIGN key ("supervisor_id") REFERENCES "supervisors" ("supervisor_id")
 );
 
 CREATE TABLE "registerations" (
@@ -682,10 +715,3 @@ $$;
 
 CREATE INDEX idx_students_first_name_ar_normalized
 ON students(normalize_arabic_text(full_name_ar));
-
-CREATE TABLE "reports" (
-    "report_id" serial PRIMARY KEY,
-    "type" TEXT NOT NULL,
-    "title" TEXT NOT NULL,
-    "attachment_url" TEXT NOT NULL
-);

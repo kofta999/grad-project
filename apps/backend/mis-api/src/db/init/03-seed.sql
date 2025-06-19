@@ -1,18 +1,21 @@
 -- ============================================================================
--- COMBINED SEED SQL
+-- COMBINED SEED SQL (UPDATED)
 -- This script includes:
 -- 1. Original seed data (academic years, initial students, applications, etc.)
 -- 2. 20 new students with varied application statuses.
 -- 3. Related data for all applications (registrations for accepted, course data, etc.)
+-- 4. Seed data for Supervisors.
+-- 5. Updated Applications to include supervisor_id.
 --
 -- IMPORTANT ASSUMPTIONS:
 -- - The 'departments' and 'courses' tables are ALREADY POPULATED from your separate courses.sql file.
 -- - All primary key IDs (student_id, application_id, etc.) are auto-incrementing.
 -- - Hashed password for 'test123' is '$2a$10$xxRUJhEPNZjZoKcmuQxXr.q/iCJPvZIWCYrxuSNjN61y27KLdr6Ve'.
+-- - The 'application_status' ENUM is defined in your schema.
 -- ============================================================================
 
 -- ============================================================================
--- PART 1: ORIGINAL SEED DATA (MODIFIED FOR CONSISTENCY)
+-- PART 1: ORIGINAL SEED DATA (MODIFIED FOR CONSISTENCY & NEW SCHEMA)
 -- ============================================================================
 
 
@@ -60,14 +63,35 @@ VALUES
 	    'What is your favorite color?', 'Red', 'Completed', '1995-05-15 00:00:00', CURRENT_TIMESTAMP
 	); -- student_id 4 (This student does not have an application in the original seed)
 
+-- Insert sample supervisors (supervisor_ids 1-3)
+INSERT INTO
+    "supervisors" (
+        "full_name_ar", "full_name_en", "email", "hashed_password"
+    )
+VALUES
+    (
+        'د. خالد محمود', 'Dr. Khaled Mahmoud', 'khaled.mahmoud@supervisor.example.com',
+        '$2a$10$xxRUJhEPNZjZoKcmuQxXr.q/iCJPvZIWCYrxuSNjN61y27KLdr6Ve'
+    ), -- supervisor_id 1
+    (
+        'د. علياء فتحي', 'Dr. Alyaa Fathy', 'alyaa.fathy@supervisor.example.com',
+        '$2a$10$xxRUJhEPNZjZoKcmuQxXr.q/iCJPvZIWCYrxuSNjN61y27KLdr6Ve'
+    ), -- supervisor_id 2
+    (
+        'د. إبراهيم يوسف', 'Dr. Ibrahim Youssef', 'ibrahim.youssef@supervisor.example.com',
+        '$2a$10$xxRUJhEPNZjZoKcmuQxXr.q/iCJPvZIWCYrxuSNjN61y27KLdr6Ve'
+    ); -- supervisor_id 3
+
+
 -- Insert sample applications (application_ids 1-3)
 -- Student 2 (Ahmed Samir), Student 1 (Mohamed Ali), Student 3 (Sara Hassan)
+-- UPDATED to include supervisor_id
 INSERT INTO
-	"applications" ("student_id", "status")
+	"applications" ("student_id", "supervisor_id", "status")
 VALUES
-	(2, 'accepted'), -- App ID 1 for Ahmed Samir (student_id 2)
-	(1, 'accepted'), -- App ID 2 for Mohamed Ali (student_id 1) - SET TO ACCEPTED due to course data
-	(3, 'accepted'); -- App ID 3 for Sara Hassan (student_id 3) - SET TO ACCEPTED for consistency with registration data
+	(2, 1, 'accepted'), -- App ID 1 for Ahmed Samir (student_id 2), Supervisor 1
+	(1, 2, 'accepted'), -- App ID 2 for Mohamed Ali (student_id 1), Supervisor 2 - SET TO ACCEPTED due to course data
+	(3, 1, 'accepted'); -- App ID 3 for Sara Hassan (student_id 3), Supervisor 1 - SET TO ACCEPTED for consistency with registration data
 
 -- Insert sample registrations for original students
 INSERT INTO
@@ -200,7 +224,7 @@ VALUES
 		'First pet?', 'Lion', 'Not Applicable', '1992-02-01', CURRENT_TIMESTAMP
 	), -- student_id 6
 	(
-		'علي', 'Ali Ahmed', TRUE, 'ali.a03@example.com', 'Egyptian', 'http://localhost:3002/avatar.jpg',
+		'علي أحمد', 'Ali Ahmed', TRUE, 'ali.a03@example.com', 'Egyptian', 'http://localhost:3002/avatar.jpg',
 		'01010000007', NULL, NULL, 'national_id', '2021-03-01', '29803010100007',
 		'Alexandria', 'single', FALSE, NULL, '$2a$10$xxRUJhEPNZjZoKcmuQxXr.q/iCJPvZIWCYrxuSNjN61y27KLdr6Ve',
 		'Mother name?', 'Fatma', 'Postponed', '1998-03-01', CURRENT_TIMESTAMP
@@ -220,7 +244,7 @@ VALUES
 
 	-- Students 10-14: Will have REJECTED applications
 	(
-		'كريم', 'Karim Saleh', TRUE, 'karim.s06@example.com', 'Egyptian', 'http://localhost:3002/avatar.jpg',
+		'كريم صالح', 'Karim Saleh', TRUE, 'karim.s06@example.com', 'Egyptian', 'http://localhost:3002/avatar.jpg',
 		'01010000010', NULL, NULL, 'national_id', '2017-06-01', '29306010100010',
 		'Cairo', 'single', FALSE, NULL, '$2a$10$xxRUJhEPNZjZoKcmuQxXr.q/iCJPvZIWCYrxuSNjN61y27KLdr6Ve',
 		'Fav hobby?', 'Gaming', 'Exempted', '1993-06-01', CURRENT_TIMESTAMP
@@ -238,7 +262,7 @@ VALUES
 		'Childhood hero?', 'Batman', 'Not Applicable', '1991-08-01', CURRENT_TIMESTAMP
 	), -- student_id 12
 	(
-		'سامر', 'Samer Adly', TRUE, 'samer.a09@example.com', 'Egyptian', 'http://localhost:3002/avatar.jpg',
+		'سامر عدلي', 'Samer Adly', TRUE, 'samer.a09@example.com', 'Egyptian', 'http://localhost:3002/avatar.jpg',
 		'01010000013', NULL, NULL, 'national_id', '2021-09-01', '29909010100013',
 		'Aswan', 'single', FALSE, NULL, '$2a$10$xxRUJhEPNZjZoKcmuQxXr.q/iCJPvZIWCYrxuSNjN61y27KLdr6Ve',
 		'Fav animal?', 'Eagle', 'Postponed', '1999-09-01', CURRENT_TIMESTAMP
@@ -264,7 +288,7 @@ VALUES
 		'Fav song?', 'Classical', 'Not Applicable', '1996-12-01', CURRENT_TIMESTAMP
 	), -- student_id 16
 	(
-		'آية الله', 'Ayat Allah Mahmoud', FALSE, 'ayat.m13@example.com', 'Qatari', 'http://localhost:3002/avatar.jpg',
+		'آية الله محمود', 'Ayat Allah Mahmoud', FALSE, 'ayat.m13@example.com', 'Qatari', 'http://localhost:3002/avatar.jpg',
 		'01010000017', NULL, NULL, 'passport', '2020-01-15', 'E00000017',
 		'Doha', 'single', TRUE, 'Part-time', '$2a$10$xxRUJhEPNZjZoKcmuQxXr.q/iCJPvZIWCYrxuSNjN61y27KLdr6Ve',
 		'Fav drink?', 'Tea', 'Not Applicable', '1997-01-15', CURRENT_TIMESTAMP
@@ -276,7 +300,7 @@ VALUES
 		'Fav author?', 'Taha Hussein', 'Not Applicable', '1998-02-15', CURRENT_TIMESTAMP
 	), -- student_id 18
 	(
-		'زينب', 'Zeinab Mohamed', FALSE, 'zeinab.m15@example.com', 'Bahraini', 'http://localhost:3002/avatar.jpg',
+		'زينب محمد', 'Zeinab Mohamed', FALSE, 'zeinab.m15@example.com', 'Bahraini', 'http://localhost:3002/avatar.jpg',
 		'01010000019', NULL, NULL, 'passport', '2019-03-15', 'F00000019',
 		'Manama', 'married', TRUE, 'Full-time', '$2a$10$xxRUJhEPNZjZoKcmuQxXr.q/iCJPvZIWCYrxuSNjN61y27KLdr6Ve',
 		'Fav movie?', 'Drama', 'Not Applicable', '1994-03-15', CURRENT_TIMESTAMP
@@ -296,7 +320,7 @@ VALUES
 		'Fav actress?', 'Hend Sabry', 'Not Applicable', '1997-05-15', CURRENT_TIMESTAMP
 	), -- student_id 21
 	(
-		'رنا', 'Rana Atef', FALSE, 'rana.a18@example.com', 'Egyptian', 'http://localhost:3002/avatar.jpg',
+		'رنا عاطف', 'Rana Atef', FALSE, 'rana.a18@example.com', 'Egyptian', 'http://localhost:3002/avatar.jpg',
 		'01010000022', NULL, NULL, 'national_id', '2017-06-15', '29306150200022',
 		'Cairo', 'married', TRUE, 'Full-time', '$2a$10$xxRUJhEPNZjZoKcmuQxXr.q/iCJPvZIWCYrxuSNjN61y27KLdr6Ve',
 		'Fav figure?', 'Hatshepsut', 'Not Applicable', '1993-06-15', CURRENT_TIMESTAMP
@@ -318,31 +342,32 @@ VALUES
 -- ===========================================================================================
 -- PART 3: INSERT APPLICATIONS FOR 15 NEW STUDENTS (IDs 10-24)
 -- Application IDs will be 4 through 18
+-- UPDATED to include supervisor_id
 -- ===========================================================================================
 
 -- Rejected Applications (Students 10-14, New Application IDs 4-8)
-INSERT INTO "applications" ("student_id", "status") VALUES
-    (10, 'rejected'), -- Karim, App ID 4
-    (11, 'rejected'), -- Tarek Gamal, App ID 5
-    (12, 'rejected'), -- Belal Fathy, App ID 6
-    (13, 'rejected'), -- Samer, App ID 7
-    (14, 'rejected'); -- Fares Ramzy, App ID 8
+INSERT INTO "applications" ("student_id", "supervisor_id", "status") VALUES
+    (10, 1, 'rejected'), -- Karim, App ID 4, Supervisor 1
+    (11, 2, 'rejected'), -- Tarek Gamal, App ID 5, Supervisor 2
+    (12, 3, 'rejected'), -- Belal Fathy, App ID 6, Supervisor 3
+    (13, 1, 'rejected'), -- Samer, App ID 7, Supervisor 1
+    (14, 2, 'rejected'); -- Fares Ramzy, App ID 8, Supervisor 2
 
 -- Pending Applications (Students 15-19, New Application IDs 9-13)
-INSERT INTO "applications" ("student_id", "status") VALUES
-    (15, 'pending'),  -- Nour Elhoda, App ID 9
-    (16, 'pending'),  -- Fatima AlZahraa, App ID 10
-    (17, 'pending'),  -- Ayat Allah, App ID 11
-    (18, 'pending'),  -- Khadija Omar, App ID 12
-    (19, 'pending');  -- Zeinab, App ID 13
+INSERT INTO "applications" ("student_id", "supervisor_id", "status") VALUES
+    (15, 3, 'pending'),  -- Nour Elhoda, App ID 9, Supervisor 3
+    (16, 1, 'pending'),  -- Fatima AlZahraa, App ID 10, Supervisor 1
+    (17, 2, 'pending'),  -- Ayat Allah, App ID 11, Supervisor 2
+    (18, 3, 'pending'),  -- Khadija Omar, App ID 12, Supervisor 3
+    (19, 1, 'pending');  -- Zeinab, App ID 13, Supervisor 1
 
 -- Accepted Applications (Students 20-24, New Application IDs 14-18)
-INSERT INTO "applications" ("student_id", "status") VALUES
-    (20, 'accepted'), -- Mona Hesham, App ID 14
-    (21, 'accepted'), -- Hoda Kamal, App ID 15
-    (22, 'accepted'), -- Rana, App ID 16
-    (23, 'accepted'), -- Dina Sherif, App ID 17
-    (24, 'accepted'); -- Lama Nabil, App ID 18
+INSERT INTO "applications" ("student_id", "supervisor_id", "status") VALUES
+    (20, 2, 'accepted'), -- Mona Hesham, App ID 14, Supervisor 2
+    (21, 3, 'accepted'), -- Hoda Kamal, App ID 15, Supervisor 3
+    (22, 1, 'accepted'), -- Rana, App ID 16, Supervisor 1
+    (23, 2, 'accepted'), -- Dina Sherif, App ID 17, Supervisor 2
+    (24, 3, 'accepted'); -- Lama Nabil, App ID 18, Supervisor 3
 
 -- ===========================================================================================
 -- PART 4: INSERT SUPPORTING DATA FOR THE 15 NEW APPLICATIONS (IDs 4-18)
