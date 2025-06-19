@@ -177,7 +177,7 @@ VALUES
     ((SELECT course_id FROM courses WHERE code = 'EMPE 605'), 2, 'second', 1),-- CR_ID 6
     ((SELECT course_id FROM courses WHERE code = 'EMPE 606'), 2, 'second', 1),-- CR_ID 7
     ((SELECT course_id FROM courses WHERE code = 'EMPE 607'), 2, 'first', 1), -- CR_ID 8 (Repeated semester, ok for example)
-    ((SELECT course_id FROM courses WHERE code = 'EMPE 609'), 2, 'third', 1), -- CR_ID 9 (EMPE 608 from original file seems to be missing from courses file, changed to 609)
+    ((SELECT course_id FROM courses WHERE code = 'EMPE 608'), 2, 'third', 1), -- CR_ID 9
     ((SELECT course_id FROM courses WHERE code = 'EMPE 609'), 2, 'third', 1), -- CR_ID 10
     ((SELECT course_id FROM courses WHERE code = 'EMPE 610'), 2, 'third', 1); -- CR_ID 11
 
