@@ -2,8 +2,6 @@ import type { OpenAPIHono, RouteConfig, RouteHandler } from "@hono/zod-openapi";
 import type { PinoLogger } from "hono-pino";
 import { APPLICATION_STATUSES, DEPARTMENT_TYPES, GRADES, ROLES, SEMESTERS } from "./constants";
 
-
-
 export interface AppBindings {
   Variables: {
     logger: PinoLogger;
