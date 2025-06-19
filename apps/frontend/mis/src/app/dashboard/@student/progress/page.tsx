@@ -1,7 +1,9 @@
 "use client";
+import { Calendar } from "lucide-react";
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Container } from "@/components/ui/container";
-import React, { useState } from "react";
+import { Loader } from "@/components/ui/loader";
 import {
   Table,
   TableBody,
@@ -10,16 +12,13 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Loader } from "@/components/ui/loader";
-import { Calendar } from "lucide-react";
 import useAcademicProgress from "@/hooks/use-academic-progress";
 
 export default function Page() {
   const [semester] = useState(["first", "second", "third"]);
   const { academicYears, semesterCourses, loading } = useAcademicProgress();
-  console.log(academicYears, semesterCourses);
 
-  if (academicYears.length === 0 && semesterCourses.length === 0) {
+  if (!loading && academicYears.length === 0 && semesterCourses.length === 0) {
     return (
       <Container className="h-screen flex items-center justify-center">
         <p className="text-3xl font-bold text-mainColor">لا يوجد نتائج</p>
@@ -77,7 +76,7 @@ export default function Page() {
                       <TableBody>
                         {semesterData.courses.map((course, index) => (
                           <TableRow
-                            key={index}
+                            key={course.courseId}
                             className={index % 2 !== 0 ? "bg-white" : "bg-blue-50"}
                           >
                             <TableCell className="text-right">{course.title}</TableCell>

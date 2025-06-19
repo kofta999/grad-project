@@ -56,7 +56,7 @@ export class StudentApplicationService
       )
       .returning();
 
-    if (res.length == 0) {
+    if (res.length === 0) {
       throw new Error("Attachment not found");
     }
 
