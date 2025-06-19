@@ -89,11 +89,13 @@ export const students = pgTable(
       .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),
   },
-  (table) => {
-    return {
-      studentsEmailKey: unique("students_email_key").on(table.email),
-    };
-  }
+  (table) => [
+    index("idx_students_first_name_ar_normalized").using(
+      "btree",
+      sql`normalize_arabic_text(full_name_ar)`
+    ),
+    unique("students_email_key").on(table.email),
+  ]
 );
 
 export const applications = pgTable(
@@ -101,21 +103,25 @@ export const applications = pgTable(
   {
     applicationId: serial("application_id").primaryKey().notNull(),
     studentId: integer("student_id").notNull(),
+    supervisorId: integer("supervisor_id").notNull(),
     status: applicationStatus().default("pending").notNull(),
   },
-  (table) => {
-    return {
-      studentIdIdx: index("applications_student_id_idx").using(
-        "btree",
-        table.studentId.asc().nullsLast()
-      ),
-      applicationsStudentIdFkey: foreignKey({
-        columns: [table.studentId],
-        foreignColumns: [students.studentId],
-        name: "applications_student_id_fkey",
-      }),
-    };
-  }
+  (table) => [
+    index("applications_student_id_idx").using(
+      "btree",
+      table.studentId.asc().nullsLast().op("int4_ops")
+    ),
+    foreignKey({
+      columns: [table.studentId],
+      foreignColumns: [students.studentId],
+      name: "applications_student_id_fkey",
+    }),
+    foreignKey({
+      columns: [table.supervisorId],
+      foreignColumns: [supervisors.supervisorId],
+      name: "applications_supervisor_id_fkey",
+    }),
+  ]
 );
 
 export const registerations = pgTable(
@@ -498,3 +504,21 @@ export const reports = pgTable("reports", {
   title: text("title").notNull(),
   attachmentUrl: text("attachment_url").notNull(),
 });
+
+export const supervisors = pgTable(
+  "supervisors",
+  {
+    supervisorId: serial("supervisor_id").primaryKey().notNull(),
+    fullNameAr: text("full_name_ar").notNull(),
+    fullNameEn: text("full_name_en").notNull(),
+    email: text().notNull(),
+    hashedPassword: text("hashed_password").notNull(),
+    createdAt: timestamp("created_at", { mode: "string" })
+      .default(sql`CURRENT_TIMESTAMP`)
+      .notNull(),
+    updatedAt: timestamp("updated_at", { mode: "string" })
+      .default(sql`CURRENT_TIMESTAMP`)
+      .notNull(),
+  },
+  (table) => [unique("supervisors_email_key").on(table.email)]
+);
