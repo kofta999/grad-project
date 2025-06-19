@@ -110,7 +110,7 @@ CREATE TABLE "reports" (
 CREATE TABLE "applications" (
 	"application_id" serial PRIMARY KEY,
 	"student_id" INTEGER NOT NULL,
-	"supervisor_id" INTEGER NOT NULL,
+	"supervisor_id" INTEGER,
 	"status" application_status NOT NULL DEFAULT 'pending',
 	FOREIGN key ("student_id") REFERENCES "students" ("student_id"),
 	FOREIGN key ("supervisor_id") REFERENCES "supervisors" ("supervisor_id")

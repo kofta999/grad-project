@@ -103,7 +103,7 @@ export const applications = pgTable(
   {
     applicationId: serial("application_id").primaryKey().notNull(),
     studentId: integer("student_id").notNull(),
-    supervisorId: integer("supervisor_id").notNull(),
+    supervisorId: integer("supervisor_id"),
     status: applicationStatus().default("pending").notNull(),
   },
   (table) => [
