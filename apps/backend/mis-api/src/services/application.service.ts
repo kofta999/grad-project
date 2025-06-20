@@ -44,7 +44,11 @@ export abstract class ApplicationService implements IApplicationService {
         academicYear: academicYears,
         department: departments,
         qualificationCountry: countries,
-        supervisor: { name: supervisors.fullNameAr, email: supervisors.email },
+        supervisor: {
+          name: supervisors.fullNameAr,
+          email: supervisors.email,
+          supervisorId: supervisors.supervisorId,
+        },
       })
       .from(a)
       .innerJoin(addresses, eq(a.applicationId, addresses.applicationId))

@@ -1,6 +1,6 @@
 import { eq, sql } from "drizzle-orm";
 import db from "@/db";
-import { attachments, theses } from "@/db/schema";
+import { applications, attachments, supervisors, theses } from "@/db/schema";
 import type { GetThesisDTO } from "@/dtos/get-thesis.dto";
 import { AdminApplicationService } from "./admin-application.service";
 
@@ -8,7 +8,12 @@ type ThesisAvailability = { available: true } | { available: false; reason: stri
 
 export interface IThesisService {
   isThesisAvailable(studentId: number): Promise<ThesisAvailability>;
-  submitThesis(studentId: number, title: string, attachmentUrl: string): Promise<GetThesisDTO>;
+  submitThesis(
+    studentId: number,
+    title: string,
+    attachmentUrl: string,
+    supervisorId: number
+  ): Promise<GetThesisDTO>;
   getThesis(studentId: number): Promise<GetThesisDTO | null>;
 }
 
@@ -42,7 +47,8 @@ export class ThesisService implements IThesisService {
   async submitThesis(
     studentId: number,
     title: string,
-    attachmentUrl: string
+    attachmentUrl: string,
+    supervisorId: number
   ): Promise<GetThesisDTO> {
     const application = await this.applicationService.getApplicationByStudentId(studentId);
 
@@ -50,15 +56,27 @@ export class ThesisService implements IThesisService {
       throw new Error("Application not found");
     }
 
-    const { applicationId, supervisor } = application;
-
-    if (!supervisor) {
-      throw new Error("Supervisor not found");
-    }
+    const { applicationId } = application;
 
     try {
       // Transaction to ensure both insertions succeed or fail together
       return await db.transaction(async (tx) => {
+        await tx
+          .update(applications)
+          .set({ supervisorId })
+          .where(eq(applications.applicationId, applicationId));
+
+        const supervisor = (
+          await tx
+            .select({
+              name: supervisors.fullNameAr,
+              email: supervisors.email,
+              supervisorId: supervisors.supervisorId,
+            })
+            .from(supervisors)
+            .where(eq(supervisors.supervisorId, supervisorId))
+        )[0];
+
         const attachment = await tx
           .insert(attachments)
           .values({ applicationId, type: "thesis", attachmentUrl })
