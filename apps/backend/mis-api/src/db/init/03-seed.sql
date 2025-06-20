@@ -5,7 +5,6 @@
 -- 2. 20 new students with varied application statuses.
 -- 3. Related data for all applications (registrations for accepted, course data, etc.)
 -- 4. Seed data for Supervisors.
--- 5. Updated Applications to include supervisor_id.
 --
 -- IMPORTANT ASSUMPTIONS:
 -- - The 'departments' and 'courses' tables are ALREADY POPULATED from your separate courses.sql file.
@@ -85,13 +84,12 @@ VALUES
 
 -- Insert sample applications (application_ids 1-3)
 -- Student 2 (Ahmed Samir), Student 1 (Mohamed Ali), Student 3 (Sara Hassan)
--- UPDATED to include supervisor_id
 INSERT INTO
-	"applications" ("student_id", "supervisor_id", "status")
+	"applications" ("student_id", "status")
 VALUES
-	(2, 1, 'accepted'), -- App ID 1 for Ahmed Samir (student_id 2), Supervisor 1
-	(1, 2, 'accepted'), -- App ID 2 for Mohamed Ali (student_id 1), Supervisor 2 - SET TO ACCEPTED due to course data
-	(3, 1, 'accepted'); -- App ID 3 for Sara Hassan (student_id 3), Supervisor 1 - SET TO ACCEPTED for consistency with registration data
+	(2, 'accepted'), -- App ID 1 for Ahmed Samir (student_id 2), Supervisor 1
+	(1, 'accepted'), -- App ID 2 for Mohamed Ali (student_id 1), Supervisor 2 - SET TO ACCEPTED due to course data
+	(3, 'accepted'); -- App ID 3 for Sara Hassan (student_id 3), Supervisor 1 - SET TO ACCEPTED for consistency with registration data
 
 -- Insert sample registrations for original students
 INSERT INTO
@@ -342,32 +340,31 @@ VALUES
 -- ===========================================================================================
 -- PART 3: INSERT APPLICATIONS FOR 15 NEW STUDENTS (IDs 10-24)
 -- Application IDs will be 4 through 18
--- UPDATED to include supervisor_id
 -- ===========================================================================================
 
 -- Rejected Applications (Students 10-14, New Application IDs 4-8)
-INSERT INTO "applications" ("student_id", "supervisor_id", "status") VALUES
-    (10, 1, 'rejected'), -- Karim, App ID 4, Supervisor 1
-    (11, 2, 'rejected'), -- Tarek Gamal, App ID 5, Supervisor 2
-    (12, 3, 'rejected'), -- Belal Fathy, App ID 6, Supervisor 3
-    (13, 1, 'rejected'), -- Samer, App ID 7, Supervisor 1
-    (14, 2, 'rejected'); -- Fares Ramzy, App ID 8, Supervisor 2
+INSERT INTO "applications" ("student_id", "status") VALUES
+    (10, 'rejected'), -- Karim, App ID 4, Supervisor 1
+    (11, 'rejected'), -- Tarek Gamal, App ID 5, Supervisor 2
+    (12, 'rejected'), -- Belal Fathy, App ID 6, Supervisor 3
+    (13, 'rejected'), -- Samer, App ID 7, Supervisor 1
+    (14, 'rejected'); -- Fares Ramzy, App ID 8, Supervisor 2
 
 -- Pending Applications (Students 15-19, New Application IDs 9-13)
-INSERT INTO "applications" ("student_id", "supervisor_id", "status") VALUES
-    (15, 3, 'pending'),  -- Nour Elhoda, App ID 9, Supervisor 3
-    (16, 1, 'pending'),  -- Fatima AlZahraa, App ID 10, Supervisor 1
-    (17, 2, 'pending'),  -- Ayat Allah, App ID 11, Supervisor 2
-    (18, 3, 'pending'),  -- Khadija Omar, App ID 12, Supervisor 3
-    (19, 1, 'pending');  -- Zeinab, App ID 13, Supervisor 1
+INSERT INTO "applications" ("student_id", "status") VALUES
+    (15, 'pending'),  -- Nour Elhoda, App ID 9, Supervisor 3
+    (16, 'pending'),  -- Fatima AlZahraa, App ID 10, Supervisor 1
+    (17, 'pending'),  -- Ayat Allah, App ID 11, Supervisor 2
+    (18, 'pending'),  -- Khadija Omar, App ID 12, Supervisor 3
+    (19, 'pending');  -- Zeinab, App ID 13, Supervisor 1
 
 -- Accepted Applications (Students 20-24, New Application IDs 14-18)
-INSERT INTO "applications" ("student_id", "supervisor_id", "status") VALUES
-    (20, 2, 'accepted'), -- Mona Hesham, App ID 14, Supervisor 2
-    (21, 3, 'accepted'), -- Hoda Kamal, App ID 15, Supervisor 3
-    (22, 1, 'accepted'), -- Rana, App ID 16, Supervisor 1
-    (23, 2, 'accepted'), -- Dina Sherif, App ID 17, Supervisor 2
-    (24, 3, 'accepted'); -- Lama Nabil, App ID 18, Supervisor 3
+INSERT INTO "applications" ("student_id", "status") VALUES
+    (20, 'accepted'), -- Mona Hesham, App ID 14, Supervisor 2
+    (21, 'accepted'), -- Hoda Kamal, App ID 15, Supervisor 3
+    (22, 'accepted'), -- Rana, App ID 16, Supervisor 1
+    (23, 'accepted'), -- Dina Sherif, App ID 17, Supervisor 2
+    (24, 'accepted'); -- Lama Nabil, App ID 18, Supervisor 3
 
 -- ===========================================================================================
 -- PART 4: INSERT SUPPORTING DATA FOR THE 15 NEW APPLICATIONS (IDs 4-18)

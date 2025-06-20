@@ -315,6 +315,7 @@ export const submitThesis = createRoute({
       z.object({
         title: z.string().min(1),
         attachmentUrl: z.string().url(),
+        supervisorId: z.number(),
       }),
       "Submit thesis schema"
     ),

@@ -51,6 +51,7 @@ export const ApplicationDetailsSchema = z.object({
   }),
   supervisor: z
     .object({
+      supervisorId: z.number(),
       name: z.string(),
       email: z.string(),
     })
