@@ -81,7 +81,7 @@ CREATE TABLE "supervisors" (
 	"full_name_ar" TEXT NOT NULL,
 	"full_name_en" TEXT NOT NULL,
 	"email" TEXT NOT NULL UNIQUE,
-	"image_url" TEXT NOT NULL,
+	"image_url" TEXT,
 	-- "phone_no_main" TEXT NOT NULL,
 	-- "phone_no_sec" TEXT,
 	-- "fax" TEXT,

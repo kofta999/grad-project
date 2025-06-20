@@ -9,6 +9,7 @@ import enrollments from "@/routes/enrollments/enrollments.index";
 import index from "@/routes/index.route";
 import reports from "@/routes/reports/reports.index";
 import students from "@/routes/students/students.index";
+import supervisors from "@/routes/supervisors/supervisors.index";
 import configureOpenAPI from "./lib/configure-open-api";
 
 const app = await createApp();
@@ -29,6 +30,7 @@ export const _app = app
   // })
   .route("/auth", auth)
   .route("/students", students)
+  .route("/supervisors", supervisors)
   .route("/applications", applications)
   .route("/enrollments", enrollments)
   .route("/course-results", courseResults)

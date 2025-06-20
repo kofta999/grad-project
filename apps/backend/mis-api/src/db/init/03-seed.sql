@@ -65,20 +65,17 @@ VALUES
 -- Insert sample supervisors (supervisor_ids 1-3)
 INSERT INTO
     "supervisors" (
-        "full_name_ar", "full_name_en", "email", "hashed_password"
+        "full_name_ar", "full_name_en", "email"
     )
 VALUES
     (
-        'د. خالد محمود', 'Dr. Khaled Mahmoud', 'khaled.mahmoud@supervisor.example.com',
-        '$2a$10$xxRUJhEPNZjZoKcmuQxXr.q/iCJPvZIWCYrxuSNjN61y27KLdr6Ve'
+        'د. خالد محمود', 'Dr. Khaled Mahmoud', 'khaled.mahmoud@supervisor.example.com'
     ), -- supervisor_id 1
     (
-        'د. علياء فتحي', 'Dr. Alyaa Fathy', 'alyaa.fathy@supervisor.example.com',
-        '$2a$10$xxRUJhEPNZjZoKcmuQxXr.q/iCJPvZIWCYrxuSNjN61y27KLdr6Ve'
+        'د. علياء فتحي', 'Dr. Alyaa Fathy', 'alyaa.fathy@supervisor.example.com'
     ), -- supervisor_id 2
     (
-        'د. إبراهيم يوسف', 'Dr. Ibrahim Youssef', 'ibrahim.youssef@supervisor.example.com',
-        '$2a$10$xxRUJhEPNZjZoKcmuQxXr.q/iCJPvZIWCYrxuSNjN61y27KLdr6Ve'
+        'د. إبراهيم يوسف', 'Dr. Ibrahim Youssef', 'ibrahim.youssef@supervisor.example.com'
     ); -- supervisor_id 3
 
 
