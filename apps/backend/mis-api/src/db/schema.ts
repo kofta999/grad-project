@@ -512,7 +512,8 @@ export const supervisors = pgTable(
     fullNameAr: text("full_name_ar").notNull(),
     fullNameEn: text("full_name_en").notNull(),
     email: text().notNull(),
-    hashedPassword: text("hashed_password").notNull(),
+    imageUrl: text("image_url").notNull(),
+    isOutsider: boolean("is_outsider").default(false),
     createdAt: timestamp("created_at", { mode: "string" })
       .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),

@@ -1,22 +1,22 @@
-import { sql } from "drizzle-orm";
 import {
-  bigint,
-  boolean,
-  date,
-  foreignKey,
-  index,
-  integer,
-  pgEnum,
   pgTable,
-  pgView,
-  primaryKey,
-  real,
   serial,
-  text,
-  timestamp,
-  unique,
   varchar,
+  foreignKey,
+  integer,
+  date,
+  index,
+  unique,
+  text,
+  boolean,
+  timestamp,
+  real,
+  primaryKey,
+  pgView,
+  bigint,
+  pgEnum,
 } from "drizzle-orm/pg-core";
+import { sql } from "drizzle-orm";
 
 export const addressType = pgEnum("address_type", ["permanent", "current"]);
 export const applicationStatus = pgEnum("application_status", ["pending", "accepted", "rejected"]);
@@ -118,7 +118,8 @@ export const supervisors = pgTable(
     fullNameAr: text("full_name_ar").notNull(),
     fullNameEn: text("full_name_en").notNull(),
     email: text().notNull(),
-    hashedPassword: text("hashed_password").notNull(),
+    imageUrl: text("image_url").notNull(),
+    isOutsider: boolean("is_outsider").default(false),
     createdAt: timestamp("created_at", { mode: "string" })
       .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),
@@ -134,7 +135,7 @@ export const applications = pgTable(
   {
     applicationId: serial("application_id").primaryKey().notNull(),
     studentId: integer("student_id").notNull(),
-    supervisorId: integer("supervisor_id").notNull(),
+    supervisorId: integer("supervisor_id"),
     status: applicationStatus().default("pending").notNull(),
   },
   (table) => [
@@ -462,10 +463,7 @@ export const departmentCourses = pgTable(
       foreignColumns: [departments.departmentId],
       name: "department_courses_department_id_fkey",
     }),
-    primaryKey({
-      columns: [table.courseId, table.departmentId],
-      name: "department_courses_pkey",
-    }),
+    primaryKey({ columns: [table.courseId, table.departmentId], name: "department_courses_pkey" }),
   ]
 );
 export const adminApplicationsList = pgView("admin_applications_list", {
@@ -485,9 +483,7 @@ export const acceptedApplications = pgView("accepted_applications", {
   // You can use { mode: "bigint" } if numbers are exceeding js number limitations
   totalCompletedHours: bigint("total_completed_hours", { mode: "number" }),
   // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-  completedCompulsoryHours: bigint("completed_compulsory_hours", {
-    mode: "number",
-  }),
+  completedCompulsoryHours: bigint("completed_compulsory_hours", { mode: "number" }),
 }).as(
   sql`SELECT a.application_id, a.student_id, r.department_id, COALESCE(sum( CASE WHEN c_res.grade >= 60 THEN c.total_hours ELSE 0 END), 0::bigint) AS total_completed_hours, COALESCE(sum( CASE WHEN d_c.is_compulsory = true AND c_res.grade >= 60 THEN c.total_hours ELSE 0 END), 0::bigint) AS completed_compulsory_hours FROM applications a JOIN registerations r ON r.application_id = a.application_id LEFT JOIN course_registrations c_reg ON c_reg.application_id = a.application_id LEFT JOIN course_results c_res ON c_res.course_registration_id = c_reg.course_registration_id LEFT JOIN courses c ON c.course_id = c_reg.course_id LEFT JOIN department_courses d_c ON d_c.course_id = c_reg.course_id AND d_c.department_id = r.department_id WHERE a.status = 'accepted'::application_status GROUP BY a.application_id, r.department_id`
 );
