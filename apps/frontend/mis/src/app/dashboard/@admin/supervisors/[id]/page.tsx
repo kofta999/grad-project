@@ -18,13 +18,13 @@ export default function SupervisorDetailsPage() {
     const loadData = async () => {
       try {
         const response = await apiClient.supervisors[":id"].$get({
-          param: { id: params.id as string }
+          param: { id: params.id as string },
         });
-        
+
         if (!response.ok) throw new Error("Failed to fetch supervisor");
-        
+
         const data = await response.json();
-        
+
         const formattedSupervisor: Supervisor = {
           supervisorId: data.supervisorId,
           fullNameAr: data.fullNameAr,
@@ -35,7 +35,7 @@ export default function SupervisorDetailsPage() {
           createdAt: data.createdAt,
           updatedAt: data.updatedAt,
         };
-        
+
         setSupervisor(formattedSupervisor);
       } catch (error) {
         toast.error("فشل في تحميل بيانات المشرف");
@@ -64,7 +64,9 @@ export default function SupervisorDetailsPage() {
         <div className="max-w-6xl mx-auto text-center py-8">
           <p>لم يتم العثور على المشرف</p>
           <Link href="/supervisors">
-            <Button className="mt-4 bg-blue-600 hover:bg-blue-700 text-white">العودة للقائمة</Button>
+            <Button className="mt-4 bg-blue-600 hover:bg-blue-700 text-white">
+              العودة للقائمة
+            </Button>
           </Link>
         </div>
       </div>
@@ -73,12 +75,12 @@ export default function SupervisorDetailsPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-2">
-        <div className="max-w-3xl mx-auto">
-          <Link href="/dashboard/supervisors" className="flex justify-end">
-            <Button className="bg-blue-600 hover:bg-blue-700 text-white">العودة للقائمة</Button>
-          </Link>
-          <SupervisorCard supervisor={supervisor} />
-        </div>
+      <div className="max-w-3xl mx-auto">
+        <Link href="/dashboard/supervisors" className="flex justify-end">
+          <Button className="bg-blue-600 hover:bg-blue-700 text-white">العودة للقائمة</Button>
+        </Link>
+        <SupervisorCard supervisor={supervisor} />
+      </div>
     </div>
   );
 }

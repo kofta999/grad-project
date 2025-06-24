@@ -1,4 +1,3 @@
-"use client";
 import { useState, ChangeEvent } from "react";
 import { UploadCloud, CheckCircle2, Loader2, UserPlus } from "lucide-react";
 import { toast } from "react-hot-toast";
@@ -83,7 +82,7 @@ export function SupervisorForm({ onCancel, onSuccess }: SupervisorFormProps) {
     try {
       const response = await apiClient.supervisors.$post({ json: formValues });
       if (!response.ok) throw new Error("Failed to create supervisor");
-      
+
       toast.success("تم إضافة المشرف بنجاح");
       onSuccess();
     } catch (error) {
@@ -155,16 +154,12 @@ export function SupervisorForm({ onCancel, onSuccess }: SupervisorFormProps) {
           </div>
 
           <div className="space-y-3">
-            <Label className="text-gray-700 font-medium block text-right">
-              صورة المشرف
-            </Label>
+            <Label className="text-gray-700 font-medium block text-right">صورة المشرف</Label>
 
             <label
               htmlFor="image"
               className={`relative cursor-pointer flex flex-col items-center justify-center border-2 border-dashed rounded-xl p-8 hover:border-blue-500 transition-colors ${
-                formValues.imageUrl
-                  ? "border-blue-500 bg-green-50"
-                  : "border-gray-300 bg-gray-50"
+                formValues.imageUrl ? "border-blue-500 bg-green-50" : "border-gray-300 bg-gray-50"
               }`}
             >
               <div className="flex flex-col items-center text-center">

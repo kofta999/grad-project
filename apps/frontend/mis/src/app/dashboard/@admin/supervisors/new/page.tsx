@@ -20,7 +20,7 @@ export default function NewSupervisorPage() {
               <Button className="text-white bg-blue-600 hover:bg-blue-700 ">العودة للقائمة</Button>
             </Link>
           </div>
-          <SupervisorForm 
+          <SupervisorForm
             onCancel={() => router.push("/dashboard/supervisors")}
             onSuccess={handleSuccess}
           />

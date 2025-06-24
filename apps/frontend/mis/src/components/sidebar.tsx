@@ -18,10 +18,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useUserContext } from "@/context/user-context";
 import { useRouter } from "next/navigation";
-import { apiClient } from "@/lib/client";
 import toast, { Toaster } from "react-hot-toast";
 import useUser from "@/hooks/use-user";
-import { deleteCookie } from "@/lib/utils";
+import Cookies from "js-cookie";
 
 export type SideNavItem = {
   title: string;
@@ -87,8 +86,8 @@ export default function SideNav({ role }: SideNavProps) {
   const handleLogout = async () => {
     try {
       setLoggedInUser(null);
-      deleteCookie("role");
-      deleteCookie("jwtToken");
+      Cookies.remove("role");
+      Cookies.remove("jwtToken");
       router.refresh();
       toast.success("تم تسجيل الخروج بنجاح");
     } catch (err) {

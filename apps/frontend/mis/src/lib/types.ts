@@ -1,4 +1,4 @@
-import type { InferResponseType } from "@repo/mis-api";
+import type { InferRequestType, InferResponseType } from "@repo/mis-api";
 import type * as Yup from "yup";
 import type { apiClient } from "./client";
 import type {
@@ -60,23 +60,8 @@ export type SupervisorListItem = InferResponseType<
   200
 >[number];
 
-export interface Supervisor {
-  supervisorId: number;
-  name?: string;
-  fullNameAr: string;
-  fullNameEn: string;
-  email: string;
-  imageUrl: string | null;
-  isOutsider: boolean | null;
-  createdAt: string;
-  updatedAt?: string;
-}
+export type Supervisor = InferResponseType<(typeof apiClient)["supervisors"]["$post"], 200>;
 
-export interface SupervisorFormData {
-  name: string;
-  fullNameAr: string;
-  fullNameEn: string;
-  email: string;
-  imageUrl: string | null;
-  isOutsider: boolean;
-}
+export type SupervisorFormData = InferRequestType<
+  (typeof apiClient)["supervisors"]["$post"]
+>["json"];

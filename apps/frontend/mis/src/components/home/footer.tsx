@@ -7,7 +7,10 @@ export default function Footer() {
     { title: "الرئيسية", path: "/" },
     { title: "عن الكلية", path: "/about" },
     { title: "البرامج الأكاديمية", path: "/#programs-section" },
-    { title: "البحث العلمي", path: "https://eng.suez.edu.eg/?s=%D8%A7%D9%84%D8%A8%D8%AD%D8%AB+%D8%A7%D9%84%D8%B9%D9%84%D9%85%D9%8A" },
+    {
+      title: "البحث العلمي",
+      path: "https://eng.suez.edu.eg/?s=%D8%A7%D9%84%D8%A8%D8%AD%D8%AB+%D8%A7%D9%84%D8%B9%D9%84%D9%85%D9%8A",
+    },
     { title: "الفعاليات", path: "/#news-section" },
     { title: "مجلة الكليه", path: "https://sceee.journals.ekb.eg/" },
   ];

@@ -21,14 +21,13 @@ export function SupervisorCard({ supervisor }: { supervisor: Supervisor }) {
             <div className="w-full md:w-1/3 flex justify-center">
               <img
                 src={supervisor.imageUrl}
-                alt={supervisor.name}
+                alt={supervisor.fullNameEn}
                 className="w-48 h-48 rounded-full object-cover border-4 border-blue-100 shadow-md"
               />
             </div>
           )}
 
           <div className={`space-y-4 ${supervisor.imageUrl ? "md:w-2/3" : "w-full"}`}>
-
             <div className="space-y-3">
               <Label className="text-gray-700 font-medium block text-right">
                 الاسم الكامل (عربي)
@@ -52,30 +51,23 @@ export function SupervisorCard({ supervisor }: { supervisor: Supervisor }) {
                 البريد الإلكتروني
               </Label>
               <div className="w-full px-4 py-3 bg-gray-50 rounded-lg text-left">
-                <a
-                  href={`mailto:${supervisor.email}`}
-                  className="text-blue-600 hover:underline"
-                >
+                <a href={`mailto:${supervisor.email}`} className="text-blue-600 hover:underline">
                   {supervisor.email}
                 </a>
               </div>
             </div>
 
             <div className="space-y-3">
-              <Label className="text-gray-700 font-medium block text-right">
-                حالة المشرف
-              </Label>
+              <Label className="text-gray-700 font-medium block text-right">حالة المشرف</Label>
               <div className="w-full px-4 py-3 bg-gray-50 rounded-lg text-right">
                 {supervisor.isOutsider ? "خارجي" : "داخلي"}
               </div>
             </div>
 
             <div className="space-y-3">
-              <Label className="text-gray-700 font-medium block text-right">
-                تاريخ التسجيل
-              </Label>
-              <div className="w-full px-4 py-3 bg-gray-50 rounded-lg text-right">
-                <CalendarDays className="w-4 h-4" />
+              <Label className="text-gray-700 font-medium block text-right">تاريخ التسجيل</Label>
+              <div className="w-full px-4 py-3 bg-gray-50 rounded-lg text-right flex items-center">
+                <CalendarDays className="w-4 h-4 ml-3" />
                 {new Date(supervisor.createdAt).toLocaleDateString("en-US")}
               </div>
             </div>

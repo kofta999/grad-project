@@ -1,30 +1,37 @@
 "use client";
-import { Loader2, UserPlus } from "lucide-react";
-import { useState, useEffect } from "react";
-import { toast } from "react-hot-toast";
+import { UserPlus, Users } from "lucide-react";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { apiClient } from "@/lib/client";
+import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
+import { Container } from "@/components/ui/container";
+import { useEffect, useState } from "react";
+import { Loader } from "@/components/ui/loader";
 import Link from "next/link";
-
-interface SupervisorListItem {
-  supervisorId: number;
-  name: string;
-  fullNameAr?: string;
-  fullNameEn?: string;
-}
+import { SupervisorListItem } from "@/lib/types";
 
 export function SupervisorList() {
+  const router = useRouter();
   const [supervisors, setSupervisors] = useState<SupervisorListItem[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const loadData = async () => {
       try {
-        const response = await apiClient.supervisors.$get({ query: { type: "" } });
+        const response = await apiClient.supervisors.$get();
         if (!response.ok) throw new Error("Failed to fetch supervisors");
-        const data: SupervisorListItem[] = await response.json();
+        const data = await response.json();
         setSupervisors(data);
-      } catch (error) {
+      } catch {
         toast.error("فشل في تحميل قائمة المشرفين");
       } finally {
         setLoading(false);
@@ -33,30 +40,63 @@ export function SupervisorList() {
     loadData();
   }, []);
 
-  return (
-    <div className="w-full bg-gray-200 p-6 rounded-xl shadow-lg border border-blue-100">
-      <div className="max-w-3xl mx-auto flex justify-between items-center mb-4">
-        <h2 className="text-2xl font-semibold text-blue-800">قائمة المشرفين</h2>
-        <Link href="/dashboard/supervisors/new">
-          <Button className="bg-blue-600 hover:bg-blue-700 text-white">
-            <UserPlus className="h-4 w-4 mr-2" />
-            إضافة مشرف
-          </Button>
-        </Link>
-      </div>
+  if (loading) {
+    return (
+      <Container>
+        <div className="flex items-center justify-center h-screen">
+          <Loader className="w-20 h-20" />
+        </div>
+      </Container>
+    );
+  }
 
-      <ul className="space-y-3">
-        {supervisors.map((supervisor) => (
-          <li key={supervisor.supervisorId}>
-            <Link 
-              href={`/dashboard/supervisors/${supervisor.supervisorId}`}
-              className="w-full text-right p-3 rounded-lg hover:bg-blue-200 text-gray-700 transition block"
-            >
-              {supervisor.name}
+  return (
+    <Container>
+      <Card>
+        <CardHeader>
+          <div className="flex justify-between items-center">
+            <CardTitle>
+              <Users className="text-yellow-500" />
+              قائمة المشرفين
+            </CardTitle>
+            <Link href="/dashboard/supervisors/new">
+              <Button className="bg-blue-600 hover:bg-blue-700 text-white">
+                <UserPlus className="h-4 w-4 mr-2" />
+                إضافة مشرف
+              </Button>
             </Link>
-          </li>
-        ))}
-      </ul>
-    </div>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="overflow-x-auto">
+            <Table dir="rtl">
+              <TableHeader>
+                <TableRow className="border-b">
+                  <TableHead className="text-right">اسم المشرف</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {supervisors.length === 0 && (
+                  <TableRow className="border-b h-12">
+                    <TableCell colSpan={2} className="text-center">
+                      لا يوجد مشرفين
+                    </TableCell>
+                  </TableRow>
+                )}
+                {supervisors.map((supervisor, index) => (
+                  <TableRow
+                    onClick={() => router.push(`/dashboard/supervisors/${supervisor.supervisorId}`)}
+                    key={supervisor.supervisorId}
+                    className={`border-b h-12 cursor-pointer ${index % 2 !== 0 ? "bg-white" : "bg-blue-50"}`}
+                  >
+                    <TableCell className="w-[50%]">{supervisor.name}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        </CardContent>
+      </Card>
+    </Container>
   );
 }

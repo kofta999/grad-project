@@ -41,7 +41,11 @@ export default function Navbar() {
         { title: "الهندسة المدنية", path: "https://eng.suez.edu.eg/?page_id=5433" },
       ],
     },
-    { title: "البحث العلمي", path: "https://eng.suez.edu.eg/?s=%D8%A7%D9%84%D8%A8%D8%AD%D8%AB+%D8%A7%D9%84%D8%B9%D9%84%D9%85%D9%8A", icon: <FlaskConical size={20} className="ml-1" /> },
+    {
+      title: "البحث العلمي",
+      path: "https://eng.suez.edu.eg/?s=%D8%A7%D9%84%D8%A8%D8%AD%D8%AB+%D8%A7%D9%84%D8%B9%D9%84%D9%85%D9%8A",
+      icon: <FlaskConical size={20} className="ml-1" />,
+    },
     { title: "الفعاليات", path: "/#news-section", icon: <Calendar size={20} className="ml-1" /> },
     { title: "بوابة الطالب", path: "/login", icon: <NotebookPen size={20} className="ml-1" /> },
     { title: "اتصل بنا", path: "/#contact-section", icon: <Mail size={20} className="ml-1" /> },
