@@ -1,19 +1,33 @@
+import { eq, sql } from "drizzle-orm";
 import db from "@/db";
-import { attachments, theses } from "@/db/schema";
-import { GetThesisDTO } from "@/dtos/get-thesis.dto";
-import { sql, eq } from "drizzle-orm";
+import { applications, attachments, supervisors, theses } from "@/db/schema";
+import type { GetThesisDTO } from "@/dtos/get-thesis.dto";
+import { AdminApplicationService } from "./admin-application.service";
 
 type ThesisAvailability = { available: true } | { available: false; reason: string };
 
 export interface IThesisService {
   isThesisAvailable(studentId: number): Promise<ThesisAvailability>;
-  submitThesis(studentId: number, title: string, attachmentUrl: string): Promise<GetThesisDTO>;
+  submitThesis(
+    studentId: number,
+    title: string,
+    attachmentUrl: string,
+    supervisorId: number
+  ): Promise<GetThesisDTO>;
   getThesis(studentId: number): Promise<GetThesisDTO | null>;
 }
 
 export class ThesisService implements IThesisService {
+  applicationService = new AdminApplicationService();
+
   async isThesisAvailable(studentId: number): Promise<ThesisAvailability> {
-    const applicationId = await this.getApplicationByStudentId(studentId);
+    const application = await this.applicationService.getApplicationByStudentId(studentId);
+
+    if (!application) {
+      throw new Error("Application not found");
+    }
+
+    const { applicationId } = application;
 
     if (!applicationId) {
       throw new Error("Application not found");
@@ -33,17 +47,36 @@ export class ThesisService implements IThesisService {
   async submitThesis(
     studentId: number,
     title: string,
-    attachmentUrl: string
+    attachmentUrl: string,
+    supervisorId: number
   ): Promise<GetThesisDTO> {
-    const applicationId = await this.getApplicationByStudentId(studentId);
+    const application = await this.applicationService.getApplicationByStudentId(studentId);
 
-    if (!applicationId) {
+    if (!application) {
       throw new Error("Application not found");
     }
+
+    const { applicationId } = application;
 
     try {
       // Transaction to ensure both insertions succeed or fail together
       return await db.transaction(async (tx) => {
+        await tx
+          .update(applications)
+          .set({ supervisorId })
+          .where(eq(applications.applicationId, applicationId));
+
+        const supervisor = (
+          await tx
+            .select({
+              name: supervisors.fullNameAr,
+              email: supervisors.email,
+              supervisorId: supervisors.supervisorId,
+            })
+            .from(supervisors)
+            .where(eq(supervisors.supervisorId, supervisorId))
+        )[0];
+
         const attachment = await tx
           .insert(attachments)
           .values({ applicationId, type: "thesis", attachmentUrl })
@@ -51,7 +84,11 @@ export class ThesisService implements IThesisService {
 
         const thesis = await tx
           .insert(theses)
-          .values({ applicationId, title, attachmentId: attachment[0].attachmentId })
+          .values({
+            applicationId,
+            title,
+            attachmentId: attachment[0].attachmentId,
+          })
           .returning();
 
         return {
@@ -60,6 +97,7 @@ export class ThesisService implements IThesisService {
           title: thesis[0].title,
           attachmentUrl: attachment[0].attachmentUrl,
           createdAt: thesis[0].createdAt,
+          supervisor,
         };
       });
     } catch (error) {
@@ -68,26 +106,16 @@ export class ThesisService implements IThesisService {
     }
   }
 
-  // TODO: Remove this
-  private async getApplicationByStudentId(studentId: number): Promise<number | null> {
-    const application = await db.query.applications.findFirst({
-      where(f, { eq }) {
-        return eq(f.studentId, studentId);
-      },
-      columns: { applicationId: true },
-    });
+  async getThesis(studentId: number): Promise<GetThesisDTO | null> {
+    const application = await this.applicationService.getApplicationByStudentId(studentId);
 
     if (!application) {
       return null;
     }
 
-    return application.applicationId;
-  }
+    const { applicationId, supervisor } = application;
 
-  async getThesis(studentId: number): Promise<GetThesisDTO | null> {
-    const applicationId = await this.getApplicationByStudentId(studentId);
-
-    if (!applicationId) {
+    if (!supervisor) {
       return null;
     }
 
@@ -107,6 +135,7 @@ export class ThesisService implements IThesisService {
       title: thesis[0].theses.title,
       attachmentUrl: thesis[0].attachments.attachmentUrl,
       createdAt: thesis[0].theses.createdAt,
+      supervisor,
     };
   }
 }

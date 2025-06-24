@@ -1,11 +1,11 @@
-import type { AppBindings } from "./types";
-import { logger } from "@/middlewares/logger";
+import { serveStatic } from "@hono/node-server/serve-static";
 import { OpenAPIHono } from "@hono/zod-openapi";
+import { cors } from "hono/cors";
 import { notFound, onError, serveEmojiFavicon } from "stoker/middlewares";
 import { defaultHook } from "stoker/openapi";
-import { serveStatic } from "@hono/node-server/serve-static";
-import { cors } from "hono/cors";
 import env from "@/env";
+import { logger } from "@/middlewares/logger";
+import type { AppBindings } from "./types";
 
 export function createRouter() {
   return new OpenAPIHono<AppBindings>({ strict: false, defaultHook });

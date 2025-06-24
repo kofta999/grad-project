@@ -1,16 +1,17 @@
 import { hcWithType } from "@repo/mis-api";
-import { deleteCookie, getCookie } from "./utils";
+import Cookies from "js-cookie";
 
 const customFetch: typeof fetch = async (input, init) => {
   const currentHeaders = new Headers(init?.headers);
-  const authToken = getCookie("jwtToken");
+  const authToken = Cookies.get("jwtToken");
 
   currentHeaders.set("Authorization", `Bearer ${authToken}`);
   const response = await fetch(input, { ...init, headers: currentHeaders });
   if (response.status === 401 && authToken) {
+    console.log("here");
     console.warn("API client (dynamic) returned 401. Logging out.");
-    deleteCookie("jwtToken");
-    deleteCookie("role");
+    Cookies.remove("jwtToken");
+    Cookies.remove("role");
     localStorage.removeItem("loggedInUser");
     window.location.reload();
     // Potentially throw to signal failure upstream

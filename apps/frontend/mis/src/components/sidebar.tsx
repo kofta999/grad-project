@@ -10,6 +10,7 @@ import {
   LogOut,
   X,
   Menu,
+  Users,
 } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import Image from "next/image";
@@ -17,10 +18,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useUserContext } from "@/context/user-context";
 import { useRouter } from "next/navigation";
-import { apiClient } from "@/lib/client";
 import toast, { Toaster } from "react-hot-toast";
 import useUser from "@/hooks/use-user";
-import { deleteCookie } from "@/lib/utils";
+import Cookies from "js-cookie";
 
 export type SideNavItem = {
   title: string;
@@ -64,6 +64,11 @@ const ADMIN_SIDEBAR_ITEMS = [
     path: "/dashboard/reports",
     icon: <File />,
   },
+  {
+    title: "المشرفين",
+    path: "/dashboard/supervisors",
+    icon: <Users />,
+  },
 ];
 
 type SideNavProps = {
@@ -81,9 +86,9 @@ export default function SideNav({ role }: SideNavProps) {
   const handleLogout = async () => {
     try {
       setLoggedInUser(null);
-      deleteCookie("role");
-      deleteCookie("jwtToken");
-      router.refresh()
+      Cookies.remove("role");
+      Cookies.remove("jwtToken");
+      router.refresh();
       toast.success("تم تسجيل الخروج بنجاح");
     } catch (err) {
       toast.error("فشل تسجيل الخروج حاول مرة أخرى");

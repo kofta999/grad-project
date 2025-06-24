@@ -1,5 +1,6 @@
 "use client";
 import Image from "next/image";
+import Cookies from "js-cookie";
 import Link from "next/link";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -47,8 +48,9 @@ export default function LoginForm() {
       }
 
       const result = await res.json();
-      document.cookie = `jwtToken=${result.accessToken};`;
-      document.cookie = `role=${result.role};`;
+      Cookies.set("jwtToken", result.accessToken);
+      Cookies.set("role", result.role);
+
       setLoggedInUser(result);
       setLoading(false);
 

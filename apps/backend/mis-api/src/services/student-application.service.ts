@@ -1,17 +1,17 @@
+import { and, count, eq } from "drizzle-orm";
 import db from "@/db";
 import {
-  applications,
-  addresses,
-  emergencyContacts,
   academicQualifications,
-  registerations,
+  addresses,
+  applications,
   attachments,
+  emergencyContacts,
+  registerations,
 } from "@/db/schema";
-import { CreateApplicationDTO } from "@/dtos/create-application.dto";
-import { SaveAttachmentsDTO } from "@/dtos/save-attachment.dto";
+import type { CreateApplicationDTO } from "@/dtos/create-application.dto";
+import type { SaveAttachmentsDTO } from "@/dtos/save-attachment.dto";
+import type { UpdateApplicationDTO } from "@/dtos/update-application.dto";
 import { ApplicationService } from "./application.service";
-import { and, count, eq } from "drizzle-orm";
-import { UpdateApplicationDTO } from "@/dtos/update-application.dto";
 
 export interface IStudentApplicationService {
   createApplication(studentId: number, application: CreateApplicationDTO): Promise<number>;
@@ -56,7 +56,7 @@ export class StudentApplicationService
       )
       .returning();
 
-    if (res.length == 0) {
+    if (res.length === 0) {
       throw new Error("Attachment not found");
     }
 
@@ -75,7 +75,7 @@ export class StudentApplicationService
   ): Promise<number> {
     const newApplication = await db
       .insert(applications)
-      .values({ studentId })
+      .values({ studentId, supervisorId: null })
       .returning({ applicationId: applications.applicationId });
 
     const applicationId = newApplication[0].applicationId;

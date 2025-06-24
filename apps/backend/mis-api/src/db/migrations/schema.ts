@@ -5,11 +5,11 @@ import {
   foreignKey,
   integer,
   date,
+  index,
   unique,
   text,
   boolean,
   timestamp,
-  index,
   real,
   primaryKey,
   pgView,
@@ -95,24 +95,47 @@ export const students = pgTable(
       .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),
   },
-  (table) => [unique("students_email_key").on(table.email)]
+  (table) => [
+    index("idx_students_first_name_ar_normalized").using(
+      "btree",
+      sql`normalize_arabic_text(full_name_ar)`
+    ),
+    unique("students_email_key").on(table.email),
+  ]
 );
 
-export const departments = pgTable("departments", {
-  departmentId: serial("department_id").primaryKey().notNull(),
-  code: text().notNull(),
+export const reports = pgTable("reports", {
+  reportId: serial("report_id").primaryKey().notNull(),
+  type: text().notNull(),
   title: text().notNull(),
-  type: departmentType().notNull(),
-  coursesHours: integer("courses_hours").notNull(),
-  compulsoryHours: integer("compulsory_hours").notNull(),
-  thesisHours: integer("thesis_hours").notNull(),
+  attachmentUrl: text("attachment_url").notNull(),
 });
+
+export const supervisors = pgTable(
+  "supervisors",
+  {
+    supervisorId: serial("supervisor_id").primaryKey().notNull(),
+    fullNameAr: text("full_name_ar").notNull(),
+    fullNameEn: text("full_name_en").notNull(),
+    email: text().notNull(),
+    imageUrl: text("image_url").notNull(),
+    isOutsider: boolean("is_outsider").default(false),
+    createdAt: timestamp("created_at", { mode: "string" })
+      .default(sql`CURRENT_TIMESTAMP`)
+      .notNull(),
+    updatedAt: timestamp("updated_at", { mode: "string" })
+      .default(sql`CURRENT_TIMESTAMP`)
+      .notNull(),
+  },
+  (table) => [unique("supervisors_email_key").on(table.email)]
+);
 
 export const applications = pgTable(
   "applications",
   {
     applicationId: serial("application_id").primaryKey().notNull(),
     studentId: integer("student_id").notNull(),
+    supervisorId: integer("supervisor_id"),
     status: applicationStatus().default("pending").notNull(),
   },
   (table) => [
@@ -124,6 +147,11 @@ export const applications = pgTable(
       columns: [table.studentId],
       foreignColumns: [students.studentId],
       name: "applications_student_id_fkey",
+    }),
+    foreignKey({
+      columns: [table.supervisorId],
+      foreignColumns: [supervisors.supervisorId],
+      name: "applications_supervisor_id_fkey",
     }),
   ]
 );
@@ -168,6 +196,16 @@ export const registerations = pgTable(
     unique("registerations_application_id_key").on(table.applicationId),
   ]
 );
+
+export const departments = pgTable("departments", {
+  departmentId: serial("department_id").primaryKey().notNull(),
+  code: text().notNull(),
+  title: text().notNull(),
+  type: departmentType().notNull(),
+  coursesHours: integer("courses_hours").notNull(),
+  compulsoryHours: integer("compulsory_hours").notNull(),
+  thesisHours: integer("thesis_hours").notNull(),
+});
 
 export const attachments = pgTable(
   "attachments",
@@ -279,24 +317,6 @@ export const academicQualifications = pgTable(
   ]
 );
 
-export const admins = pgTable(
-  "admins",
-  {
-    adminId: serial("admin_id").primaryKey().notNull(),
-    fullNameAr: text("full_name_ar").notNull(),
-    fullNameEn: text("full_name_en").notNull(),
-    email: text().notNull(),
-    hashedPassword: text("hashed_password").notNull(),
-    createdAt: timestamp("created_at", { mode: "string" })
-      .default(sql`CURRENT_TIMESTAMP`)
-      .notNull(),
-    updatedAt: timestamp("updated_at", { mode: "string" })
-      .default(sql`CURRENT_TIMESTAMP`)
-      .notNull(),
-  },
-  (table) => [unique("admins_email_key").on(table.email)]
-);
-
 export const courses = pgTable(
   "courses",
   {
@@ -381,6 +401,24 @@ export const courseResults = pgTable(
   ]
 );
 
+export const admins = pgTable(
+  "admins",
+  {
+    adminId: serial("admin_id").primaryKey().notNull(),
+    fullNameAr: text("full_name_ar").notNull(),
+    fullNameEn: text("full_name_en").notNull(),
+    email: text().notNull(),
+    hashedPassword: text("hashed_password").notNull(),
+    createdAt: timestamp("created_at", { mode: "string" })
+      .default(sql`CURRENT_TIMESTAMP`)
+      .notNull(),
+    updatedAt: timestamp("updated_at", { mode: "string" })
+      .default(sql`CURRENT_TIMESTAMP`)
+      .notNull(),
+  },
+  (table) => [unique("admins_email_key").on(table.email)]
+);
+
 export const theses = pgTable(
   "theses",
   {
@@ -406,13 +444,6 @@ export const theses = pgTable(
     unique("theses_application_id_key").on(table.applicationId),
   ]
 );
-
-export const reports = pgTable("reports", {
-  reportId: serial("report_id").primaryKey().notNull(),
-  type: text().notNull(),
-  title: text().notNull(),
-  attachmentUrl: text("attachment_url").notNull(),
-});
 
 export const departmentCourses = pgTable(
   "department_courses",

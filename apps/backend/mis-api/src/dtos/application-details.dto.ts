@@ -1,6 +1,5 @@
-import { DEPARTMENT_TYPES } from "@/lib/constants";
-import { APPLICATION_STATUSES } from "@/lib/constants";
 import { z } from "zod";
+import { APPLICATION_STATUSES, DEPARTMENT_TYPES } from "@/lib/constants";
 
 export const ApplicationDetailsSchema = z.object({
   applicationId: z.number(),
@@ -50,6 +49,13 @@ export const ApplicationDetailsSchema = z.object({
     academicDegree: z.enum(DEPARTMENT_TYPES),
     academicProgram: z.string(),
   }),
+  supervisor: z
+    .object({
+      supervisorId: z.number(),
+      name: z.string(),
+      email: z.string(),
+    })
+    .nullable(),
   attachments: z.array(
     z.object({
       attachmentId: z.number(),

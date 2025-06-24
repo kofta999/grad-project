@@ -198,10 +198,10 @@ export const checkThesisAvailability: AppRouteHandler<routes.CheckThesisAvailabi
 
 export const submitThesis: AppRouteHandler<routes.SubmitThesisRoute> = async (c) => {
   const studentId = c.var.user.userId;
-  const { attachmentUrl, title } = c.req.valid("json");
+  const { attachmentUrl, title, supervisorId } = c.req.valid("json");
 
   try {
-    const thesis = await thesisService.submitThesis(studentId, title, attachmentUrl);
+    const thesis = await thesisService.submitThesis(studentId, title, attachmentUrl, supervisorId);
     return c.json(thesis, HttpStatusCodes.OK);
   } catch (error) {
     console.error("Error submitting thesis:", error);

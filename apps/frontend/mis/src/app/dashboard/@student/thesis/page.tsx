@@ -3,13 +3,14 @@ import { useEffect, useState } from "react";
 import { apiClient } from "@/lib/client";
 import { ThesisStudentView } from "@/components/student/thesis-student-view";
 import { ThesisSubmitForm } from "@/components/student/thesis-submit-form";
-import type { ThesisStatusResponse, ThesisResponse } from "@/lib/types";
+import type { ThesisStatusResponse, ThesisResponse, SupervisorListItem } from "@/lib/types";
 import { Loader } from "@/components/ui/loader";
 import { Container } from "@/components/ui/container";
 
 export default function ThesisPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [thesisData, setThesisData] = useState<ThesisResponse | null>(null);
+  const [supervisorList, setSupervisorList] = useState<SupervisorListItem[]>([]);
   const [status, setStatus] = useState<ThesisStatusResponse | null>(null);
   const [error, setError] = useState("");
 
@@ -45,6 +46,10 @@ export default function ThesisPage() {
         // so we set thesis data to null instead
         if (thesisResponse.status === 404) {
           setThesisData(null);
+
+          const res = await apiClient.supervisors.$get();
+
+          setSupervisorList(await res.json());
         } else {
           const thesis = await thesisResponse.json();
           setThesisData(thesis);
@@ -93,7 +98,10 @@ export default function ThesisPage() {
       {thesisData != null ? (
         <ThesisStudentView thesis={thesisData} />
       ) : (
-        <ThesisSubmitForm onSubmissionSuccess={handleSubmissionSuccess} />
+        <ThesisSubmitForm
+          onSubmissionSuccess={handleSubmissionSuccess}
+          supervisorList={supervisorList}
+        />
       )}
     </Container>
   );
