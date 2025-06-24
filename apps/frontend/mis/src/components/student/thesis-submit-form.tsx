@@ -19,24 +19,25 @@ import { apiClient } from "@/lib/client";
 import { useState, ChangeEvent } from "react";
 import toast from "react-hot-toast";
 import { BookmarkCheck, UploadCloud, CheckCircle2, Loader2, Send } from "lucide-react";
-import type { SubmitThesisRequest, SubmitThesisResponse, ThesisResponse } from "@/lib/types";
+import type { SubmitThesisRequest, SupervisorListItem, ThesisResponse } from "@/lib/types";
 import { SpacingWrapper } from "../ui/spacing-wrapper";
 import { ErrorMessage } from "../ui/error-message";
 import { Loader } from "@/components/ui/loader";
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const ACCEPTED_FILE_TYPES = ["application/pdf"];
 
 interface ThesisSubmitFormProps {
   onSubmissionSuccess: (response: ThesisResponse) => void;
+  supervisorList: SupervisorListItem[];
 }
 
-export function ThesisSubmitForm({ onSubmissionSuccess }: ThesisSubmitFormProps) {
+export function ThesisSubmitForm({ onSubmissionSuccess, supervisorList }: ThesisSubmitFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [formValues, setFormValues] = useState<SubmitThesisRequest>({
     title: "",
-    supervisorId: 0, 
+    supervisorId: 0,
     attachmentUrl: "",
   });
 
@@ -70,7 +71,7 @@ export function ThesisSubmitForm({ onSubmissionSuccess }: ThesisSubmitFormProps)
         json: {
           title: formValues.title,
           supervisorId: formValues.supervisorId,
-          attachmentUrl: formValues.attachmentUrl
+          attachmentUrl: formValues.attachmentUrl,
         },
       });
 
@@ -181,17 +182,18 @@ export function ThesisSubmitForm({ onSubmissionSuccess }: ThesisSubmitFormProps)
             </Label>
             <Select
               onValueChange={handleSupervisorChange}
-              value={formValues.supervisorId.toString()}
+              value={formValues.supervisorId === 0 ? undefined : formValues.supervisorId.toString()}
               required
             >
               <SelectTrigger className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-right">
                 <SelectValue placeholder="اختر المشرف" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="1">د/ مروة جمال</SelectItem>
-                <SelectItem value="2">د/ هدير حسين</SelectItem>
-                <SelectItem value="3">د/ ريهام حسن</SelectItem>
-                <SelectItem value="4">د/ إيمان مصطفى</SelectItem>
+                {supervisorList.map((sp) => (
+                  <SelectItem key={sp.supervisorId} value={sp.supervisorId.toString()}>
+                    {sp.name}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </SpacingWrapper>
@@ -242,10 +244,10 @@ export function ThesisSubmitForm({ onSubmissionSuccess }: ThesisSubmitFormProps)
               onClick={submitForm}
               className="w-full py-3 px-6 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-medium rounded-lg shadow-md"
               disabled={
-                isSubmitting || 
-                isUploading || 
-                !formValues.title || 
-                !formValues.supervisorId || 
+                isSubmitting ||
+                isUploading ||
+                !formValues.title ||
+                !formValues.supervisorId ||
                 !formValues.attachmentUrl
               }
             >

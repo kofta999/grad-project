@@ -65,18 +65,30 @@ VALUES
 -- Insert sample supervisors (supervisor_ids 1-3)
 INSERT INTO
     "supervisors" (
-        "full_name_ar", "full_name_en", "email"
+        "full_name_ar", "full_name_en", "email", "is_outsider"
     )
 VALUES
     (
-        'د. خالد محمود', 'Dr. Khaled Mahmoud', 'khaled.mahmoud@supervisor.example.com'
+        'د. خالد محمود', 'Dr. Khaled Mahmoud', 'khaled.mahmoud@supervisor.example.com', TRUE
     ), -- supervisor_id 1
     (
-        'د. علياء فتحي', 'Dr. Alyaa Fathy', 'alyaa.fathy@supervisor.example.com'
+        'د. علياء فتحي', 'Dr. Alyaa Fathy', 'alyaa.fathy@supervisor.example.com', TRUE
     ), -- supervisor_id 2
     (
-        'د. إبراهيم يوسف', 'Dr. Ibrahim Youssef', 'ibrahim.youssef@supervisor.example.com'
-    ); -- supervisor_id 3
+        'د. إبراهيم يوسف', 'Dr. Ibrahim Youssef', 'ibrahim.youssef@supervisor.example.com', TRUE
+    ), -- supervisor_id 3
+    (
+        'د/ مروة جمال', 'Dr. Marwa Gamal', 'Marwa_Gamal@eng.suez.edu.eg', FALSE
+    ), -- supervisor_id 4
+    (
+        'د/ هدير حسين', 'Dr. Hadeer Hussein', 'hadeerhussein@eng.suez.edu.eg', FALSE
+    ), -- supervisor_id 5
+    (
+        'د/ ريهام حسن', 'Dr. Reham Hassan', 'Reham.Elenani@eng.suez.edu.eg', FALSE
+    ), -- supervisor_id 6
+    (
+        'د/ إيمان مصطفى', 'Dr. Iman Mostafa', 'IMAN.MOSTAFA@ENG.SUEZ.EDU.EG', FALSE
+    ); -- supervisor_id 7
 
 
 -- Insert sample applications (application_ids 1-3)

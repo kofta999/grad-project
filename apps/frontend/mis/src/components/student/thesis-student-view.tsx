@@ -1,34 +1,27 @@
 "use client";
-import { Card, CardHeader, CardTitle, CardContent, CardGrid } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardGrid, CardHeader, CardTitle } from "@/components/ui/card";
 import type { ThesisResponse } from "@/lib/types";
-import { FileText, Text, File, Download, CalendarDays, User, Mail } from "lucide-react";
-import { SpacingWrapper } from "../ui/spacing-wrapper";
+import { CalendarDays, Download, File, FileText, Mail, Text, User } from "lucide-react";
 import Link from "next/link";
+import { SpacingWrapper } from "../ui/spacing-wrapper";
 
 interface ThesisStudentViewProps {
   thesis: ThesisResponse;
 }
 
-const SUPERVISORS = [
-  { id: 1, name: "د/ مروة جمال", email: "Marwa_Gamal@eng.suez.edu.eg" },
-  { id: 2, name: "د/ هدير حسين", email: "hadeerhussein@eng.suez.edu.eg" },
-  { id: 3, name: "د/ ريهام حسن", email: "Reham.Elenani@eng.suez.edu.eg" },
-  { id: 4, name: "د/ إيمان مصطفى", email: "IMAN.MOSTAFA@ENG.SUEZ.EDU.EG" },
-];
-
 export function ThesisStudentView({ thesis }: ThesisStudentViewProps) {
+  const { supervisor } = thesis;
+
   if (!thesis || !thesis.thesisId) {
     return (
       <Card>
         <CardContent className="text-center py-8 text-blue-600">
-        لم يتم تقديم رسالة علمية بعد
+          لم يتم تقديم رسالة علمية بعد
         </CardContent>
       </Card>
     );
   }
-
-  const supervisor = SUPERVISORS.find(s => s.id === thesis.supervisor.supervisorId);
 
   return (
     <Card>

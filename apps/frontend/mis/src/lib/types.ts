@@ -1,7 +1,7 @@
-import { InferResponseType } from "@repo/mis-api";
-import { apiClient } from "./client";
-import * as Yup from "yup";
-import {
+import type { InferResponseType } from "@repo/mis-api";
+import type * as Yup from "yup";
+import type { apiClient } from "./client";
+import type {
   ApplicationStep1Schema,
   ApplicationStep2Schema,
   ApplicationStep3Schema,
@@ -31,11 +31,10 @@ export type ThesisStatusResponse = InferResponseType<
   typeof apiClient.students.me.thesis.status.$get
 >;
 
-
 export type SubmitThesisRequest = {
   title: string;
   attachmentUrl: string;
-  supervisorId: number; 
+  supervisorId: number;
 };
 
 export type RegisterStep1Type = Yup.InferType<typeof RegisterStep1Schema>;
@@ -55,9 +54,15 @@ export type Report = {
 export type ReportsResponse = Report[];
 
 // supervisors
+
+export type SupervisorListItem = InferResponseType<
+  (typeof apiClient)["supervisors"]["$get"],
+  200
+>[number];
+
 export interface Supervisor {
   supervisorId: number;
-  name?: string; 
+  name?: string;
   fullNameAr: string;
   fullNameEn: string;
   email: string;

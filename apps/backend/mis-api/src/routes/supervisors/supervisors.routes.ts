@@ -1,12 +1,12 @@
 import { createRoute, z } from "@hono/zod-openapi";
-import { jsonContent, jsonContentRequired } from "stoker/openapi/helpers";
 import * as HttpStatusCodes from "stoker/http-status-codes";
+import { jsonContent, jsonContentRequired } from "stoker/openapi/helpers";
 import { createMessageObjectSchema, IdParamsSchema } from "stoker/openapi/schemas";
-import { NotFoundSchema, adminMiddleware } from "@/lib/constants";
 import { CreateSupervisorSchema } from "@/dtos/create-supervisor.dto";
-import { SupervisorListSchema } from "@/dtos/supervisor-list.dto";
-import { isAuthenticated } from "@/middlewares/isAuthenticated";
 import { SupervisorDetailsSchema } from "@/dtos/supervisor-details.dto";
+import { SupervisorListSchema } from "@/dtos/supervisor-list.dto";
+import { adminMiddleware, NotFoundSchema } from "@/lib/constants";
+import { isAuthenticated } from "@/middlewares/isAuthenticated";
 
 const tags = ["Supervisors"];
 
@@ -43,11 +43,6 @@ export const getSupervisorList = createRoute({
     },
   ],
   middleware: isAuthenticated,
-  request: {
-    query: z.object({
-      type: z.string().optional(),
-    }),
-  },
   tags,
   responses: {
     [HttpStatusCodes.OK]: jsonContent(SupervisorListSchema, "Supervisor list"),
