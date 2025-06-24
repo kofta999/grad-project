@@ -3,7 +3,7 @@ import { User, CalendarDays } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Supervisor } from "@/lib/types";
-
+//
 export function SupervisorCard({ supervisor }: { supervisor: Supervisor }) {
   return (
     <Card className="rounded-xl shadow-lg border-0 overflow-hidden">
