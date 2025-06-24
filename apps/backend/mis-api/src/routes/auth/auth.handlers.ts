@@ -2,7 +2,6 @@ import { AppRouteHandler } from "@/lib/types";
 import { LoginUserRoute, RegisterStudentRoute, UploadFileRoute } from "./auth.routes";
 import * as HttpStatusCodes from "stoker/http-status-codes";
 import * as HttpStatusPhrases from "stoker/http-status-phrases";
-import { deleteCookie, setCookie } from "hono/cookie";
 import { AuthService } from "@/services/auth.service";
 import { JwtService } from "@/services/jwt.service";
 import env from "@/env";

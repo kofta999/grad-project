@@ -15,7 +15,7 @@ export default function HeroSection() {
     >
       <div className="container max-w-4xl px-4">
         <h1 className="text-4xl md:text-5xl font-bold mb-6 text-shadow">
-          كلية الهندسة بجامعة قناة السويس
+          كلية الهندسة - جامعة قناة السويس
         </h1>
 
         <p className="text-xl md:text-2xl mb-8 text-shadow">

@@ -1,7 +1,7 @@
-import { AppRouteHandler } from "@/lib/types";
 import * as HttpStatusCodes from "stoker/http-status-codes";
+import type { AppRouteHandler } from "@/lib/types";
 import { SupervisorService } from "@/services/supervisor.service";
-import * as routes from "./supervisors.routes";
+import type * as routes from "./supervisors.routes";
 
 const supervisorService = new SupervisorService();
 

@@ -54,6 +54,14 @@ export default function ApplicationDetails({ application }: { application: Appli
                 {application.registration?.academicProgram}
               </p>
             </SpacingWrapper>
+            <SpacingWrapper>
+              <p className="text-gray-600">اسم المشرف</p>
+              <p className="text-lg font-semibold text-gray-800">{application.supervisor?.name}</p>
+            </SpacingWrapper>
+            <SpacingWrapper>
+              <p className="text-gray-600">البريد الالكتروني للمشرف</p>
+              <p className="text-lg font-semibold text-gray-800">{application.supervisor?.email}</p>
+            </SpacingWrapper>
           </CardGrid>
         </CardContent>
       </Card>
