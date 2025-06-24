@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import {
@@ -26,13 +26,12 @@ export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [openSubMenu, setOpenSubMenu] = useState<string | null>(null);
-  const subMenuRef = useRef<HTMLDivElement>(null);
 
   const navLinks: NavLink[] = [
     { title: "الرئيسية", path: "/", icon: <User size={20} className="ml-1" /> },
     { title: "عن الكلية", path: "/about", icon: <GraduationCap size={20} className="ml-1" /> },
     {
-      title: "الأقسام العلمية",
+      title: "البرامج الأكاديمية",
       path: "/#programs-section",
       icon: <BookOpen size={20} className="ml-1" />,
       subLinks: [
@@ -42,7 +41,7 @@ export default function Navbar() {
         { title: "الهندسة المدنية", path: "https://eng.suez.edu.eg/?page_id=5433" },
       ],
     },
-    { title: "البحث العلمي", path: "/", icon: <FlaskConical size={20} className="ml-1" /> },
+    { title: "البحث العلمي", path: "https://eng.suez.edu.eg/?s=%D8%A7%D9%84%D8%A8%D8%AD%D8%AB+%D8%A7%D9%84%D8%B9%D9%84%D9%85%D9%8A", icon: <FlaskConical size={20} className="ml-1" /> },
     { title: "الفعاليات", path: "/#news-section", icon: <Calendar size={20} className="ml-1" /> },
     { title: "بوابة الطالب", path: "/login", icon: <NotebookPen size={20} className="ml-1" /> },
     { title: "اتصل بنا", path: "/#contact-section", icon: <Mail size={20} className="ml-1" /> },
@@ -54,19 +53,6 @@ export default function Navbar() {
     };
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (subMenuRef.current && !subMenuRef.current.contains(event.target as Node)) {
-        setOpenSubMenu(null);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
   }, []);
 
   const toggleSubMenu = (title: string) => {
@@ -96,7 +82,7 @@ export default function Navbar() {
           </Link>
           <div className="hidden md:flex items-center gap-1.5">
             {navLinks.map((link) => (
-              <div key={link.title} className="relative group" ref={subMenuRef}>
+              <div key={link.title} className="relative group">
                 {link.subLinks ? (
                   <>
                     <button
@@ -114,8 +100,6 @@ export default function Navbar() {
                           <Link
                             key={subLink.title}
                             href={subLink.path}
-                            target="_blank"
-                            rel="noopener noreferrer"
                             className="block px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 text-right transition-colors border-b border-gray-100 last:border-0"
                           >
                             {subLink.title}
@@ -148,7 +132,7 @@ export default function Navbar() {
         </div>
 
         {mobileOpen && (
-          <div className="md:hidden bg-blue-800 mt-2 rounded-lg py-3 shadow-inner" ref={subMenuRef}>
+          <div className="md:hidden bg-blue-800 mt-2 rounded-lg py-3 shadow-inner">
             {navLinks.map((link) => (
               <div key={link.title} className="px-3">
                 {link.subLinks ? (
@@ -175,8 +159,6 @@ export default function Navbar() {
                           <Link
                             key={subLink.title}
                             href={subLink.path}
-                            target="_blank"
-                            rel="noopener noreferrer"
                             className="block text-blue-100 hover:text-white px-4 py-2.5 text-sm hover:bg-blue-700 rounded transition-colors"
                           >
                             {subLink.title}
@@ -190,7 +172,6 @@ export default function Navbar() {
                     key={link.title}
                     href={link.path}
                     className="flex items-center text-white hover:bg-blue-700 px-3 py-3 rounded-lg font-medium transition-colors"
-                    onClick={() => setMobileOpen(false)}
                   >
                     {link.icon}
                     <span className="mr-2">{link.title}</span>

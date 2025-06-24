@@ -150,7 +150,7 @@ export default function AboutPage() {
               {
                 value: 250,
                 label: "عضو هيئة تدريس",
-                icon: <GraduationCap className="text-yellow-400" size={32} />,
+                icon: <Users className="text-yellow-400" size={32} />,
               },
               {
                 value: 12,
@@ -206,7 +206,6 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* قسم الشهادات محتاج صور  */}
       <section className="py-16 bg-blue-50">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold text-center text-blue-600 mb-12">

@@ -21,7 +21,7 @@ export default function StatsSection() {
       id: "2",
       value: 152,
       label: "أعضاء هيئة تدريس",
-      icon: <GraduationCap className="text-yellow-400" size={32} />,
+      icon: <Users className="text-yellow-400" size={32} />,
     },
     {
       id: "3",
@@ -33,7 +33,7 @@ export default function StatsSection() {
       id: "4",
       value: 336,
       label: "خريجين",
-      icon: <Award className="text-yellow-400" size={32} />,
+      icon: <GraduationCap className="text-yellow-400" size={32} />,
     },
   ]).current;
 

@@ -10,6 +10,7 @@ import {
   LogOut,
   X,
   Menu,
+  Users,
 } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import Image from "next/image";
@@ -63,6 +64,11 @@ const ADMIN_SIDEBAR_ITEMS = [
     title: "التقارير",
     path: "/dashboard/reports",
     icon: <File />,
+  },
+  {
+    title: "المشرفين",
+    path: "/dashboard/supervisors",
+    icon: <Users />,
   },
 ];
 

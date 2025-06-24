@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardHeader,
@@ -9,6 +8,13 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { apiClient } from "@/lib/client";
 import { useState, ChangeEvent } from "react";
 import toast from "react-hot-toast";
@@ -17,7 +23,7 @@ import type { SubmitThesisRequest, SubmitThesisResponse, ThesisResponse } from "
 import { SpacingWrapper } from "../ui/spacing-wrapper";
 import { ErrorMessage } from "../ui/error-message";
 import { Loader } from "@/components/ui/loader";
-
+import { Button } from "@/components/ui/button"
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const ACCEPTED_FILE_TYPES = ["application/pdf"];
 
@@ -30,12 +36,18 @@ export function ThesisSubmitForm({ onSubmissionSuccess }: ThesisSubmitFormProps)
   const [isUploading, setIsUploading] = useState(false);
   const [formValues, setFormValues] = useState<SubmitThesisRequest>({
     title: "",
+    supervisorId: 0, 
     attachmentUrl: "",
   });
 
   const validateForm = (): boolean => {
     if (!formValues.title.trim()) {
       toast.error("عنوان الرسالة مطلوب");
+      return false;
+    }
+
+    if (!formValues.supervisorId || formValues.supervisorId <= 0) {
+      toast.error("يرجى اختيار المشرف");
       return false;
     }
 
@@ -55,7 +67,11 @@ export function ThesisSubmitForm({ onSubmissionSuccess }: ThesisSubmitFormProps)
 
     try {
       const response = await apiClient.students.me.thesis.$post({
-        json: formValues,
+        json: {
+          title: formValues.title,
+          supervisorId: formValues.supervisorId,
+          attachmentUrl: formValues.attachmentUrl
+        },
       });
 
       if (!response.ok) {
@@ -63,12 +79,9 @@ export function ThesisSubmitForm({ onSubmissionSuccess }: ThesisSubmitFormProps)
         throw new Error(errorData.message || "فشل في تقديم الرسالة");
       }
 
-      // Here the create endpoint returns {} instead of the created thesis
-      // So we need to either refresh the page or query the api for the thesis
-      // Kofta: I'll fix that then xd
       const result = await response.json();
       toast.success("تم تقديم الرسالة بنجاح", { id: toastId });
-      setFormValues({ title: "", attachmentUrl: "" });
+      setFormValues({ title: "", supervisorId: 0, attachmentUrl: "" });
 
       onSubmissionSuccess(result);
     } catch (error) {
@@ -106,6 +119,11 @@ export function ThesisSubmitForm({ onSubmissionSuccess }: ThesisSubmitFormProps)
 
   const handleTitleChange = (e: ChangeEvent<HTMLInputElement>): void => {
     setFormValues({ ...formValues, title: e.target.value });
+  };
+
+  const handleSupervisorChange = (value: string): void => {
+    const supervisorId = Number(value);
+    setFormValues({ ...formValues, supervisorId });
   };
 
   const handleFileChange = async (e: ChangeEvent<HTMLInputElement>): Promise<void> => {
@@ -158,6 +176,27 @@ export function ThesisSubmitForm({ onSubmissionSuccess }: ThesisSubmitFormProps)
           </SpacingWrapper>
 
           <SpacingWrapper>
+            <Label htmlFor="supervisor">
+              المشرف <span className="text-yellow-500">*</span>
+            </Label>
+            <Select
+              onValueChange={handleSupervisorChange}
+              value={formValues.supervisorId.toString()}
+              required
+            >
+              <SelectTrigger className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-right">
+                <SelectValue placeholder="اختر المشرف" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="1">د/ مروة جمال</SelectItem>
+                <SelectItem value="2">د/ هدير حسين</SelectItem>
+                <SelectItem value="3">د/ ريهام حسن</SelectItem>
+                <SelectItem value="4">د/ إيمان مصطفى</SelectItem>
+              </SelectContent>
+            </Select>
+          </SpacingWrapper>
+
+          <SpacingWrapper>
             <Label>
               ملف الرسالة (PDF) <span className="text-yellow-500">*</span>
             </Label>
@@ -203,7 +242,11 @@ export function ThesisSubmitForm({ onSubmissionSuccess }: ThesisSubmitFormProps)
               onClick={submitForm}
               className="w-full py-3 px-6 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-medium rounded-lg shadow-md"
               disabled={
-                isSubmitting || isUploading || !formValues.title || !formValues.attachmentUrl
+                isSubmitting || 
+                isUploading || 
+                !formValues.title || 
+                !formValues.supervisorId || 
+                !formValues.attachmentUrl
               }
             >
               {isSubmitting ? (
