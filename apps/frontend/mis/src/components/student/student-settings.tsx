@@ -166,7 +166,6 @@ export default function Settings() {
         faculty: "",
         academicYear: "",
         academicDegree: "diploma",
-        academicProgram: "",
       },
     },
     validationSchema: ApplicationStep2Schema,
@@ -242,7 +241,6 @@ export default function Settings() {
         academicYear: registration?.academicYear || "",
         academicDegree: registration?.academicDegree || ("diploma" as const),
         departmentId: registration?.departmentId,
-        academicProgram: registration?.academicProgram || "",
       },
     });
 
