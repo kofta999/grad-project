@@ -162,7 +162,6 @@ export default function ApplicationForm() {
         faculty: "",
         academicYear: "",
         academicDegree: "diploma",
-        academicProgram: "",
       },
     },
     validationSchema: ApplicationStep2Schema,

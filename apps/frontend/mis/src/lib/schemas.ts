@@ -151,7 +151,6 @@ export const ApplicationStep2Schema = Yup.object().shape({
     academicDegree: Yup.string()
       .oneOf(["diploma", "master", "phd"])
       .required("الدرجة الأكاديمية مطلوبة"),
-    academicProgram: Yup.string().required("البرنامج الاكاديمي مطلوب"),
   }),
 });
 
