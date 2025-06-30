@@ -25,8 +25,28 @@ SET search_path TO public;
 INSERT INTO
 	academic_years (start_date, end_date)
 VALUES
-	('2024-09-01', '2025-06-30'), -- Academic Year ID: 1
-	('2025-09-01', '2026-06-30'); -- Academic Year ID: 2
+	('2024-09-01', '2025-09-01'),
+	('2025-09-01', '2026-09-01'),
+	('2026-09-01', '2027-09-01'),
+	('2027-09-01', '2028-09-01'),
+	('2028-09-01', '2029-09-01'),
+	('2029-09-01', '2030-09-01'),
+	('2030-09-01', '2031-09-01'),
+	('2031-09-01', '2032-09-01'),
+	('2032-09-01', '2033-09-01'),
+	('2033-09-01', '2034-09-01'),
+	('2034-09-01', '2035-09-01'),
+	('2035-09-01', '2036-09-01'),
+	('2036-09-01', '2037-09-01'),
+	('2037-09-01', '2038-09-01'),
+	('2038-09-01', '2039-09-01'),
+	('2039-09-01', '2040-09-01'),
+	('2040-09-01', '2041-09-01'),
+	('2041-09-01', '2042-09-01'),
+	('2042-09-01', '2043-09-01'),
+	('2043-09-01', '2044-09-01'),
+	('2044-09-01', '2045-09-01'),
+	('2045-09-01', '2046-09-01');
 
 -- Insert sample students (student_ids 1-4)
 INSERT INTO
@@ -107,7 +127,7 @@ INSERT INTO
 	)
 VALUES
     -- App ID 1 (Ahmed Samir) -> Master MSEEPE
-    (1, 2, 'facultyOfEngineering', (SELECT department_id FROM departments WHERE code = 'MSEEPE')),
+    (1, 1, 'facultyOfEngineering', (SELECT department_id FROM departments WHERE code = 'MSEEPE')),
 	-- App ID 2 (Mohamed Ali) -> Master MSEEPE (based on his course registrations)
     (2, 1, 'facultyOfEngineering', (SELECT department_id FROM departments WHERE code = 'MSEEPE')),
 	-- App ID 3 (Sara Hassan) -> PhD PHDPE
