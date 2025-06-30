@@ -30,7 +30,7 @@ export const apiClient = hcWithType(process.env.NEXT_PUBLIC_API_URL || "http://l
 export async function getServerApiClient() {
   if (typeof window === "undefined") {
     try {
-      return hcWithType("http://localhost:3000", {
+      return hcWithType(process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000", {
         init: { credentials: "include" },
         fetch: customFetch,
       });
