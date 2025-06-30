@@ -80,17 +80,26 @@ export class StudentApplicationService
 
     const applicationId = newApplication[0].applicationId;
 
-    await db.insert(addresses).values({ ...permanentAddress, applicationId, type: "permanent" });
+    db.transaction(async (tx) => {
+      try {
+        await tx
+          .insert(addresses)
+          .values({ ...permanentAddress, applicationId, type: "permanent" });
 
-    await db.insert(addresses).values({ ...currentAddress, applicationId, type: "current" });
+        await tx.insert(addresses).values({ ...currentAddress, applicationId, type: "current" });
 
-    if (emergencyContact) {
-      await db.insert(emergencyContacts).values({ ...emergencyContact, applicationId });
-    }
+        if (emergencyContact) {
+          await tx.insert(emergencyContacts).values({ ...emergencyContact, applicationId });
+        }
 
-    await db.insert(academicQualifications).values({ ...qualification, applicationId });
+        await tx.insert(academicQualifications).values({ ...qualification, applicationId });
 
-    await db.insert(registerations).values({ ...registration, applicationId });
+        await tx.insert(registerations).values({ ...registration, applicationId });
+      } catch (error) {
+        console.error(error);
+        throw error;
+      }
+    });
 
     return applicationId;
   }

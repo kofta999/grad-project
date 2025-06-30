@@ -40,6 +40,8 @@ export default function ApplicationStep2Form({
 }: Step2Props) {
   const pathname = usePathname();
 
+  console.log(formik.errors);
+
   return loading ? (
     <div className="flex items-center justify-center h-screen">
       <Loader className="w-20 h-20" />
@@ -313,9 +315,9 @@ export default function ApplicationStep2Form({
                   )}
                 </Label>
                 <Select
-                  value={formik.values.registration?.academicYear}
+                  value={formik.values.registration?.academicYearId.toString()}
                   onValueChange={(value: string) =>
-                    formik.setFieldValue("registration.academicYear", value)
+                    formik.setFieldValue("registration.academicYearId", parseInt(value))
                   }
                 >
                   <SelectTrigger>
@@ -329,9 +331,9 @@ export default function ApplicationStep2Form({
                     ))}
                   </SelectContent>
                 </Select>
-                {formik.touched.registration?.academicYear &&
-                  formik.errors.registration?.academicYear && (
-                    <ErrorMessage message={formik.errors.registration.academicYear} />
+                {formik.touched.registration?.academicYearId &&
+                  formik.errors.registration?.academicYearId && (
+                    <ErrorMessage message={formik.errors.registration.academicYearId} />
                   )}
               </SpacingWrapper>
 

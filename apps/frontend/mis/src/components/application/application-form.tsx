@@ -160,7 +160,6 @@ export default function ApplicationForm() {
         departmentId: 0,
         academicYearId: 0,
         faculty: "",
-        academicYear: "",
         academicDegree: "diploma",
       },
     },

@@ -56,11 +56,15 @@ export default function ApplicationDetails({ application }: { application: Appli
             </SpacingWrapper>
             <SpacingWrapper>
               <p className="text-gray-600">اسم المشرف</p>
-              <p className="text-lg font-semibold text-gray-800">{application.supervisor?.name}</p>
+              <p className="text-lg font-semibold text-gray-800">
+                {application.supervisor?.name || "لا يوجد"}
+              </p>
             </SpacingWrapper>
             <SpacingWrapper>
               <p className="text-gray-600">البريد الالكتروني للمشرف</p>
-              <p className="text-lg font-semibold text-gray-800">{application.supervisor?.email}</p>
+              <p className="text-lg font-semibold text-gray-800">
+                {application.supervisor?.email || "لا يوجد"}
+              </p>
             </SpacingWrapper>
           </CardGrid>
         </CardContent>
