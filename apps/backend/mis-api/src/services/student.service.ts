@@ -1,12 +1,14 @@
 import db from "@/db";
 import { applications, students } from "@/db/schema";
 import { StudentDetailsDTO } from "@/dtos/student-details.dto";
+import { UpdateStudentDTO } from "@/dtos/update-student.dto";
+import bcrypt from "bcryptjs";
 import { eq } from "drizzle-orm";
 
 export interface IStudentService {
   getStudentDetailsByStudentId(studentId: number): Promise<StudentDetailsDTO | null>;
   getStudentDetailsByApplicationId(applicationId: number): Promise<StudentDetailsDTO | null>;
-  updateStudentInfo(studentId: number, data: Partial<StudentDetailsDTO>): Promise<boolean>;
+  updateStudentInfo(studentId: number, data: UpdateStudentDTO): Promise<boolean>;
 }
 
 export class StudentService implements IStudentService {
@@ -28,7 +30,7 @@ export class StudentService implements IStudentService {
     return student;
   }
 
-  async updateStudentInfo(studentId: number, data: Partial<StudentDetailsDTO>): Promise<boolean> {
+  async updateStudentInfo(studentId: number, data: UpdateStudentDTO): Promise<boolean> {
     const existingStudent = await db.query.students.findFirst({
       where(fields, operators) {
         return operators.eq(fields.studentId, studentId);
@@ -38,6 +40,10 @@ export class StudentService implements IStudentService {
 
     if (!existingStudent) {
       return false;
+    }
+
+    if (data.hashedPassword) {
+      data.hashedPassword = await bcrypt.hash(data.hashedPassword, 10);
     }
 
     await db.update(students).set(data).where(eq(students.studentId, studentId));
