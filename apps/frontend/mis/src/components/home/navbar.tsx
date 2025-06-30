@@ -13,6 +13,7 @@ import {
   Calendar,
   NotebookPen,
   Mail,
+  Airplay,
 } from "lucide-react";
 
 interface NavLink {
@@ -48,6 +49,11 @@ export default function Navbar() {
     },
     { title: "الفعاليات", path: "/#news-section", icon: <Calendar size={20} className="ml-1" /> },
     { title: "بوابة الطالب", path: "/login", icon: <NotebookPen size={20} className="ml-1" /> },
+    {
+      title: "جولة افتراضية",
+      path: "https://iseevision.net/foe-scu",
+      icon: <Airplay size={20} className="ml-1" />,
+    },
     { title: "اتصل بنا", path: "/#contact-section", icon: <Mail size={20} className="ml-1" /> },
   ];
 

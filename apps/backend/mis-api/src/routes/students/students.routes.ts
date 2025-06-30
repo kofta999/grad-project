@@ -15,6 +15,7 @@ import { SaveAttachmentsSchema } from "@/dtos/save-attachment.dto";
 import { ApplicationDetailsSchema } from "@/dtos/application-details.dto";
 import { GetThesisSchema } from "@/dtos/get-thesis.dto";
 import { UpdateApplicationSchema } from "@/dtos/update-application.dto";
+import { UpdateStudentSchema } from "@/dtos/update-student.dto";
 
 const tags = ["Students"];
 
@@ -376,10 +377,7 @@ export const editStudentInfo = createRoute({
   tags,
   summary: "Edit Student", // ملخص: تعديل الطالب
   request: {
-    body: jsonContentRequired(
-      StudentDetailsSchema.partial().omit({ studentId: true }),
-      "Updated student information"
-    ),
+    body: jsonContentRequired(UpdateStudentSchema, "Updated student information"),
     params: IdParamsSchema,
   },
   responses: {

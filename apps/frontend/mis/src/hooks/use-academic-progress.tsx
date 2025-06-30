@@ -43,8 +43,9 @@ export default function useAcademicProgress() {
         setCurrentAcademicYear(data[data.length - 1]);
       }
     } catch (error) {
-      setLoading(false);
       console.error(error);
+    } finally {
+      setLoading(false);
     }
   };
 

@@ -46,7 +46,7 @@ const STUDENT_SIDEBAR_ITEMS = [
     path: "/dashboard/settings",
     icon: <Settings />,
   },
-];
+] as const;
 
 const ADMIN_SIDEBAR_ITEMS = [
   {
@@ -69,7 +69,7 @@ const ADMIN_SIDEBAR_ITEMS = [
     path: "/dashboard/supervisors",
     icon: <Users />,
   },
-];
+] as const;
 
 type SideNavProps = {
   role: "admin" | "student";
@@ -144,11 +144,19 @@ export default function SideNav({ role }: SideNavProps) {
                 <Image src="/image.jpg" alt="logo" width={200} height={100} />
               </Link>
               {/* Navigation Items */}
-              {sidebarItems.map((item: any, idx: number) => {
+              {sidebarItems.map((item, idx: number) => {
                 if (role === "student") {
                   if (
                     applicationData?.status === "accepted" &&
                     item.path === "/dashboard/settings"
+                  ) {
+                    return null;
+                  } else if (
+                    !(applicationData?.status === "accepted") &&
+                    (item.path === "/dashboard/course-registrations" ||
+                      item.path === "/dashboard/progress" ||
+                      item.path === "/dashboard/current-courses" ||
+                      item.path === "/dashboard/thesis")
                   ) {
                     return null;
                   }
